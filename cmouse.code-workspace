@@ -21,6 +21,13 @@
       "delay.h": "c",
       "io.h": "c",
       "avr_mcu_section.h": "c"
-    }
+    },
+    "makefile.launchConfigurations": [
+      {
+        "cwd": "/home/jtdubs/dev/cmouse",
+        "binaryPath": "/home/jtdubs/dev/cmouse/cmouse.elf",
+        "binaryArgs": []
+      }
+    ]
   }
 }
