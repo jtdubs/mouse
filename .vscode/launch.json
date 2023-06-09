@@ -4,7 +4,7 @@
       "name": "Simavr",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/debug/cmouse.elf",
+      "program": "${workspaceFolder}/fw/build/debug/cmouse.elf",
       "cwd": "${workspaceFolder}",
       "externalConsole": false,
       "stopAtEntry": true,

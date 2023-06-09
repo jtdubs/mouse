@@ -13,7 +13,7 @@
         "16000000",
         "-g",
         "-v",
-        "${workspaceFolder}/build/debug/cmouse.elf"
+        "${workspaceFolder}/fw/build/debug/cmouse.elf"
       ],
       "problemMatcher": [
         {

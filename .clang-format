@@ -1,0 +1,93 @@
+---
+BasedOnStyle: GOOGLE
+ColumnLimit: 120
+---
+Language: Cpp
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AlignCompound: true
+  PadOperators: true
+AlignConsecutiveBitFields:
+  Enabled: true
+  AcrossComments: true
+  AcrossEmptyLines: false
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossComments: true
+  AcrossEmptyLines: false
+AlignEscapedNewlines: Left
+AlignOperands: AlignAfterOperator
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 0
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+BreakBeforeBinaryOperators: NonAssignment
+
+# AllowAllArgumentsOnNextLine: true
+# AllowAllParametersOfDeclarationOnNextLine: true
+# AllowShortCaseLabelsOnASingleLine: true
+# AllowShowEnumsOnASingleLine: true
+# AllowShortIfStatementsOnASingleLine: WithoutElse
+# AlwaysBreakAfterReturnType: None
+# AlwaysBreakTemplateDeclarations: Yes
+# BinPackArguments: false
+# BreakAfterAttributes: Always
+# BreakBeforeBraces: Attach
+# BreakBeforeTernaryOperators: true
+# BreakStringLiterals: true
+# CompactNamespaces: false
+# EmptyLineAfterAccessModifier: Never
+# EmptyLineBeforeAccessModifier: Always
+# IncludeBlocks: Regroup
+# IdentAccessModifiers: false
+# IndentCaseBlocks: true
+# IndentCaseLabels: false
+# IndentGotoLabels: true
+# IndentPPDirectives: AfterHash
+# IndentWidth: 2
+# IndentWrappedFunctionNames: true
+# InsertBraces: true
+# InsertNewlineAtEOF: true
+# IntegerLiteralSeparator:
+#   Binary: -1
+#   Decimal: -1
+#   Hex: -1
+# KeepEmptyLinesAtTheStartOfBlocks: false
+# LambdaBodyIndentation: Signature
+# LineEnding: LF
+# MaxEmptyLinesToKeep: 1
+# NamespaceIndentation: None
+# PPIndentWidth: -1
+# PackConstructorInitializers: CurrentLine
+# PointerAlignment: Right
+# QualifierAlignment: Left
+# ReferenceAlignment: Right
+# ReflowComments: true
+# RemoveBracesLLVM: false
+# RemoveSemicolon: true
+# SeparateDefinitionBlocks: Always
+# SortIncludes: CaseSensitive
+# SortUsingDeclarations: Lexicographic
+# SpaceAfterCStyleCast: false
+# SpaceAfterLogicalNot: false
+# SpaceAfterTemplateKeyword: true
+# SpaceBeforeAssignmentOperators: true
+# SpaceBeforeCaseColon: false
+# SpaceBeforeCpp11BracedList: false
+# SpaceBeforeCtorInitializerColon: true
+# SpaceBeforeInheritanceColon: true
+# SpaceBeforeParens: ControlStatements
+# SpaceBeforeRangeBasedForLoopColon: true
+# SpaceBeforeSquareBrackets: false
+# SpaceInEmptyParentheses: false
+# SpacesBeforeTrailingComments: 2
+# SpacesInAngles: false
+# SpacesInCStyleCastParentheses: false
+# SpacesInConditionalStatements: false
+# SpacesInContainerLiterals: false
+# SpacesInParentheses: false
+# SpacesInSquareBrackets: false
+# Standard: Latest
+# 

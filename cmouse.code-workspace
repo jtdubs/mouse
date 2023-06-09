@@ -1,33 +1,21 @@
 {
   "folders": [
     {
-      "path": "."
+      "path": "fw"
+    },
+    {
+      "path": "sim"
+    },
+    {
+      "path": "ui"
     }
   ],
   "settings": {
-    "C_Cpp.default.includePath": [
-      "/usr/lib/avr/include",
-      "/usr/include/simavr",
-    ],
-    "C_Cpp.default.defines": [
-      "__AVR__",
-      "__AVR_ATmega328P__",
-      "F_CPU=16000000UL",
-    ],
     "files.associations": {
       "*.psl": "verilog",
-      "iom328p.h": "c",
-      "common.h": "c",
-      "delay.h": "c",
-      "io.h": "c",
-      "avr_mcu_section.h": "c"
-    },
-    "makefile.launchConfigurations": [
-      {
-        "cwd": "/home/jtdubs/dev/cmouse",
-        "binaryPath": "/home/jtdubs/dev/cmouse/cmouse.elf",
-        "binaryArgs": []
-      }
-    ]
-  }
+      "uart_pty.h": "c",
+      "libgen.h": "c",
+      "stdlib.h": "c"
+    }
+  },
 }
