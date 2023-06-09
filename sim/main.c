@@ -6,7 +6,6 @@
 #include <simavr/sim_avr.h>
 #include <simavr/sim_elf.h>
 #include <simavr/sim_gdb.h>
-#include <simavr/sim_vcd_file.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,13 +13,10 @@
 #include "args.h"
 
 avr_t     *avr = NULL;
-avr_vcd_t  vcd_file;
 uart_pty_t pty;
 
 static void sig_int(int signal) {
   if (avr) {
-    avr_vcd_stop(&vcd_file);
-    avr_vcd_close(&vcd_file);
     avr_terminate(avr);
   }
   exit(0);
@@ -65,15 +61,8 @@ int main(int argc, char *argv[]) {
   // uart_pty_init(avr, &pty);
   // uart_pty_connect(&pty, '0');
 
-  if (avr_vcd_init(avr, "gtkwave_out.vcd", &vcd_file, 100) != 0) {
-    printf("avr_vcd_init failed\n");
-    return 1;
-  }
-
   signal(SIGINT, sig_int);
   signal(SIGTERM, sig_int);
-
-  avr_vcd_start(&vcd_file);
 
   int state = cpu_Running;
   while ((state != cpu_Done) && (state != cpu_Crashed)) {
