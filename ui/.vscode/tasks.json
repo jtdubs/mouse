@@ -1,0 +1,69 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "command": "/usr/local/go/bin/go",
+      "type": "shell",
+      "args": [
+        "build",
+        "."
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+    {
+      "label": "Run (Nano)",
+      "command": "/usr/local/go/bin/go",
+      "type": "shell",
+      "args": [
+        "run",
+        ".",
+        "--port",
+        "/dev/ttyNano"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+    {
+      "label": "Run (Sim)",
+      "command": "/usr/local/go/bin/go",
+      "type": "shell",
+      "args": [
+        "run",
+        ".",
+        "--port",
+        "/dev/ttyNano"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+  ]
+}

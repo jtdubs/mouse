@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug (Nano)",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}",
+      "args": [
+        "--port",
+        "/dev/ttyNano"
+      ],
+      "preLaunchTask": "Build",
+    }
+  ]
+}
