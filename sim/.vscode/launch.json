@@ -4,15 +4,9 @@
       "name": "Debug",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/mousesim",
+      "program": "${workspaceFolder}/build/debug/mousesim",
       "args": [
         "${workspaceFolder}/../fw/build/debug/cmouse.elf"
-      ],
-      "environment": [
-        {
-          "name": "VSCODE_DEBUG",
-          "value": "1"
-        }
       ],
       "cwd": "${workspaceFolder}",
       "externalConsole": false,

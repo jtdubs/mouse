@@ -41,7 +41,7 @@
     },
     {
       "label": "Run",
-      "command": "${workspaceFolder}/build/mousesim",
+      "command": "${workspaceFolder}/build/release/mousesim",
       "args": [
         "${workspaceFolder}/../fw/build/debug/cmouse.elf"
       ],

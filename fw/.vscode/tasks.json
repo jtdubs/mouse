@@ -41,7 +41,7 @@
     },
     {
       "label": "Run Simulator",
-      "command": "${workspaceFolder}/../sim/build/mousesim",
+      "command": "${workspaceFolder}/../sim/build/release/mousesim",
       "args": [
         "--gdb",
         "${workspaceFolder}/build/debug/cmouse.elf"

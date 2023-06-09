@@ -37,6 +37,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
         argp_usage(state);
         break;
       }
+      break;
     default:
       return ARGP_ERR_UNKNOWN;
   }
