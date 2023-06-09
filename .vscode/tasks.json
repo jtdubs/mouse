@@ -1,0 +1,55 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Launch Simavr",
+      "command": "/usr/bin/simavr",
+      "type": "shell",
+      "isBackground": true,
+      "args": [
+        "-m",
+        "atmega328p",
+        "-f",
+        "16000000",
+        "-g",
+        "-v",
+        "${workspaceFolder}/build/debug/cmouse.elf"
+      ],
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "beginsPattern": ".",
+            "endsPattern": "."
+          }
+        }
+      ],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    },
+    {
+      "label": "Kill Simavr",
+      "command": "/usr/bin/killall",
+      "type": "shell",
+      "args": [
+        "simavr",
+      ],
+      "problemMatcher": [
+        "$tsc"
+      ],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    }
+  ]
+}

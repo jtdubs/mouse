@@ -1,4 +1,4 @@
-.PHONY: all release debug clean upload prep
+.PHONY: all release debug clean upload prep sim simattach
 
 SOURCES = $(wildcard *.c)
 TARGET = cmouse
@@ -24,9 +24,34 @@ REL_CFLAGS+=-ffunction-sections        # Separate functions into their own secti
 REL_CFLAGS+=-fdata-sections            # Separate data into their own sections to improve LTO.
 REL_CFLAGS+=-fno-fat-lto-objects -flto # Enable link-time optimization.
 
-all: prep release debug
+REL_TARGETS=build/release/$(TARGET).elf build/release/$(TARGET).hex build/release/$(TARGET).s
+DBG_TARGETS=build/debug/$(TARGET).elf build/debug/$(TARGET).hex build/debug/$(TARGET).s
 
-release: prep build/release/$(TARGET).elf build/release/$(TARGET).hex build/release/$(TARGET).s
+all: prep $(REL_TARGETS) $(DBG_TARGETS)
+
+release: prep $(REL_TARGETS)
+
+debug: prep $(DBG_TARGETS)
+
+clean:
+	rm -Rf build
+
+upload: prep build/release/$(TARGET).hex
+	avrdude -c arduino -P /dev/ttyNano -b 57600 -p m328p -D -U flash:w:$^:i
+
+prep: build/release build/debug
+
+sim: build/debug/$(TARGET).elf
+	simavr $^
+
+simattach: build/debug/$(TARGET).elf
+	simavr --gdb $^
+
+build/release:
+	mkdir -p build/release
+
+build/debug:
+	mkdir -p build/debug
 
 build/release/$(TARGET).elf: $(SOURCES)
 	avr-gcc $(CFLAGS) $(REL_CFLAGS) $(SOURCES) -o $@
@@ -37,27 +62,11 @@ build/release/$(TARGET).hex: build/release/$(TARGET).elf
 build/release/$(TARGET).s: build/release/$(TARGET).elf
 	avr-objdump -d $^ > $@
 
-debug: prep build/debug/$(TARGET).elf build/debug/$(TARGET).hex build/debug/$(TARGET).s
-
 build/debug/$(TARGET).elf: $(SOURCES)
-	avr-gcc $(CFLAGS) $(REL_CFLAGS) $(SOURCES) -o build/debug/$(TARGET).elf
+	avr-gcc $(CFLAGS) $(DBG_CFLAGS) $(SOURCES) -o $@
 
 build/debug/$(TARGET).hex: build/debug/$(TARGET).elf
 	avr-objcopy -j .text -j .data -j .eeprom -O ihex $^ $@
 
 build/debug/$(TARGET).s: build/debug/$(TARGET).elf
 	avr-objdump -d $^ > $@
-
-clean:
-	rm -Rf build
-
-upload: prep build/release/$(TARGET).hex
-	avrdude -c arduino -P /dev/ttyNano -b 57600 -p m328p -D -U flash:w:$^:i
-
-prep: build/release build/debug
-
-build/release:
-	mkdir -p build/release
-
-build/debug:
-	mkdir -p build/debug

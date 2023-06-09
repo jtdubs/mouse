@@ -13,7 +13,7 @@ int main()
   for (;;)
   {
     PORTB ^= 0x20; // Toggle PB5
-    _delay_ms(100);
+    _delay_ms(1);
   }
 
   return 0;
