@@ -4,11 +4,11 @@
 
 AVR_MCU(F_CPU, "atmega328p");
 AVR_MCU_VOLTAGES(5000, 5000, 5000);
+AVR_MCU_VCD_PORT_PIN('B', 5, "PB5");
 
 int main()
 {
-  DDRB |= 0x20;  // Set PB5 as output
-  PORTB |= 0x20; // Set PB5 high
+  DDRB |= 0x20; // Set PB5 as output
 
   for (;;)
   {
