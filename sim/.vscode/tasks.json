@@ -1,0 +1,63 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "command": "/usr/bin/make",
+      "type": "shell",
+      "args": [
+        "all"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+    {
+      "label": "Clean",
+      "command": "/usr/bin/make",
+      "type": "shell",
+      "args": [
+        "clean"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+    {
+      "label": "Run",
+      "command": "${workspaceFolder}/build/mousesim",
+      "args": [
+        "${workspaceFolder}/../fw/build/debug/cmouse.elf"
+      ],
+      "type": "shell",
+      "isBackground": true,
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    }
+  ]
+}

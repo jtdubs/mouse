@@ -1,0 +1,31 @@
+{
+  "configurations": [
+    {
+      "name": "Debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/mousesim",
+      "args": [
+        "${workspaceFolder}/../fw/build/debug/cmouse.elf"
+      ],
+      "environment": [
+        {
+          "name": "VSCODE_DEBUG",
+          "value": "1"
+        }
+      ],
+      "cwd": "${workspaceFolder}",
+      "externalConsole": false,
+      "stopAtEntry": true,
+      "stopAtConnect": true,
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "preLaunchTask": "Build",
+      "presentation": {
+        "hidden": false,
+        "group": "",
+        "order": 1
+      },
+    },
+  ]
+}

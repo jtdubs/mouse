@@ -1,0 +1,121 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "command": "/usr/bin/make",
+      "type": "shell",
+      "args": [
+        "all"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+    {
+      "label": "Clean",
+      "command": "/usr/bin/make",
+      "type": "shell",
+      "args": [
+        "clean"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+    {
+      "label": "Run Simulator",
+      "command": "${workspaceFolder}/../sim/build/mousesim",
+      "args": [
+        "--gdb",
+        "${workspaceFolder}/build/debug/cmouse.elf"
+      ],
+      "dependsOn": [
+        "Build"
+      ],
+      "type": "shell",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "background": {
+            "beginsPattern": ".",
+            "endsPattern": ".",
+          },
+          "pattern": [
+            {
+              "regexp": "$gcc",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ]
+        }
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+    {
+      "label": "Kill Simulator",
+      "command": "/usr/bin/killall",
+      "type": "shell",
+      "args": [
+        "mousesim",
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+    {
+      "label": "Upload",
+      "command": "/usr/bin/make",
+      "type": "shell",
+      "args": [
+        "upload"
+      ],
+      "dependsOn": [
+        "Build"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+  ]
+}
