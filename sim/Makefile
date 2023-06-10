@@ -1,6 +1,6 @@
 .PHONY: all release debug clean prep sim
 
-SOURCES = $(wildcard *.c)
+SOURCES = $(wildcard src/*.c)
 TARGET = mousesim
 
 CFLAGS=-std=c17
