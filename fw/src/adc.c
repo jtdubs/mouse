@@ -33,13 +33,11 @@ void adc_init() {
 uint16_t adc_read_0() {
   assert(!(ADCSRA & (1 << ADSC)));  // No conversion already running
 
-  pin_set(PROBE_2);
   ADMUX   = (ADMUX & 0xF0) | 0x00;  // ADC0
   ADCSRA |= (1 << ADSC);            // Start conversion
   while (ADCSRA & (1 << ADSC))      // Wait for conversion
     ;
   uint16_t result  = ADCL;
   result          |= ADCH << 8;
-  pin_clear(PROBE_2);
   return result;
 }

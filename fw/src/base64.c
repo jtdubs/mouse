@@ -1,7 +1,6 @@
 #include "base64.h"
 
 #include <assert.h>
-#include <stdbool.h>
 #include <stddef.h>
 
 static const uint8_t b64_lookup[64] = {
@@ -51,7 +50,7 @@ void base64_encode(uint8_t *input, uint8_t *output, uint8_t size) {
 
 // base64_decode decodes a base64 string into a buffer of bytes.
 bool base64_decode(uint8_t *input, uint8_t *output, uint8_t size) {
-  for (size_t i = 0, j = 1; i < size; i += 3, j += 4) {
+  for (size_t i = 0, j = 0; i < size; i += 3, j += 4) {
     uint8_t a = b64_rev_lookup[input[j] - 0x20];
     uint8_t b = b64_rev_lookup[input[j + 1] - 0x20];
     uint8_t c = b64_rev_lookup[input[j + 2] - 0x20];
