@@ -66,12 +66,11 @@ void usart0_write() {
 ISR(USART_UDRE_vect, ISR_BLOCK) {
   if (write_index < write_size) {
     UDR0 = write_buffer[write_index++];
+    pin_toggle(PROBE_1);
   } else {
     UCSR0B &= ~(1 << UDRIE0);
+    pin_clear(PROBE_1);
   }
-  pin_toggle(PROBE_1);
 }
 
-ISR(USART_RX_vect, ISR_BLOCK) {
-  pin_toggle(PROBE_0);
-}
+ISR(USART_RX_vect, ISR_BLOCK) {}
