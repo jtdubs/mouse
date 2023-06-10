@@ -35,12 +35,12 @@ void usart0_init() {
 }
 
 ISR(USART_RX_vect, ISR_BLOCK) {
-  pin_toggle(PIN_PROBE_0);
+  pin_toggle(PROBE_0);
   uint8_t d = UDR0;
   (void)d;
 }
 
 ISR(USART_UDRE_vect, ISR_BLOCK) {
-  pin_toggle(PIN_PROBE_1);
+  pin_toggle(PROBE_1);
   UDR0 = 'A';
 }

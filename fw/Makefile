@@ -60,7 +60,7 @@ build/release/$(TARGET).hex: build/release/$(TARGET).elf
 	avr-objcopy -j .text -j .data -j .eeprom -O ihex $^ $@
 
 build/release/$(TARGET).s: build/release/$(TARGET).elf
-	avr-objdump -d $^ > $@
+	avr-objdump -S -j .text -j .data -j .eeprom -j .mmcu -d $^ > $@
 
 build/debug/$(TARGET).elf: $(SOURCES)
 	avr-gcc $(CFLAGS) $(DBG_CFLAGS) $(SOURCES) -o $@
@@ -69,4 +69,4 @@ build/debug/$(TARGET).hex: build/debug/$(TARGET).elf
 	avr-objcopy -j .text -j .data -j .eeprom -O ihex $^ $@
 
 build/debug/$(TARGET).s: build/debug/$(TARGET).elf
-	avr-objdump -d $^ > $@
+	avr-objdump -S -j .text -j .data -j .eeprom -j .mmcu -d $^ > $@

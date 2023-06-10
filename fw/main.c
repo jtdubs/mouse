@@ -11,7 +11,7 @@ int main() {
   sei();
 
   for (;;) {
-    pin_toggle(PIN_LED_BUILTIN);
+    pin_toggle(LED_BUILTIN);
     _delay_ms(500);
   }
 
