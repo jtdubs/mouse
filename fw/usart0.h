@@ -1,3 +1,3 @@
 #pragma once
 
-void init_usart0();
+void usart0_init();

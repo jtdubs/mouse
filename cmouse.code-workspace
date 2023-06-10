@@ -16,7 +16,11 @@
       "uart_pty.h": "c",
       "libgen.h": "c",
       "stdlib.h": "c",
-      "delay.h": "c"
+      "delay.h": "c",
+      "iom328p.h": "c",
+      "iocan32.h": "c",
+      "typeinfo": "cpp",
+      "avr_mcu_section.h": "c"
     }
   },
 }
