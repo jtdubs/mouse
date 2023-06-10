@@ -28,8 +28,8 @@ type MouseCommand struct {
 }
 
 type MouseReport struct {
-	LeftIRSensor uint16
-	Padding      uint8
+	LeftIRSensor uint8
+	Padding      [2]uint8
 }
 
 type USBInterface struct {
