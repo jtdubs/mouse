@@ -4,7 +4,7 @@
       "name": "Simulate",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/debug/cmouse.elf",
+      "program": "${workspaceFolder}/build/debug/mouse.elf",
       "cwd": "${workspaceFolder}",
       "externalConsole": false,
       "stopAtEntry": true,

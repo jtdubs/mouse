@@ -1,7 +1,7 @@
 .PHONY: all release debug clean upload prep sim simattach
 
 SOURCES = $(wildcard src/*.c)
-TARGET = cmouse
+TARGET = mouse
 
 CFLAGS=-I/usr/lib/avr/include          # Include AVR libc headers.
 CFLAGS+=-I/usr/include/simavr          # Include simavr headers.

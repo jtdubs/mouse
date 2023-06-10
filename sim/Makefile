@@ -32,7 +32,7 @@ clean:
 	rm -Rf build
 
 sim: build/release/$(TARGET)
-	./build/release/mousesim ../fw/build/debug/cmouse.elf
+	./build/release/mousesim ../fw/build/debug/mouse.elf
 
 prep: build/release build/debug
 

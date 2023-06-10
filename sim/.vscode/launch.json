@@ -6,7 +6,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/build/debug/mousesim",
       "args": [
-        "${workspaceFolder}/../fw/build/debug/cmouse.elf"
+        "${workspaceFolder}/../fw/build/debug/mouse.elf"
       ],
       "cwd": "${workspaceFolder}",
       "externalConsole": false,

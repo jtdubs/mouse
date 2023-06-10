@@ -44,7 +44,7 @@
       "command": "${workspaceFolder}/../sim/build/release/mousesim",
       "args": [
         "--gdb",
-        "${workspaceFolder}/build/debug/cmouse.elf"
+        "${workspaceFolder}/build/debug/mouse.elf"
       ],
       "dependsOn": [
         "Build"
