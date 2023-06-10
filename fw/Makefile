@@ -1,6 +1,6 @@
 .PHONY: all release debug clean upload prep sim simattach
 
-SOURCES = $(wildcard *.c)
+SOURCES = $(wildcard src/*.c)
 TARGET = cmouse
 
 CFLAGS=-I/usr/lib/avr/include          # Include AVR libc headers.
