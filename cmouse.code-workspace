@@ -20,7 +20,8 @@
       "iom328p.h": "c",
       "iocan32.h": "c",
       "typeinfo": "cpp",
-      "avr_mcu_section.h": "c"
+      "avr_mcu_section.h": "c",
+      "stdalign.h": "c"
     }
   },
 }

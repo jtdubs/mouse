@@ -1,25 +1,27 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <stddef.h>
 #include <util/delay.h>
 
 #include "pin.h"
+#include "report.h"
 #include "timer1.h"
 #include "usart0.h"
-
-char *message = "Hello, world!\n";
 
 int main() {
   pin_init();
   usart0_init();
   timer1_init();
-  usart0_set_write_buffer((uint8_t *)message, 14);
+  report_init();
   sei();
 
+  report_t* report = NULL;
   for (;;) {
     timer1_wait();
 
-    if (usart0_write_ready()) {
-      usart0_write();
+    if ((report = report_next()) != NULL) {
+      report->ir_sensor_left = 0x1234;
+      report_ready();
     }
 
     pin_toggle(LED_BUILTIN);
