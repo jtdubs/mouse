@@ -15,7 +15,8 @@
       "*.psl": "verilog",
       "uart_pty.h": "c",
       "libgen.h": "c",
-      "stdlib.h": "c"
+      "stdlib.h": "c",
+      "delay.h": "c"
     }
   },
 }

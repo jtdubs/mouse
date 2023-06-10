@@ -41,9 +41,9 @@
     },
     {
       "label": "Run",
-      "command": "${workspaceFolder}/build/release/mousesim",
+      "command": "/usr/bin/make",
       "args": [
-        "${workspaceFolder}/../fw/build/debug/cmouse.elf"
+        "sim"
       ],
       "type": "shell",
       "isBackground": true,

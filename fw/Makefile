@@ -42,10 +42,10 @@ upload: prep build/release/$(TARGET).hex
 prep: build/release build/debug
 
 sim: build/debug/$(TARGET).elf
-	simavr $^
+	../sim/build/release/mousesim $^
 
 simattach: build/debug/$(TARGET).elf
-	simavr --gdb $^
+	../sim/build/release/mousesim --gdb $^
 
 build/release:
 	mkdir -p build/release

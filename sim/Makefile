@@ -1,4 +1,4 @@
-.PHONY: all release debug clean prep run
+.PHONY: all release debug clean prep sim
 
 SOURCES = $(wildcard *.c)
 TARGET = mousesim
@@ -31,7 +31,7 @@ debug: prep $(DBG_TARGETS)
 clean:
 	rm -Rf build
 
-run: build/release/$(TARGET)
+sim: build/release/$(TARGET)
 	./build/release/mousesim ../fw/build/debug/cmouse.elf
 
 prep: build/release build/debug
