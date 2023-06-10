@@ -1,5 +1,6 @@
 #include "usart0.h"
 
+#include <assert.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
@@ -20,7 +21,7 @@ void usart0_init() {
          | (0 << MPCM0);   // Disable multi-processor.
   UCSR0B = (1 << RXCIE0)   // Disable RX Complete Interrupt.
          | (0 << TXCIE0)   // Enable TX Complete Interrupt.
-         | (1 << UDRIE0)   // Enable Data Register Empty Interrupt.
+         | (0 << UDRIE0)   // Disable Data Register Empty Interrupt.
          | (1 << RXEN0)    // Enable receiver.
          | (1 << TXEN0)    // Enable transmitter.
          | (0 << UCSZ02);  // 8-bit data.
@@ -34,13 +35,43 @@ void usart0_init() {
          | (0 << UCPOL0);  // Clock polarity (ignored in async mode).
 }
 
-ISR(USART_RX_vect, ISR_BLOCK) {
-  pin_toggle(PROBE_0);
-  uint8_t d = UDR0;
-  (void)d;
+static uint8_t *write_buffer = NULL;
+static uint8_t  write_size   = 0;
+static uint8_t  write_index  = 0;
+
+#define READY (UCSR0A & (1 << UDRE0))
+
+bool usart0_write_ready() {
+  return write_index == write_size;
+}
+
+void usart0_set_write_buffer(uint8_t *buffer, uint8_t size) {
+  assert(buffer != NULL);
+  assert(size > 0);
+  assert(write_buffer == NULL);
+
+  write_buffer = buffer;
+  write_index  = size;
+  write_size   = size;
+}
+
+void usart0_write() {
+  assert(write_buffer != NULL);
+  assert(usart0_write_ready());
+
+  write_index  = 0;
+  UCSR0B      |= 1 << UDRIE0;
 }
 
 ISR(USART_UDRE_vect, ISR_BLOCK) {
+  if (write_index < write_size) {
+    UDR0 = write_buffer[write_index++];
+  } else {
+    UCSR0B &= ~(1 << UDRIE0);
+  }
   pin_toggle(PROBE_1);
-  UDR0 = 'A';
+}
+
+ISR(USART_RX_vect, ISR_BLOCK) {
+  pin_toggle(PROBE_0);
 }
