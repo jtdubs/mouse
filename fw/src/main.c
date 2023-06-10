@@ -4,6 +4,7 @@
 #include <util/delay.h>
 
 #include "adc.h"
+#include "command.h"
 #include "pin.h"
 #include "report.h"
 #include "timer1.h"
@@ -14,6 +15,7 @@ int main() {
   usart0_init();
   timer1_init();
   report_init();
+  command_init();
   adc_init();
   sei();
 
@@ -25,7 +27,15 @@ int main() {
       report_send();
     }
 
-    pin_toggle(LED_BUILTIN);
+    if (command_available()) {
+      if (command.led == 0) {
+        pin_clear(LED_BUILTIN);
+      } else {
+        pin_set(LED_BUILTIN);
+      }
+
+      command_processed();
+    }
   }
 
   return 0;

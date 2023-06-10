@@ -58,8 +58,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  // uart_pty_init(avr, &pty);
-  // uart_pty_connect(&pty, '0');
+  uart_pty_init(avr, &pty);
+  uart_pty_connect(&pty, '0');
 
   signal(SIGINT, sig_int);
   signal(SIGTERM, sig_int);

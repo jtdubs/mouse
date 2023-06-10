@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "base64.h"
 #include "usart0.h"
 
 #pragma pack(push)

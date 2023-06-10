@@ -23,7 +23,7 @@ void usart0_init() {
   UCSR0B = (1 << RXCIE0)   // Disable RX Complete Interrupt.
          | (0 << TXCIE0)   // Enable TX Complete Interrupt.
          | (0 << UDRIE0)   // Disable Data Register Empty Interrupt.
-         | (1 << RXEN0)    // Enable receiver.
+         | (0 << RXEN0)    // Disable receiver.
          | (1 << TXEN0)    // Enable transmitter.
          | (0 << UCSZ02);  // 8-bit data.
   UCSR0C = (0 << UMSEL01)  // Asynchronous USART.
@@ -68,6 +68,42 @@ void usart0_write() {
   UCSR0B      |= 1 << UDRIE0;
 }
 
+static uint8_t                    *read_buffer   = NULL;
+static uint8_t                     read_size     = 0;
+static uint8_t                     read_index    = 0;
+static command_received_callback_t read_callback = NULL;
+
+// usart0_disable_receiver disables the USART0 receiver.
+void usart0_disable_receiver() {
+  UCSR0B &= ~(1 << RXEN0);
+}
+
+// usart0_enable_receiver enables the USART0 receiver.
+void usart0_enable_receiver() {
+  assert(read_buffer != NULL);
+  assert(read_callback != NULL);
+  assert(read_size > 0);
+
+  UCSR0B |= (1 << RXEN0);
+}
+
+// usart0_set_read_buffer sets the read buffer for USART0.
+void usart0_set_read_buffer(uint8_t *buffer, uint8_t size) {
+  assert(buffer != NULL);
+  assert(size > 0);
+
+  read_buffer = buffer;
+  read_size   = size;
+  read_index  = 0;
+}
+
+// usart0_set_read_callback sets the read callback for USART0.
+void usart0_set_read_callback(command_received_callback_t callback) {
+  assert(callback != NULL);
+
+  read_callback = callback;
+}
+
 ISR(USART_UDRE_vect, ISR_BLOCK) {
   if (write_index < write_size) {
     UDR0 = write_buffer[write_index++];
@@ -78,4 +114,19 @@ ISR(USART_UDRE_vect, ISR_BLOCK) {
   }
 }
 
-ISR(USART_RX_vect, ISR_BLOCK) {}
+ISR(USART_RX_vect, ISR_BLOCK) {
+  uint8_t value = UDR0;
+
+  if (read_index < read_size) {
+    read_buffer[read_index++] = value;
+    if (value == '\n') {
+      if (read_index == read_size) {
+        read_callback(read_size);
+      }
+    }
+  }
+
+  if (value == '\n') {
+    read_index = 0;
+  }
+}
