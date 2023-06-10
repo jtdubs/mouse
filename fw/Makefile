@@ -37,7 +37,7 @@ clean:
 	rm -Rf build
 
 upload: prep build/release/$(TARGET).hex
-	avrdude -c arduino -P /dev/ttyNano -b 57600 -p m328p -D -U flash:w:$^:i
+	avrdude -c arduino -P /dev/ttyNano -b 57600 -p m328p -D -U flash:w:build/release/$(TARGET).hex:i
 
 prep: build/release build/debug
 
