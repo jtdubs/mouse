@@ -11,7 +11,11 @@ AVR_MCU_VCD_PORT_PIN('B', 6, "PB6");
 AVR_MCU_VCD_PORT_PIN('B', 7, "PB7");
 
 int init_uart0() {
+#ifdef DEBUG
   uint16_t baud = (F_CPU / 8 / 115200) - 1;  // 115.2k
+#else
+  uint16_t baud = (F_CPU / 8 / 115200) - 1;  // 115.2k
+#endif
 
   UBRR0H = baud >> 8;
   UBRR0L = baud & 0xFF;
