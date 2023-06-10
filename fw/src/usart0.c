@@ -6,6 +6,7 @@
 
 #include "pin.h"
 
+// usart0_init initializes USART0.
 void usart0_init() {
 #if defined(DEBUG)
   // avrsim doesn't recognize support double speed mode.
@@ -39,12 +40,15 @@ static uint8_t *write_buffer = NULL;
 static uint8_t  write_size   = 0;
 static uint8_t  write_index  = 0;
 
+// READY determines if USART0 is ready for a byte.
 #define READY (UCSR0A & (1 << UDRE0))
 
+// usart0_write_ready determines if USART0 is ready for a write request.
 bool usart0_write_ready() {
   return write_index == write_size;
 }
 
+// usart0_set_write_buffer sets the write buffer for USART0.
 void usart0_set_write_buffer(uint8_t *buffer, uint8_t size) {
   assert(buffer != NULL);
   assert(size > 0);
@@ -55,6 +59,7 @@ void usart0_set_write_buffer(uint8_t *buffer, uint8_t size) {
   write_size   = size;
 }
 
+// usart0_write begins an asynchronous write to USART0.
 void usart0_write() {
   assert(write_buffer != NULL);
   assert(usart0_write_ready());

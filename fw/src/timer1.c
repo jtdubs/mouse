@@ -3,8 +3,9 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-volatile bool ready = false;
+volatile bool timer1_elapsed = false;
 
+// timer1_init initializes timer1.
 void timer1_init() {
   // Board-specific fudge factor based on oscilloscope measurements.
   const uint16_t fudge = 62;
@@ -18,5 +19,5 @@ void timer1_init() {
 }
 
 ISR(TIMER1_COMPA_vect) {
-  ready = true;
+  timer1_elapsed = true;
 }

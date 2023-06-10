@@ -15,13 +15,12 @@ int main() {
   report_init();
   sei();
 
-  report_t* report = NULL;
   for (;;) {
     timer1_wait();
 
-    if ((report = report_next()) != NULL) {
-      report->ir_sensor_left = 0x1234;
-      report_ready();
+    if (report_available()) {
+      report.ir_sensor_left = 0x1234;
+      report_send();
     }
 
     pin_toggle(LED_BUILTIN);
