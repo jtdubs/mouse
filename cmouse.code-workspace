@@ -21,7 +21,8 @@
       "iocan32.h": "c",
       "typeinfo": "cpp",
       "avr_mcu_section.h": "c",
-      "stdalign.h": "c"
+      "stdalign.h": "c",
+      "assert.h": "c"
     }
   },
 }

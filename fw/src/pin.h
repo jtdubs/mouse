@@ -12,9 +12,9 @@ typedef struct {
 } pin_t;
 
 #define LED_BUILTIN ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 5, .mask = _BV(5)})
-#define PROBE_0 ((pin_t){.port = &PORTC, .ddr = &DDRB, .pin = 3, .mask = _BV(3)})
-#define PROBE_1 ((pin_t){.port = &PORTC, .ddr = &DDRB, .pin = 4, .mask = _BV(4)})
-#define PROBE_2 ((pin_t){.port = &PORTC, .ddr = &DDRB, .pin = 5, .mask = _BV(5)})
+#define PROBE_0 ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 3, .mask = _BV(3)})
+#define PROBE_1 ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 4, .mask = _BV(4)})
+#define PROBE_2 ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 5, .mask = _BV(5)})
 
 // pin_init initializes all pins.
 void pin_init();
