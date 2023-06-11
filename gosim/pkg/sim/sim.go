@@ -16,6 +16,7 @@ package sim
 import "C"
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -33,15 +34,17 @@ var (
 )
 
 type Sim struct {
-	avr *C.avr_t
-	pty C.uart_pty_t
+	avr     *C.avr_t
+	pty     C.uart_pty_t
+	LED     bool
+	Voltage uint
 }
 
 func New() *Sim {
 	return &Sim{}
 }
 
-func (s *Sim) Run() {
+func (s *Sim) Run(ctx context.Context) {
 	if *firmwarePath == "" {
 		log.Fatalf("No firmware specified")
 	}
@@ -92,14 +95,18 @@ func (s *Sim) Run() {
 		}
 	}()
 
-	<-signals
+	select {
+	case <-signals:
+	case <-ctx.Done():
+	}
 	exit = true
 }
 
 func (s *Sim) on_adc_irq(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
-	C.avr_raise_irq(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC0), 1000)
+	C.avr_raise_irq(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC0), C.uint(s.Voltage))
 }
 
 func (s *Sim) on_led_write(avr *C.avr_t, addr C.avr_io_addr_t, v uint8, param unsafe.Pointer) {
 	fmt.Printf("LED Write: %v\n", (v>>5)&1)
+	s.LED = (v>>5)&1 == 1
 }
