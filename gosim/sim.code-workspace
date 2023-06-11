@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "go.toolsEnvVars": {
+      "GOOS": "linux"
+    }
+  }
+}

@@ -5,6 +5,7 @@ import (
 	"flag"
 
 	"github.com/jtdubs/mouse/ui/pkg/mouse"
+	"github.com/jtdubs/mouse/ui/pkg/ui"
 )
 
 func main() {
@@ -16,6 +17,6 @@ func main() {
 	mouse := mouse.New()
 	go mouse.Run(ctx)
 
-	ui := newUI()
-	ui.run(mouse)
+	ui := ui.New()
+	ui.Run(mouse)
 }
