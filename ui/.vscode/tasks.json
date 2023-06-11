@@ -51,7 +51,7 @@
         "run",
         ".",
         "--port",
-        "/dev/ttyNano"
+        "/tmp/simavr-uart0"
       ],
       "problemMatcher": [
         "$gcc"

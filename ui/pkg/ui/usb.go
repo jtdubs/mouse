@@ -25,7 +25,7 @@ func (s *usbWindow) draw(mouse *mouse.Mouse) {
 		return
 	}
 
-	imgui.Begin(fmt.Sprintf("USB Port - %s", mouse.USB.PortName()))
+	imgui.Begin(fmt.Sprintf("Port - %s", mouse.USB.PortName()))
 
 	// LeftIRSensor
 	imgui.Text("Left IR Sensor: ")

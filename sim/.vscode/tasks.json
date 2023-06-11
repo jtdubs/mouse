@@ -3,29 +3,11 @@
   "tasks": [
     {
       "label": "Build",
-      "command": "/usr/bin/make",
+      "command": "/usr/local/go/bin/go",
       "type": "shell",
       "args": [
-        "all"
-      ],
-      "problemMatcher": [
-        "$gcc"
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "dedicated",
-        "clear": true,
-      },
-      "group": "none"
-    },
-    {
-      "label": "Clean",
-      "command": "/usr/bin/make",
-      "type": "shell",
-      "args": [
-        "clean"
+        "build",
+        "."
       ],
       "problemMatcher": [
         "$gcc"
@@ -41,23 +23,23 @@
     },
     {
       "label": "Run",
-      "command": "/usr/bin/make",
-      "args": [
-        "sim"
-      ],
+      "command": "/usr/local/go/bin/go",
       "type": "shell",
-      "isBackground": true,
+      "args": [
+        "run",
+        ".",
+      ],
       "problemMatcher": [
         "$gcc"
       ],
       "presentation": {
         "echo": true,
         "reveal": "always",
-        "focus": true,
+        "focus": false,
         "panel": "dedicated",
         "clear": true,
       },
       "group": "none"
-    }
+    },
   ]
 }

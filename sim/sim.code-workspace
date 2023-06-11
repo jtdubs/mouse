@@ -5,10 +5,8 @@
     }
   ],
   "settings": {
-    "C_Cpp.default.includePath": [
-      "/usr/include",
-      "/usr/include/simavr",
-      "/usr/include/simavr/parts"
-    ],
+    "go.toolsEnvVars": {
+      "GOOS": "linux"
+    }
   }
 }

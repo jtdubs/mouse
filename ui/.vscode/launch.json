@@ -12,6 +12,18 @@
         "/dev/ttyNano"
       ],
       "preLaunchTask": "Build",
+    },
+    {
+      "name": "Debug (Sim)",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}",
+      "args": [
+        "--port",
+        "/tmp/simavr-uart0"
+      ],
+      "preLaunchTask": "Build",
     }
   ]
 }

@@ -21,7 +21,7 @@ type UI struct {
 func New(mouse *mouse.Mouse) *UI {
 	backend := imgui.CreateBackend(imgui.NewGLFWBackend())
 	backend.SetBgColor(imgui.NewVec4(0.45, 0.55, 0.6, 1.0))
-	backend.CreateWindow("Mouse UI", 1024, 768, 0)
+	backend.CreateWindow("Mouse Remote", 1024, 768, 0)
 	backend.SetTargetFPS(60)
 
 	imgui.CurrentIO().Fonts().AddFontFromFileTTF("fonts/DroidSans.ttf", 24)
