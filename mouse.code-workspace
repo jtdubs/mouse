@@ -22,7 +22,8 @@
       "typeinfo": "cpp",
       "avr_mcu_section.h": "c",
       "stdalign.h": "c",
-      "assert.h": "c"
+      "assert.h": "c",
+      "pin.h": "c"
     }
   },
 }

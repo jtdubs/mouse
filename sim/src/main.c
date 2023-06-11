@@ -22,6 +22,11 @@ static void sig_int(int signal) {
   exit(0);
 }
 
+uint8_t read_trim(struct avr_t *avr, avr_io_addr_t addr, void *param) {
+  printf("read_trim()\n");
+  return 127;
+}
+
 int main(int argc, char *argv[]) {
   arguments_t *args = parse_args(argc, argv);
 
@@ -47,7 +52,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  avr_load_firmware(avr, &f);
+  // avr_register_io_read(avr, 0x25, read_trim, NULL);
 
   if (args->gdb_enabled) {
     avr->state    = cpu_Stopped;
