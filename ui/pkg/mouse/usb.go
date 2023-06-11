@@ -60,7 +60,7 @@ func NewUSBInterface() *USBInterface {
 	}
 }
 
-func (s *USBInterface) Run(ctx context.Context) error {
+func (s *USBInterface) Run(ctx context.Context) {
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGCONT)
 
@@ -72,10 +72,10 @@ func (s *USBInterface) Run(ctx context.Context) error {
 	for {
 		port := s.open(ctx, signalChan)
 		if port == nil {
-			return nil
+			return
 		}
 		if !s.read(ctx, port, signalChan) {
-			return nil
+			return
 		}
 	}
 }

@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"context"
+
 	"github.com/jtdubs/mouse/ui/pkg/mouse"
 
 	imgui "github.com/AllenDang/cimgui-go"
@@ -11,11 +13,12 @@ type window interface {
 }
 
 type UI struct {
+	mouse   *mouse.Mouse
 	backend imgui.Backend
 	windows []window
 }
 
-func New() *UI {
+func New(mouse *mouse.Mouse) *UI {
 	backend := imgui.CreateBackend(imgui.NewGLFWBackend())
 	backend.SetBgColor(imgui.NewVec4(0.45, 0.55, 0.6, 1.0))
 	backend.CreateWindow("Mouse UI", 1024, 768, 0)
@@ -25,6 +28,7 @@ func New() *UI {
 	imgui.CurrentIO().SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
 	return &UI{
+		mouse:   mouse,
 		backend: backend,
 		windows: []window{
 			newUSBWindow(),
@@ -32,12 +36,16 @@ func New() *UI {
 	}
 }
 
-func (ui *UI) Run(mouse *mouse.Mouse) {
+func (ui *UI) Run(ctx context.Context) {
+	go func() {
+		<-ctx.Done()
+		ui.backend.SetShouldClose(true)
+	}()
 	ui.backend.Run(func() {
 		dockspace := imgui.DockSpaceOverViewport()
 		for _, window := range ui.windows {
 			imgui.SetNextWindowDockIDV(dockspace, imgui.CondFirstUseEver)
-			window.draw(mouse)
+			window.draw(ui.mouse)
 		}
 		ui.backend.Refresh()
 	})

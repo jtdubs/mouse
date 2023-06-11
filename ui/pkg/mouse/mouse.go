@@ -3,8 +3,6 @@ package mouse
 import (
 	"context"
 	"flag"
-
-	"golang.org/x/sync/errgroup"
 )
 
 var (
@@ -12,8 +10,7 @@ var (
 )
 
 type Mouse struct {
-	USB  *USBInterface
-	done bool
+	USB *USBInterface
 }
 
 func New() *Mouse {
@@ -25,14 +22,5 @@ func New() *Mouse {
 }
 
 func (m *Mouse) Run(ctx context.Context) {
-	grp, ctx := errgroup.WithContext(ctx)
-	if m.USB != nil {
-		grp.Go(func() error { return m.USB.Run(ctx) })
-	}
-	grp.Wait()
-	m.done = true
-}
-
-func (m *Mouse) Done() bool {
-	return m.done
+	m.USB.Run(ctx)
 }

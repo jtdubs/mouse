@@ -2,21 +2,24 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 
 	"github.com/jtdubs/mouse/ui/pkg/mouse"
 	"github.com/jtdubs/mouse/ui/pkg/ui"
+	"golang.org/x/sync/errgroup"
 )
 
 func main() {
 	flag.Parse()
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
-	defer cancelFunc()
-
 	mouse := mouse.New()
-	go mouse.Run(ctx)
+	ui := ui.New(mouse)
 
-	ui := ui.New()
-	ui.Run(mouse)
+	exitError := errors.New("exit")
+
+	grp, ctx := errgroup.WithContext(context.Background())
+	grp.Go(func() error { mouse.Run(ctx); return exitError })
+	grp.Go(func() error { ui.Run(ctx); return exitError })
+	grp.Wait()
 }
