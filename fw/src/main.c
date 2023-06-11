@@ -23,7 +23,7 @@ int main() {
     timer1_wait();
 
     if (report_available()) {
-      report.ir_sensor_left = adc_read_0();
+      report.ir_sensor_left = adc_read_0() >> 2;
       report_send();
     }
 

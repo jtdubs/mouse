@@ -1,6 +1,7 @@
 #include <libgen.h>
 #include <pthread.h>
 #include <signal.h>
+#include <simavr/avr_adc.h>
 #include <simavr/avr_ioport.h>
 #include <simavr/parts/uart_pty.h>
 #include <simavr/sim_avr.h>
@@ -22,9 +23,12 @@ static void sig_int(int signal) {
   exit(0);
 }
 
-uint8_t read_trim(struct avr_t *avr, avr_io_addr_t addr, void *param) {
-  printf("read_trim()\n");
-  return 127;
+void on_adc_irq(struct avr_irq_t *irq, uint32_t value, void *param) {
+  avr_raise_irq(avr_io_getirq(avr, AVR_IOCTL_ADC_GETIRQ, ADC_IRQ_ADC0), 1000);
+}
+
+void on_led_write(struct avr_t *avr, avr_io_addr_t addr, uint8_t v, void *param) {
+  printf("LED Write: %d\n", (v >> 5) & 1);
 }
 
 int main(int argc, char *argv[]) {
@@ -52,7 +56,10 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  // avr_register_io_read(avr, 0x25, read_trim, NULL);
+  avr_load_firmware(avr, &f);
+
+  avr_irq_register_notify(avr_io_getirq(avr, AVR_IOCTL_ADC_GETIRQ, ADC_IRQ_OUT_TRIGGER), on_adc_irq, NULL);
+  avr_register_io_write(avr, 0x25, on_led_write, NULL);
 
   if (args->gdb_enabled) {
     avr->state    = cpu_Stopped;
