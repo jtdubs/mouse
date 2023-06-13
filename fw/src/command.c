@@ -12,7 +12,7 @@ static bool command_valid = false;
 static char encoded_command[ENCODED_SIZE];
 static bool encoded_command_full = false;
 
-void on_command_received(uint8_t size) {
+static void on_command_received(uint8_t size) {
   assert(!encoded_command_full);
 
   if (size != ENCODED_SIZE) {
