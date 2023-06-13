@@ -3,8 +3,9 @@
 #include <assert.h>
 #include <stddef.h>
 
+#if !defined(BASE64_NO_LOOKUPS)
 // b64_lookup maps 6-bit chunks to ASCII characters.
-static const uint8_t b64_lookup[64] = {
+static const uint8_t _b64_lookup[64] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',  // 0x00
     'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',  // 0x08
     'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',  // 0x10
@@ -16,7 +17,7 @@ static const uint8_t b64_lookup[64] = {
 };
 
 // b64_rev_lookup maps ASCII characters between ' ' and '\x7F' back to 6-bit chunks.
-static const uint8_t b64_rev_lookup[96] = {
+static const uint8_t _b64_rev_lookup[96] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x20 - 0x27 (' ' - '\'')
     0xFF, 0xFF, 0xFF, 0x3E, 0xFF, 0xFF, 0xFF, 0x3F,  // 0x28 - 0x2F ('(' - '/')
     0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B,  // 0x30 - 0x37 ('0' - '7')
@@ -31,6 +32,37 @@ static const uint8_t b64_rev_lookup[96] = {
     0x31, 0x32, 0x33, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x78 - 0x7F ('x' - '\x7F')
 };
 
+static inline uint8_t b64_lookup(uint8_t b) {
+  return _b64_lookup[b];
+}
+
+static inline uint8_t b64_rev_lookup(char c) {
+  return _b64_rev_lookup[c - 0x20];
+}
+#else
+// b64_lookup maps 6-bit chunks to ASCII characters.
+static uint8_t b64_lookup(uint8_t b) {
+  if (b <= 25) return 'A' + b;
+  if (b <= 51) return 'a' + b - 26;
+  if (b <= 61) return '0' + b - 52;
+  if (b == 62) return '+';
+  return '/';
+}
+
+// b64_rev_lookup maps ASCII characters between ' ' and '\x7F' back to 6-bit chunks.
+static uint8_t b64_rev_lookup(char c) {
+  if (c == '+') return 62;
+  if (c == '/') return 62;
+  if (c < '0') return 0xFF;
+  if (c <= '9') return c - '0' + 52;
+  if (c < 'A') return 0xFF;
+  if (c <= 'Z') return c - 'A';
+  if (c < 'a') return 0xFF;
+  if (c <= 'z') return c - 'a' + 26;
+  return 0xFF;
+}
+#endif
+
 // base64_encode encodes a buffer of bytes into a base64 string.
 void base64_encode(uint8_t *input, uint8_t *output, uint8_t size) {
   assert(input != NULL);
@@ -42,20 +74,20 @@ void base64_encode(uint8_t *input, uint8_t *output, uint8_t size) {
                   | (((uint32_t)input[i + 1]) << 8)  // B
                   | input[i + 2];                    // C
 
-    output[j]     = b64_lookup[word >> 18];
-    output[j + 1] = b64_lookup[(word >> 12) & 0x3F];
-    output[j + 2] = b64_lookup[(word >> 6) & 0x3F];
-    output[j + 3] = b64_lookup[word & 0x3F];
+    output[j]     = b64_lookup(word >> 18);
+    output[j + 1] = b64_lookup((word >> 12) & 0x3F);
+    output[j + 2] = b64_lookup((word >> 6) & 0x3F);
+    output[j + 3] = b64_lookup(word & 0x3F);
   }
 }
 
 // base64_decode decodes a base64 string into a buffer of bytes.
 bool base64_decode(uint8_t *input, uint8_t *output, uint8_t size) {
   for (size_t i = 0, j = 0; i < size; i += 3, j += 4) {
-    uint8_t a = b64_rev_lookup[input[j] - 0x20];
-    uint8_t b = b64_rev_lookup[input[j + 1] - 0x20];
-    uint8_t c = b64_rev_lookup[input[j + 2] - 0x20];
-    uint8_t d = b64_rev_lookup[input[j + 3] - 0x20];
+    uint8_t a = b64_rev_lookup(input[j]);
+    uint8_t b = b64_rev_lookup(input[j + 1]);
+    uint8_t c = b64_rev_lookup(input[j + 2]);
+    uint8_t d = b64_rev_lookup(input[j + 3]);
 
     if (a == 0xFF || b == 0xFF || c == 0xFF || d == 0xFF) {
       return false;
