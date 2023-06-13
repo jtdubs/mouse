@@ -23,7 +23,8 @@
       "avr_mcu_section.h": "c",
       "stdalign.h": "c",
       "assert.h": "c",
-      "pin.h": "c"
+      "pin.h": "c",
+      "pgmspace.h": "c"
     }
   },
 }

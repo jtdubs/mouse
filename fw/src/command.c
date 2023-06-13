@@ -8,7 +8,7 @@
 #define ENCODED_SIZE ((sizeof(command_t) * 4 / 3) + 3)
 
 command_t   command;
-bool        command_valid = false;
+static bool command_valid = false;
 static char encoded_command[ENCODED_SIZE];
 static bool encoded_command_full = false;
 

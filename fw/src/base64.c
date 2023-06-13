@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stddef.h>
 
+// b64_lookup maps 6-bit chunks to ASCII characters.
 static const uint8_t b64_lookup[64] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',  // 0x00
     'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',  // 0x08
