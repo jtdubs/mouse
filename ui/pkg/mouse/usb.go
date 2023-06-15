@@ -33,6 +33,10 @@ type MouseReport struct {
 	Padding        uint8
 }
 
+func (r *MouseReport) DecodeFunctionSelect() (bool, uint8) {
+	return (r.FunctionSelect >> 7) == 1, uint8(r.FunctionSelect & 0x0f)
+}
+
 type USBInterface struct {
 	status   string
 	portOpen bool

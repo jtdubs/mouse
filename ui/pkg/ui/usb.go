@@ -20,19 +20,6 @@ func newUSBWindow() *usbWindow {
 	}
 }
 
-var FunctionSelectThresholds = [16]uint8{
-	21, 42, 60, 77, 91, 102, 112, 123, 133, 139, 144, 150, 156, 160, 163, 180,
-}
-
-func DecodeFunctionSelect(v uint8) uint8 {
-	for i, t := range FunctionSelectThresholds {
-		if v <= t {
-			return uint8(i)
-		}
-	}
-	return 16
-}
-
 func (s *usbWindow) draw(mouse *mouse.Mouse) {
 	if mouse.USB == nil {
 		return
@@ -53,12 +40,11 @@ func (s *usbWindow) draw(mouse *mouse.Mouse) {
 	// Function Select
 	imgui.Text("Function Select: ")
 	imgui.SameLine()
-	imgui.Text(fmt.Sprintf("%05b", DecodeFunctionSelect(mouse.USB.Report().FunctionSelect)))
-	imgui.SameLine()
-	if mouse.USB.Open() {
-		imgui.ProgressBarV(float32(mouse.USB.Report().FunctionSelect)/256.0, imgui.Vec2{X: 0, Y: 0}, fmt.Sprintf("%v / 256", mouse.USB.Report().FunctionSelect))
-	} else {
-		imgui.ProgressBarV(0.0, imgui.Vec2{X: 0, Y: 0}, "Disconnected")
+	fselButton, fsel := mouse.USB.Report().DecodeFunctionSelect()
+	imgui.Text(fmt.Sprintf("%v", fsel))
+	if fselButton {
+		imgui.SameLine()
+		imgui.Text("(pressed)")
 	}
 	imgui.Separator()
 
