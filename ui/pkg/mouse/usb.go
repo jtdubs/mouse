@@ -28,8 +28,9 @@ type MouseCommand struct {
 }
 
 type MouseReport struct {
-	LeftIRSensor uint8
-	Padding      [2]uint8
+	BatteryVolts   uint8
+	FunctionSelect uint8
+	Padding        uint8
 }
 
 type USBInterface struct {
@@ -51,7 +52,8 @@ func NewUSBInterface() *USBInterface {
 		portOpen: false,
 		messages: NewRing[string](*scrollback),
 		report: MouseReport{
-			LeftIRSensor: 0,
+			BatteryVolts:   0,
+			FunctionSelect: 0,
 		},
 		command: MouseCommand{
 			LED: 0,

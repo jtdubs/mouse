@@ -20,6 +20,19 @@ func newUSBWindow() *usbWindow {
 	}
 }
 
+var FunctionSelectThresholds = [16]uint8{
+	21, 42, 60, 77, 91, 102, 112, 123, 133, 139, 144, 150, 156, 160, 163, 180,
+}
+
+func DecodeFunctionSelect(v uint8) uint8 {
+	for i, t := range FunctionSelectThresholds {
+		if v <= t {
+			return uint8(i)
+		}
+	}
+	return 16
+}
+
 func (s *usbWindow) draw(mouse *mouse.Mouse) {
 	if mouse.USB == nil {
 		return
@@ -27,15 +40,30 @@ func (s *usbWindow) draw(mouse *mouse.Mouse) {
 
 	imgui.Begin(fmt.Sprintf("Port - %s", mouse.USB.PortName()))
 
-	// LeftIRSensor
-	imgui.Text("Left IR Sensor: ")
+	// Battery Voltage
+	imgui.Text("Battery Voltage: ")
 	imgui.SameLine()
 	if mouse.USB.Open() {
-		imgui.ProgressBarV(float32(mouse.USB.Report().LeftIRSensor)/256.0, imgui.Vec2{X: 0, Y: 0}, fmt.Sprintf("%v / 256", mouse.USB.Report().LeftIRSensor))
+		imgui.ProgressBarV(float32(mouse.USB.Report().BatteryVolts)/256.0, imgui.Vec2{X: 0, Y: 0}, fmt.Sprintf("%v / 256", mouse.USB.Report().BatteryVolts))
 	} else {
 		imgui.ProgressBarV(0.0, imgui.Vec2{X: 0, Y: 0}, "Disconnected")
 	}
 	imgui.Separator()
+
+	// Function Select
+	imgui.Text("Function Select: ")
+	imgui.SameLine()
+	imgui.Text(fmt.Sprintf("%05b", DecodeFunctionSelect(mouse.USB.Report().FunctionSelect)))
+	imgui.SameLine()
+	if mouse.USB.Open() {
+		imgui.ProgressBarV(float32(mouse.USB.Report().FunctionSelect)/256.0, imgui.Vec2{X: 0, Y: 0}, fmt.Sprintf("%v / 256", mouse.USB.Report().FunctionSelect))
+	} else {
+		imgui.ProgressBarV(0.0, imgui.Vec2{X: 0, Y: 0}, "Disconnected")
+	}
+	imgui.Separator()
+
+	// 255 = Button is pressed
+	// v := mouse.USB.Report().ButtonState
 
 	// LED
 	led := mouse.USB.Command().LED != 0
