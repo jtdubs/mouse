@@ -1,8 +1,8 @@
 TODO:
-- Read specs for motor driver 
 - Read specs for encoder (why is there a encoder pulse doubler??)
-- Test the encoder / motor / driver
+- Test the encoder
 
+- Add a pwm library
 - Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".  An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
 - Consider dynamically changing ADC "resolution" to something faster for voltage and function select.
 

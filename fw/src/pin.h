@@ -15,6 +15,10 @@ typedef struct {
 #define PROBE_0 ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 3, .mask = _BV(3)})
 #define PROBE_1 ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 4, .mask = _BV(4)})
 #define PROBE_2 ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 5, .mask = _BV(5)})
+#define LEFT_DIR ((pin_t){.port = &PORTD, .ddr = &DDRD, .pin = 7, .mask = _BV(7)})
+#define RIGHT_DIR ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 0, .mask = _BV(0)})
+#define LEFT_PWM ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 1, .mask = _BV(1)})
+#define RIGHT_PWM ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 2, .mask = _BV(2)})
 
 // pin_init initializes all pins.
 void pin_init();

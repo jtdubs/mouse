@@ -28,6 +28,8 @@ void tick() {
   fsel_update();
   battery_update();
 
+  // pin_toggle(RIGHT_PWM);
+
   if (report_available()) {
     report.battery_volts   = battery_voltage;
     report.function_select = fsel;
