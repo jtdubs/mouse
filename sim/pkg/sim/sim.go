@@ -34,10 +34,15 @@ var (
 )
 
 type Sim struct {
-	avr     *C.avr_t
-	pty     C.uart_pty_t
-	LED     bool
-	Voltage uint
+	avr                  *C.avr_t
+	pty                  C.uart_pty_t
+	LED                  bool
+	Voltage              uint
+	FunctionSelectA      bool
+	FunctionSelectB      bool
+	FunctionSelectC      bool
+	FunctionSelectD      bool
+	FunctionSelectButton bool
 }
 
 func New() *Sim {
@@ -103,7 +108,29 @@ func (s *Sim) Run(ctx context.Context) {
 }
 
 func (s *Sim) on_adc_irq(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
-	C.avr_raise_irq(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC0), C.uint(s.Voltage))
+	C.avr_raise_irq(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC7), C.uint(s.Voltage/2))
+
+	if s.FunctionSelectButton {
+		C.avr_raise_irq(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC6), C.uint(5000))
+	} else {
+		x := 0
+		if s.FunctionSelectA {
+			x |= 8
+		}
+		if s.FunctionSelectB {
+			x |= 4
+		}
+		if s.FunctionSelectC {
+			x |= 2
+		}
+		if s.FunctionSelectD {
+			x |= 1
+		}
+		lookup := [16]int{
+			11, 32, 53, 64, 86, 97, 108, 116, 130, 136, 142, 147, 154, 158, 162, 165,
+		}
+		C.avr_raise_irq(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC6), C.uint(lookup[x]*5000/255))
+	}
 }
 
 func (s *Sim) on_led_write(avr *C.avr_t, addr C.avr_io_addr_t, v uint8, param unsafe.Pointer) {
