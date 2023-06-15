@@ -105,17 +105,14 @@ void usart0_set_read_callback(command_received_callback_t callback) {
 }
 
 ISR(USART_UDRE_vect, ISR_BLOCK) {
-  pin_set(PROBE_2);
   if (write_index < write_size) {
     UDR0 = write_buffer[write_index++];
   } else {
     UCSR0B &= ~(1 << UDRIE0);
   }
-  pin_clear(PROBE_2);
 }
 
 ISR(USART_RX_vect, ISR_BLOCK) {
-  pin_set(PROBE_1);
   uint8_t value = UDR0;
 
   if (read_index < read_size) {
@@ -128,5 +125,4 @@ ISR(USART_RX_vect, ISR_BLOCK) {
   if (value == '\n') {
     read_index = 0;
   }
-  pin_clear(PROBE_1);
 }

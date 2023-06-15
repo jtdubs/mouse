@@ -28,6 +28,7 @@ ISR(INT0_vect) {
   } else {
     encoder_left--;
   }
+
   last_b = b;
 }
 
@@ -44,5 +45,6 @@ ISR(INT1_vect) {
   } else {
     encoder_right--;
   }
+
   last_b = b;
 }
