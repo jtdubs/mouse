@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"fmt"
+
 	imgui "github.com/AllenDang/cimgui-go"
 	"github.com/jtdubs/mouse/sim/pkg/sim"
 )
@@ -24,13 +26,11 @@ func (s *simWindow) draw(sim *sim.Sim) {
 
 	// Function Select
 	imgui.Text("Function Select: ")
-	imgui.Checkbox("A", &sim.FunctionSelectA)
-	imgui.SameLine()
-	imgui.Checkbox("B", &sim.FunctionSelectB)
-	imgui.SameLine()
-	imgui.Checkbox("C", &sim.FunctionSelectC)
-	imgui.SameLine()
-	imgui.Checkbox("D", &sim.FunctionSelectD)
+	for i := range sim.FunctionSelect {
+		imgui.SameLine()
+		imgui.Checkbox(fmt.Sprintf("##FSEL%v", i), &sim.FunctionSelect[3-i])
+	}
+	imgui.SameLineV(0, 20)
 	imgui.Checkbox("Button", &sim.FunctionSelectButton)
 	imgui.Separator()
 
