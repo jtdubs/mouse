@@ -4,6 +4,7 @@
 #include <util/delay.h>
 
 #include "adc.h"
+#include "battery.h"
 #include "command.h"
 #include "fsel.h"
 #include "pin.h"
@@ -19,14 +20,16 @@ void init() {
   command_init();
   adc_init();
   fsel_init();
+  battery_init();
   sei();
 }
 
 void tick() {
   fsel_update();
+  battery_update();
 
   if (report_available()) {
-    report.battery_volts   = adc_read(7) >> 2;
+    report.battery_volts   = battery_voltage;
     report.function_select = fsel;
     report_send();
   }

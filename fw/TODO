@@ -1,9 +1,4 @@
 TODO:
-- Add MCU_VCD_PORT_PIN statements for other interesting pins.
-- Confirm VCD files still look sane.
-
-- Decode battery voltage and store in report as a uint16_t in millivolts.
-
 - Read specs for motor driver 
 - Read specs for encoder (why is there a encoder pulse doubler??)
 - Test the encoder / motor / driver

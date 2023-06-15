@@ -28,9 +28,8 @@ type MouseCommand struct {
 }
 
 type MouseReport struct {
-	BatteryVolts   uint8
+	BatteryVolts   uint16
 	FunctionSelect uint8
-	Padding        uint8
 }
 
 func (r *MouseReport) DecodeFunctionSelect() (bool, uint8) {

@@ -31,9 +31,9 @@ func (s *usbWindow) draw(mouse *mouse.Mouse) {
 	imgui.Text("Battery Voltage: ")
 	imgui.SameLine()
 	if mouse.USB.Open() {
-		imgui.ProgressBarV(float32(mouse.USB.Report().BatteryVolts)/256.0, imgui.Vec2{X: 0, Y: 0}, fmt.Sprintf("%v / 256", mouse.USB.Report().BatteryVolts))
+		imgui.Text(fmt.Sprintf("%v mV", mouse.USB.Report().BatteryVolts))
 	} else {
-		imgui.ProgressBarV(0.0, imgui.Vec2{X: 0, Y: 0}, "Disconnected")
+		imgui.Text("Disconnected")
 	}
 	imgui.Separator()
 

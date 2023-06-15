@@ -10,10 +10,8 @@
 #pragma pack(1)
 // report_t represents mouse status report.
 typedef struct {
-  uint8_t battery_volts;
-  fsel_t  function_select;
-  // uint8_t sensors[6];
-  uint8_t padding;
+  uint16_t battery_volts;
+  fsel_t   function_select;
 } report_t;
 #pragma pack(pop)
 
