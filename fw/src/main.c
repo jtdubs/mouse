@@ -6,21 +6,23 @@
 #include "adc.h"
 #include "battery.h"
 #include "command.h"
+#include "encoders.h"
 #include "fsel.h"
 #include "pin.h"
 #include "report.h"
-#include "timer1.h"
+#include "timer0.h"
 #include "usart0.h"
 
 void init() {
   pin_init();
   usart0_init();
-  timer1_init();
+  timer0_init();
   report_init();
   command_init();
   adc_init();
   fsel_init();
   battery_init();
+  encoders_init();
   sei();
 }
 
@@ -33,6 +35,8 @@ void tick() {
   if (report_available()) {
     report.battery_volts   = battery_voltage;
     report.function_select = fsel;
+    report.encoder_left    = encoder_left;
+    report.encoder_right   = encoder_right;
     report_send();
   }
 
@@ -50,7 +54,7 @@ void tick() {
 int main() {
   init();
   for (;;) {
-    timer1_wait();
+    timer0_wait();
     tick();
   }
   return 0;

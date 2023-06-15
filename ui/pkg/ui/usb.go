@@ -48,6 +48,18 @@ func (s *usbWindow) draw(mouse *mouse.Mouse) {
 	}
 	imgui.Separator()
 
+	// Left Encoder
+	imgui.Text("Left Encoder: ")
+	imgui.SameLine()
+	imgui.Text(fmt.Sprintf("%v", mouse.USB.Report().LeftEncoder))
+	imgui.Separator()
+
+	// Right Encoder
+	imgui.Text("Right Encoder: ")
+	imgui.SameLine()
+	imgui.Text(fmt.Sprintf("%v", mouse.USB.Report().RightEncoder))
+	imgui.Separator()
+
 	// 255 = Button is pressed
 	// v := mouse.USB.Report().ButtonState
 

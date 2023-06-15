@@ -11,14 +11,21 @@ typedef struct {
   uint8_t           mask;
 } pin_t;
 
+// clang-format off
+#define RIGHT_DIR   ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 0, .mask = _BV(0)})
+#define LEFT_PWM    ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 1, .mask = _BV(1)})
+#define RIGHT_PWM   ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 2, .mask = _BV(2)})
 #define LED_BUILTIN ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 5, .mask = _BV(5)})
-#define PROBE_0 ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 3, .mask = _BV(3)})
-#define PROBE_1 ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 4, .mask = _BV(4)})
-#define PROBE_2 ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 5, .mask = _BV(5)})
-#define LEFT_DIR ((pin_t){.port = &PORTD, .ddr = &DDRD, .pin = 7, .mask = _BV(7)})
-#define RIGHT_DIR ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 0, .mask = _BV(0)})
-#define LEFT_PWM ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 1, .mask = _BV(1)})
-#define RIGHT_PWM ((pin_t){.port = &PORTB, .ddr = &DDRB, .pin = 2, .mask = _BV(2)})
+#define PROBE_0     ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 3, .mask = _BV(3)})
+#define PROBE_1     ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 4, .mask = _BV(4)})
+#define PROBE_2     ((pin_t){.port = &PORTC, .ddr = &DDRC, .pin = 5, .mask = _BV(5)})
+#define LEFT_CLK_A  ((pin_t){.port = &PORTD, .ddr = &DDRD, .pin = 2, .mask = _BV(2)})
+#define RIGHT_CLK_A ((pin_t){.port = &PORTD, .ddr = &DDRD, .pin = 3, .mask = _BV(3)})
+#define LEFT_B      ((pin_t){.port = &PORTD, .ddr = &DDRD, .pin = 4, .mask = _BV(4)})
+#define RIGHT_B     ((pin_t){.port = &PORTD, .ddr = &DDRD, .pin = 5, .mask = _BV(5)})
+#define USER_IO     ((pin_t){.port = &PORTD, .ddr = &DDRD, .pin = 6, .mask = _BV(6)})
+#define LEFT_DIR    ((pin_t){.port = &PORTD, .ddr = &DDRD, .pin = 7, .mask = _BV(7)})
+// clang-format on
 
 // pin_init initializes all pins.
 void pin_init();

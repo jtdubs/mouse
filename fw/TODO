@@ -1,8 +1,8 @@
 TODO:
-- Read specs for encoder (why is there a encoder pulse doubler??)
-- Test the encoder
+- Add a pwm library on timer1
+- Add a motor library that's a higher-level interface to pwm + direction setting
+- Add encoder support to sim
 
-- Add a pwm library
 - Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".  An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
 - Consider dynamically changing ADC "resolution" to something faster for voltage and function select.
 
