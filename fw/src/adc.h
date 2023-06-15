@@ -4,4 +4,4 @@
 
 void adc_init();
 
-uint16_t adc_read_0();
+uint16_t adc_read(uint8_t n);

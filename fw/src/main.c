@@ -23,7 +23,8 @@ int main() {
     timer1_wait();
 
     if (report_available()) {
-      report.ir_sensor_left = adc_read_0() >> 2;
+      report.battery_volts   = adc_read(7) >> 2;
+      report.function_select = adc_read(6) >> 2;
       report_send();
     }
 

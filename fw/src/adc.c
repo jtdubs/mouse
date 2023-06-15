@@ -24,18 +24,24 @@ void adc_init() {
          | (0 << ADTS1)   // Free running mode
          | (0 << ADTS2);  // Free running mode
 
-  DIDR0 = (1 << ADC0D);  // Disable digital input buffer on ADC0
+  DIDR0 = (1 << ADC0D)   // Disable digital input buffer on ADC0
+        | (1 << ADC1D)   // Disable digital input buffer on ADC1
+        | (1 << ADC2D)   // Disable digital input buffer on ADC2
+        | (1 << ADC3D)   // Disable digital input buffer on ADC3
+        | (1 << ADC4D)   // Disable digital input buffer on ADC4
+        | (1 << ADC5D);  // Disable digital input buffer on ADC5
 
   ADCSRA |= (1 << ADEN);  // Enable ADC
 }
 
 // adc_read_0 reads the ADC0 value.
-uint16_t adc_read_0() {
+uint16_t adc_read(uint8_t n) {
   assert(!(ADCSRA & (1 << ADSC)));  // No conversion already running
+  assert(n < 8);                    // There are 8 ADC channels
 
-  ADMUX   = (ADMUX & 0xF0) | 0x00;  // ADC0
-  ADCSRA |= (1 << ADSC);            // Start conversion
-  while (ADCSRA & (1 << ADSC))      // Wait for conversion
+  ADMUX   = (ADMUX & 0xF0) | (n & 0x0F);
+  ADCSRA |= (1 << ADSC);        // Start conversion
+  while (ADCSRA & (1 << ADSC))  // Wait for conversion
     ;
   uint16_t result  = ADCL;
   result          |= ADCH << 8;
