@@ -22,9 +22,17 @@ var (
 	scrollback = flag.Int("scrollback", 100000, "Number of lines to keep in the scrollback buffer")
 )
 
+type MouseCommandType uint8
+
+var (
+	CommandLED      MouseCommandType = 0
+	CommandPWMLeft  MouseCommandType = 1
+	CommandPWMRight MouseCommandType = 2
+)
+
 type MouseCommand struct {
-	LED     uint8
-	Padding [2]uint8
+	Type  MouseCommandType
+	Value uint16
 }
 
 type MouseReport struct {
@@ -46,8 +54,7 @@ type USBInterface struct {
 	index    int
 	messages *Ring[string]
 	report   MouseReport
-	command  MouseCommand
-	sendChan chan struct{}
+	sendChan chan MouseCommand
 }
 
 func NewUSBInterface() *USBInterface {
@@ -61,10 +68,7 @@ func NewUSBInterface() *USBInterface {
 			BatteryVolts:   0,
 			FunctionSelect: 0,
 		},
-		command: MouseCommand{
-			LED: 0,
-		},
-		sendChan: make(chan struct{}, 1),
+		sendChan: make(chan MouseCommand, 1),
 	}
 }
 
@@ -112,12 +116,8 @@ func (s *USBInterface) Report() *MouseReport {
 	return &s.report
 }
 
-func (s *USBInterface) Command() *MouseCommand {
-	return &s.command
-}
-
-func (s *USBInterface) SendCommand() {
-	s.sendChan <- struct{}{}
+func (s *USBInterface) SendCommand(c MouseCommand) {
+	s.sendChan <- c
 }
 
 func (s *USBInterface) open(ctx context.Context, signalChan <-chan os.Signal) serial.Port {
@@ -192,9 +192,9 @@ func (s *USBInterface) read(ctx context.Context, port serial.Port, signalChan <-
 				return false
 			}
 			return true
-		case <-s.sendChan:
+		case cmd := <-s.sendChan:
 			var b bytes.Buffer
-			binary.Write(&b, binary.LittleEndian, s.command)
+			binary.Write(&b, binary.LittleEndian, cmd)
 			c := fmt.Sprintf("[%s]\n", base64.StdEncoding.EncodeToString(b.Bytes()))
 			s.messages.Add(fmt.Sprintf("Sending %q", c))
 			port.Write([]byte(c))

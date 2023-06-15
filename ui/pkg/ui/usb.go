@@ -11,6 +11,9 @@ type usbWindow struct {
 	autoScroll  bool
 	forceScroll bool
 	filter      imgui.TextFilter
+	led         bool
+	leftPWM     int32
+	rightPWM    int32
 }
 
 func newUSBWindow() *usbWindow {
@@ -20,18 +23,18 @@ func newUSBWindow() *usbWindow {
 	}
 }
 
-func (s *usbWindow) draw(mouse *mouse.Mouse) {
-	if mouse.USB == nil {
+func (s *usbWindow) draw(m *mouse.Mouse) {
+	if m.USB == nil {
 		return
 	}
 
-	imgui.Begin(fmt.Sprintf("Port - %s", mouse.USB.PortName()))
+	imgui.Begin(fmt.Sprintf("Port - %s", m.USB.PortName()))
 
 	// Battery Voltage
 	imgui.Text("Battery Voltage: ")
 	imgui.SameLine()
-	if mouse.USB.Open() {
-		imgui.Text(fmt.Sprintf("%v mV", mouse.USB.Report().BatteryVolts))
+	if m.USB.Open() {
+		imgui.Text(fmt.Sprintf("%v mV", m.USB.Report().BatteryVolts))
 	} else {
 		imgui.Text("Disconnected")
 	}
@@ -40,7 +43,7 @@ func (s *usbWindow) draw(mouse *mouse.Mouse) {
 	// Function Select
 	imgui.Text("Function Select: ")
 	imgui.SameLine()
-	fselButton, fsel := mouse.USB.Report().DecodeFunctionSelect()
+	fselButton, fsel := m.USB.Report().DecodeFunctionSelect()
 	imgui.Text(fmt.Sprintf("%v", fsel))
 	if fselButton {
 		imgui.SameLine()
@@ -51,32 +54,70 @@ func (s *usbWindow) draw(mouse *mouse.Mouse) {
 	// Left Encoder
 	imgui.Text("Left Encoder: ")
 	imgui.SameLine()
-	imgui.Text(fmt.Sprintf("%v", mouse.USB.Report().LeftEncoder))
+	imgui.Text(fmt.Sprintf("%v", m.USB.Report().LeftEncoder))
 	imgui.Separator()
 
 	// Right Encoder
 	imgui.Text("Right Encoder: ")
 	imgui.SameLine()
-	imgui.Text(fmt.Sprintf("%v", mouse.USB.Report().RightEncoder))
+	imgui.Text(fmt.Sprintf("%v", m.USB.Report().RightEncoder))
 	imgui.Separator()
 
-	// 255 = Button is pressed
-	// v := mouse.USB.Report().ButtonState
+	if !m.USB.Open() {
+		imgui.BeginDisabled()
+	}
 
 	// LED
-	led := mouse.USB.Command().LED != 0
 	imgui.Text("LED: ")
 	imgui.SameLine()
+	led := s.led
 	imgui.Checkbox(" ", &led)
-	if led != (mouse.USB.Command().LED != 0) {
-		if led {
-			mouse.USB.Command().LED = 1
-		} else {
-			mouse.USB.Command().LED = 0
-		}
-		mouse.USB.SendCommand()
+	if led != s.led {
+		s.led = led
+		m.USB.SendCommand(mouse.MouseCommand{
+			Type: mouse.CommandLED,
+			Value: func() uint16 {
+				if led {
+					return 1
+				} else {
+					return 0
+				}
+			}(),
+		})
 	}
 	imgui.Separator()
+
+	// Left PWM
+	imgui.Text("Left PWM: ")
+	imgui.SameLine()
+	leftPWM := int32(s.leftPWM)
+	imgui.SliderInt("##LeftPWM", &leftPWM, 0, 100)
+	if leftPWM != s.leftPWM {
+		s.leftPWM = leftPWM
+		m.USB.SendCommand(mouse.MouseCommand{
+			Type:  mouse.CommandPWMLeft,
+			Value: uint16(leftPWM),
+		})
+	}
+	imgui.Separator()
+
+	// Right PWM
+	imgui.Text("Right PWM: ")
+	imgui.SameLine()
+	rightPWM := int32(s.rightPWM)
+	imgui.SliderInt("##RightPWM", &rightPWM, 0, 100)
+	if rightPWM != s.rightPWM {
+		s.rightPWM = rightPWM
+		m.USB.SendCommand(mouse.MouseCommand{
+			Type:  mouse.CommandPWMRight,
+			Value: uint16(rightPWM),
+		})
+	}
+	imgui.Separator()
+
+	if !m.USB.Open() {
+		imgui.EndDisabled()
+	}
 
 	// Toolbar
 	imgui.Text("Filter: ")
@@ -84,7 +125,7 @@ func (s *usbWindow) draw(mouse *mouse.Mouse) {
 	s.filter.DrawV("", 180)
 	imgui.SameLineV(0, 20)
 	if imgui.Button("Clear") {
-		mouse.USB.Clear()
+		m.USB.Clear()
 	}
 	imgui.SameLine()
 	copy := imgui.Button("Copy")
@@ -103,9 +144,9 @@ func (s *usbWindow) draw(mouse *mouse.Mouse) {
 			imgui.LogToClipboard()
 		}
 
-		mouse.USB.ForEachMessage(func(line string) {
+		m.USB.ForEachMessage(func(line string) {
 			if s.filter.PassFilter(line) {
-				if mouse.USB.Open() {
+				if m.USB.Open() {
 					imgui.TextUnformatted(line)
 				} else {
 					imgui.TextDisabled(line)
@@ -126,7 +167,7 @@ func (s *usbWindow) draw(mouse *mouse.Mouse) {
 	imgui.Separator()
 
 	// Status
-	imgui.Text(fmt.Sprintf("Status: %s", mouse.USB.Status()))
+	imgui.Text(fmt.Sprintf("Status: %s", m.USB.Status()))
 
 	imgui.End()
 }
