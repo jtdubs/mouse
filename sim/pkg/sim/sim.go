@@ -44,7 +44,9 @@ type Sim struct {
 }
 
 func New() *Sim {
-	return &Sim{}
+	return &Sim{
+		Voltage: 9000,
+	}
 }
 
 func (s *Sim) Run(ctx context.Context) {
