@@ -5,6 +5,7 @@
 
 #include "adc.h"
 #include "command.h"
+#include "fsel.h"
 #include "pin.h"
 #include "report.h"
 #include "timer1.h"
@@ -17,14 +18,17 @@ int main() {
   report_init();
   command_init();
   adc_init();
+  fsel_init();
   sei();
 
   for (;;) {
     timer1_wait();
 
+    fsel_update();
+
     if (report_available()) {
       report.battery_volts   = adc_read(7) >> 2;
-      report.function_select = adc_read(6) >> 2;
+      report.function_select = fsel;
       report_send();
     }
 

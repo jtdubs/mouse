@@ -41,9 +41,10 @@
     },
     {
       "label": "Run Simulator",
-      "command": "${workspaceFolder}/../sim/build/release/mousesim",
+      "command": "${workspaceFolder}/../sim/sim",
       "args": [
         "--gdb",
+        "--firmware",
         "${workspaceFolder}/build/debug/mouse.elf"
       ],
       "dependsOn": [
@@ -81,7 +82,8 @@
       "command": "/usr/bin/killall",
       "type": "shell",
       "args": [
-        "mousesim",
+        "-e",
+        "sim",
       ],
       "problemMatcher": [
         "$gcc"

@@ -1,6 +1,7 @@
 .PHONY: all release debug clean upload prep sim simattach
 
 SOURCES = $(wildcard src/*.c)
+HEADERS = $(wildcard src/*.h)
 TARGET = mouse
 
 CFLAGS=-I/usr/lib/avr/include          # Include AVR libc headers.
@@ -55,7 +56,7 @@ build/release:
 build/debug:
 	mkdir -p build/debug
 
-build/release/$(TARGET).elf: $(SOURCES)
+build/release/$(TARGET).elf: $(SOURCES) $(HEADERS)
 	avr-gcc $(CFLAGS) $(REL_CFLAGS) $(SOURCES) -o $@
 
 build/release/$(TARGET).hex: build/release/$(TARGET).elf
@@ -64,7 +65,7 @@ build/release/$(TARGET).hex: build/release/$(TARGET).elf
 build/release/$(TARGET).s: build/release/$(TARGET).elf
 	avr-objdump -S -j .text -j .data -j .eeprom -j .mmcu -d $^ > $@
 
-build/debug/$(TARGET).elf: $(SOURCES)
+build/debug/$(TARGET).elf: $(SOURCES) $(HEADERS)
 	avr-gcc $(CFLAGS) $(DBG_CFLAGS) $(SOURCES) -o $@
 
 build/debug/$(TARGET).hex: build/debug/$(TARGET).elf

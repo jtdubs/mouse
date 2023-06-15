@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "fsel.h"
 #include "usart0.h"
 
 #pragma pack(push)
@@ -10,7 +11,7 @@
 // report_t represents mouse status report.
 typedef struct {
   uint8_t battery_volts;
-  uint8_t function_select;
+  fsel_t  function_select;
   // uint8_t sensors[6];
   uint8_t padding;
 } report_t;
