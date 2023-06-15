@@ -5,10 +5,6 @@ ADC:
 Encoders:
 - Need support in the simulator, ideally based on the PWM value.
 - So, basically model a "motor" that takes the PWM and Dir inputs, and produces the encoder outputs.
-- Optimize logic in ISRs
-
-PWM:
-- Verify PWM timing with probe.
 
 UI:
 - Fold "USB" directly into "mouse" and "UI".
