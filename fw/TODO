@@ -1,12 +1,15 @@
 TODO:
-- Move digital logic probes to unused sensor ports (3,4,5).
-- Only init ADC functionality on the ADCs we use (0, 1, 2, 6, 7).
-- Sanity check probe timings.
 - Add MCU_VCD_PORT_PIN statements for other interesting pins.
 - Confirm VCD files still look sane.
+
 - Decode battery voltage and store in report as a uint16_t in millivolts.
-- Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".  An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
-- Consider dynamically changing ADC "resolution" to something faster for voltage and function select.
+
 - Read specs for motor driver 
 - Read specs for encoder (why is there a encoder pulse doubler??)
-- Build encoders, motors, and mount to board.
+- Test the encoder / motor / driver
+
+- Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".  An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
+- Consider dynamically changing ADC "resolution" to something faster for voltage and function select.
+
+#define system for modules to declare ownership of pins and to error if they overlap...
+this could also be a bitmask and be handled with asserts..

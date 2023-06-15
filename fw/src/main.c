@@ -11,7 +11,7 @@
 #include "timer1.h"
 #include "usart0.h"
 
-int main() {
+void init() {
   pin_init();
   usart0_init();
   timer1_init();
@@ -20,28 +20,33 @@ int main() {
   adc_init();
   fsel_init();
   sei();
+}
 
-  for (;;) {
-    timer1_wait();
+void tick() {
+  fsel_update();
 
-    fsel_update();
-
-    if (report_available()) {
-      report.battery_volts   = adc_read(7) >> 2;
-      report.function_select = fsel;
-      report_send();
-    }
-
-    if (command_available()) {
-      if (command.led == 0) {
-        pin_clear(LED_BUILTIN);
-      } else {
-        pin_set(LED_BUILTIN);
-      }
-
-      command_processed();
-    }
+  if (report_available()) {
+    report.battery_volts   = adc_read(7) >> 2;
+    report.function_select = fsel;
+    report_send();
   }
 
+  if (command_available()) {
+    if (command.led == 0) {
+      pin_clear(LED_BUILTIN);
+    } else {
+      pin_set(LED_BUILTIN);
+    }
+
+    command_processed();
+  }
+}
+
+int main() {
+  init();
+  for (;;) {
+    timer1_wait();
+    tick();
+  }
   return 0;
 }
