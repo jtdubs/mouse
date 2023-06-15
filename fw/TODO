@@ -1,10 +1,7 @@
 TODO:
-- Add a pwm library on timer1
-- Add a motor library that's a higher-level interface to pwm + direction setting
+- verify PWM functionality with probe
+- why doesn't PWM work in simavr?
 - Add encoder support to sim
 
 - Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".  An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
 - Consider dynamically changing ADC "resolution" to something faster for voltage and function select.
-
-#define system for modules to declare ownership of pins and to error if they overlap...
-this could also be a bitmask and be handled with asserts..

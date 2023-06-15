@@ -1,12 +1,12 @@
-#include "timer0.h"
+#include "timer.h"
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-volatile bool timer0_elapsed = false;
+volatile bool timer_elapsed = false;
 
-// timer0_init initializes timer0.
-void timer0_init() {
+// timer_init initializes timer.
+void timer_init() {
   // Board-specific fudge factor based on oscilloscope measurements.
   const uint8_t fudge = 0;
 
@@ -19,5 +19,5 @@ void timer0_init() {
 }
 
 ISR(TIMER0_COMPA_vect) {
-  timer0_elapsed = true;
+  timer_elapsed = true;
 }
