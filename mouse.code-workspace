@@ -24,7 +24,8 @@
       "stdalign.h": "c",
       "assert.h": "c",
       "pin.h": "c",
-      "pgmspace.h": "c"
+      "pgmspace.h": "c",
+      "interrupt.h": "c"
     }
   },
 }
