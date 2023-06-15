@@ -1,3 +1,5 @@
+#include "sim.h"
+
 #include <avr/avr_mcu_section.h>
 #include <avr/io.h>
 
@@ -22,12 +24,11 @@ AVR_MCU_VCD_IRQ(USART_RX);
 
 const struct avr_mmcu_vcd_trace_t _adc_trace[] _MMCU_ = {
     // clang-format off
-    { AVR_MCU_VCD_SYMBOL("ADCSRA"), .what = (void*)&ADCSRA },
-    { AVR_MCU_VCD_SYMBOL("ADMUX"),  .what = (void*)&ADMUX  },
-    { AVR_MCU_VCD_SYMBOL("ADCL"),   .what = (void*)&ADCL   },
-    { AVR_MCU_VCD_SYMBOL("ADCH"),   .what = (void*)&ADCH   },
     { AVR_MCU_VCD_SYMBOL("ICR1"),   .what = (void*)&ICR1   },
     { AVR_MCU_VCD_SYMBOL("OCR1A"),  .what = (void*)&OCR1A  },
     { AVR_MCU_VCD_SYMBOL("OCR1B"),  .what = (void*)&OCR1B  }
     // clang-format on}
 };
+
+AVR_MCU_SIMAVR_COMMAND(&SIM_COMMAND_REG);
+AVR_MCU_SIMAVR_CONSOLE(&SIM_CONSOLE_REG);

@@ -11,6 +11,7 @@
 #include "pin.h"
 #include "pwm.h"
 #include "report.h"
+#include "sim.h"
 #include "timer.h"
 #include "usart0.h"
 
@@ -62,6 +63,7 @@ void tick() {
 
 int main() {
   init();
+  sim_start_trace();
   for (;;) {
     timer_wait();
     tick();

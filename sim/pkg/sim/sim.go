@@ -9,6 +9,7 @@ package sim
 #include <avr_adc.h>
 #include <avr_ioport.h>
 #include <parts/uart_pty.h>
+#include <sim_vcd_file.h>
 #include <sim_avr.h>
 #include <sim_elf.h>
 #include <sim_gdb.h>
@@ -66,6 +67,12 @@ func (s *Sim) Run(ctx context.Context) {
 	}
 
 	C.avr_load_firmware(s.avr, &f)
+
+	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC0), 16, C.CString("SENSOR0"))
+	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC1), 16, C.CString("SENSOR1"))
+	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC2), 16, C.CString("SENSOR2"))
+	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC6), 16, C.CString("FUNCTION_SELECT"))
+	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC7), 16, C.CString("BATTERY_VOLTAGE"))
 
 	C.avr_irq_register_notify(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_OUT_TRIGGER), on_adc_irq_cgo, pointer.Save(s))
 	C.avr_register_io_write(s.avr, 0x25, on_led_write_cgo, pointer.Save(s))
