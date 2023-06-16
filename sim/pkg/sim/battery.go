@@ -9,6 +9,7 @@ package sim
 #include <avr_adc.h>
 #include <avr_ioport.h>
 #include <sim_avr.h>
+#include <sim_vcd_file.h>
 */
 import "C"
 
@@ -33,6 +34,7 @@ func NewBattery(avr *C.avr_t, adc C.int) *Battery {
 }
 
 func (b *Battery) Init() {
+	C.avr_vcd_add_signal(b.avr.vcd, b.irq, 16, C.CString("BATTERY_VOLTAGE"))
 	C.avr_irq_register_notify(C.avr_io_getirq(b.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_OUT_TRIGGER), on_irq_cgo, pointer.Save(b))
 }
 

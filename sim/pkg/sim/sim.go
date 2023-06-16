@@ -68,14 +68,12 @@ func (s *Sim) Run(ctx context.Context) {
 	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC0), 16, C.CString("SENSOR0"))
 	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC1), 16, C.CString("SENSOR1"))
 	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC2), 16, C.CString("SENSOR2"))
-	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC6), 16, C.CString("FUNCTION_SELECT"))
-	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC7), 16, C.CString("BATTERY_VOLTAGE"))
 
 	s.LED = NewLED(s.avr, 0x25, 5)
 	s.Battery = NewBattery(s.avr, C.ADC_IRQ_ADC7)
 	s.FunctionSelector = NewFunctionSelect(s.avr, C.ADC_IRQ_ADC6)
-	s.LeftMotor = NewMotor(s.avr, C.TIMER_IRQ_OUT_PWM0)
-	s.RightMotor = NewMotor(s.avr, C.TIMER_IRQ_OUT_PWM1)
+	s.LeftMotor = NewMotor(s.avr, "Left Motor", C.TIMER_IRQ_OUT_PWM0, 'D', 4, 'D', 2)
+	s.RightMotor = NewMotor(s.avr, "Right Motor", C.TIMER_IRQ_OUT_PWM1, 'D', 5, 'D', 3)
 
 	s.LED.Init()
 	s.Battery.Init()
