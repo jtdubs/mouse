@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"fmt"
+
 	imgui "github.com/AllenDang/cimgui-go"
 	"github.com/jtdubs/mouse/sim/pkg/sim"
 )
@@ -36,6 +38,18 @@ func (s *simWindow) draw(sim *sim.Sim) {
 	} else {
 		imgui.Text("Off")
 	}
+	imgui.Separator()
+
+	// Left Motor
+	imgui.Text("Left Motor: ")
+	imgui.SameLine()
+	imgui.Text(fmt.Sprintf("%v (Hz)", sim.LeftMotor.ActualFrequency/4))
+	imgui.Separator()
+
+	// Right Motor
+	imgui.Text("Right Motor: ")
+	imgui.SameLine()
+	imgui.Text(fmt.Sprintf("%v (Hz)", sim.RightMotor.ActualFrequency/4))
 	imgui.Separator()
 
 	imgui.End()

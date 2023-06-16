@@ -23,8 +23,8 @@ import (
 
 type Motor struct {
 	name                 string
-	desiredFrequency     uint32
-	actualFrequency      uint32
+	DesiredFrequency     uint32
+	ActualFrequency      uint32
 	ix                   int // mod 4 location in pulse train
 	avr                  *C.avr_t
 	pwmIRQ, clkIRQ, bIRQ *C.avr_irq_t
@@ -33,8 +33,8 @@ type Motor struct {
 func NewMotor(avr *C.avr_t, name string, pwm C.int, clkPin int, bPin int) *Motor {
 	return &Motor{
 		name:             name,
-		desiredFrequency: 0,
-		actualFrequency:  0,
+		DesiredFrequency: 0,
+		ActualFrequency:  0,
 		ix:               0,
 		avr:              avr,
 		pwmIRQ:           C.avr_io_getirq(avr, 0x746D7231 /* tmr1 */, pwm),
@@ -52,8 +52,8 @@ func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 	// As a crude approximation, lets assume the motor speed is 1/20 of the PWM duty cycle.
 	// So the PWM range of [0,800) becomes a motor speed of [0,40)Hz.
 	// The encoder pulses 4 times per revolution, so the encoder frequency is 4 times the motor speed.
-	m.desiredFrequency = value / 5
-	if m.actualFrequency == 0 && m.desiredFrequency > 0 {
+	m.DesiredFrequency = value / 5
+	if m.ActualFrequency == 0 && m.DesiredFrequency > 0 {
 		C.avr_cycle_timer_register(m.avr, 0, on_cycle_cgo, pointer.Save(m))
 	}
 }
@@ -63,9 +63,9 @@ func (m *Motor) OnCycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Poi
 	C.avr_raise_irq(m.clkIRQ, C.uint(m.ix%2))
 	C.avr_raise_irq(m.bIRQ, C.uint(m.ix>>1))
 
-	m.actualFrequency = m.desiredFrequency
-	if m.actualFrequency == 0 {
+	m.ActualFrequency = m.DesiredFrequency
+	if m.ActualFrequency == 0 {
 		return 0
 	}
-	return when + C.avr_cycle_count_t(16000000/m.actualFrequency)
+	return when + C.avr_cycle_count_t(16000000/m.ActualFrequency)
 }
