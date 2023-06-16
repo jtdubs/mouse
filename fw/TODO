@@ -1,14 +1,10 @@
-ADC:
-- Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".  An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
+Fw:
+- Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".
+- An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
 - Consider dynamically changing ADC "resolution" to something faster for voltage and function select.
 
-Encoders:
-- Need support in the simulator, ideally based on the PWM value.
-- So, basically model a "motor" that takes the PWM and Dir inputs, and produces the encoder outputs.
+Sim:
+- Gather real timing data for motor and finish implementing the motor type
 
 UI:
 - Fold "USB" directly into "mouse" and "UI".
-
-General:
-- Review level of documentation.
-
