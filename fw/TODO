@@ -3,8 +3,5 @@ Fw:
 - An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
 - Consider dynamically changing ADC "resolution" to something faster for voltage and function select.
 
-Sim:
-- Gather real timing data for motor and finish implementing the motor type
-
 UI:
 - Fold "USB" directly into "mouse" and "UI".

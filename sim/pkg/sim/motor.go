@@ -60,8 +60,8 @@ func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 
 func (m *Motor) OnCycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Pointer) C.avr_cycle_count_t {
 	m.ix = (m.ix + 1) % 4
-	C.avr_raise_irq(m.clkIRQ, C.uint(m.ix%2))
-	C.avr_raise_irq(m.bIRQ, C.uint(m.ix>>1))
+	C.avr_raise_irq(m.clkIRQ, C.uint(m.ix&1))
+	C.avr_raise_irq(m.bIRQ, C.uint((m.ix>>1)&1))
 
 	m.ActualFrequency = m.DesiredFrequency
 	if m.ActualFrequency == 0 {
