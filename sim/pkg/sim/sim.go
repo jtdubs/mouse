@@ -19,14 +19,10 @@ import "C"
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"unsafe"
-
-	"github.com/mattn/go-pointer"
 )
 
 var (
@@ -35,18 +31,15 @@ var (
 )
 
 type Sim struct {
-	avr                  *C.avr_t
-	pty                  C.uart_pty_t
-	LED                  bool
-	Voltage              uint
-	FunctionSelect       [4]bool
-	FunctionSelectButton bool
+	avr              *C.avr_t
+	pty              C.uart_pty_t
+	LED              *LED
+	Battery          *Battery
+	FunctionSelector *FunctionSelector
 }
 
 func New() *Sim {
-	return &Sim{
-		Voltage: 9000,
-	}
+	return &Sim{}
 }
 
 func (s *Sim) Run(ctx context.Context) {
@@ -76,8 +69,13 @@ func (s *Sim) Run(ctx context.Context) {
 	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC6), 16, C.CString("FUNCTION_SELECT"))
 	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC7), 16, C.CString("BATTERY_VOLTAGE"))
 
-	C.avr_irq_register_notify(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_OUT_TRIGGER), on_adc_irq_cgo, pointer.Save(s))
-	C.avr_register_io_write(s.avr, 0x25, on_led_write_cgo, pointer.Save(s))
+	s.LED = NewLED(s.avr, 0x25, 5)
+	s.Battery = NewBattery(s.avr, C.ADC_IRQ_ADC7)
+	s.FunctionSelector = NewFunctionSelect(s.avr, C.ADC_IRQ_ADC6)
+
+	s.LED.Init()
+	s.Battery.Init()
+	s.FunctionSelector.Init()
 
 	if *gdbEnabled {
 		s.avr.state = C.cpu_Stopped
@@ -111,30 +109,4 @@ func (s *Sim) Run(ctx context.Context) {
 	case <-ctx.Done():
 	}
 	exit = true
-}
-
-// Values of each function in millivolts.
-var functionVoltages = [16]int{
-	3235, 3176, 3098, 3019, 2882, 2784, 2666, 2549, 2274, 2117, 1901, 1686, 1333, 1039, 627, 215,
-}
-
-func (s *Sim) on_adc_irq(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
-	C.avr_raise_irq(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC7), C.uint(s.Voltage/2))
-
-	if s.FunctionSelectButton {
-		C.avr_raise_irq(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC6), C.uint(5000))
-	} else {
-		x := 0
-		for i, v := range s.FunctionSelect {
-			if v {
-				x |= 1 << uint(i)
-			}
-		}
-		C.avr_raise_irq(C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC6), C.uint(functionVoltages[x]))
-	}
-}
-
-func (s *Sim) on_led_write(avr *C.avr_t, addr C.avr_io_addr_t, v uint8, param unsafe.Pointer) {
-	fmt.Printf("LED Write: %v\n", (v>>5)&1)
-	s.LED = (v>>5)&1 == 1
 }

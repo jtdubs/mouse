@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"fmt"
-
 	imgui "github.com/AllenDang/cimgui-go"
 	"github.com/jtdubs/mouse/sim/pkg/sim"
 )
@@ -19,30 +17,25 @@ func (s *simWindow) draw(sim *sim.Sim) {
 	// Voltage
 	imgui.Text("Voltage: ")
 	imgui.SameLine()
-	v := int32(sim.Voltage)
-	imgui.SliderInt("(V)", &v, 0, 9000)
-	sim.Voltage = uint(v)
+	imgui.SliderInt("(V)", &sim.Battery.Voltage, 0, 9000)
 	imgui.Separator()
 
 	// Function Select
 	imgui.Text("Function Select: ")
-	for i := range sim.FunctionSelect {
-		imgui.SameLine()
-		imgui.Checkbox(fmt.Sprintf("##FSEL%v", i), &sim.FunctionSelect[3-i])
-	}
+	functions := "0\0001\0002\0003\0004\0005\0006\0007\0008\0009\00010\00011\00012\00013\00014\00015"
+	imgui.ComboStr("##FSEL", &sim.FunctionSelector.Function, functions)
 	imgui.SameLineV(0, 20)
-	imgui.Checkbox("Button", &sim.FunctionSelectButton)
+	imgui.Checkbox("Button", &sim.FunctionSelector.ButtonPressed)
 	imgui.Separator()
 
 	// LED
 	imgui.Text("LED: ")
 	imgui.SameLine()
-	if sim.LED {
+	if sim.LED.State {
 		imgui.Text("On")
 	} else {
 		imgui.Text("Off")
 	}
-
 	imgui.Separator()
 
 	imgui.End()

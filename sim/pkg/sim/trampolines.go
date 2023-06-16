@@ -33,10 +33,10 @@ var (
 
 //export on_adc_irq
 func on_adc_irq(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
-	pointer.Restore(param).(*Sim).on_adc_irq(irq, value, param)
+	pointer.Restore(param).(ADCComponent).OnADCRead(irq, value, param)
 }
 
 //export on_led_write
 func on_led_write(avr *C.avr_t, addr C.avr_io_addr_t, v uint8, param unsafe.Pointer) {
-	pointer.Restore(param).(*Sim).on_led_write(avr, addr, v, param)
+	pointer.Restore(param).(*LED).OnLEDWrite(avr, addr, v, param)
 }
