@@ -8,6 +8,7 @@ package sim
 
 #include <avr_adc.h>
 #include <avr_ioport.h>
+#include <avr_timer.h>
 #include <parts/uart_pty.h>
 #include <sim_vcd_file.h>
 #include <sim_avr.h>
@@ -31,11 +32,12 @@ var (
 )
 
 type Sim struct {
-	avr              *C.avr_t
-	pty              C.uart_pty_t
-	LED              *LED
-	Battery          *Battery
-	FunctionSelector *FunctionSelector
+	avr                   *C.avr_t
+	pty                   C.uart_pty_t
+	LED                   *LED
+	Battery               *Battery
+	FunctionSelector      *FunctionSelector
+	LeftMotor, RightMotor *Motor
 }
 
 func New() *Sim {
@@ -72,10 +74,14 @@ func (s *Sim) Run(ctx context.Context) {
 	s.LED = NewLED(s.avr, 0x25, 5)
 	s.Battery = NewBattery(s.avr, C.ADC_IRQ_ADC7)
 	s.FunctionSelector = NewFunctionSelect(s.avr, C.ADC_IRQ_ADC6)
+	s.LeftMotor = NewMotor(s.avr, C.TIMER_IRQ_OUT_PWM0)
+	s.RightMotor = NewMotor(s.avr, C.TIMER_IRQ_OUT_PWM1)
 
 	s.LED.Init()
 	s.Battery.Init()
 	s.FunctionSelector.Init()
+	s.LeftMotor.Init()
+	s.RightMotor.Init()
 
 	if *gdbEnabled {
 		s.avr.state = C.cpu_Stopped

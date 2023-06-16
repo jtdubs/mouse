@@ -5,17 +5,17 @@ package sim
 #include <avr_ioport.h>
 #include <sim_avr.h>
 
-void on_adc_irq(struct avr_irq_t *irq, uint32_t value, void *param);
-void on_led_write(struct avr_t *avr, avr_io_addr_t addr, uint8_t v, void *param);
+void on_irq(struct avr_irq_t *irq, uint32_t value, void *param);
+void on_io_write(struct avr_t *avr, avr_io_addr_t addr, uint8_t v, void *param);
 
 __attribute__((weak))
-void on_adc_irq_cgo(struct avr_irq_t *irq, uint32_t value, void *param) {
-	on_adc_irq(irq, value, param);
+void on_irq_cgo(struct avr_irq_t *irq, uint32_t value, void *param) {
+	on_irq(irq, value, param);
 }
 
 __attribute__((weak))
-void on_led_write_cgo(struct avr_t *avr, avr_io_addr_t addr, uint8_t v, void *param) {
-	on_led_write(avr, addr, v, param);
+void on_io_write_cgo(struct avr_t *avr, avr_io_addr_t addr, uint8_t v, void *param) {
+	on_io_write(avr, addr, v, param);
 }
 */
 import "C"
@@ -26,17 +26,25 @@ import (
 	"github.com/mattn/go-pointer"
 )
 
-var (
-	on_led_write_cgo = C.avr_io_write_t(C.on_led_write_cgo)
-	on_adc_irq_cgo   = C.avr_irq_notify_t(C.on_adc_irq_cgo)
-)
-
-//export on_adc_irq
-func on_adc_irq(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
-	pointer.Restore(param).(ADCComponent).OnADCRead(irq, value, param)
+type IRQHandler interface {
+	OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer)
 }
 
-//export on_led_write
-func on_led_write(avr *C.avr_t, addr C.avr_io_addr_t, v uint8, param unsafe.Pointer) {
-	pointer.Restore(param).(*LED).OnLEDWrite(avr, addr, v, param)
+type IOWriteHandler interface {
+	OnIOWrite(irq *C.avr_t, addr C.avr_io_addr_t, value uint8, param unsafe.Pointer)
+}
+
+var (
+	on_io_write_cgo = C.avr_io_write_t(C.on_io_write_cgo)
+	on_irq_cgo      = C.avr_irq_notify_t(C.on_irq_cgo)
+)
+
+//export on_irq
+func on_irq(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
+	pointer.Restore(param).(IRQHandler).OnIRQ(irq, value, param)
+}
+
+//export on_io_write
+func on_io_write(avr *C.avr_t, addr C.avr_io_addr_t, v uint8, param unsafe.Pointer) {
+	pointer.Restore(param).(IOWriteHandler).OnIOWrite(avr, addr, v, param)
 }
