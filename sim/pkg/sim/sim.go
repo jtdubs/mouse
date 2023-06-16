@@ -72,8 +72,8 @@ func (s *Sim) Run(ctx context.Context) {
 	s.LED = NewLED(s.avr, 0x25, 5)
 	s.Battery = NewBattery(s.avr, C.ADC_IRQ_ADC7)
 	s.FunctionSelector = NewFunctionSelect(s.avr, C.ADC_IRQ_ADC6)
-	s.LeftMotor = NewMotor(s.avr, "Left Motor", C.TIMER_IRQ_OUT_PWM0, 'D', 4, 'D', 2)
-	s.RightMotor = NewMotor(s.avr, "Right Motor", C.TIMER_IRQ_OUT_PWM1, 'D', 5, 'D', 3)
+	s.LeftMotor = NewMotor(s.avr, "Left Motor", C.TIMER_IRQ_OUT_PWM0, 4, 2)
+	s.RightMotor = NewMotor(s.avr, "Right Motor", C.TIMER_IRQ_OUT_PWM1, 5, 3)
 
 	s.LED.Init()
 	s.Battery.Init()
