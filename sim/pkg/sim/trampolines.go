@@ -7,7 +7,7 @@ package sim
 
 void on_irq(struct avr_irq_t *irq, uint32_t value, void *param);
 void on_io_write(struct avr_t *avr, avr_io_addr_t addr, uint8_t v, void *param);
-void on_cycle(struct avr_t *avr, avr_cycle_count_t when, void *param);
+avr_cycle_count_t on_cycle(struct avr_t *avr, avr_cycle_count_t when, void *param);
 
 __attribute__((weak))
 void on_irq_cgo(struct avr_irq_t *irq, uint32_t value, void *param) {
@@ -20,8 +20,8 @@ void on_io_write_cgo(struct avr_t *avr, avr_io_addr_t addr, uint8_t v, void *par
 }
 
 __attribute__((weak))
-void on_cycle_cgo(struct avr_t *avr, avr_cycle_count_t when, void *param) {
-	on_cycle(avr, when, param);
+avr_cycle_count_t on_cycle_cgo(struct avr_t *avr, avr_cycle_count_t when, void *param) {
+	return on_cycle(avr, when, param);
 }
 */
 import "C"
@@ -41,7 +41,7 @@ type IOWriteHandler interface {
 }
 
 type CycleHandler interface {
-	OnCycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Pointer)
+	OnCycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Pointer) C.avr_cycle_count_t
 }
 
 var (
@@ -61,6 +61,6 @@ func on_io_write(avr *C.avr_t, addr C.avr_io_addr_t, v uint8, param unsafe.Point
 }
 
 //export on_cycle
-func on_cycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Pointer) {
-	pointer.Restore(param).(CycleHandler).OnCycle(avr, when, param)
+func on_cycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Pointer) C.avr_cycle_count_t {
+	return pointer.Restore(param).(CycleHandler).OnCycle(avr, when, param)
 }
