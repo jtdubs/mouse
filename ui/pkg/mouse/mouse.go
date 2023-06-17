@@ -10,17 +10,17 @@ var (
 )
 
 type Mouse struct {
-	USB *USBInterface
+	Serial *SerialInterface
 }
 
 func New() *Mouse {
 	result := &Mouse{}
 	if *usb {
-		result.USB = NewUSBInterface()
+		result.Serial = NewSerialInterface()
 	}
 	return result
 }
 
 func (m *Mouse) Run(ctx context.Context) {
-	m.USB.Run(ctx)
+	m.Serial.Run(ctx)
 }

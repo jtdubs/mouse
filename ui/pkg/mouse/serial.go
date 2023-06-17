@@ -47,7 +47,7 @@ func (r *MouseReport) DecodeFunctionSelect() (bool, uint8) {
 	return (r.FunctionSelect >> 7) == 1, uint8(r.FunctionSelect & 0x0f)
 }
 
-type USBInterface struct {
+type SerialInterface struct {
 	status   string
 	portOpen bool
 	buffer   []byte
@@ -57,8 +57,8 @@ type USBInterface struct {
 	sendChan chan MouseCommand
 }
 
-func NewUSBInterface() *USBInterface {
-	return &USBInterface{
+func NewSerialInterface() *SerialInterface {
+	return &SerialInterface{
 		buffer:   make([]byte, 256),
 		index:    0,
 		status:   "Closed",
@@ -72,7 +72,7 @@ func NewUSBInterface() *USBInterface {
 	}
 }
 
-func (s *USBInterface) Run(ctx context.Context) {
+func (s *SerialInterface) Run(ctx context.Context) {
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGCONT)
 
@@ -92,35 +92,35 @@ func (s *USBInterface) Run(ctx context.Context) {
 	}
 }
 
-func (s *USBInterface) PortName() string {
+func (s *SerialInterface) PortName() string {
 	return *portName
 }
 
-func (s *USBInterface) Open() bool {
+func (s *SerialInterface) Open() bool {
 	return s.portOpen
 }
 
-func (s *USBInterface) Status() string {
+func (s *SerialInterface) Status() string {
 	return s.status
 }
 
-func (s *USBInterface) ForEachMessage(f func(string)) {
+func (s *SerialInterface) ForEachMessage(f func(string)) {
 	s.messages.ForEach(f)
 }
 
-func (s *USBInterface) Clear() {
+func (s *SerialInterface) Clear() {
 	s.messages.Clear()
 }
 
-func (s *USBInterface) Report() *MouseReport {
+func (s *SerialInterface) Report() *MouseReport {
 	return &s.report
 }
 
-func (s *USBInterface) SendCommand(c MouseCommand) {
+func (s *SerialInterface) SendCommand(c MouseCommand) {
 	s.sendChan <- c
 }
 
-func (s *USBInterface) open(ctx context.Context, signalChan <-chan os.Signal) serial.Port {
+func (s *SerialInterface) open(ctx context.Context, signalChan <-chan os.Signal) serial.Port {
 	s.portOpen = false
 	s.status = "Polling"
 
@@ -155,7 +155,7 @@ func (s *USBInterface) open(ctx context.Context, signalChan <-chan os.Signal) se
 	}
 }
 
-func (s *USBInterface) read(ctx context.Context, port serial.Port, signalChan <-chan os.Signal) bool {
+func (s *SerialInterface) read(ctx context.Context, port serial.Port, signalChan <-chan os.Signal) bool {
 	defer port.Close()
 
 	closedChan := make(chan struct{})
@@ -204,7 +204,7 @@ func (s *USBInterface) read(ctx context.Context, port serial.Port, signalChan <-
 	}
 }
 
-func (s *USBInterface) sleep(ctx context.Context, signalChan <-chan os.Signal) bool {
+func (s *SerialInterface) sleep(ctx context.Context, signalChan <-chan os.Signal) bool {
 	s.status = "Paused"
 	for {
 		select {
@@ -219,7 +219,7 @@ func (s *USBInterface) sleep(ctx context.Context, signalChan <-chan os.Signal) b
 	}
 }
 
-func (s *USBInterface) decode(message string) {
+func (s *SerialInterface) decode(message string) {
 	if !strings.HasPrefix(message, "[") || !strings.HasSuffix(message, "]") {
 		s.messages.Add(fmt.Sprintf("Invalid message: %q", message))
 		return
