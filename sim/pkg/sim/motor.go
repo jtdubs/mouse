@@ -45,6 +45,7 @@ func NewMotor(avr *C.avr_t, name string, pwm C.int, clkPin int, bPin int) *Motor
 
 func (m *Motor) Init() {
 	C.avr_irq_register_notify(m.pwmIRQ, on_irq_cgo, pointer.Save(m))
+	C.avr_cycle_timer_register(m.avr, m.avr.cycle+10000, on_cycle_cgo, pointer.Save(m))
 }
 
 func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
@@ -52,19 +53,20 @@ func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 	// As a crude approximation, we'll map the PWM range [0,512) to motor speeds of [0,32) Hz.
 	// Which means the encoder pulses run at [0,128) Hz, or PWM >> 2.
 	m.DesiredFrequency = value >> 2
-	if m.ActualFrequency == 0 && m.DesiredFrequency > 0 {
-		C.avr_cycle_timer_register(m.avr, 0, on_cycle_cgo, pointer.Save(m))
-	}
 }
 
 func (m *Motor) OnCycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Pointer) C.avr_cycle_count_t {
-	m.ix = (m.ix + 1) % 4
+	if m.ActualFrequency > 0 {
+		m.ix = (m.ix + 1) % 4
+	}
+
 	C.avr_raise_irq(m.clkIRQ, C.uint(m.ix&1))
 	C.avr_raise_irq(m.bIRQ, C.uint((m.ix>>1)&1))
 
 	m.ActualFrequency = m.DesiredFrequency
 	if m.ActualFrequency == 0 {
-		return 0
+		return when + 10000
 	}
+
 	return when + C.avr_cycle_count_t(16000000/m.ActualFrequency)
 }
