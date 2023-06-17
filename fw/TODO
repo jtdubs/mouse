@@ -1,6 +1,3 @@
-Motors:
-- Encoder reversing isn't working (it still counts up)
-
 ADC:
 - Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".
 - An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
