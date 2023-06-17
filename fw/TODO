@@ -12,5 +12,4 @@ Hardware:
 - Solder up a sensor board
 
 Sim:
-- Add sim outputs for all interrupts
 - Why do so many signals look uninitialized for the first ms in gtkwave?
