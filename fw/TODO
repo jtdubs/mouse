@@ -1,6 +1,5 @@
 Motors:
 - Encoder reversing isn't working (it still counts up)
-- Sim can't generate reversed encoder values
 
 ADC:
 - Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".
@@ -10,6 +9,3 @@ ADC:
 Hardware:
 - Solder up second motor w/ encoder
 - Solder up a sensor board
-
-Sim:
-- Why do so many signals look uninitialized for the first ms in gtkwave?

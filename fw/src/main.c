@@ -66,9 +66,7 @@ void tick() {
 }
 
 int main() {
-#if defined(DEBUG)
   sim_start_trace();
-#endif
 
   init();
   for (;;) {
