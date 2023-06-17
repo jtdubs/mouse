@@ -82,8 +82,8 @@ func (m *Motor) OnCycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Poi
 		}
 	}
 
-	C.avr_raise_irq(m.clkIRQ, C.uint(m.ix&1))
 	C.avr_raise_irq(m.bIRQ, C.uint((m.ix>>1)&1))
+	C.avr_raise_irq(m.clkIRQ, C.uint(m.ix&1))
 
 	m.ActualFrequency = m.DesiredFrequency
 	if m.ActualFrequency == 0 {
