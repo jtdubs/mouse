@@ -3,6 +3,8 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
+#include "sim.h"
+
 uint16_t encoder_left;
 uint16_t encoder_right;
 
@@ -19,9 +21,10 @@ void encoders_init() {
 ISR(INT0_vect, ISR_BLOCK) {
   static uint8_t last_b = 0;
 
-  uint8_t d = PORTD;
-  uint8_t b = (d >> 4) & 1;
-  uint8_t a = ((d >> 2) & 1) ^ b;
+  uint8_t d   = PIND;
+  uint8_t b   = (d >> 4) & 1;
+  uint8_t clk = ((d >> 2) & 1);
+  uint8_t a   = clk ^ b;
 
   if (a == last_b) {
     encoder_left++;
@@ -36,9 +39,10 @@ ISR(INT0_vect, ISR_BLOCK) {
 ISR(INT1_vect, ISR_BLOCK) {
   static uint8_t last_b = 0;
 
-  uint8_t d = PORTD;
-  uint8_t b = (d >> 5) & 1;
-  uint8_t a = ((d >> 3) & 1) ^ b;
+  uint8_t d   = PIND;
+  uint8_t b   = (d >> 5) & 1;
+  uint8_t clk = ((d >> 3) & 1);
+  uint8_t a   = clk ^ b;
 
   if (a == last_b) {
     encoder_right++;
