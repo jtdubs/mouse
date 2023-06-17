@@ -18,6 +18,6 @@ void timer_init() {
   TCNT0  = 0;                                  // Reset the timer
 }
 
-ISR(TIMER0_COMPA_vect) {
+ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
   timer_elapsed = true;
 }

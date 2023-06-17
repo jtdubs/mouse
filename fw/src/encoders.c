@@ -16,7 +16,7 @@ void encoders_init() {
 }
 
 // Left Encoder Clock
-ISR(INT0_vect) {
+ISR(INT0_vect, ISR_BLOCK) {
   static uint8_t last_b = 0;
 
   uint8_t d = PORTD;
@@ -33,7 +33,7 @@ ISR(INT0_vect) {
 }
 
 // Right Encoder Clock
-ISR(INT1_vect) {
+ISR(INT1_vect, ISR_BLOCK) {
   static uint8_t last_b = 0;
 
   uint8_t d = PORTD;
