@@ -1,12 +1,16 @@
-Fw:
+Motors:
+- Encoder reversing isn't working (it still counts up)
+- Sim can't generate reversed encoder values
+
+ADC:
 - Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".
 - An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
 - Consider dynamically changing ADC "resolution" to something faster for voltage and function select.
-- Add sim outputs for all interrupts
-
-Sim:
-- Handle motor reversing
 
 Hardware:
 - Solder up second motor w/ encoder
 - Solder up a sensor board
+
+Sim:
+- Add sim outputs for all interrupts
+- Why do so many signals look uninitialized for the first ms in gtkwave?
