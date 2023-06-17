@@ -70,7 +70,7 @@ func (s *serialWindow) drawStatus(m *mouse.Mouse) {
 	imgui.Text("Battery Voltage: ")
 	imgui.TableSetColumnIndex(1)
 	if m.Serial.Open() {
-		imgui.Text(fmt.Sprintf("%v mV", m.Serial.Report().BatteryVolts))
+		imgui.Text(fmt.Sprintf("%v mV", uint16(m.Serial.Report().BatteryVolts)*39))
 	} else {
 		imgui.Text("Disconnected")
 	}
