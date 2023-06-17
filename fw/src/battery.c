@@ -2,11 +2,7 @@
 
 #include "adc.h"
 
-uint16_t battery_voltage;
-
-void battery_init() {
-  battery_voltage = 0;
-}
+uint16_t battery_voltage = 0;
 
 void battery_update() {
   uint16_t temp = adc_read(7);

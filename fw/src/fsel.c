@@ -2,17 +2,10 @@
 
 #include "adc.h"
 
-fsel_t fsel;
+fsel_t fsel = {0};
 
 static const uint8_t FunctionSelectThrehsolds[16] = {21,  42,  60,  77,  91,  102, 112, 123,
                                                      133, 139, 144, 150, 156, 160, 163, 255};
-
-void fsel_init() {
-  fsel = (fsel_t){
-      .button   = false,
-      .function = 0,
-  };
-}
 
 void fsel_update() {
   uint8_t v   = (uint8_t)(adc_read(6) >> 2);

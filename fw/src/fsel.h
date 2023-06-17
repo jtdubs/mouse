@@ -14,5 +14,4 @@ typedef struct {
 
 extern fsel_t fsel;
 
-void fsel_init();
 void fsel_update();

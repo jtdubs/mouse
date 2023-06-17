@@ -22,8 +22,6 @@ void init() {
   report_init();
   command_init();
   adc_init();
-  fsel_init();
-  battery_init();
   encoders_init();
   motor_init();
   sei();
@@ -68,11 +66,13 @@ void tick() {
 }
 
 int main() {
-  init();
   sim_start_trace();
+
+  init();
   for (;;) {
     timer_wait();
     tick();
   }
+
   return 0;
 }
