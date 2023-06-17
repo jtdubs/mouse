@@ -19,11 +19,11 @@ void init() {
   pin_init();
   usart0_init();
   timer_init();
-  report_init();
-  command_init();
   adc_init();
   encoders_init();
   motor_init();
+  report_init();
+  command_init();
   sei();
 }
 
@@ -66,7 +66,9 @@ void tick() {
 }
 
 int main() {
+#if defined(DEBUG)
   sim_start_trace();
+#endif
 
   init();
   for (;;) {
