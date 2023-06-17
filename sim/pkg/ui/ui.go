@@ -27,6 +27,8 @@ func New(sim *sim.Sim) *UI {
 	imgui.CurrentIO().Fonts().AddFontFromFileTTF("fonts/DroidSans.ttf", 24)
 	imgui.CurrentIO().SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
+	imgui.StyleColorsClassic()
+
 	return &UI{
 		sim:     sim,
 		backend: backend,

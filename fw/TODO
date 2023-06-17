@@ -2,6 +2,4 @@ Fw:
 - Switch to round-robin, interrupt-driven ADC reading into a uint16_t[8] of "latest readings".
 - An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
 - Consider dynamically changing ADC "resolution" to something faster for voltage and function select.
-
-UI:
-- Fold "USB" directly into "mouse" and "UI".
+- Add sim outputs for all interrupts
