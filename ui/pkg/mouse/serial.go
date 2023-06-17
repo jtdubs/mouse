@@ -24,10 +24,12 @@ var (
 
 type MouseCommandType uint8
 
-var (
-	CommandLED      MouseCommandType = 0
-	CommandPWMLeft  MouseCommandType = 1
-	CommandPWMRight MouseCommandType = 2
+const (
+	CommandLED             MouseCommandType = 0
+	CommandLeftMotorSpeed  MouseCommandType = 1
+	CommandRightMotorSpeed MouseCommandType = 2
+	CommandLeftMotorDir    MouseCommandType = 3
+	CommandRightMotorDir   MouseCommandType = 4
 )
 
 type MouseCommand struct {

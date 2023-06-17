@@ -3,3 +3,10 @@ Fw:
 - An tick() would disable and re-enable this interrupt so it can happen "in between" ticks.
 - Consider dynamically changing ADC "resolution" to something faster for voltage and function select.
 - Add sim outputs for all interrupts
+
+Sim:
+- Handle motor reversing
+
+Hardware:
+- Solder up second motor w/ encoder
+- Solder up a sensor board

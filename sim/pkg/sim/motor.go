@@ -49,10 +49,9 @@ func (m *Motor) Init() {
 
 func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 	fmt.Printf("%v PWM changed: %d\n", m.name, value)
-	// As a crude approximation, lets assume the motor speed is 1/20 of the PWM duty cycle.
-	// So the PWM range of [0,800) becomes a motor speed of [0,40)Hz.
-	// The encoder pulses 4 times per revolution, so the encoder frequency is 4 times the motor speed.
-	m.DesiredFrequency = value / 5
+	// As a crude approximation, we'll map the PWM range [0,512) to motor speeds of [0,32) Hz.
+	// Which means the encoder pulses run at [0,128) Hz, or PWM >> 2.
+	m.DesiredFrequency = value >> 2
 	if m.ActualFrequency == 0 && m.DesiredFrequency > 0 {
 		C.avr_cycle_timer_register(m.avr, 0, on_cycle_cgo, pointer.Save(m))
 	}

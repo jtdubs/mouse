@@ -3,9 +3,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define COMMAND_LED 0
-#define COMMAND_PWM_LEFT 1
-#define COMMAND_PWM_RIGHT 2
+#define COMMAND_SET_LED 0
+#define COMMAND_SET_LEFT_MOTOR_SPEED 1
+#define COMMAND_SET_RIGHT_MOTOR_SPEED 2
+#define COMMAND_SET_LEFT_MOTOR_DIR 3
+#define COMMAND_SET_RIGHT_MOTOR_DIR 4
 
 #pragma pack(push)
 #pragma pack(1)

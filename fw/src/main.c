@@ -8,8 +8,8 @@
 #include "command.h"
 #include "encoders.h"
 #include "fsel.h"
+#include "motor.h"
 #include "pin.h"
-#include "pwm.h"
 #include "report.h"
 #include "sim.h"
 #include "timer.h"
@@ -25,7 +25,7 @@ void init() {
   fsel_init();
   battery_init();
   encoders_init();
-  pwm_init();
+  motor_init();
   sei();
 }
 
@@ -43,18 +43,24 @@ void tick() {
 
   if (command_available()) {
     switch (command.type) {
-      case COMMAND_LED:
+      case COMMAND_SET_LED:
         if (command.value == 0) {
           pin_clear(LED_BUILTIN);
         } else {
           pin_set(LED_BUILTIN);
         }
         break;
-      case COMMAND_PWM_LEFT:
-        set_pwm_duty_cycle_a(command.value);
+      case COMMAND_SET_LEFT_MOTOR_SPEED:
+        set_left_motor_speed(command.value);
         break;
-      case COMMAND_PWM_RIGHT:
-        set_pwm_duty_cycle_b(command.value);
+      case COMMAND_SET_RIGHT_MOTOR_SPEED:
+        set_right_motor_speed(command.value);
+        break;
+      case COMMAND_SET_LEFT_MOTOR_DIR:
+        set_left_motor_dir(command.value > 0);
+        break;
+      case COMMAND_SET_RIGHT_MOTOR_DIR:
+        set_right_motor_dir(command.value > 0);
         break;
     }
     command_processed();

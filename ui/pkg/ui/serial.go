@@ -8,12 +8,14 @@ import (
 )
 
 type serialWindow struct {
-	autoScroll  bool
-	forceScroll bool
-	filter      imgui.TextFilter
-	led         bool
-	leftPWM     int32
-	rightPWM    int32
+	autoScroll   bool
+	forceScroll  bool
+	filter       imgui.TextFilter
+	led          bool
+	leftSpeed    int32
+	rightSpeed   int32
+	leftForward  bool
+	rightForward bool
 }
 
 func newSerialWindow() *serialWindow {
@@ -144,33 +146,65 @@ func (s *serialWindow) drawControls(m *mouse.Mouse) {
 		})
 	}
 
-	// Left PWM
+	// Left Speed
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
-	imgui.Text("Left PWM: ")
+	imgui.Text("Left Speed: ")
 	imgui.TableSetColumnIndex(1)
-	leftPWM := int32(s.leftPWM)
-	imgui.SliderInt("##LeftPWM", &leftPWM, 0, 100)
-	if leftPWM != s.leftPWM {
-		s.leftPWM = leftPWM
+	leftSpeed := int32(s.leftSpeed)
+	imgui.SliderInt("##leftSpeed", &leftSpeed, 0, 255)
+	if leftSpeed != s.leftSpeed {
+		s.leftSpeed = leftSpeed
 		m.Serial.SendCommand(mouse.MouseCommand{
-			Type:  mouse.CommandPWMLeft,
-			Value: uint16(leftPWM),
+			Type:  mouse.CommandLeftMotorSpeed,
+			Value: uint16(leftSpeed),
+		})
+	}
+	imgui.SameLineV(0, 20)
+	leftForward := s.leftForward
+	imgui.Checkbox("Reverse##Left", &leftForward)
+	if leftForward != s.leftForward {
+		s.leftForward = leftForward
+		m.Serial.SendCommand(mouse.MouseCommand{
+			Type: mouse.CommandLeftMotorDir,
+			Value: func() uint16 {
+				if leftForward {
+					return 1
+				} else {
+					return 0
+				}
+			}(),
 		})
 	}
 
-	// Right PWM
+	// Right Speed
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
-	imgui.Text("Right PWM: ")
+	imgui.Text("Right Speed: ")
 	imgui.TableSetColumnIndex(1)
-	rightPWM := int32(s.rightPWM)
-	imgui.SliderInt("##RightPWM", &rightPWM, 0, 100)
-	if rightPWM != s.rightPWM {
-		s.rightPWM = rightPWM
+	rightSpeed := int32(s.rightSpeed)
+	imgui.SliderInt("##rightSpeed", &rightSpeed, 0, 255)
+	if rightSpeed != s.rightSpeed {
+		s.rightSpeed = rightSpeed
 		m.Serial.SendCommand(mouse.MouseCommand{
-			Type:  mouse.CommandPWMRight,
-			Value: uint16(rightPWM),
+			Type:  mouse.CommandRightMotorSpeed,
+			Value: uint16(rightSpeed),
+		})
+	}
+	imgui.SameLineV(0, 20)
+	rightForward := s.rightForward
+	imgui.Checkbox("Reverse##Right", &rightForward)
+	if rightForward != s.rightForward {
+		s.rightForward = rightForward
+		m.Serial.SendCommand(mouse.MouseCommand{
+			Type: mouse.CommandRightMotorDir,
+			Value: func() uint16 {
+				if rightForward {
+					return 1
+				} else {
+					return 0
+				}
+			}(),
 		})
 	}
 
