@@ -1,4 +1,7 @@
-.PHONY: sim
+.PHONY: sim fw
 
-sim:
+sim: fw
 	go run . --firmware ../fw/build/debug/mouse.elf
+
+fw:
+	make -C ../fw all
