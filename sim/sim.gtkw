@@ -1,0 +1,59 @@
+[*]
+[*] GTKWave Analyzer v3.3.113 (w)1999-2022 BSI
+[*] Sat Jun 17 02:49:10 2023
+[*]
+[dumpfile] "/home/jtdubs/dev/mouse/sim/gtkwave_trace.vcd"
+[dumpfile_mtime] "Sat Jun 17 02:40:15 2023"
+[dumpfile_size] 13062144
+[savefile] "/home/jtdubs/dev/mouse/sim/sim.gtkw"
+[timestart] 11590270000
+[size] 2482 1353
+[pos] -479 -326
+*-21.643951 11602986120 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 273
+[signals_width] 266
+[sst_expanded] 1
+[sst_vpaned_height] 399
+@200
+-Interrupts
+@29
+logic.TICK
+@28
+logic.LEFT_ENCODER_CLK
+logic.RIGHT_ENCODER_CLK
+logic.SERIAL_TX
+logic.SERIAL_RX
+@200
+-Left Motor
+@22
+logic.LEFT_PWM[7:0]
+@28
+logic.LEFT_DIR
+logic.LEFT_CLK_A
+logic.LEFT_B
+@200
+-Right Motor
+@22
+logic.RIGHT_PWM[7:0]
+@28
+logic.RIGHT_DIR
+logic.RIGHT_CLK_A
+logic.RIGHT_B
+@200
+-ADC
+@8022
+logic.BATTERY_VOLTAGE[15:0]
+logic.FUNCTION_SELECT[15:0]
+@200
+-Probes
+@28
+logic.PROBE_0
+logic.PROBE_1
+logic.PROBE_2
+@200
+-LEDs
+@28
+logic.LED_BUILTIN
+logic.USER_IO
+[pattern_trace] 1
+[pattern_trace] 0
