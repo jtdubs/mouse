@@ -1,4 +1,4 @@
-.PHONY: all release debug clean upload prep sim simattach
+.PHONY: all release debug clean upload prep sim simattach size
 
 SOURCES = $(wildcard src/*.c)
 HEADERS = $(wildcard src/*.h)
@@ -49,6 +49,9 @@ sim: build/debug/$(TARGET).elf
 
 simattach: build/debug/$(TARGET).elf
 	../sim/build/release/mousesim --gdb $^
+
+size: build/release/$(TARGET).elf
+	avr-size $^
 
 build/release:
 	mkdir -p build/release
