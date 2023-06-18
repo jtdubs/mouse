@@ -31,6 +31,7 @@ AVR_MCU_VCD_IRQ_TRACE(INT1_vect_num, 1, "RIGHT_ENCODER_CLK");
 AVR_MCU_VCD_IRQ_TRACE(TIMER0_COMPA_vect_num, 1, "TICK");
 AVR_MCU_VCD_IRQ_TRACE(USART_UDRE_vect_num, 1, "SERIAL_TX");
 AVR_MCU_VCD_IRQ_TRACE(USART_RX_vect_num, 1, "SERIAL_RX");
+AVR_MCU_VCD_IRQ_TRACE(ADC_vect_num, 1, "ADC");
 
 // PWM outputs
 const struct avr_mmcu_vcd_trace_t _pwm_trace[] _MMCU_ = {

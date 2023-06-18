@@ -8,7 +8,7 @@ static const uint8_t FunctionSelectThrehsolds[16] = {21,  42,  60,  77,  91,  10
                                                      133, 139, 144, 150, 156, 160, 163, 255};
 
 void fsel_update() {
-  uint8_t v   = (uint8_t)(adc_read(6) >> 2);
+  uint8_t v   = (uint8_t)(adc_read(6) >> 8);
   fsel.button = (v > 180);
   if (fsel.button) {
     return;

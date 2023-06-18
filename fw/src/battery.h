@@ -1,8 +1,11 @@
 #pragma once
 
-#include <stdbool.h>
 #include <stdint.h>
 
-extern uint8_t battery_voltage;  // from 0 to 10V
+#include "adc.h"
 
-void battery_update();
+extern uint8_t battery_voltage;
+
+inline void battery_update() {
+  battery_voltage = (uint8_t)(adc_read(7) >> 8);
+}
