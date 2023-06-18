@@ -1,10 +1,10 @@
 [*]
-[*] GTKWave Analyzer v3.3.113 (w)1999-2022 BSI
-[*] Sat Jun 17 18:26:46 2023
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Sun Jun 18 15:46:06 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/sim/gtkwave_trace.fst"
-[dumpfile_mtime] "Sat Jun 17 18:25:27 2023"
-[dumpfile_size] 9228288
+[dumpfile_mtime] "Sun Jun 18 15:45:46 2023"
+[dumpfile_size] 18879
 [savefile] "/home/jtdubs/dev/mouse/sim/sim.gtkw"
 [timestart] 0
 [size] 2482 1353
@@ -22,9 +22,11 @@ logic.LEFT_ENCODER_CLK
 logic.RIGHT_ENCODER_CLK
 logic.SERIAL_TX
 logic.SERIAL_RX
+@29
+logic.ADC
 @200
 -Left Motor
-@8023
+@8022
 logic.LEFT_PWM[7:0]
 @28
 logic.LEFT_DIR
@@ -32,7 +34,7 @@ logic.LEFT_CLK_A
 logic.LEFT_B
 @200
 -Right Motor
-@8023
+@8022
 logic.RIGHT_PWM[7:0]
 @28
 logic.RIGHT_DIR

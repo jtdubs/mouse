@@ -20,9 +20,9 @@ void adc_init() {
          | (0 << ADATE)   // Disable auto trigger
          | (0 << ADIF)    // Clear interrupt flag
          | (1 << ADIE)    // Enable interrupt
-         | (0 << ADPS0)   // Prescaler 64
-         | (1 << ADPS1)   // Prescaler 64
-         | (1 << ADPS2);  // Prescaler 64
+         | (1 << ADPS0)   // Prescaler 128
+         | (1 << ADPS1)   // Prescaler 128
+         | (1 << ADPS2);  // Prescaler 128
 
   ADCSRB = (0 << ADTS0)   // Free running mode
          | (0 << ADTS1)   // Free running mode
