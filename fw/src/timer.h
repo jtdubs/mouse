@@ -1,5 +1,6 @@
 #pragma once
 
+#include <avr/interrupt.h>
 #include <stdbool.h>
 
 #include "pin.h"
@@ -12,7 +13,9 @@ void timer_init();
 // timer_wait waits for timer to elapse.
 inline void timer_wait() {
   pin_clear(PROBE_0);
+  sei();
   while (!timer_elapsed) {};
+  cli();
   timer_elapsed = false;
   pin_set(PROBE_0);
 }
