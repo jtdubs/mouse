@@ -2,7 +2,7 @@
 [*] GTKWave Analyzer v3.3.113 (w)1999-2022 BSI
 [*] Sat Jun 17 18:26:46 2023
 [*]
-[dumpfile] "/home/jtdubs/dev/mouse/sim/gtkwave_trace.vcd"
+[dumpfile] "/home/jtdubs/dev/mouse/sim/gtkwave_trace.fst"
 [dumpfile_mtime] "Sat Jun 17 18:25:27 2023"
 [dumpfile_size] 9228288
 [savefile] "/home/jtdubs/dev/mouse/sim/sim.gtkw"
