@@ -32,7 +32,7 @@ void report_init() {
 void report_send() {
   if (report_available()) {
     report.battery_volts  = battery_voltage;
-    report.mode           = mode;
+    report.mode           = active_mode;
     report.encoder_left   = encoder_left;
     report.encoder_right  = encoder_right;
     report.sensors.left   = sensor_left;

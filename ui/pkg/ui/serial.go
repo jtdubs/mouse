@@ -73,17 +73,12 @@ func (s *serialWindow) drawStatus() {
 
 	{
 		modes := []string{"Remote", "Wall Sensor", "Unknown #2", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}
-		button, active, proposed := s.mouse.Serial.Report().DecodeMode()
 		imgui.TableNextRow()
 		imgui.TableSetColumnIndex(0)
 		imgui.Text("Mode:")
 		imgui.TableSetColumnIndex(1)
 		if s.mouse.Serial.Open() {
-			imgui.Text(fmt.Sprintf("%v (%v proposed)", modes[active], modes[proposed]))
-			if button {
-				imgui.SameLine()
-				imgui.Text("(button)")
-			}
+			imgui.Text(modes[s.mouse.Serial.Report().Mode])
 		} else {
 			imgui.Text("Disconnected")
 		}
@@ -121,14 +116,13 @@ func (s *serialWindow) drawControls() {
 
 	// Mode
 	{
-		_, mode, _ := s.mouse.Serial.Report().DecodeMode()
-		currentMode := mode
+		mode := int32(s.mouse.Serial.Report().Mode)
 		imgui.TableNextRow()
 		imgui.TableSetColumnIndex(0)
 		imgui.Text("Function: ")
 		imgui.TableSetColumnIndex(1)
 		imgui.ComboStr("##FSEL", &mode, "Remote\000Wall Sensor")
-		if mode != currentMode {
+		if mode != int32(s.mouse.Serial.Report().Mode) {
 			s.mouse.Serial.SendCommand(mouse.MouseCommand{
 				Type:  mouse.CommandSetMode,
 				Value: uint16(mode),

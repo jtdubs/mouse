@@ -11,7 +11,7 @@
 // report_t represents mouse status report.
 typedef struct {
   uint8_t  battery_volts;
-  mode_t   mode;
+  uint8_t  mode;
   uint16_t encoder_left;
   uint16_t encoder_right;
   struct {

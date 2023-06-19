@@ -51,13 +51,6 @@ type MouseReport struct {
 	Padding      uint8
 }
 
-func (r *MouseReport) DecodeMode() (button bool, active, proposed int32) {
-	button = (r.Mode >> 7) == 1
-	active = int32(r.Mode & 0x07)
-	proposed = int32((r.Mode >> 3) & 0x07)
-	return
-}
-
 func (r *MouseReport) DecodeSensors() (left, center, right uint16) {
 	left = uint16(r.Sensors & 0x3ff)
 	center = uint16((r.Sensors >> 10) & 0x3ff)

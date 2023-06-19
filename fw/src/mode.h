@@ -3,19 +3,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define MODE_REMOTE 0
-#define MODE_WALL 1
+typedef void (*mode_enter_fn)();
+typedef void (*mode_tick_fn)();
 
-#pragma pack(push)
-#pragma pack(1)
 typedef struct {
-  uint8_t active   : 3;
-  uint8_t proposed : 3;
-  int     padding  : 1;
-  bool    button   : 1;
+  mode_enter_fn enter;
+  mode_tick_fn  tick;
 } mode_t;
-#pragma pack(pop)
 
-extern mode_t mode;
+extern uint8_t active_mode;
 
+void mode_init();
 void mode_update();
+void mode_tick();
