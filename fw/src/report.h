@@ -14,6 +14,20 @@ typedef struct {
   fsel_t   function_select;
   uint16_t encoder_left;
   uint16_t encoder_right;
+  struct {
+    uint16_t left    : 10;
+    uint16_t center  : 10;
+    uint16_t right   : 10;
+    uint16_t padding : 2;
+  } sensors;
+  struct {
+    uint16_t onboard : 1;
+    uint16_t left    : 1;
+    uint16_t right   : 1;
+    uint16_t ir      : 1;
+    uint16_t padding : 4;
+  } leds;
+  uint8_t padding[1];
 } report_t;
 #pragma pack(pop)
 

@@ -69,53 +69,35 @@ func (s *serialWindow) drawStatus() {
 	imgui.TableSetupColumnV("##StatusLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
 	imgui.TableSetupColumnV("##StatusControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
 
-	// Battery Voltage
-	imgui.TableNextRow()
-	imgui.TableSetColumnIndex(0)
-	imgui.Text("Battery Voltage: ")
-	imgui.TableSetColumnIndex(1)
-	if s.mouse.Serial.Open() {
-		imgui.Text(fmt.Sprintf("%v mV", uint16(s.mouse.Serial.Report().BatteryVolts)*39))
-	} else {
-		imgui.Text("Disconnected")
-	}
+	s.drawNumericStatus("Battery Voltage", int(s.mouse.Serial.Report().BatteryVolts)*39, "mV")
 
-	// Function Select
-	imgui.TableNextRow()
-	imgui.TableSetColumnIndex(0)
-	imgui.Text("Function Select: ")
-	imgui.TableSetColumnIndex(1)
-	if s.mouse.Serial.Open() {
+	{
 		fselButton, fsel := s.mouse.Serial.Report().DecodeFunctionSelect()
-		imgui.Text(fmt.Sprintf("%v", fsel))
-		if fselButton {
-			imgui.SameLine()
-			imgui.Text("(pressed)")
-		}
-	} else {
-		imgui.Text("Disconnected")
+		s.drawNumericStatus("Function Select", int(fsel), func() string {
+			if fselButton {
+				return "(pressed)"
+			} else {
+				return ""
+			}
+		}())
 	}
 
-	// Left Encoder
-	imgui.TableNextRow()
-	imgui.TableSetColumnIndex(0)
-	imgui.Text("Left Encoder: ")
-	imgui.TableSetColumnIndex(1)
-	if s.mouse.Serial.Open() {
-		imgui.Text(fmt.Sprintf("%v", s.mouse.Serial.Report().LeftEncoder))
-	} else {
-		imgui.Text("Disconnected")
+	s.drawNumericStatus("Left Encoder", int(s.mouse.Serial.Report().LeftEncoder), "")
+	s.drawNumericStatus("Right Encoder", int(s.mouse.Serial.Report().RightEncoder), "")
+
+	{
+		left, center, right := s.mouse.Serial.Report().DecodeSensors()
+		s.drawNumericStatus("Left Sensor", int(left), "")
+		s.drawNumericStatus("Center Sensor", int(center), "")
+		s.drawNumericStatus("Right Sensor", int(right), "")
 	}
 
-	// Right Encoder
-	imgui.TableNextRow()
-	imgui.TableSetColumnIndex(0)
-	imgui.Text("Right Encoder: ")
-	imgui.TableSetColumnIndex(1)
-	if s.mouse.Serial.Open() {
-		imgui.Text(fmt.Sprintf("%v", s.mouse.Serial.Report().RightEncoder))
-	} else {
-		imgui.Text("Disconnected")
+	{
+		onboard, left, right, ir := s.mouse.Serial.Report().DecodeLEDs()
+		s.drawLEDStatus("Onboard LED", onboard)
+		s.drawLEDStatus("Left LED", left)
+		s.drawLEDStatus("Right LED", right)
+		s.drawLEDStatus("IR LEDs", ir)
 	}
 
 	imgui.EndTable()
@@ -190,6 +172,38 @@ func (s *serialWindow) drawLog() {
 		s.forceScroll = false
 	}
 	imgui.EndChild()
+}
+
+func (s *serialWindow) drawNumericStatus(name string, value int, units string) {
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text(fmt.Sprintf("%v:", name))
+	imgui.TableSetColumnIndex(1)
+	if s.mouse.Serial.Open() {
+		imgui.Text(fmt.Sprint(value))
+		if units != "" {
+			imgui.SameLine()
+			imgui.Text(units)
+		}
+	} else {
+		imgui.Text("Disconnected")
+	}
+}
+
+func (s *serialWindow) drawLEDStatus(name string, value bool) {
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text(fmt.Sprintf("%v:", name))
+	imgui.TableSetColumnIndex(1)
+	if s.mouse.Serial.Open() {
+		if value {
+			imgui.Text("On")
+		} else {
+			imgui.Text("Off")
+		}
+	} else {
+		imgui.Text("Disconnected")
+	}
 }
 
 func (s *serialWindow) drawLEDControl(name string, commandType mouse.CommandType, value *bool) {

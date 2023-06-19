@@ -2,17 +2,17 @@
 
 // pin_init initializes all pins.
 void pin_init() {
-  DDRB = (1 << RIGHT_DIR.pin)     //
-       | (1 << LEFT_PWM.pin)      //
-       | (1 << RIGHT_PWM.pin)     //
-       | (1 << LED_LEFT.pin)      //
-       | (1 << IR_LEDS.pin)       //
-       | (1 << LED_BUILTIN.pin);  //
-  DDRC = (1 << PROBE_0.pin)       //
-       | (1 << PROBE_1.pin)       //
-       | (1 << PROBE_2.pin);      //
-  DDRD = (1 << LED_RIGHT.pin)     //
-       | (1 << LEFT_DIR.pin);     //
+  DDRB = (RIGHT_DIR.mask)     //
+       | (LEFT_PWM.mask)      //
+       | (RIGHT_PWM.mask)     //
+       | (LED_LEFT.mask)      //
+       | (IR_LEDS.mask)       //
+       | (LED_BUILTIN.mask);  //
+  DDRC = (PROBE_0.mask)       //
+       | (PROBE_1.mask)       //
+       | (PROBE_2.mask);      //
+  DDRD = (LED_RIGHT.mask)     //
+       | (LEFT_DIR.mask);     //
 
   PORTB = 0;
   PORTC = 0;

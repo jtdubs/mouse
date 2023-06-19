@@ -32,12 +32,13 @@ var (
 )
 
 type Sim struct {
-	avr                   *C.avr_t
-	pty                   C.uart_pty_t
-	LEDs                  *LEDs
-	Battery               *Battery
-	FunctionSelector      *FunctionSelector
-	LeftMotor, RightMotor *Motor
+	avr                                   *C.avr_t
+	pty                                   C.uart_pty_t
+	LEDs                                  *LEDs
+	Battery                               *Battery
+	FunctionSelector                      *FunctionSelector
+	LeftSensor, CenterSensor, RightSensor *Sensor
+	LeftMotor, RightMotor                 *Motor
 }
 
 func New() *Sim {
@@ -74,12 +75,18 @@ func (s *Sim) Run(ctx context.Context) {
 	s.FunctionSelector = NewFunctionSelect(s.avr, C.ADC_IRQ_ADC6)
 	s.LeftMotor = NewMotor(s.avr, "Left Motor", true)
 	s.RightMotor = NewMotor(s.avr, "Right Motor", false)
+	s.LeftSensor = NewSensor(s.avr, "Left Sensor", C.ADC_IRQ_ADC0)
+	s.CenterSensor = NewSensor(s.avr, "Left Sensor", C.ADC_IRQ_ADC1)
+	s.RightSensor = NewSensor(s.avr, "Left Sensor", C.ADC_IRQ_ADC2)
 
 	s.LEDs.Init()
 	s.Battery.Init()
 	s.FunctionSelector.Init()
 	s.LeftMotor.Init()
 	s.RightMotor.Init()
+	s.LeftSensor.Init()
+	s.CenterSensor.Init()
+	s.RightSensor.Init()
 
 	if *gdbEnabled {
 		s.avr.state = C.cpu_Stopped

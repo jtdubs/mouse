@@ -45,10 +45,28 @@ type MouseReport struct {
 	FunctionSelect uint8
 	LeftEncoder    uint16
 	RightEncoder   uint16
+	Sensors        uint32
+	LEDs           uint8
+	Padding        uint8
 }
 
 func (r *MouseReport) DecodeFunctionSelect() (bool, uint8) {
 	return (r.FunctionSelect >> 7) == 1, uint8(r.FunctionSelect & 0x0f)
+}
+
+func (r *MouseReport) DecodeSensors() (left, center, right uint16) {
+	left = uint16(r.Sensors & 0x3ff)
+	center = uint16((r.Sensors >> 10) & 0x3ff)
+	right = uint16((r.Sensors >> 20) & 0x3ff)
+	return
+}
+
+func (r *MouseReport) DecodeLEDs() (onboard, left, right, ir bool) {
+	onboard = (r.LEDs & 0x01) == 1
+	left = ((r.LEDs >> 1) & 0x01) == 1
+	right = ((r.LEDs >> 2) & 0x01) == 1
+	ir = ((r.LEDs >> 3) & 0x01) == 1
+	return
 }
 
 type SerialInterface struct {

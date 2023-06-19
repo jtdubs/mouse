@@ -18,12 +18,12 @@ func (s *simWindow) drawControls(sim *sim.Sim) {
 	imgui.TableSetupColumnV("##ControlsLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
 	imgui.TableSetupColumnV("##ControlsControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
 
-	// Voltage
+	// Battery Voltage
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text("Voltage: ")
 	imgui.TableSetColumnIndex(1)
-	imgui.SliderInt("(V)", &sim.Battery.Voltage, 0, 9000)
+	imgui.SliderInt("(V)##BATTERY", &sim.Battery.Voltage, 0, 9000)
 
 	// Function Select
 	imgui.TableNextRow()
@@ -34,6 +34,27 @@ func (s *simWindow) drawControls(sim *sim.Sim) {
 	imgui.ComboStr("##FSEL", &sim.FunctionSelector.Function, functions)
 	imgui.SameLineV(0, 20)
 	imgui.Checkbox("Button", &sim.FunctionSelector.ButtonPressed)
+
+	// Left Sensor
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text("Left Sensor: ")
+	imgui.TableSetColumnIndex(1)
+	imgui.SliderInt("(V)##LEFT", &sim.LeftSensor.Voltage, 0, 5000)
+
+	// Center Sensor
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text("Center Sensor: ")
+	imgui.TableSetColumnIndex(1)
+	imgui.SliderInt("(V)##CENTER", &sim.CenterSensor.Voltage, 0, 5000)
+
+	// Right Sensor
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text("Right Sensor: ")
+	imgui.TableSetColumnIndex(1)
+	imgui.SliderInt("(V)##RIGHT", &sim.RightSensor.Voltage, 0, 5000)
 
 	imgui.EndTable()
 }
