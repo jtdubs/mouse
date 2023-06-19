@@ -1,1 +1,13 @@
-- Start testing sensors
+Sensors:
+- Characterize based on distance & angle from wall
+
+Modes:
+- DIP + Command to set "modes"
+- Mode 0: Remote control, no smarts, big dumb
+- Mode 1: LEDs indicate presence of walls, reports only
+
+UI:
+- Possibly move to a prettier graphical representation of the mouse
+
+Sim:
+- Long-term goal is simulate sensor readings based on virtual walls
