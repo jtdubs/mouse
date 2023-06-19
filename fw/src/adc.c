@@ -6,8 +6,11 @@
 
 #include "pin.h"
 
-uint16_t       adc_values[8] = {0};
-static uint8_t adc_index     = 0;
+uint16_t sensor_right;
+uint16_t sensor_center;
+uint16_t sensor_left;
+uint16_t mode_selector;
+uint16_t battery_voltage;
 
 // adc_init initializes the ADC.
 void adc_init() {
@@ -37,13 +40,29 @@ void adc_init() {
 }
 
 ISR(ADC_vect, ISR_BLOCK) {
-  adc_values[adc_index] = ADC;
+  uint8_t adc_index = ADMUX & 0x0F;
 
-  // Advance to next ADC index.
-  if (adc_index == 2) {
-    adc_index = 6;
-  } else {
-    adc_index = (adc_index + 1) & 7;
+  switch (adc_index) {
+    case 0:
+      sensor_right = ADC;
+      adc_index    = 1;
+      break;
+    case 1:
+      sensor_center = ADC;
+      adc_index     = 2;
+      break;
+    case 2:
+      sensor_left = ADC;
+      adc_index   = 6;
+      break;
+    case 6:
+      mode_selector = ADC;
+      adc_index     = 7;
+      break;
+    case 7:
+      battery_voltage = ADC;
+      adc_index       = 0;
+      break;
   }
 
   // Start the next conversion

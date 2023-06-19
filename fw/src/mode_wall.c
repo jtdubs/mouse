@@ -1,8 +1,8 @@
 #include "mode_wall.h"
 
+#include "adc.h"
 #include "motor.h"
 #include "pin.h"
-#include "sensor.h"
 
 void mode_wall_enter() {
   pin_clear(LED_BUILTIN);

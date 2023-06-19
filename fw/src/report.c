@@ -5,11 +5,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "adc.h"
 #include "base64.h"
-#include "battery.h"
 #include "encoders.h"
 #include "pin.h"
-#include "sensor.h"
 #include "usart0.h"
 
 #define ENCODED_SIZE ((sizeof(report_t) * 4 / 3) + 3)

@@ -4,14 +4,12 @@
 #include <util/delay.h>
 
 #include "adc.h"
-#include "battery.h"
 #include "command.h"
 #include "encoders.h"
 #include "mode.h"
 #include "motor.h"
 #include "pin.h"
 #include "report.h"
-#include "sensor.h"
 #include "sim.h"
 #include "timer.h"
 #include "usart0.h"
@@ -30,8 +28,6 @@ void init() {
 }
 
 void tick() {
-  battery_update();
-  sensor_update();
   mode_tick();
   report_send();
   mode_update();
