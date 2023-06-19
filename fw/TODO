@@ -1,8 +1,12 @@
+Firmware:
+- See if we can knock down RAM usage?
+
 Sensors:
 - Characterize based on distance & angle from wall
 
 UI:
 - Possibly move to a prettier graphical representation of the mouse
+- Separate tabs for different modes?
 
 Sim:
 - Long-term goal is simulate sensor readings based on virtual walls

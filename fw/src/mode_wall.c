@@ -1,5 +1,6 @@
 #include "mode_wall.h"
 
+#include "motor.h"
 #include "pin.h"
 #include "sensor.h"
 
