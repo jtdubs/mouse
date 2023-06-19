@@ -266,7 +266,7 @@ func (s *serialWindow) drawMotorControl(name string, speedCommand mouse.CommandT
 	if tempForward != s.leftForward {
 		*forward = tempForward
 		s.mouse.Serial.SendCommand(mouse.MouseCommand{
-			Type: mouse.CommandLeftMotorDir,
+			Type: dirCommand,
 			Value: func() uint16 {
 				if tempForward {
 					return 1
