@@ -4,8 +4,8 @@
 #include <stddef.h>
 
 #if !defined(BASE64_NO_LOOKUPS)
-// b64_lookup maps 6-bit chunks to ASCII characters.
-static const uint8_t _b64_lookup[64] = {
+// Lookup maps 6-bit chunks to ASCII characters.
+static const uint8_t Lookup[64] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',  // 0x00
     'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',  // 0x08
     'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',  // 0x10
@@ -16,8 +16,8 @@ static const uint8_t _b64_lookup[64] = {
     '4', '5', '6', '7', '8', '9', '+', '/'   // 0x38
 };
 
-// b64_rev_lookup maps ASCII characters between ' ' and '\x7F' back to 6-bit chunks.
-static const uint8_t _b64_rev_lookup[96] = {
+// RevLookup maps ASCII characters between ' ' and '\x7F' back to 6-bit chunks.
+static const uint8_t RevLookup[96] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x20 - 0x27 (' ' - '\'')
     0xFF, 0xFF, 0xFF, 0x3E, 0xFF, 0xFF, 0xFF, 0x3F,  // 0x28 - 0x2F ('(' - '/')
     0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B,  // 0x30 - 0x37 ('0' - '7')
@@ -33,11 +33,11 @@ static const uint8_t _b64_rev_lookup[96] = {
 };
 
 static inline uint8_t b64_lookup(uint8_t b) {
-  return _b64_lookup[b];
+  return Lookup[b];
 }
 
 static inline uint8_t b64_rev_lookup(char c) {
-  return _b64_rev_lookup[c - 0x20];
+  return RevLookup[c - 0x20];
 }
 #else
 // b64_lookup maps 6-bit chunks to ASCII characters.

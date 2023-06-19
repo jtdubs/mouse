@@ -34,7 +34,7 @@ AVR_MCU_VCD_IRQ_TRACE(USART_RX_vect_num, 1, "SERIAL_RX");
 AVR_MCU_VCD_IRQ_TRACE(ADC_vect_num, 1, "ADC");
 
 // PWM outputs
-const struct avr_mmcu_vcd_trace_t _pwm_trace[] _MMCU_ = {
+const struct avr_mmcu_vcd_trace_t PWMTrace[] _MMCU_ = {
     // clang-format off
     { AVR_MCU_VCD_SYMBOL("LEFT_PWM"),  .what = (void*)&OCR1A  },
     { AVR_MCU_VCD_SYMBOL("RIGHT_PWM"), .what = (void*)&OCR1B  }
