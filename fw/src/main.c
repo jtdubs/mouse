@@ -36,9 +36,9 @@ void tick() {
     report.function_select = fsel;
     report.encoder_left    = encoder_left;
     report.encoder_right   = encoder_right;
-    report.sensors.left    = adc_read(0) >> 6;
+    report.sensors.left    = adc_read(2) >> 6;
     report.sensors.center  = adc_read(1) >> 6;
-    report.sensors.right   = adc_read(2) >> 6;
+    report.sensors.right   = adc_read(0) >> 6;
     report.leds.onboard    = pin_is_set(LED_BUILTIN);
     report.leds.left       = pin_is_set(LED_LEFT);
     report.leds.right      = pin_is_set(LED_RIGHT);

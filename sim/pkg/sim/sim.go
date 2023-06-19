@@ -75,9 +75,9 @@ func (s *Sim) Run(ctx context.Context) {
 	s.FunctionSelector = NewFunctionSelect(s.avr, C.ADC_IRQ_ADC6)
 	s.LeftMotor = NewMotor(s.avr, "Left Motor", true)
 	s.RightMotor = NewMotor(s.avr, "Right Motor", false)
-	s.LeftSensor = NewSensor(s.avr, "Left Sensor", C.ADC_IRQ_ADC0)
-	s.CenterSensor = NewSensor(s.avr, "Left Sensor", C.ADC_IRQ_ADC1)
-	s.RightSensor = NewSensor(s.avr, "Left Sensor", C.ADC_IRQ_ADC2)
+	s.LeftSensor = NewSensor(s.avr, "Left Sensor", C.ADC_IRQ_ADC2)
+	s.CenterSensor = NewSensor(s.avr, "Center Sensor", C.ADC_IRQ_ADC1)
+	s.RightSensor = NewSensor(s.avr, "Right Sensor", C.ADC_IRQ_ADC0)
 
 	s.LEDs.Init()
 	s.Battery.Init()
