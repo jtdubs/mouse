@@ -1,6 +1,3 @@
-Firmware:
-- See if we can knock down RAM usage?
-
 Sensors:
 - Characterize based on distance & angle from wall
 
