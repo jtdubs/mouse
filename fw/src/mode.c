@@ -5,8 +5,8 @@
 #include "mode_remote.h"
 #include "mode_wall.h"
 
-static uint8_t proposed_mode = 0;
-uint8_t        active_mode   = 0;
+static uint8_t proposed_mode;
+uint8_t        active_mode;
 
 static const uint8_t ModeThresholds[16] = {21, 42, 60, 77, 91, 102, 112, 123, 133, 139, 144, 150, 156, 160, 163, 255};
 

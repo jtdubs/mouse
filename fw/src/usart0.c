@@ -36,9 +36,9 @@ void usart0_init() {
          | (0 << UCPOL0);  // Clock polarity (ignored in async mode).
 }
 
-static uint8_t *write_buffer = NULL;
-static uint8_t  write_size   = 0;
-static uint8_t  write_index  = 0;
+static uint8_t *write_buffer;
+static uint8_t  write_size;
+static uint8_t  write_index;
 
 // READY determines if USART0 is ready for a byte.
 #define READY (UCSR0A & (1 << UDRE0))
@@ -68,10 +68,10 @@ void usart0_write() {
   UCSR0B      |= 1 << UDRIE0;
 }
 
-static uint8_t                    *read_buffer   = NULL;
-static uint8_t                     read_size     = 0;
-static uint8_t                     read_index    = 0;
-static command_received_callback_t read_callback = NULL;
+static uint8_t                    *read_buffer;
+static uint8_t                     read_size;
+static uint8_t                     read_index;
+static command_received_callback_t read_callback;
 
 // usart0_disable_receiver disables the USART0 receiver.
 void usart0_disable_receiver() {

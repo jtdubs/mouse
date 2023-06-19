@@ -8,9 +8,9 @@
 #define ENCODED_SIZE ((sizeof(command_t) * 4 / 3) + 3)
 
 command_t   command;
-static bool command_valid = false;
+static bool command_valid;
 static char encoded_command[ENCODED_SIZE];
-static bool encoded_command_full = false;
+static bool encoded_command_full;
 
 static void on_command_received(uint8_t size) {
   assert(!encoded_command_full);

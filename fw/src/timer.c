@@ -3,7 +3,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-volatile bool timer_elapsed = false;
+volatile bool timer_elapsed;
 
 // timer_init initializes timer.
 void timer_init() {
