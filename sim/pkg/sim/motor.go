@@ -15,14 +15,12 @@ package sim
 import "C"
 
 import (
-	"fmt"
 	"unsafe"
 
 	"github.com/mattn/go-pointer"
 )
 
 type Motor struct {
-	name                         string
 	DesiredFrequency             uint32
 	ActualFrequency              uint32
 	Forward                      bool
@@ -31,9 +29,8 @@ type Motor struct {
 	pwmIRQ, clkIRQ, bIRQ, dirIRQ *C.avr_irq_t
 }
 
-func NewMotor(avr *C.avr_t, name string, left bool) *Motor {
+func NewMotor(avr *C.avr_t, left bool) *Motor {
 	m := &Motor{
-		name:             name,
 		DesiredFrequency: 0,
 		ActualFrequency:  0,
 		Forward:          true,
@@ -63,12 +60,10 @@ func (m *Motor) Init() {
 
 func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 	if irq == m.pwmIRQ {
-		fmt.Printf("%v PWM changed: %d\n", m.name, value)
 		// As a crude approximation, we'll map the PWM range [0,512) to motor speeds of [0,32) Hz.
 		// Which means the encoder pulses run at [0,128) Hz, or PWM >> 2.
 		m.DesiredFrequency = value >> 2
 	} else if irq == m.dirIRQ {
-		fmt.Printf("%v dir changed: %d\n", m.name, value)
 		m.Forward = value != 0
 	}
 }

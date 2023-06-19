@@ -27,7 +27,8 @@
       "pgmspace.h": "c",
       "interrupt.h": "c",
       "report.h": "c",
-      "mode_remote.h": "c"
+      "mode_remote.h": "c",
+      "mode.h": "c"
     }
   },
 }
