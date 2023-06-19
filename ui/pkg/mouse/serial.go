@@ -22,18 +22,21 @@ var (
 	scrollback = flag.Int("scrollback", 100000, "Number of lines to keep in the scrollback buffer")
 )
 
-type MouseCommandType uint8
+type CommandType uint8
 
 const (
-	CommandLED             MouseCommandType = 0
-	CommandLeftMotorSpeed  MouseCommandType = 1
-	CommandRightMotorSpeed MouseCommandType = 2
-	CommandLeftMotorDir    MouseCommandType = 3
-	CommandRightMotorDir   MouseCommandType = 4
+	CommandOnboardLED      CommandType = 0
+	CommandLeftLED         CommandType = 1
+	CommandRightLED        CommandType = 2
+	CommandIRLEDs          CommandType = 3
+	CommandLeftMotorSpeed  CommandType = 4
+	CommandRightMotorSpeed CommandType = 5
+	CommandLeftMotorDir    CommandType = 6
+	CommandRightMotorDir   CommandType = 7
 )
 
 type MouseCommand struct {
-	Type  MouseCommandType
+	Type  CommandType
 	Value uint16
 }
 

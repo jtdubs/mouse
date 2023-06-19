@@ -46,9 +46,42 @@ func (s *simWindow) drawStatus(sim *sim.Sim) {
 	// LED
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
-	imgui.Text("LED: ")
+	imgui.Text("Onboard LED: ")
 	imgui.TableSetColumnIndex(1)
-	if sim.LED.State {
+	if sim.LEDs.Onboard {
+		imgui.Text("On")
+	} else {
+		imgui.Text("Off")
+	}
+
+	// Left LED
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text("Left LED: ")
+	imgui.TableSetColumnIndex(1)
+	if sim.LEDs.Left {
+		imgui.Text("On")
+	} else {
+		imgui.Text("Off")
+	}
+
+	// Right LED
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text("Right LED: ")
+	imgui.TableSetColumnIndex(1)
+	if sim.LEDs.Right {
+		imgui.Text("On")
+	} else {
+		imgui.Text("Off")
+	}
+
+	// IR LEDs
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text("IR LEDs: ")
+	imgui.TableSetColumnIndex(1)
+	if sim.LEDs.IR {
 		imgui.Text("On")
 	} else {
 		imgui.Text("Off")

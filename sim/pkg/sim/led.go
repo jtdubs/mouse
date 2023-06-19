@@ -17,26 +17,29 @@ import (
 	"github.com/mattn/go-pointer"
 )
 
-type LED struct {
-	State bool
-	avr   *C.avr_t
-	addr  int
-	bit   int
+type LEDs struct {
+	Right, Left, IR, Onboard bool
+	avr                      *C.avr_t
 }
 
-func NewLED(avr *C.avr_t, addr, bit int) *LED {
-	return &LED{
-		State: false,
-		avr:   avr,
-		addr:  addr,
-		bit:   bit,
+func NewLEDs(avr *C.avr_t) *LEDs {
+	return &LEDs{
+		avr: avr,
 	}
 }
 
-func (l *LED) Init() {
-	C.avr_register_io_write(l.avr, C.ushort(l.addr), on_io_write_cgo, pointer.Save(l))
+func (l *LEDs) Init() {
+	C.avr_register_io_write(l.avr, C.ushort(0x25), on_io_write_cgo, pointer.Save(l))
+	C.avr_register_io_write(l.avr, C.ushort(0x2B), on_io_write_cgo, pointer.Save(l))
 }
 
-func (l *LED) OnIOWrite(avr *C.avr_t, addr C.avr_io_addr_t, v uint8, param unsafe.Pointer) {
-	l.State = (v>>l.bit)&1 == 1
+func (l *LEDs) OnIOWrite(avr *C.avr_t, addr C.avr_io_addr_t, v uint8, param unsafe.Pointer) {
+	switch addr {
+	case 0x25:
+		l.Left = (v>>3)&1 == 1
+		l.IR = (v>>4)&1 == 1
+		l.Onboard = (v>>5)&1 == 1
+	case 0x2B:
+		l.Right = (v>>6)&1 == 1
+	}
 }

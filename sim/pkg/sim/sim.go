@@ -34,7 +34,7 @@ var (
 type Sim struct {
 	avr                   *C.avr_t
 	pty                   C.uart_pty_t
-	LED                   *LED
+	LEDs                  *LEDs
 	Battery               *Battery
 	FunctionSelector      *FunctionSelector
 	LeftMotor, RightMotor *Motor
@@ -69,13 +69,13 @@ func (s *Sim) Run(ctx context.Context) {
 	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC1), 16, C.CString("SENSOR1"))
 	C.avr_vcd_add_signal(s.avr.vcd, C.avr_io_getirq(s.avr, C.AVR_IOCTL_ADC_GETIRQ, C.ADC_IRQ_ADC2), 16, C.CString("SENSOR2"))
 
-	s.LED = NewLED(s.avr, 0x25, 5)
+	s.LEDs = NewLEDs(s.avr)
 	s.Battery = NewBattery(s.avr, C.ADC_IRQ_ADC7)
 	s.FunctionSelector = NewFunctionSelect(s.avr, C.ADC_IRQ_ADC6)
 	s.LeftMotor = NewMotor(s.avr, "Left Motor", true)
 	s.RightMotor = NewMotor(s.avr, "Right Motor", false)
 
-	s.LED.Init()
+	s.LEDs.Init()
 	s.Battery.Init()
 	s.FunctionSelector.Init()
 	s.LeftMotor.Init()
