@@ -1,21 +1,24 @@
-#include "fsel.h"
+#include "mode.h"
 
 #include "adc.h"
 
-fsel_t fsel = {0};
+mode_t mode = {0};
 
 static const uint8_t FunctionSelectThrehsolds[16] = {21,  42,  60,  77,  91,  102, 112, 123,
                                                      133, 139, 144, 150, 156, 160, 163, 255};
 
-void fsel_update() {
-  uint8_t v   = (uint8_t)(adc_read(6) >> 8);
-  fsel.button = (v > 180);
-  if (fsel.button) {
+void mode_update() {
+  uint8_t v = (uint8_t)(adc_read(6) >> 2);
+
+  mode.button = (v > 180);
+  if (mode.button) {
+    mode.active = mode.proposed;
     return;
   }
+
   for (int i = 0; i < 16; i++) {
     if (v < FunctionSelectThrehsolds[i]) {
-      fsel.function = 15 - i;
+      mode.proposed = 15 - i;
       return;
     }
   }

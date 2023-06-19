@@ -7,5 +7,5 @@
 extern uint8_t battery_voltage;
 
 inline void battery_update() {
-  battery_voltage = (uint8_t)(adc_read(7) >> 8);
+  battery_voltage = (uint8_t)(adc_read(7) >> 2);
 }

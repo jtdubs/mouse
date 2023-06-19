@@ -72,14 +72,21 @@ func (s *serialWindow) drawStatus() {
 	s.drawNumericStatus("Battery Voltage", int(s.mouse.Serial.Report().BatteryVolts)*39, "mV")
 
 	{
-		fselButton, fsel := s.mouse.Serial.Report().DecodeFunctionSelect()
-		s.drawNumericStatus("Function Select", int(fsel), func() string {
-			if fselButton {
-				return "(pressed)"
-			} else {
-				return ""
+		modes := []string{"Remote", "Wall Sensor", "Unknown #2", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}
+		button, active, proposed := s.mouse.Serial.Report().DecodeMode()
+		imgui.TableNextRow()
+		imgui.TableSetColumnIndex(0)
+		imgui.Text("Mode:")
+		imgui.TableSetColumnIndex(1)
+		if s.mouse.Serial.Open() {
+			imgui.Text(fmt.Sprintf("%v (%v proposed)", modes[active], modes[proposed]))
+			if button {
+				imgui.SameLine()
+				imgui.Text("(button)")
 			}
-		}())
+		} else {
+			imgui.Text("Disconnected")
+		}
 	}
 
 	s.drawNumericStatus("Left Encoder", int(s.mouse.Serial.Report().LeftEncoder), "")
@@ -111,6 +118,23 @@ func (s *serialWindow) drawControls() {
 	imgui.BeginTable("##Controls", 2)
 	imgui.TableSetupColumnV("##ControlsLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
 	imgui.TableSetupColumnV("##ControlsControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
+
+	// Mode
+	{
+		_, mode, _ := s.mouse.Serial.Report().DecodeMode()
+		currentMode := mode
+		imgui.TableNextRow()
+		imgui.TableSetColumnIndex(0)
+		imgui.Text("Function: ")
+		imgui.TableSetColumnIndex(1)
+		imgui.ComboStr("##FSEL", &mode, "Remote\000Wall Sensor")
+		if mode != currentMode {
+			s.mouse.Serial.SendCommand(mouse.MouseCommand{
+				Type:  mouse.CommandSetMode,
+				Value: uint16(mode),
+			})
+		}
+	}
 
 	s.drawLEDControl("Onboard LED", mouse.CommandOnboardLED, &s.onboardLED)
 	s.drawLEDControl("Left LED", mouse.CommandLeftLED, &s.leftLED)

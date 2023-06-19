@@ -25,14 +25,15 @@ var (
 type CommandType uint8
 
 const (
-	CommandOnboardLED      CommandType = 0
-	CommandLeftLED         CommandType = 1
-	CommandRightLED        CommandType = 2
-	CommandIRLEDs          CommandType = 3
-	CommandLeftMotorSpeed  CommandType = 4
-	CommandRightMotorSpeed CommandType = 5
-	CommandLeftMotorDir    CommandType = 6
-	CommandRightMotorDir   CommandType = 7
+	CommandSetMode         CommandType = 0
+	CommandOnboardLED      CommandType = 1
+	CommandLeftLED         CommandType = 2
+	CommandRightLED        CommandType = 3
+	CommandIRLEDs          CommandType = 4
+	CommandLeftMotorSpeed  CommandType = 5
+	CommandRightMotorSpeed CommandType = 6
+	CommandLeftMotorDir    CommandType = 7
+	CommandRightMotorDir   CommandType = 8
 )
 
 type MouseCommand struct {
@@ -41,17 +42,20 @@ type MouseCommand struct {
 }
 
 type MouseReport struct {
-	BatteryVolts   uint8
-	FunctionSelect uint8
-	LeftEncoder    uint16
-	RightEncoder   uint16
-	Sensors        uint32
-	LEDs           uint8
-	Padding        uint8
+	BatteryVolts uint8
+	Mode         uint8
+	LeftEncoder  uint16
+	RightEncoder uint16
+	Sensors      uint32
+	LEDs         uint8
+	Padding      uint8
 }
 
-func (r *MouseReport) DecodeFunctionSelect() (bool, uint8) {
-	return (r.FunctionSelect >> 7) == 1, uint8(r.FunctionSelect & 0x0f)
+func (r *MouseReport) DecodeMode() (button bool, active, proposed int32) {
+	button = (r.Mode >> 7) == 1
+	active = int32(r.Mode & 0x07)
+	proposed = int32((r.Mode >> 3) & 0x07)
+	return
 }
 
 func (r *MouseReport) DecodeSensors() (left, center, right uint16) {
@@ -87,8 +91,8 @@ func NewSerialInterface() *SerialInterface {
 		portOpen: false,
 		messages: NewRing[string](*scrollback),
 		report: MouseReport{
-			BatteryVolts:   0,
-			FunctionSelect: 0,
+			BatteryVolts: 0,
+			Mode:         0,
 		},
 		sendChan: make(chan MouseCommand, 1),
 	}

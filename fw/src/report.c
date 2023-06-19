@@ -6,6 +6,10 @@
 #include <stdint.h>
 
 #include "base64.h"
+#include "battery.h"
+#include "encoders.h"
+#include "pin.h"
+#include "sensor.h"
 #include "usart0.h"
 
 #define ENCODED_SIZE ((sizeof(report_t) * 4 / 3) + 3)
@@ -26,8 +30,19 @@ void report_init() {
 
 // report_send sends the report.
 void report_send() {
-  assert(report_available());
-
-  base64_encode((uint8_t*)&report, (uint8_t*)&encoded_report[1], sizeof(report));
-  usart0_write();
+  if (report_available()) {
+    report.battery_volts  = battery_voltage;
+    report.mode           = mode;
+    report.encoder_left   = encoder_left;
+    report.encoder_right  = encoder_right;
+    report.sensors.left   = sensor_left;
+    report.sensors.center = sensor_center;
+    report.sensors.right  = sensor_right;
+    report.leds.onboard   = pin_is_set(LED_BUILTIN);
+    report.leds.left      = pin_is_set(LED_LEFT);
+    report.leds.right     = pin_is_set(LED_RIGHT);
+    report.leds.ir        = pin_is_set(IR_LEDS);
+    base64_encode((uint8_t*)&report, (uint8_t*)&encoded_report[1], sizeof(report));
+    usart0_write();
+  }
 }

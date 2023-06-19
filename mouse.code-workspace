@@ -25,7 +25,8 @@
       "assert.h": "c",
       "pin.h": "c",
       "pgmspace.h": "c",
-      "interrupt.h": "c"
+      "interrupt.h": "c",
+      "report.h": "c"
     }
   },
 }

@@ -13,7 +13,7 @@ static uint8_t adc_index     = 0;
 void adc_init() {
   ADMUX = (1 << REFS0)   // AVCC with external capacitor at AREF pin
         | (0 << REFS1)   // AVCC with external capacitor at AREF pin
-        | (1 << ADLAR);  // Left adjust result
+        | (0 << ADLAR);  // Don't left adjust result
 
   ADCSRA = (0 << ADEN)    // Disable ADC
          | (0 << ADSC)    // Don't start conversion
