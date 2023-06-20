@@ -1,5 +1,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <avr/power.h>
+#include <avr/wdt.h>
 #include <stddef.h>
 #include <util/delay.h>
 
@@ -24,6 +26,16 @@ void init() {
   report_init();
   command_init();
   mode_init();
+
+  power_spi_disable();
+  power_twi_disable();
+  power_timer2_disable();
+
+  // If I switch to Timer2, I can use ADC Noise Reduction mode.
+  // set_sleep_mode(SLEEP_MODE_ADC);
+
+  wdt_enable(WDTO_15MS);
+
   sei();
 }
 
@@ -39,6 +51,7 @@ int main() {
   init();
   for (;;) {
     timer_wait();
+    wdt_reset();
     tick();
   }
 
