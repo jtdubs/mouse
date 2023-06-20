@@ -27,10 +27,10 @@ typedef struct {
     uint16_t ir      : 1;
     uint16_t padding : 4;
   } leds;
-  uint16_t distance_left;
-  uint16_t distance_center;
-  uint16_t distance_right;
-  uint8_t  padding[1];
+  uint8_t distance_left;
+  uint8_t distance_center;
+  uint8_t distance_right;
+  uint8_t padding[1];
 } report_t;
 #pragma pack(pop)
 

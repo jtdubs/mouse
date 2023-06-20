@@ -6,11 +6,11 @@
 #include "motor.h"
 #include "pin.h"
 
-uint16_t distance_left;
-uint16_t distance_center;
-uint16_t distance_right;
+uint8_t distance_left;
+uint8_t distance_center;
+uint8_t distance_right;
 
-uint16_t calc_distance_center();
+uint8_t calc_distance_center();
 
 void mode_wall_enter() {
   pin_clear(LED_BUILTIN);
@@ -31,33 +31,35 @@ void mode_wall_tick() {
   distance_center = calc_distance_center();
 }
 
-uint16_t calc_distance_center() {
-  if (sensor_center < 6) {
-    return 770 - (sensor_center << 6);
+uint8_t calc_distance_center() {
+  uint8_t sensor = sensor_center >> 2;
+
+  if (sensor < 4) {
+    return 255 - (sensor << 4);
   }
-  if (sensor_center < 18) {
-    return 550 - (sensor_center << 4);
+  if (sensor < 14) {
+    return 225 - (sensor << 3);
   }
-  if (sensor_center < 34) {
-    return 290 - (sensor_center << 2);
+  if (sensor < 20) {
+    return 172 - (sensor << 2);
   }
-  if (sensor_center < 50) {
-    return 223 - (sensor_center << 1);
+  if (sensor < 30) {
+    return 133 - (sensor << 1);
   }
-  if (sensor_center < 78) {
-    return 173 - sensor_center;
+  if (sensor < 46) {
+    return 103 - sensor;
   }
-  if (sensor_center < 116) {
-    return 134 - (sensor_center >> 1);
+  if (sensor < 72) {
+    return 80 - (sensor >> 1);
   }
-  if (sensor_center < 200) {
-    return 105 - (sensor_center >> 2);
+  if (sensor < 112) {
+    return 62 - (sensor >> 2);
   }
-  if (sensor_center < 272) {
-    return 80 - (sensor_center >> 3);
+  if (sensor < 176) {
+    return 48 - (sensor >> 3);
   }
-  if (sensor_center < 512) {
-    return 63 - (sensor_center >> 4);
+  if (sensor < 203) {
+    return 37 - (sensor >> 4);
   }
-  return 47 - (sensor_center >> 5);
+  return 75 - (sensor >> 2);
 }

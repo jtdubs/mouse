@@ -48,9 +48,9 @@ type MouseReport struct {
 	RightEncoder   uint16
 	Sensors        uint32
 	LEDs           uint8
-	DistanceLeft   uint16
-	DistanceCenter uint16
-	DistanceRight  uint16
+	DistanceLeft   uint8
+	DistanceCenter uint8
+	DistanceRight  uint8
 	Padding        uint8
 }
 
