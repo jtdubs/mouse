@@ -42,13 +42,16 @@ type MouseCommand struct {
 }
 
 type MouseReport struct {
-	BatteryVolts uint8
-	Mode         uint8
-	LeftEncoder  uint16
-	RightEncoder uint16
-	Sensors      uint32
-	LEDs         uint8
-	Padding      uint8
+	BatteryVolts   uint8
+	Mode           uint8
+	LeftEncoder    uint16
+	RightEncoder   uint16
+	Sensors        uint32
+	LEDs           uint8
+	DistanceLeft   uint16
+	DistanceCenter uint16
+	DistanceRight  uint16
+	Padding        uint8
 }
 
 func (r *MouseReport) DecodeSensors() (left, center, right uint16) {

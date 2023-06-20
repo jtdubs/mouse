@@ -102,6 +102,12 @@ func (s *serialWindow) drawStatus() {
 		s.drawLEDStatus("IR LEDs", ir)
 	}
 
+	{
+		s.drawNumericStatus("Left Distance", int(s.mouse.Serial.Report().DistanceLeft), "mm")
+		s.drawNumericStatus("Center Distance", int(s.mouse.Serial.Report().DistanceCenter), "mm")
+		s.drawNumericStatus("Right Distance", int(s.mouse.Serial.Report().DistanceRight), "mm")
+	}
+
 	imgui.EndTable()
 }
 
