@@ -35,7 +35,7 @@ uint16_t calc_distance_center() {
   if (sensor_center < 6) {
     return 770 - (sensor_center << 6);
   }
-  if (sensor_center < 21) {
+  if (sensor_center < 18) {
     return 550 - (sensor_center << 4);
   }
   if (sensor_center < 34) {
@@ -50,11 +50,14 @@ uint16_t calc_distance_center() {
   if (sensor_center < 116) {
     return 134 - (sensor_center >> 1);
   }
-  if (sensor_center < 218) {
+  if (sensor_center < 200) {
     return 105 - (sensor_center >> 2);
   }
-  if (sensor_center < 575) {
-    return 64 - (sensor_center >> 4);
+  if (sensor_center < 272) {
+    return 80 - (sensor_center >> 3);
   }
-  return 46 - (sensor_center >> 5);
+  if (sensor_center < 512) {
+    return 63 - (sensor_center >> 4);
+  }
+  return 47 - (sensor_center >> 5);
 }
