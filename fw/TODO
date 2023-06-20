@@ -1,8 +1,8 @@
 Sensors:
-- Characterize based on distance & angle from wall
+- Take more measurements for longer distances to refine piecewise approximation
+- Characterize lateral distances in the same way
 
 UI:
-- Possibly move to a prettier graphical representation of the mouse
 - Separate tabs for different modes?
 
 Sim:
