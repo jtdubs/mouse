@@ -1,9 +1,21 @@
-Sensors:
-- Take more measurements for longer distances to refine piecewise approximation
-- Characterize lateral distances in the same way
-
-UI:
-- Separate tabs for different modes?
+Modes:
+- Error mode:
+  - Can be moved into from other modes
+  - Turns off everything and displays a blink code on the LEDs
+- Calibration mode:
+  - Place mouse in center of box facing wall, let sensor calibrate against the "wall is present" values
+  - Just accumulate 256 8-bit samples in a 16-bit counter, and keep the top byte
+  - Consider only taking a sample every 10-20ms so it is averaged over a longer period of time (1-2s)
+  - LED signal when done, or if failed
+- Self-check mode:
+  - Place mouse in center of box facing wall, with wheels off the ground
+  - Turn on LEDs and confirm all sensors have a reading
+  - Turn each wheel forward then backward a few revolutions to ensure encoders are working.
+  - Confirm battery voltage in range
+  - Have LED blink codes for error conditions
+- Remote-control mode:
+  - As-implemented
+  - Eventually a "turn x degrees" and "move y mm" commands
 
 Sim:
-- Long-term goal is simulate sensor readings based on virtual walls
+- Long-term goal is simulate sensor readings based on virtual walls and show it in the sim UI
