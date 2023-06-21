@@ -6,8 +6,8 @@ RELEASE_OBJECTS = $(SOURCES:src/%.c=build/release/%.o)
 DEBUG_OBJECTS = $(SOURCES:src/%.c=build/debug/%.o)
 TARGET = mouse
 
-CFLAGS=-I/usr/lib/avr/include          # Include AVR libc headers.
-CFLAGS+=-I/usr/include/simavr          # Include simavr headers.
+CFLAGS=-I/opt/avr-gcc-12.1.0-x64-linux/avr/include # Include AVR libc headers.
+CFLAGS+=-I/usr/local/include/simavr    # Include simavr headers.
 CFLAGS+=-std=c17                       # Use C17 standard. 
 CFLAGS+=-Wall -Werror -Wextra          # Enable all warnings and treat them as errors.
 CFLAGS+=-D__AVR__                      # Tell AVR libc that we are compiling for AVR.
