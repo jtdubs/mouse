@@ -1,9 +1,23 @@
-.PHONY: all sim fw wave
+.PHONY: all clean fw run wave
 
-all: sim
+CGO_CFLAGS = $(shell pkg-config --cflags simavr)
+CGO_CFLAGS += $(shell pkg-config --cflags simavrparts)
+export CGO_CFLAGS
+
+CGO_LDFLAGS = $(shell pkg-config --libs simavr)
+CGO_LDFLAGS += $(shell pkg-config --libs simavrparts)
+export CGO_LDFLAGS
+
+all: run
+
+clean:
+	go clean .
+
+run: sim
+	go run . --firmware ../fw/build/debug/mouse.elf
 
 sim: fw
-	go run . --firmware ../fw/build/debug/mouse.elf
+	go build .
 
 fw:
 	make -C ../fw all

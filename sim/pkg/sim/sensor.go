@@ -1,10 +1,6 @@
 package sim
 
 /*
-#cgo CFLAGS: -I/usr/local/include/simavr
-#cgo CFLAGS: -I/usr/local/include/simavr/parts
-#cgo LDFLAGS: -L/usr/local/lib -lsimavr -lsimavrparts -lelf
-
 #include <avr_adc.h>
 #include <avr_ioport.h>
 #include <sim_avr.h>
