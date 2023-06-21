@@ -1,13 +1,5 @@
 .PHONY: all clean fw run wave
 
-CGO_CFLAGS = $(shell pkg-config --cflags simavr)
-CGO_CFLAGS += $(shell pkg-config --cflags simavrparts)
-export CGO_CFLAGS
-
-CGO_LDFLAGS = $(shell pkg-config --libs simavr)
-CGO_LDFLAGS += $(shell pkg-config --libs simavrparts)
-export CGO_LDFLAGS
-
 all: run
 
 clean:
