@@ -3,7 +3,7 @@
     {
       "name": "Linux",
       "includePath": [
-        "/usr/lib/avr/include",
+        "/opt/avr-gcc-12.1.0-x64-linux/avr/include",
         "/usr/include/simavr"
       ],
       "defines": [
@@ -11,7 +11,7 @@
         "__AVR_ATmega328P__",
         "F_CPU=16000000UL"
       ],
-      "compilerPath": "/usr/bin/avr-gcc",
+      "compilerPath": "/opt/avr-gcc-12.1.0-x64-linux/bin/avr-gcc",
       "cStandard": "c17",
       "cppStandard": "c++17",
       "intelliSenseMode": "linux-gcc-x64"
