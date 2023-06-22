@@ -1,10 +1,10 @@
 #include "motor.h"
 
-#include <avr/interrupt.h>
 #include <avr/io.h>
 
 #include "platform/pin.h"
 
+// motor_init initializes the motors.
 void motor_init() {
   TCCR1A = (1 << COM1A1)   // Clear OC1A when up-counting, set when down-counting
          | (1 << COM1B1);  // Clear OCBA when up-counting, set when down-counting

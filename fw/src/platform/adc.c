@@ -5,6 +5,7 @@
 
 #include "platform/pin.h"
 
+// Raw 10-bit readings from ADC channels.
 uint16_t sensor_right;
 uint16_t sensor_center;
 uint16_t sensor_left;
@@ -41,6 +42,7 @@ void adc_init() {
 ISR(ADC_vect, ISR_BLOCK) {
   uint8_t adc_index = ADMUX & 0x0F;
 
+  // Choose the next ADC channel to sample.
   switch (adc_index) {
     case 0:
       sensor_right = ADC;
@@ -64,7 +66,7 @@ ISR(ADC_vect, ISR_BLOCK) {
       break;
   }
 
-  // Start the next conversion
+  // Start the next conversion.
   ADMUX   = (ADMUX & 0xF0) | adc_index;
   ADCSRA |= (1 << ADSC);
 }

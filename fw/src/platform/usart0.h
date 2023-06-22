@@ -15,9 +15,16 @@ void usart0_set_write_buffer(uint8_t* buffer, uint8_t size);
 // usart0_write begins an asynchronous write to USART0.
 void usart0_write();
 
-typedef void (*command_received_callback_t)(uint8_t size);
+typedef void (*buffer_received_callback_t)(uint8_t size);
 
+// usart0_disable_receiver disables the USART0 receiver.
 void usart0_disable_receiver();
+
+// usart0_enable_receiver enables the USART0 receiver.
 void usart0_enable_receiver();
+
+// usart0_set_read_buffer sets the read buffer for USART0.
 void usart0_set_read_buffer(uint8_t* buffer, uint8_t size);
-void usart0_set_read_callback(command_received_callback_t callback);
+
+// usart0_set_read_callback sets the read callback for USART0.
+void usart0_set_read_callback(buffer_received_callback_t callback);

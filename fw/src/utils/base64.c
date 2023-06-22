@@ -66,7 +66,6 @@ static uint8_t b64_rev_lookup(char c) {
 
 // base64_encode encodes a buffer of bytes into a base64 string.
 void base64_encode(uint8_t *input, uint8_t *output, uint8_t size) {
-  assert_debug((size % 3) == 0);
   assert(input != NULL);
   assert(output != NULL);
 

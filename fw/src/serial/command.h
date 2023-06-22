@@ -15,7 +15,7 @@
 #define COMMAND_MAX_VALUE 9
 
 #pragma pack(push, 1)
-// command_t represents mouse status command.
+// command_t represents a command that can be processed by the mouse.
 typedef struct {
   uint8_t  type;
   uint16_t value;

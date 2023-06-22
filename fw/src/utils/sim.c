@@ -1,8 +1,5 @@
 #include "utils/sim.h"
 
-#include <avr/avr_mcu_section.h>
-#include <avr/io.h>
-
 AVR_MCU(F_CPU, "atmega328p");
 AVR_MCU_VOLTAGES(5000, 5000, 5000);
 
@@ -43,5 +40,6 @@ const struct avr_mmcu_vcd_trace_t PWMTrace[] _MMCU_ = {
     // clang-format on}
 };
 
+// Console and command registers
 AVR_MCU_SIMAVR_COMMAND(&SIM_COMMAND_REG);
 AVR_MCU_SIMAVR_CONSOLE(&SIM_CONSOLE_REG);

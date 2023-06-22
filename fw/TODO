@@ -19,4 +19,4 @@ Sim:
 - Long-term goal is simulate sensor readings based on virtual walls and show it in the sim UI
 
 Fw:
-- Switch to cmake?  Something to better allow for subdirectories of code...
+- Better documentation of modules, how they work and what they do.

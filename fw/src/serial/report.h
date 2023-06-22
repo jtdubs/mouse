@@ -1,10 +1,6 @@
 #pragma once
 
-#include <stdbool.h>
 #include <stdint.h>
-
-#include "modes/mode.h"
-#include "platform/usart0.h"
 
 #pragma pack(push, 1)
 // report_t represents mouse status report.
@@ -38,11 +34,6 @@ extern report_t report;
 
 // report_init initializes the report module.
 void report_init();
-
-// report_available determines if the report is available to be written.
-inline bool report_available() {
-  return usart0_write_ready();
-}
 
 // report_send sends the report.
 void report_send();

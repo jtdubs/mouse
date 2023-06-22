@@ -4,7 +4,9 @@
 #include "platform/pin.h"
 #include "serial/command.h"
 
+// mode_remote_tick is the remote mode's tick function.
 void mode_remote_tick() {
+  // If a serial command has been received, process it.
   if (command_available()) {
     switch (command.type) {
       case COMMAND_SET_ONBOARD_LED:
