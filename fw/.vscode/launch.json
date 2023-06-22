@@ -10,7 +10,7 @@
       "stopAtEntry": true,
       "stopAtConnect": true,
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/avr-gdb",
+      "miDebuggerPath": "/opt/avr-gcc-12.1.0-x64-linux/bin/avr-gdb",
       "miDebuggerServerAddress": "localhost:1234",
       "serverLaunchTimeout": 4000,
       "preLaunchTask": "Run Simulator",
