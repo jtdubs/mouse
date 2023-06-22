@@ -1,8 +1,8 @@
 #pragma once
 
-#include <assert.h>
 #include <stdbool.h>
 
+#include "assert.h"
 #include "pin.h"
 
 void motor_init();

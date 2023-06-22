@@ -1,11 +1,11 @@
 #include "report.h"
 
-#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
 #include "adc.h"
+#include "assert.h"
 #include "base64.h"
 #include "encoders.h"
 #include "mode_wall.h"
@@ -19,7 +19,7 @@ static char encoded_report[ENCODED_SIZE];
 
 // report_init initializes the report module.
 void report_init() {
-  assert(sizeof(report_t) % 3 == 0);
+  _Static_assert((sizeof(report_t) % 3) == 0);
 
   encoded_report[0]                = '[';
   encoded_report[ENCODED_SIZE - 2] = ']';

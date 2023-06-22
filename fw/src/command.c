@@ -1,7 +1,6 @@
 #include "command.h"
 
-#include <assert.h>
-
+#include "assert.h"
 #include "base64.h"
 #include "usart0.h"
 
@@ -32,6 +31,8 @@ static void on_command_received(uint8_t size) {
 }
 
 void command_init() {
+  _Static_assert((sizeof(command_t) % 3) == 0);
+
   usart0_set_read_buffer((uint8_t*)encoded_command, ENCODED_SIZE);
   usart0_set_read_callback(on_command_received);
   usart0_enable_receiver();

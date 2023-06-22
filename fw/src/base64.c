@@ -1,7 +1,8 @@
 #include "base64.h"
 
-#include <assert.h>
 #include <stddef.h>
+
+#include "assert.h"
 
 #if !defined(BASE64_NO_LOOKUPS)
 // Lookup maps 6-bit chunks to ASCII characters.
@@ -65,9 +66,9 @@ static uint8_t b64_rev_lookup(char c) {
 
 // base64_encode encodes a buffer of bytes into a base64 string.
 void base64_encode(uint8_t *input, uint8_t *output, uint8_t size) {
+  assert_debug((size % 3) == 0);
   assert(input != NULL);
   assert(output != NULL);
-  assert(size > 0 && size % 3 == 0);
 
   for (uint8_t i = 0, j = 0; i < size; i += 3, j += 4) {
     uint32_t word = (((uint32_t)input[i]) << 16)     // A

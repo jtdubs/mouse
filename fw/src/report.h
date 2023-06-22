@@ -6,8 +6,7 @@
 #include "mode.h"
 #include "usart0.h"
 
-#pragma pack(push)
-#pragma pack(1)
+#pragma pack(push, 1)
 // report_t represents mouse status report.
 typedef struct {
   uint8_t  battery_volts;
@@ -18,19 +17,19 @@ typedef struct {
     uint16_t left    : 10;
     uint16_t center  : 10;
     uint16_t right   : 10;
-    uint16_t padding : 2;
+    uint8_t  padding : 2;
   } sensors;
   struct {
-    uint16_t onboard : 1;
-    uint16_t left    : 1;
-    uint16_t right   : 1;
-    uint16_t ir      : 1;
-    uint16_t padding : 4;
+    uint8_t onboard : 1;
+    uint8_t left    : 1;
+    uint8_t right   : 1;
+    uint8_t ir      : 1;
+    uint8_t padding : 4;
   } leds;
   uint8_t distance_left;
   uint8_t distance_center;
   uint8_t distance_right;
-  uint8_t padding[1];
+  uint8_t padding;
 } report_t;
 #pragma pack(pop)
 

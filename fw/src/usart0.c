@@ -1,9 +1,10 @@
 #include "usart0.h"
 
-#include <assert.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <stddef.h>
 
+#include "assert.h"
 #include "pin.h"
 
 // usart0_init initializes USART0.

@@ -14,8 +14,7 @@
 #define COMMAND_SET_RIGHT_MOTOR_DIR 8
 #define COMMAND_MAX_VALUE 9
 
-#pragma pack(push)
-#pragma pack(1)
+#pragma pack(push, 1)
 // command_t represents mouse status command.
 typedef struct {
   uint8_t  type;
