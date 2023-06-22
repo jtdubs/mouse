@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "mode_error.h"
+#include "modes/mode_error.h"
 
 #if !defined(NOASSERT)
 #define assert(e) ((e) ? (void)0 : mode_error(__LINE__))

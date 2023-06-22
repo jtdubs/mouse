@@ -1,8 +1,8 @@
-#include "base64.h"
+#include "utils/base64.h"
 
 #include <stddef.h>
 
-#include "assert.h"
+#include "utils/assert.h"
 
 #if !defined(BASE64_NO_LOOKUPS)
 // Lookup maps 6-bit chunks to ASCII characters.

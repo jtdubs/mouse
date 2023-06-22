@@ -2,8 +2,8 @@
 
 #include <stdbool.h>
 
-#include "assert.h"
-#include "pin.h"
+#include "platform/pin.h"
+#include "utils/assert.h"
 
 void motor_init();
 

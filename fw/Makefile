@@ -1,4 +1,4 @@
-.PHONY: all release debug clean upload prep sim simattach size
+.PHONY: all release debug clean upload sim simattach size
 
 USE_GCC12=1
 
@@ -12,8 +12,8 @@ GCC = $(AVR_BIN)/avr-gcc
 OBJCOPY = $(AVR_BIN)/avr-objcopy
 OBJDUMP = $(AVR_BIN)/avr-objdump
 
-SOURCES = $(wildcard src/*.c)
-HEADERS = $(wildcard src/*.h)
+SOURCES = $(wildcard src/*.c src/**/*.c)
+HEADERS = $(wildcard src/*.h src/**/*.h)
 RELEASE_OBJECTS = $(SOURCES:src/%.c=build/release/%.o)
 DEBUG_OBJECTS = $(SOURCES:src/%.c=build/debug/%.o)
 TARGET = mouse
@@ -36,6 +36,7 @@ ifeq ($(USE_GCC12),1)
 CFLAGS+=--param=min-pagesize=0         # Needed for AVR target.
 endif
 CFLAGS+=-O2                            # Optimize for speed.
+CFLAGS+=-Isrc/
 
 DBG_CFLAGS=-DDEBUG
 DBG_CFLAGS+=-gdwarf-2 -ggdb3           # Generate debug info in DWARF2 and GDB3 formats.
@@ -48,21 +49,19 @@ REL_CFLAGS+=-fno-fat-lto-objects -flto # Enable link-time optimization.
 REL_TARGETS=build/release/$(TARGET).elf build/release/$(TARGET).hex build/release/$(TARGET).s
 DBG_TARGETS=build/debug/$(TARGET).elf build/debug/$(TARGET).hex build/debug/$(TARGET).s
 
-all: prep $(REL_TARGETS) $(DBG_TARGETS)
+all: $(REL_TARGETS) $(DBG_TARGETS)
 
-release: prep $(REL_TARGETS)
+release: $(REL_TARGETS)
 
-debug: prep $(DBG_TARGETS)
+debug: $(DBG_TARGETS)
 
 clean:
 	rm -Rf build
 
-upload: prep build/release/$(TARGET).hex
+upload: build/release/$(TARGET).hex
 	-killall -HUP -e ui
 	avrdude -c arduino -P /dev/ttyNano -b 57600 -p m328p -D -U flash:w:build/release/$(TARGET).hex:i
 	-killall -CONT -e ui
-
-prep: build/release build/debug
 
 sim: build/debug/$(TARGET).elf
 	../sim/build/release/mousesim $^
@@ -73,32 +72,34 @@ simattach: build/debug/$(TARGET).elf
 size: build/release/$(TARGET).elf
 	avr-size $^
 
-build/release:
-	mkdir -p build/release
-
-build/debug:
-	mkdir -p build/debug
-
 build/release/%.o: src/%.c $(HEADERS)
+	mkdir -p $(dir $@)
 	$(GCC) $(CFLAGS) $(REL_CFLAGS) -c $< -o $@
 
 build/release/$(TARGET).elf: $(RELEASE_OBJECTS)
+	mkdir -p $(dir $@)
 	$(GCC) $(CFLAGS) $(REL_CFLAGS) -o $@ $^
 
 build/release/$(TARGET).hex: build/release/$(TARGET).elf
+	mkdir -p $(dir $@)
 	$(OBJCOPY) -j .text -j .data -j .eeprom -O ihex $^ $@
 
 build/release/$(TARGET).s: build/release/$(TARGET).elf
+	mkdir -p $(dir $@)
 	$(OBJDUMP) -S -j .text -j .data -j .eeprom -j .mmcu -d $^ > $@
 
 build/debug/%.o: src/%.c $(HEADERS)
+	mkdir -p $(dir $@)
 	$(GCC) $(CFLAGS) $(DBG_CFLAGS) -c $< -o $@
 
 build/debug/$(TARGET).elf: $(DEBUG_OBJECTS)
+	mkdir -p $(dir $@)
 	$(GCC) $(CFLAGS) $(DBG_CFLAGS) -o $@ $^
 
 build/debug/$(TARGET).hex: build/debug/$(TARGET).elf
+	mkdir -p $(dir $@)
 	$(OBJCOPY) -j .text -j .data -j .eeprom -O ihex $^ $@
 
 build/debug/$(TARGET).s: build/debug/$(TARGET).elf
+	mkdir -p $(dir $@)
 	$(OBJDUMP) -S -j .text -j .data -j .eeprom -j .mmcu -d $^ > $@

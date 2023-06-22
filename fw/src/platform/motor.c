@@ -3,7 +3,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-#include "pin.h"
+#include "platform/pin.h"
 
 void motor_init() {
   TCCR1A = (1 << COM1A1)   // Clear OC1A when up-counting, set when down-counting

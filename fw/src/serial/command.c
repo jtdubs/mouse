@@ -1,8 +1,8 @@
 #include "command.h"
 
-#include "assert.h"
-#include "base64.h"
-#include "usart0.h"
+#include "platform/usart0.h"
+#include "utils/assert.h"
+#include "utils/base64.h"
 
 #define ENCODED_SIZE ((sizeof(command_t) * 4 / 3) + 3)
 

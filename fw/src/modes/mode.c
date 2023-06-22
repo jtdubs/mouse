@@ -1,12 +1,12 @@
-#include "mode.h"
+#include "modes/mode.h"
 
-#include "adc.h"
-#include "command.h"
-#include "mode_error.h"
-#include "mode_remote.h"
-#include "mode_wall.h"
-#include "motor.h"
-#include "pin.h"
+#include "modes/mode_error.h"
+#include "modes/mode_remote.h"
+#include "modes/mode_wall.h"
+#include "platform/adc.h"
+#include "platform/motor.h"
+#include "platform/pin.h"
+#include "serial/command.h"
 
 static uint8_t proposed_mode;
 uint8_t        active_mode;

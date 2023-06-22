@@ -3,7 +3,7 @@
 #include <avr/interrupt.h>
 #include <stdbool.h>
 
-#include "pin.h"
+#include "platform/pin.h"
 
 extern volatile bool timer_elapsed;
 

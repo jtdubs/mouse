@@ -4,7 +4,8 @@
       "name": "Linux",
       "includePath": [
         "/opt/avr-gcc-12.1.0-x64-linux/avr/include",
-        "/usr/local/include/simavr"
+        "/usr/local/include/simavr",
+        "src/",
       ],
       "defines": [
         "__AVR__",

@@ -1,11 +1,11 @@
-#include "mode_wall.h"
+#include "modes/mode_wall.h"
 
 #include <math.h>
 
-#include "adc.h"
-#include "mode.h"
-#include "motor.h"
-#include "pin.h"
+#include "modes/mode.h"
+#include "platform/adc.h"
+#include "platform/motor.h"
+#include "platform/pin.h"
 
 uint8_t distance_left;
 uint8_t distance_center;

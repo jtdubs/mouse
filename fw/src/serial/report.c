@@ -1,16 +1,16 @@
-#include "report.h"
+#include "serial/report.h"
 
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-#include "adc.h"
-#include "assert.h"
-#include "base64.h"
-#include "encoders.h"
-#include "mode_wall.h"
-#include "pin.h"
-#include "usart0.h"
+#include "modes/mode_wall.h"
+#include "platform/adc.h"
+#include "platform/encoders.h"
+#include "platform/pin.h"
+#include "platform/usart0.h"
+#include "utils/assert.h"
+#include "utils/base64.h"
 
 #define ENCODED_SIZE ((sizeof(report_t) * 4 / 3) + 3)
 

@@ -5,16 +5,16 @@
 #include <stddef.h>
 #include <util/delay.h>
 
-#include "adc.h"
-#include "command.h"
-#include "encoders.h"
-#include "mode.h"
-#include "motor.h"
-#include "pin.h"
-#include "report.h"
-#include "sim.h"
-#include "timer.h"
-#include "usart0.h"
+#include "modes/mode.h"
+#include "platform/adc.h"
+#include "platform/encoders.h"
+#include "platform/motor.h"
+#include "platform/pin.h"
+#include "platform/timer.h"
+#include "platform/usart0.h"
+#include "serial/command.h"
+#include "serial/report.h"
+#include "utils/sim.h"
 
 void init() {
   pin_init();
@@ -30,9 +30,6 @@ void init() {
   power_spi_disable();
   power_twi_disable();
   power_timer2_disable();
-
-  // If I switch to Timer2, I can use ADC Noise Reduction mode.
-  // set_sleep_mode(SLEEP_MODE_ADC);
 
   wdt_enable(WDTO_15MS);
 

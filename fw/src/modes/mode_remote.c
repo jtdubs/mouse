@@ -1,8 +1,8 @@
-#include "mode_remote.h"
+#include "modes/mode_remote.h"
 
-#include "command.h"
-#include "motor.h"
-#include "pin.h"
+#include "platform/motor.h"
+#include "platform/pin.h"
+#include "serial/command.h"
 
 void mode_remote_tick() {
   if (command_available()) {

@@ -1,8 +1,8 @@
-#include "mode_error.h"
+#include "modes/mode_error.h"
 
-#include "mode.h"
-#include "motor.h"
-#include "pin.h"
+#include "modes/mode.h"
+#include "platform/motor.h"
+#include "platform/pin.h"
 
 uint8_t  error_code;
 uint8_t  bit_index;

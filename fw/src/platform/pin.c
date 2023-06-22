@@ -1,4 +1,4 @@
-#include "pin.h"
+#include "platform/pin.h"
 
 // pin_init initializes all pins.
 void pin_init() {

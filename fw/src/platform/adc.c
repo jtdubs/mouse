@@ -1,9 +1,9 @@
-#include "adc.h"
+#include "platform/adc.h"
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-#include "pin.h"
+#include "platform/pin.h"
 
 uint16_t sensor_right;
 uint16_t sensor_center;

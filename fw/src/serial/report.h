@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "mode.h"
-#include "usart0.h"
+#include "modes/mode.h"
+#include "platform/usart0.h"
 
 #pragma pack(push, 1)
 // report_t represents mouse status report.

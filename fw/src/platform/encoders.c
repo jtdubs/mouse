@@ -3,7 +3,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-#include "sim.h"
+#include "utils/sim.h"
 
 uint16_t encoder_left;
 uint16_t encoder_right;
