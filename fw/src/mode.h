@@ -21,3 +21,5 @@ void mode_init();
 void mode_set(uint8_t mode);
 void mode_update();
 void mode_tick();
+
+void mode_enter();

@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "adc.h"
+#include "mode.h"
 #include "motor.h"
 #include "pin.h"
 
@@ -13,14 +14,8 @@ uint8_t distance_right;
 uint8_t calc_distance_center();
 
 void mode_wall_enter() {
-  pin_clear(LED_BUILTIN);
-  pin_clear(LED_LEFT);
-  pin_clear(LED_RIGHT);
+  mode_enter();
   pin_set(IR_LEDS);
-  set_left_motor_dir(true);
-  set_left_motor_speed(0);
-  set_right_motor_dir(true);
-  set_right_motor_speed(0);
 }
 
 void mode_wall_tick() {

@@ -8,19 +8,6 @@ uint8_t  error_code;
 uint8_t  bit_index;
 uint16_t counter;
 
-void mode_error_enter() {
-  pin_clear(LED_BUILTIN);
-  pin_clear(LED_LEFT);
-  pin_clear(LED_RIGHT);
-  pin_clear(IR_LEDS);
-  set_left_motor_dir(true);
-  set_left_motor_speed(0);
-  set_right_motor_dir(true);
-  set_right_motor_speed(0);
-  bit_index = 0;
-  counter   = 0;
-}
-
 void mode_error_tick() {
   // on for first 8 bits, and first 100ms of each bit
   bool on  = bit_index < 8 && counter < 20;
