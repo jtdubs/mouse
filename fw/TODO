@@ -1,7 +1,4 @@
 Modes:
-- Error mode:
-  - Can be moved into from other modes
-  - Turns off everything and displays a blink code on the LEDs
 - Calibration mode:
   - Place mouse in center of box facing wall, let sensor calibrate against the "wall is present" values
   - Just accumulate 256 8-bit samples in a 16-bit counter, and keep the top byte
@@ -16,6 +13,7 @@ Modes:
 - Remote-control mode:
   - As-implemented
   - Eventually a "turn x degrees" and "move y mm" commands
+  - Include wall-detection logic here and get rid of wall mode.
 
 Sim:
 - Long-term goal is simulate sensor readings based on virtual walls and show it in the sim UI

@@ -72,7 +72,7 @@ func (s *serialWindow) drawStatus() {
 	s.drawNumericStatus("Battery Voltage", int(s.mouse.Serial.Report().BatteryVolts)*39, "mV")
 
 	{
-		modes := []string{"Remote", "Wall Sensor", "Unknown #2", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}
+		modes := []string{"Remote", "Wall Sensor", "Error", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}
 		imgui.TableNextRow()
 		imgui.TableSetColumnIndex(0)
 		imgui.Text("Mode:")
@@ -127,7 +127,7 @@ func (s *serialWindow) drawControls() {
 		imgui.TableSetColumnIndex(0)
 		imgui.Text("Function: ")
 		imgui.TableSetColumnIndex(1)
-		imgui.ComboStr("##FSEL", &mode, "Remote\000Wall Sensor")
+		imgui.ComboStr("##FSEL", &mode, "Remote\000Wall Sensor\000Error")
 		if mode != int32(s.mouse.Serial.Report().Mode) {
 			s.mouse.Serial.SendCommand(mouse.MouseCommand{
 				Type:  mouse.CommandSetMode,

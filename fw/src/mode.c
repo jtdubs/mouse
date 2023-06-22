@@ -2,6 +2,7 @@
 
 #include "adc.h"
 #include "command.h"
+#include "mode_error.h"
 #include "mode_remote.h"
 #include "mode_wall.h"
 
@@ -10,11 +11,12 @@ uint8_t        active_mode;
 
 static const uint8_t ModeThresholds[16] = {21, 42, 60, 77, 91, 102, 112, 123, 133, 139, 144, 150, 156, 160, 163, 255};
 
-#define MODE_COUNT 2
+#define MODE_COUNT 3
 
-static const mode_t Modes[2] = {
-    {&mode_remote_enter, &mode_remote_tick},  //
-    {&mode_wall_enter, &mode_wall_tick},      //
+static const mode_t Modes[MODE_COUNT] = {
+    [MODE_REMOTE] = {&mode_remote_enter, &mode_remote_tick},  //
+    [MODE_WALL]   = {&mode_wall_enter, &mode_wall_tick},      //
+    [MODE_ERROR]  = {&mode_error_enter, &mode_error_tick},    //
 };
 
 void mode_init() {
