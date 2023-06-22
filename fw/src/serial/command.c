@@ -14,7 +14,7 @@ static bool encoded_command_full;
 
 // on_command_received is the USART0 callback for when a command is received.
 static void on_command_received(uint8_t size) {
-  assert(!encoded_command_full);
+  assert(ASSERT_COMMAND + 0, !encoded_command_full);
 
   if (size != ENCODED_SIZE) {
     return;

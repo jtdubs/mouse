@@ -32,7 +32,8 @@
       "report.h": "c",
       "mode_remote.h": "c",
       "mode.h": "c",
-      "io.h": "c"
+      "io.h": "c",
+      "stdint.h": "c"
     }
   },
 }

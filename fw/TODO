@@ -23,3 +23,5 @@ Fw:
 
 Report:
 - Motor direction and speed
+
+// TODO: Should probably pull all of this out into platform/mode_selector or something.

@@ -33,7 +33,7 @@ void mode_init() {
 
 // mode_set sets the active mode.
 void mode_set(uint8_t mode) {
-  assert(mode < MODE_COUNT);
+  assert(ASSERT_MODE + 0, mode < MODE_COUNT);
 
   if (mode != active_mode) {
     active_mode = mode;

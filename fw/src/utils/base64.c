@@ -66,8 +66,8 @@ static uint8_t b64_rev_lookup(char c) {
 
 // base64_encode encodes a buffer of bytes into a base64 string.
 void base64_encode(uint8_t *input, uint8_t *output, uint8_t size) {
-  assert(input != NULL);
-  assert(output != NULL);
+  assert(ASSERT_BASE64 + 0, input != NULL);
+  assert(ASSERT_BASE64 + 1, output != NULL);
 
   for (uint8_t i = 0, j = 0; i < size; i += 3, j += 4) {
     uint32_t word = (((uint32_t)input[i]) << 16)     // A

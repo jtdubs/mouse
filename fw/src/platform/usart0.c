@@ -51,9 +51,9 @@ bool usart0_write_ready() {
 
 // usart0_set_write_buffer sets the write buffer for USART0.
 void usart0_set_write_buffer(uint8_t *buffer, uint8_t size) {
-  assert(buffer != NULL);
-  assert(size > 0);
-  assert(write_buffer == NULL);
+  assert(ASSERT_USART0 + 0, buffer != NULL);
+  assert(ASSERT_USART0 + 1, size > 0);
+  assert(ASSERT_USART0 + 2, write_buffer == NULL);
 
   write_buffer = buffer;
   write_index  = size;
@@ -62,8 +62,8 @@ void usart0_set_write_buffer(uint8_t *buffer, uint8_t size) {
 
 // usart0_write begins an asynchronous write to USART0.
 void usart0_write() {
-  assert(write_buffer != NULL);
-  assert(usart0_write_ready());
+  assert(ASSERT_USART0 + 3, write_buffer != NULL);
+  assert(ASSERT_USART0 + 4, usart0_write_ready());
 
   // Enable the Data Register Empty Interrupt to start the write.
   write_index  = 0;
@@ -83,17 +83,17 @@ void usart0_disable_receiver() {
 
 // usart0_enable_receiver enables the USART0 receiver.
 void usart0_enable_receiver() {
-  assert(read_buffer != NULL);
-  assert(read_callback != NULL);
-  assert(read_size > 0);
+  assert(ASSERT_USART0 + 5, read_buffer != NULL);
+  assert(ASSERT_USART0 + 6, read_callback != NULL);
+  assert(ASSERT_USART0 + 7, read_size > 0);
 
   UCSR0B |= (1 << RXEN0);
 }
 
 // usart0_set_read_buffer sets the read buffer for USART0.
 void usart0_set_read_buffer(uint8_t *buffer, uint8_t size) {
-  assert(buffer != NULL);
-  assert(size > 0);
+  assert(ASSERT_USART0 + 8, buffer != NULL);
+  assert(ASSERT_USART0 + 9, size > 0);
 
   read_buffer = buffer;
   read_size   = size;
@@ -102,7 +102,7 @@ void usart0_set_read_buffer(uint8_t *buffer, uint8_t size) {
 
 // usart0_set_read_callback sets the read callback for USART0.
 void usart0_set_read_callback(buffer_received_callback_t callback) {
-  assert(callback != NULL);
+  assert(ASSERT_USART0 + 10, callback != NULL);
 
   read_callback = callback;
 }
