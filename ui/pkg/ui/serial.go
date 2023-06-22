@@ -269,7 +269,7 @@ func (s *serialWindow) drawMotorControl(name string, speedCommand mouse.CommandT
 	imgui.SameLineV(0, 20)
 	tempForward := *forward
 	imgui.Checkbox(fmt.Sprintf("Reverse##%vDirection", name), &tempForward)
-	if tempForward != s.leftForward {
+	if tempForward != *forward {
 		*forward = tempForward
 		s.mouse.Serial.SendCommand(mouse.MouseCommand{
 			Type: dirCommand,

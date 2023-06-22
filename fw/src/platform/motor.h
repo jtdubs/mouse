@@ -19,9 +19,9 @@ inline void set_left_motor_dir(bool forward) {
 // set_right_motor_dir sets the direction of the right motor.
 inline void set_right_motor_dir(bool forward) {
   if (forward) {
-    pin_set(RIGHT_DIR);
-  } else {
     pin_clear(RIGHT_DIR);
+  } else {
+    pin_set(RIGHT_DIR);
   }
 }
 

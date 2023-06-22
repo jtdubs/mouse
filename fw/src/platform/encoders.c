@@ -49,9 +49,9 @@ ISR(INT1_vect, ISR_BLOCK) {
 
   // Update the encoder count based on rotation direction.
   if (a == last_b) {
-    encoder_right++;
-  } else {
     encoder_right--;
+  } else {
+    encoder_right++;
   }
 
   last_b = b;

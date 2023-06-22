@@ -20,3 +20,6 @@ Sim:
 
 Fw:
 - Better documentation of modules, how they work and what they do.
+
+Report:
+- Motor direction and speed
