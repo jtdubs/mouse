@@ -3,6 +3,8 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
+#include "pin.h"
+
 // Encoder counts.
 uint16_t encoder_left;
 uint16_t encoder_right;
@@ -21,6 +23,8 @@ void encoders_init() {
 ISR(INT0_vect, ISR_BLOCK) {
   static uint8_t last_b = 0;
 
+  pin_set(PROBE_1);
+
   // Read the encoder pins (b and clk) and calculate a.
   uint8_t d   = PIND;
   uint8_t b   = (d >> 4) & 1;
@@ -35,11 +39,15 @@ ISR(INT0_vect, ISR_BLOCK) {
   }
 
   last_b = b;
+
+  pin_clear(PROBE_1);
 }
 
 // Right Encoder Clock
 ISR(INT1_vect, ISR_BLOCK) {
   static uint8_t last_b = 0;
+
+  pin_set(PROBE_2);
 
   // Read the encoder pins (b and clk) and calculate a.
   uint8_t d   = PIND;
@@ -55,4 +63,6 @@ ISR(INT1_vect, ISR_BLOCK) {
   }
 
   last_b = b;
+
+  pin_clear(PROBE_1);
 }
