@@ -6,16 +6,12 @@
 #include "platform/adc.h"
 #include "platform/motor.h"
 #include "platform/pin.h"
+#include "platform/selector.h"
 #include "serial/command.h"
 #include "utils/assert.h"
 
-// The proposed mode (from the DIP switches) and the active mode.
-static uint8_t proposed_mode;
+// The active mode.
 static uint8_t active_mode;
-
-// Voltage thresholds for the DIP switches.
-// TODO: Should probably pull all of this out into platofrm/mode_selector or something.
-static const uint8_t ModeThresholds[16] = {21, 42, 60, 77, 91, 102, 112, 123, 133, 139, 144, 150, 156, 160, 163, 255};
 
 // Register the modes and their mode functions.
 #define MODE_COUNT 3
@@ -33,8 +29,6 @@ void mode_init() {
 
 // mode_set sets the active mode.
 void mode_set(uint8_t mode) {
-  assert(ASSERT_MODE + 0, mode < MODE_COUNT);
-
   if (mode != active_mode) {
     active_mode = mode;
     // Enter the new mode.
@@ -44,21 +38,9 @@ void mode_set(uint8_t mode) {
 
 // mode_update handles mode changes initiated through the mode selector or serial command.
 void mode_update() {
-  // Read the mode selector voltage.
-  uint8_t v = mode_selector >> 2;
-
-  // If the button is being pressed, enter the proposed mode.
-  if (v > 180) {
-    mode_set(proposed_mode);
-    return;
-  }
-
-  // Otherwise, decode the mode selector voltage.
-  for (int i = 0; i < 16; i++) {
-    if (v < ModeThresholds[i]) {
-      proposed_mode = 15 - i;
-      break;
-    }
+  uint8_t new_mode = selector_update();
+  if (new_mode != 0xFF) {
+    mode_set(new_mode);
   }
 
   // If a serial command has been received to set the mode, process it.

@@ -11,7 +11,13 @@
 #define ASSERT_BASE64 0x40
 
 #if !defined(NOASSERT)
-#define assert(n, e) ((e) ? (void)0 : mode_error(n))
+#define assert(n, e) \
+  {                  \
+    if (!(e)) {      \
+      mode_error(n); \
+      return;        \
+    }                \
+  }
 #else
 #define assert(n, e)
 #endif
