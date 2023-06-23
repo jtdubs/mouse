@@ -23,7 +23,7 @@ void encoders_init() {
 ISR(INT0_vect, ISR_BLOCK) {
   static uint8_t last_b = 0;
 
-  pin_set(PROBE_1);
+  pin_toggle(PROBE_1);
 
   // Read the encoder pins (b and clk) and calculate a.
   uint8_t d   = PIND;
@@ -39,15 +39,13 @@ ISR(INT0_vect, ISR_BLOCK) {
   }
 
   last_b = b;
-
-  pin_clear(PROBE_1);
 }
 
 // Right Encoder Clock
 ISR(INT1_vect, ISR_BLOCK) {
   static uint8_t last_b = 0;
 
-  pin_set(PROBE_2);
+  pin_toggle(PROBE_2);
 
   // Read the encoder pins (b and clk) and calculate a.
   uint8_t d   = PIND;
@@ -63,6 +61,4 @@ ISR(INT1_vect, ISR_BLOCK) {
   }
 
   last_b = b;
-
-  pin_clear(PROBE_1);
 }

@@ -113,14 +113,14 @@ func (s *simWindow) drawStatus(sim *sim.Sim) {
 	imgui.TableSetColumnIndex(0)
 	imgui.Text("Left Motor: ")
 	imgui.TableSetColumnIndex(1)
-	imgui.Text(fmt.Sprintf("%v (Hz)", sim.LeftMotor.ActualFrequency/4))
+	imgui.Text(fmt.Sprintf("%2.2f (Hz)", 16000000.0/float32(sim.LeftMotor.ActualPeriod*240)))
 
 	// Right Motor
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text("Right Motor: ")
 	imgui.TableSetColumnIndex(1)
-	imgui.Text(fmt.Sprintf("%v (Hz)", sim.RightMotor.ActualFrequency/4))
+	imgui.Text(fmt.Sprintf("%2.2f (Hz)", 16000000.0/float32(sim.RightMotor.ActualPeriod*240)))
 
 	imgui.EndTable()
 }

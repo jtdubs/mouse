@@ -34,7 +34,7 @@ void report_init() {
 // report_send sends the report, if usart0 is ready.
 void report_send() {
   if (usart0_write_ready()) {
-    report.battery_volts        = adc_battery_voltage;
+    report.battery_volts        = adc_battery_voltage >> 2;
     report.mode                 = mode_active;
     report.motors.encoder_left  = encoder_left;
     report.motors.encoder_right = encoder_right;

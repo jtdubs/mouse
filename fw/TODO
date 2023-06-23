@@ -16,11 +16,15 @@ Modes:
   - Include wall-detection logic here and get rid of wall mode.
 
 Sim:
-- Long-term goal is simulate sensor readings based on virtual walls and show it in the sim UI
+- Track mouse absolute position via integral of motor speeds over time
+- Add a "maze" that shows up in the UI
+- Allow drag and drop of mouse within maze to update absolute position
+- Allow reset of firmware for long-run tests
+- Allow disabling VCD output
+- Simulate IR readings based on wall distance in simulation
 
 Fw:
 - Better documentation of modules, how they work and what they do.
 
 Motors:
 - Encoder count is 240 per wheel revolution, so ~0.4mm
-- Measure motor speeds at various power levels via probe and add to sim.
