@@ -1,12 +1,6 @@
 .PHONY: all release debug clean upload sim simattach size
 
-USE_GCC12=1
-
-ifeq ($(USE_GCC12),1)
 AVR_BIN=/opt/avr-gcc-12.1.0-x64-linux/bin
-else
-AVR_BIN=/usr/bin
-endif
 
 GCC = $(AVR_BIN)/avr-gcc
 OBJCOPY = $(AVR_BIN)/avr-objcopy
@@ -19,11 +13,7 @@ DEBUG_OBJECTS = $(SOURCES:src/%.c=build/debug/%.o)
 TARGET = mouse
 
 CFLAGS=$(shell pkg-config --cflags simavr) # Include simavr headers.
-ifeq ($(USE_GCC12),1)
 CFLAGS+=-std=c17                       # Use C17 standard. 
-else
-CFLAGS+=-std=gnu11                     # Use GNU C11 standard.  :( 
-endif
 CFLAGS+=-Wall -Werror -Wextra          # Enable all warnings and treat them as errors.
 CFLAGS+=-D__AVR__                      # Tell AVR libc that we are compiling for AVR.
 CFLAGS+=-D__AVR_ATmega328P__           # Tell AVR libc which microcontroller we are using.
@@ -32,9 +22,7 @@ CFLAGS+=-mmcu=atmega328p               # Target microcontroller.
 CFLAGS+=-Wl,--relax,--gc-sections      # Remove unused sections.
 CFLAGS+=-Wl,--undefined=_mmcu,--section-start=.mmcu=0x910000 # Define mmcu section.
 CFLAGS+=-DBASE64_NO_LOOKUPS            # Use slower but smaller base64 implementation.
-ifeq ($(USE_GCC12),1)
 CFLAGS+=--param=min-pagesize=0         # Needed for AVR target.
-endif
 CFLAGS+=-O2                            # Optimize for speed.
 CFLAGS+=-Isrc/
 

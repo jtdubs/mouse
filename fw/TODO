@@ -21,5 +21,6 @@ Sim:
 Fw:
 - Better documentation of modules, how they work and what they do.
 
-Report:
-- Motor direction and speed
+Motors:
+- Encoder count is 240 per wheel revolution, so ~0.4mm
+- Measure motor speeds at various power levels via probe and add to sim.
