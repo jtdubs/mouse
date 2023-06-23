@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"math"
 
 	imgui "github.com/AllenDang/cimgui-go"
 	"github.com/jtdubs/mouse/sim/pkg/sim"
@@ -121,6 +122,13 @@ func (s *simWindow) drawStatus(sim *sim.Sim) {
 	imgui.Text("Right Motor: ")
 	imgui.TableSetColumnIndex(1)
 	imgui.Text(fmt.Sprintf("%2.2f (Hz)", 16000000.0/float32(sim.RightMotor.ActualPeriod*240)))
+
+	// Location
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text("Location: ")
+	imgui.TableSetColumnIndex(1)
+	imgui.Text(fmt.Sprintf("x=%2.2f, y=%2.2f, theta=%2.2f", sim.Environment.MouseX, sim.Environment.MouseY, sim.Environment.MouseAngle*180.0/math.Pi))
 
 	imgui.EndTable()
 }

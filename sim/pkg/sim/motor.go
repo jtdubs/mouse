@@ -17,6 +17,10 @@ import (
 	"github.com/mattn/go-pointer"
 )
 
+type EncoderTickEvent struct {
+	Left, Forward bool
+}
+
 type Motor struct {
 	DesiredPeriod                uint32
 	ActualPeriod                 uint32
@@ -25,9 +29,10 @@ type Motor struct {
 	ix                           int // mod 4 location in pulse train
 	avr                          *C.avr_t
 	pwmIRQ, clkIRQ, bIRQ, dirIRQ *C.avr_irq_t
+	encoderChan                  chan<- EncoderTickEvent
 }
 
-func NewMotor(avr *C.avr_t, left bool) *Motor {
+func NewMotor(avr *C.avr_t, left bool, encoderChan chan<- EncoderTickEvent) *Motor {
 	m := &Motor{
 		DesiredPeriod: 0,
 		ActualPeriod:  0,
@@ -35,6 +40,7 @@ func NewMotor(avr *C.avr_t, left bool) *Motor {
 		left:          left,
 		ix:            0,
 		avr:           avr,
+		encoderChan:   encoderChan,
 	}
 	if left {
 		m.pwmIRQ = C.avr_io_getirq(avr, 0x746D7231 /* tmr1 */, 0)
@@ -78,6 +84,7 @@ func (m *Motor) OnCycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Poi
 		} else {
 			m.ix = (m.ix + 3) % 4
 		}
+		m.encoderChan <- EncoderTickEvent{Left: m.left, Forward: m.Forward}
 	}
 
 	C.avr_raise_irq(m.bIRQ, C.uint((m.ix>>1)&1))
