@@ -4,6 +4,11 @@
 
 #include "platform/pin.h"
 
+uint8_t motor_left_speed;
+uint8_t motor_right_speed;
+bool    motor_left_forward;
+bool    motor_right_forward;
+
 // motor_init initializes the motors.
 void motor_init() {
   TCCR1A = (1 << COM1A1)   // Clear OC1A when up-counting, set when down-counting
@@ -16,4 +21,7 @@ void motor_init() {
   TIMSK1 = 0;              // Disable interrupts.
   TIFR0  = 0;              // Clear interrupt flags.
   TCNT1  = 0;              // Reset counter.
+
+  set_left_motor_forward(true);
+  set_right_motor_forward(true);
 }

@@ -21,6 +21,7 @@ type Motor struct {
 	DesiredFrequency             uint32
 	ActualFrequency              uint32
 	Forward                      bool
+	left                         bool
 	ix                           int // mod 4 location in pulse train
 	avr                          *C.avr_t
 	pwmIRQ, clkIRQ, bIRQ, dirIRQ *C.avr_irq_t
@@ -31,6 +32,7 @@ func NewMotor(avr *C.avr_t, left bool) *Motor {
 		DesiredFrequency: 0,
 		ActualFrequency:  0,
 		Forward:          true,
+		left:             left,
 		ix:               0,
 		avr:              avr,
 	}
@@ -67,7 +69,7 @@ func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 
 func (m *Motor) OnCycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Pointer) C.avr_cycle_count_t {
 	if m.ActualFrequency > 0 {
-		if m.Forward {
+		if m.Forward != m.left {
 			m.ix = (m.ix + 1) % 4
 		} else {
 			m.ix = (m.ix + 3) % 4

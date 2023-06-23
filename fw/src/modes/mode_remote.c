@@ -27,11 +27,11 @@ void mode_remote_tick() {
       case COMMAND_SET_RIGHT_MOTOR_SPEED:
         set_right_motor_speed(command.value);
         break;
-      case COMMAND_SET_LEFT_MOTOR_DIR:
-        set_left_motor_dir(command.value > 0);
+      case COMMAND_SET_LEFT_MOTOR_FORWARD:
+        set_left_motor_forward(command.value > 0);
         break;
-      case COMMAND_SET_RIGHT_MOTOR_DIR:
-        set_right_motor_dir(command.value > 0);
+      case COMMAND_SET_RIGHT_MOTOR_FORWARD:
+        set_right_motor_forward(command.value > 0);
         break;
       default:
         return;

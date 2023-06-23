@@ -25,15 +25,15 @@ var (
 type CommandType uint8
 
 const (
-	CommandSetMode         CommandType = 0
-	CommandOnboardLED      CommandType = 1
-	CommandLeftLED         CommandType = 2
-	CommandRightLED        CommandType = 3
-	CommandIRLEDs          CommandType = 4
-	CommandLeftMotorSpeed  CommandType = 5
-	CommandRightMotorSpeed CommandType = 6
-	CommandLeftMotorDir    CommandType = 7
-	CommandRightMotorDir   CommandType = 8
+	CommandSetMode           CommandType = 0
+	CommandOnboardLED        CommandType = 1
+	CommandLeftLED           CommandType = 2
+	CommandRightLED          CommandType = 3
+	CommandIRLEDs            CommandType = 4
+	CommandLeftMotorSpeed    CommandType = 5
+	CommandRightMotorSpeed   CommandType = 6
+	CommandLeftMotorForward  CommandType = 7
+	CommandRightMotorForward CommandType = 8
 )
 
 type MouseCommand struct {
@@ -42,16 +42,16 @@ type MouseCommand struct {
 }
 
 type MouseReport struct {
-	BatteryVolts   uint8
-	Mode           uint8
-	LeftEncoder    uint16
-	RightEncoder   uint16
-	Sensors        uint32
-	LEDs           uint8
-	DistanceLeft   uint8
-	DistanceCenter uint8
-	DistanceRight  uint8
-	Padding        uint8
+	BatteryVolts uint8
+	Mode         uint8
+	Sensors      uint32
+	LEDs         uint8
+	EncoderLeft  uint16
+	EncoderRight uint16
+	SpeedLeft    uint8
+	SpeedRight   uint8
+	Forward      uint8
+	Padding      uint8
 }
 
 func (r *MouseReport) DecodeSensors() (left, center, right uint16) {
@@ -66,6 +66,12 @@ func (r *MouseReport) DecodeLEDs() (onboard, left, right, ir bool) {
 	left = ((r.LEDs >> 1) & 0x01) == 1
 	right = ((r.LEDs >> 2) & 0x01) == 1
 	ir = ((r.LEDs >> 3) & 0x01) == 1
+	return
+}
+
+func (r *MouseReport) DecodeForward() (left, right bool) {
+	left = (r.Forward & 0x01) == 1
+	right = ((r.Forward >> 1) & 0x01) == 1
 	return
 }
 

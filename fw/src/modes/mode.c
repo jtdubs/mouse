@@ -11,7 +11,7 @@
 #include "utils/assert.h"
 
 // The active mode.
-static uint8_t active_mode;
+uint8_t mode_active;
 
 // Register the modes and their mode functions.
 #define MODE_COUNT 3
@@ -24,15 +24,15 @@ static const mode_t Modes[MODE_COUNT] = {
 // mode_init initializes the mode module.
 void mode_init() {
   // Enter the initial mode.
-  Modes[active_mode].enter();
+  Modes[mode_active].enter();
 }
 
 // mode_set sets the active mode.
 void mode_set(uint8_t mode) {
-  if (mode != active_mode) {
-    active_mode = mode;
+  if (mode != mode_active) {
+    mode_active = mode;
     // Enter the new mode.
-    Modes[active_mode].enter();
+    Modes[mode_active].enter();
   }
 }
 
@@ -52,7 +52,7 @@ void mode_update() {
 
 // mode_tick ticks the active mode.
 void mode_tick() {
-  Modes[active_mode].tick();
+  Modes[mode_active].tick();
 }
 
 // mode_enter is the default enter function.
@@ -62,13 +62,8 @@ void mode_enter() {
   pin_clear(LED_LEFT);
   pin_clear(LED_RIGHT);
   pin_clear(IR_LEDS);
-  set_left_motor_dir(true);
+  set_left_motor_forward(true);
   set_left_motor_speed(0);
-  set_right_motor_dir(true);
+  set_right_motor_forward(true);
   set_right_motor_speed(0);
-}
-
-// mode_get_active() returns the active mode.
-uint8_t mode_get_active() {
-  return active_mode;
 }

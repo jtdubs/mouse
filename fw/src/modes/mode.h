@@ -8,6 +8,8 @@
 #define MODE_WALL 1
 #define MODE_ERROR 2
 
+extern uint8_t mode_active;
+
 // A mode is defined by two functions: enter and tick.
 typedef void (*mode_enter_fn)();
 typedef void (*mode_tick_fn)();
@@ -32,6 +34,3 @@ void mode_tick();
 
 // mode_enter is the default enter function.
 void mode_enter();
-
-// mode_get_active() returns the active mode.
-uint8_t mode_get_active();
