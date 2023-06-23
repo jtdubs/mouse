@@ -20,7 +20,6 @@ Sim:
 
 Fw:
 - Better documentation of modules, how they work and what they do.
-- Namespace exported variables based on module...
 
 Report:
 - Motor direction and speed

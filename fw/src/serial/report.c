@@ -33,13 +33,13 @@ void report_init() {
 // report_send sends the report, if usart0 is ready.
 void report_send() {
   if (usart0_write_ready()) {
-    report.battery_volts   = battery_voltage;
+    report.battery_volts   = adc_battery_voltage;
     report.mode            = mode_get_active();
     report.encoder_left    = encoder_left;
     report.encoder_right   = encoder_right;
-    report.sensors.left    = sensor_left;
-    report.sensors.center  = sensor_center;
-    report.sensors.right   = sensor_right;
+    report.sensors.left    = adc_sensor_left;
+    report.sensors.center  = adc_sensor_center;
+    report.sensors.right   = adc_sensor_right;
     report.distance_left   = distance_left;
     report.distance_center = distance_center;
     report.distance_right  = distance_right;

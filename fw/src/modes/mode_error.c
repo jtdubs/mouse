@@ -5,9 +5,9 @@
 #include "platform/pin.h"
 
 // The error code and associated blink pattern state.
-uint8_t  error_code;
-uint8_t  bit_index;
-uint16_t counter;
+uint8_t         error_code;
+static uint8_t  bit_index;
+static uint16_t counter;
 
 void mode_error_tick() {
   // Blink for first 8 bits, and first 20ms of each blink period.

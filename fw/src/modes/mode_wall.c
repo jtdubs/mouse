@@ -19,15 +19,15 @@ void mode_wall_enter() {
 }
 
 void mode_wall_tick() {
-  pin_set2(LED_LEFT, sensor_left > 100);
-  pin_set2(LED_BUILTIN, sensor_center > 100);
-  pin_set2(LED_RIGHT, sensor_right > 100);
+  pin_set2(LED_LEFT, adc_sensor_left > 100);
+  pin_set2(LED_BUILTIN, adc_sensor_center > 100);
+  pin_set2(LED_RIGHT, adc_sensor_right > 100);
 
   distance_center = calc_distance_center();
 }
 
 uint8_t calc_distance_center() {
-  uint8_t sensor = sensor_center >> 2;
+  uint8_t sensor = adc_sensor_center >> 2;
 
   if (sensor < 4) {
     return 255 - (sensor << 4);
