@@ -16,7 +16,6 @@ Modes:
   - Include wall-detection logic here and get rid of wall mode.
 
 Sim:
-- Imgui MDI icons
 - Is there a way to use a gdb map file to pull static variables out of memory and display them? 
 - Add a "maze" that shows up in the UI
 - Allow drag and drop of mouse within maze to update absolute position
@@ -25,6 +24,3 @@ Sim:
 
 Fw:
 - Better documentation of modules, how they work and what they do.
-
-Motors:
-- Encoder count is 240 per wheel revolution, so ~0.4mm
