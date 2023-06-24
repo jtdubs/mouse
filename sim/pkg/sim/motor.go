@@ -18,13 +18,13 @@ import (
 )
 
 type EncoderTickEvent struct {
-	Left, Forward bool
+	Left, Clockwise bool
 }
 
 type Motor struct {
 	DesiredPeriod                uint32
 	ActualPeriod                 uint32
-	Forward                      bool
+	Clockwise                    bool
 	left                         bool
 	ix                           int // mod 4 location in pulse train
 	avr                          *C.avr_t
@@ -36,7 +36,7 @@ func NewMotor(avr *C.avr_t, left bool, encoderChan chan<- EncoderTickEvent) *Mot
 	m := &Motor{
 		DesiredPeriod: 0,
 		ActualPeriod:  0,
-		Forward:       true,
+		Clockwise:     !left,
 		left:          left,
 		ix:            0,
 		avr:           avr,
@@ -73,18 +73,18 @@ func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 			m.DesiredPeriod = uint32((90.0 / (float32(value) - 16.0)) * 16000.0)
 		}
 	} else if irq == m.dirIRQ {
-		m.Forward = value != 0
+		m.Clockwise = value != 0
 	}
 }
 
 func (m *Motor) OnCycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Pointer) C.avr_cycle_count_t {
 	if m.ActualPeriod > 0 {
-		if m.Forward != m.left {
+		if m.Clockwise {
 			m.ix = (m.ix + 1) % 4
 		} else {
 			m.ix = (m.ix + 3) % 4
 		}
-		m.encoderChan <- EncoderTickEvent{Left: m.left, Forward: m.Forward}
+		m.encoderChan <- EncoderTickEvent{Left: m.left, Clockwise: m.Clockwise}
 	}
 
 	C.avr_raise_irq(m.bIRQ, C.uint((m.ix>>1)&1))

@@ -14,6 +14,26 @@ func newMouseWindow() *mouseWindow {
 	return &mouseWindow{}
 }
 
+func (s *mouseWindow) draw(m *sim.Mouse) {
+	imgui.Begin("Mouse Sim")
+
+	imgui.SeparatorText("Controls")
+	imgui.Text("")
+	imgui.SameLineV(0, 20)
+	imgui.BeginGroup()
+	s.drawControls(m)
+	imgui.EndGroup()
+
+	imgui.SeparatorText("Status")
+	imgui.Text("")
+	imgui.SameLineV(0, 20)
+	imgui.BeginGroup()
+	s.drawStatus(m)
+	imgui.EndGroup()
+
+	imgui.End()
+}
+
 func (s *mouseWindow) drawControls(m *sim.Mouse) {
 	imgui.BeginTable("##Controls", 2)
 	imgui.TableSetupColumnV("##ControlsLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
@@ -131,24 +151,4 @@ func (s *mouseWindow) drawStatus(m *sim.Mouse) {
 	imgui.Text(fmt.Sprintf("x=%2.2f, y=%2.2f, theta=%2.2f", m.Environment.MouseX, m.Environment.MouseY, m.Environment.MouseAngle*180.0/math.Pi))
 
 	imgui.EndTable()
-}
-
-func (s *mouseWindow) draw(m *sim.Mouse) {
-	imgui.Begin("Mouse Sim")
-
-	imgui.SeparatorText("Controls")
-	imgui.Text("")
-	imgui.SameLineV(0, 20)
-	imgui.BeginGroup()
-	s.drawControls(m)
-	imgui.EndGroup()
-
-	imgui.SeparatorText("Status")
-	imgui.Text("")
-	imgui.SameLineV(0, 20)
-	imgui.BeginGroup()
-	s.drawStatus(m)
-	imgui.EndGroup()
-
-	imgui.End()
 }

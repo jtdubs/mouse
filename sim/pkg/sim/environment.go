@@ -15,8 +15,8 @@ var (
 	WheelCircumference     float64 = math.Pi * WheelDiameter
 	DistancePerEncoderTick float64 = WheelCircumference / float64(EncoderTicksPerRotation)
 	EncoderTickDtheta      float64 = DistancePerEncoderTick / WheelBase
-	EncoderTickDx          float64 = (WheelBase / 2.0) * (1.0 - math.Cos(EncoderTickDtheta))
-	EncoderTickDy          float64 = (WheelBase / 2.0) * math.Sin(EncoderTickDtheta)
+	EncoderTickDx          float64 = (WheelBase / 2.0) * math.Sin(EncoderTickDtheta)
+	EncoderTickDy          float64 = (WheelBase / 2.0) * (1.0 - math.Cos(EncoderTickDtheta))
 )
 
 type Environment struct {
@@ -38,43 +38,50 @@ func NewEnvironment(mazeWidth, mazeHeight int, encoderChan <-chan EncoderTickEve
 func (e *Environment) Init() {
 	go func() {
 		for ev := range e.encoderChan {
-			if ev.Left {
-				e.LeftEncoderTick(ev.Forward)
-			} else {
-				e.RightEncoderTick(ev.Forward)
-			}
+			e.EncoderTick(ev.Left, ev.Left != ev.Clockwise)
 		}
 	}()
 }
 
-func (e *Environment) dx() float64 {
-	return (EncoderTickDx * math.Cos(e.MouseAngle)) - (EncoderTickDy * math.Sin(e.MouseAngle))
+func (e *Environment) dx(left, forward bool) float64 {
+	dx := EncoderTickDx
+	if !forward {
+		dx = -dx
+	}
+	dy := EncoderTickDy
+	if left {
+		dy = -dy
+	}
+	return (dx * math.Cos(e.MouseAngle)) - (dy * math.Sin(e.MouseAngle))
 }
 
-func (e *Environment) dy() float64 {
-	return (EncoderTickDx * math.Sin(e.MouseAngle)) - (EncoderTickDy * math.Cos(e.MouseAngle))
+func (e *Environment) dy(left, forward bool) float64 {
+	dx := EncoderTickDx
+	if !forward {
+		dx = -dx
+	}
+	dy := EncoderTickDy
+	if left {
+		dy = -dy
+	}
+	return (dx * math.Sin(e.MouseAngle)) + (dy * math.Cos(e.MouseAngle))
 }
 
-func (e *Environment) LeftEncoderTick(forward bool) {
-	if forward {
-		e.MouseX += e.dx()
-		e.MouseY += e.dy()
-		e.MouseAngle -= EncoderTickDtheta
+func (e *Environment) dt(left, forward bool) float64 {
+	if left != forward {
+		return EncoderTickDtheta
 	} else {
-		e.MouseX += e.dx()
-		e.MouseY -= e.dy()
-		e.MouseAngle += EncoderTickDtheta
+		return -EncoderTickDtheta
 	}
 }
 
-func (e *Environment) RightEncoderTick(forward bool) {
-	if forward {
-		e.MouseX -= e.dx()
-		e.MouseY += e.dy()
-		e.MouseAngle += EncoderTickDtheta
-	} else {
-		e.MouseX -= e.dx()
-		e.MouseY -= e.dy()
-		e.MouseAngle -= EncoderTickDtheta
+func (e *Environment) EncoderTick(left, forward bool) {
+	e.MouseX += e.dx(left, forward)
+	e.MouseY += e.dy(left, forward)
+	e.MouseAngle += e.dt(left, forward)
+	if e.MouseAngle < 0 {
+		e.MouseAngle += 2 * math.Pi
+	} else if e.MouseAngle >= 2*math.Pi {
+		e.MouseAngle -= 2 * math.Pi
 	}
 }
