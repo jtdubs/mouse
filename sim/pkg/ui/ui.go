@@ -9,7 +9,7 @@ import (
 )
 
 type window interface {
-	draw(m *sim.Mouse)
+	draw()
 }
 
 type UI struct {
@@ -33,7 +33,7 @@ func New(sim *sim.Sim) *UI {
 		sim:     sim,
 		backend: backend,
 		windows: []window{
-			newMouseWindow(),
+			newMouseWindow(sim),
 		},
 	}
 }
@@ -47,7 +47,7 @@ func (ui *UI) Run(ctx context.Context) {
 		dockspace := imgui.DockSpaceOverViewport()
 		for _, window := range ui.windows {
 			imgui.SetNextWindowDockIDV(dockspace, imgui.CondFirstUseEver)
-			window.draw(ui.sim.Mouse)
+			window.draw()
 		}
 		ui.backend.Refresh()
 	})

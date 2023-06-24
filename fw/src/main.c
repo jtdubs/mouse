@@ -41,9 +41,6 @@ void tick() {
 }
 
 int main() {
-  // Start the VCD trace (simulator only).
-  sim_start_trace();
-
   init();
   for (;;) {
     timer_wait();

@@ -15,12 +15,8 @@ package sim
 import "C"
 
 import (
-	"context"
 	"flag"
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 var (
@@ -28,17 +24,68 @@ var (
 	gdbEnabled   = flag.Bool("gdb", false, "Enable GDB")
 )
 
+type State int
+
+const (
+	Paused State = iota
+	Running
+	Crashed
+	Done
+)
+
 type Sim struct {
-	avr   *C.avr_t
-	pty   C.uart_pty_t
-	Mouse *Mouse
+	State          State
+	Recording      bool
+	loopShouldExit bool
+	loopChan       chan struct{}
+	avr            *C.avr_t
+	pty            C.uart_pty_t
+	Mouse          *Mouse
 }
 
 func New() *Sim {
-	return &Sim{}
+	return &Sim{
+		State:     Paused,
+		Recording: false,
+	}
 }
 
-func (s *Sim) Run(ctx context.Context) {
+func (s *Sim) SetRunning(running bool) {
+	if running && s.State == Paused {
+		go s.loop()
+	} else if !running && s.State == Running {
+		s.loopShouldExit = true
+		<-s.loopChan
+		s.loopShouldExit = false
+	}
+}
+
+func (s *Sim) SetRecording(recording bool) {
+	wasRunning := s.State == Running
+	s.SetRunning(false)
+	defer s.SetRunning(wasRunning)
+
+	if recording && !s.Recording {
+		C.avr_vcd_start(s.avr.vcd)
+		s.Recording = true
+	} else if !recording && s.Recording {
+		C.avr_vcd_stop(s.avr.vcd)
+		s.Recording = false
+	}
+}
+
+func (s *Sim) Reset() {
+	if s.State == Crashed {
+		return
+	}
+
+	wasRunning := s.State == Running
+	s.SetRunning(false)
+	C.avr_reset(s.avr)
+	s.SetRunning(wasRunning)
+}
+
+func (s *Sim) Init() {
 	if *firmwarePath == "" {
 		log.Fatalf("No firmware specified")
 	}
@@ -72,26 +119,26 @@ func (s *Sim) Run(ctx context.Context) {
 
 	C.uart_pty_init(s.avr, &s.pty)
 	C.uart_pty_connect(&s.pty, '0')
+}
 
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
+func (s *Sim) loop() {
+	s.loopChan = make(chan struct{})
+	defer close(s.loopChan)
 
-	var exit bool
-	go func() {
-		var state int = C.cpu_Running
-		for !exit {
-			state = int(C.avr_run(s.avr))
-			if state == C.cpu_Done {
-				break
-			} else if state == C.cpu_Crashed {
-				log.Fatalf("AVR crashed")
-			}
+	s.State = Running
+
+	var state int = C.cpu_Running
+	for !s.loopShouldExit {
+		state = int(C.avr_run(s.avr))
+		if state == C.cpu_Done {
+			s.State = Done
+			return
+		} else if state == C.cpu_Crashed {
+			log.Fatalf("AVR crashed")
+			s.State = Crashed
+			return
 		}
-	}()
-
-	select {
-	case <-signals:
-	case <-ctx.Done():
 	}
-	exit = true
+
+	s.State = Paused
 }

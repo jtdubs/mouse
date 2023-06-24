@@ -16,11 +16,10 @@ Modes:
   - Include wall-detection logic here and get rid of wall mode.
 
 Sim:
-- Track mouse absolute position via integral of motor speeds over time
+- Imgui MDI icons
+- VCD stop panics??
 - Add a "maze" that shows up in the UI
 - Allow drag and drop of mouse within maze to update absolute position
-- Allow reset of firmware for long-run tests
-- Allow disabling VCD output
 - Simulate IR readings based on wall distance in simulation
   - Need a better characterization of IR reading based on angle for this
 
