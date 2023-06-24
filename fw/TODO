@@ -17,7 +17,7 @@ Modes:
 
 Sim:
 - Imgui MDI icons
-- VCD stop panics??
+- Is there a way to use a gdb map file to pull static variables out of memory and display them? 
 - Add a "maze" that shows up in the UI
 - Allow drag and drop of mouse within maze to update absolute position
 - Simulate IR readings based on wall distance in simulation
