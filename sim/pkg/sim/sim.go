@@ -62,6 +62,14 @@ func New() *Sim {
 	}
 }
 
+func (s *Sim) Micros() uint64 {
+	return (uint64(s.avr.cycle) >> 4)
+}
+
+func (s *Sim) Nanos() uint64 {
+	return (uint64(s.avr.cycle) * 62) + (uint64(s.avr.cycle) >> 1)
+}
+
 func (s *Sim) SetRunning(running bool) {
 	if running && s.State == Paused {
 		go s.loop()

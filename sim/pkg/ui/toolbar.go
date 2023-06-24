@@ -50,18 +50,14 @@ func (s *toolbarWindow) drawToolbar() {
 		imgui.Text("Crashed")
 	case sim.Done:
 		imgui.Text("Done")
-	default:
-		imgui.BeginDisabledV(s.sim.State == sim.Running)
+	case sim.Paused:
 		if s.toolbarButton("SimPlay", "play") {
 			s.sim.SetRunning(true)
 		}
-		imgui.EndDisabled()
-		imgui.SameLine()
-		imgui.BeginDisabledV(s.sim.State == sim.Paused)
+	case sim.Running:
 		if s.toolbarButton("SimPause", "pause") {
 			s.sim.SetRunning(false)
 		}
-		imgui.EndDisabled()
 	}
 	imgui.SameLineV(0, 20)
 
@@ -76,6 +72,19 @@ func (s *toolbarWindow) drawToolbar() {
 		s.sim.SetRecording(false)
 	}
 	imgui.EndDisabled()
+	imgui.SameLineV(0, 20)
+
+	nanos := s.sim.Nanos()
+	nanosText := fmt.Sprintf("%d:%02d:%02d.%03d,%03d,%03d",
+		(nanos / 3600000000000),
+		(nanos/60000000000)%60,
+		(nanos/1000000000)%60,
+		(nanos/1000000)%1000,
+		(nanos/1000)%1000,
+		nanos%1000,
+	)
+	imgui.SetCursorPosY((48 - imgui.CalcTextSize(nanosText).Y) / 2)
+	imgui.Text(nanosText)
 }
 
 func (s *toolbarWindow) draw(dock imgui.ID) {
