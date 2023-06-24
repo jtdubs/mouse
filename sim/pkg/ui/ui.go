@@ -35,7 +35,7 @@ func New(sim *sim.Sim) *UI {
 
 	backend.SetBgColor(imgui.NewVec4(0.45, 0.55, 0.6, 1.0))
 	backend.SetAfterCreateContextHook(ui.init)
-	backend.CreateWindow("Mouse Simulator", 1280, 768, imgui.GLFWWindowFlags(0))
+	backend.CreateWindow("Mouse Simulator", 1600, 1200, imgui.GLFWWindowFlags(0))
 	backend.SetTargetFPS(60)
 
 	imgui.CurrentIO().Fonts().AddFontFromFileTTF("fonts/DroidSans.ttf", 24)
