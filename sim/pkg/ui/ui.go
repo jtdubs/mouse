@@ -10,7 +10,7 @@ import (
 
 type window interface {
 	init()
-	draw()
+	draw(dock imgui.ID)
 }
 
 type UI struct {
@@ -26,6 +26,7 @@ func New(sim *sim.Sim) *UI {
 		sim:     sim,
 		backend: backend,
 		windows: []window{
+			newToolbarWindow(sim),
 			newMouseWindow(sim),
 		},
 	}
@@ -54,11 +55,31 @@ func (ui *UI) Run(ctx context.Context) {
 		ui.backend.SetShouldClose(true)
 	}()
 	ui.backend.Run(func() {
-		dockspace := imgui.DockSpaceOverViewport()
+		var dockspaceFlags imgui.WindowFlags = imgui.WindowFlagsNoDocking |
+			imgui.WindowFlagsNoTitleBar |
+			imgui.WindowFlagsNoCollapse |
+			imgui.WindowFlagsNoResize |
+			imgui.WindowFlagsNoMove |
+			imgui.WindowFlagsNoBringToFrontOnFocus |
+			imgui.WindowFlagsNoNavFocus
+
+		vp := imgui.MainViewport()
+		imgui.SetNextWindowPos(vp.Pos().Add(imgui.NewVec2(0, 48)))
+		imgui.SetNextWindowSize(vp.Size().Sub(imgui.NewVec2(0, 48)))
+		imgui.SetNextWindowViewport(vp.ID())
+		imgui.PushStyleVarVec2(imgui.StyleVarWindowPadding, imgui.NewVec2(0, 0))
+		imgui.PushStyleVarFloat(imgui.StyleVarWindowRounding, 0)
+		imgui.PushStyleVarFloat(imgui.StyleVarWindowBorderSize, 0)
+		imgui.BeginV("Master Dockspace", nil, dockspaceFlags)
+		dockID := imgui.IDStr("Dockspace")
+		imgui.DockSpace(dockID)
+		imgui.End()
+		imgui.PopStyleVarV(3)
+
 		for _, window := range ui.windows {
-			imgui.SetNextWindowDockIDV(dockspace, imgui.CondFirstUseEver)
-			window.draw()
+			window.draw(dockID)
 		}
+
 		ui.backend.Refresh()
 	})
 }
