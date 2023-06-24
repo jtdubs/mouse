@@ -17,8 +17,8 @@ import "C"
 import (
 	"debug/elf"
 	"flag"
-	"fmt"
 	"log"
+	"reflect"
 	"strings"
 	"unsafe"
 )
@@ -37,9 +37,16 @@ const (
 	Done
 )
 
+type Symbol struct {
+	Address int
+	Length  int
+}
+
 type Sim struct {
 	State          State
 	Recording      bool
+	RAM            []byte
+	Symbols        map[string]Symbol
 	loopShouldExit bool
 	loopChan       chan struct{}
 	avr            *C.avr_t
@@ -51,11 +58,8 @@ func New() *Sim {
 	return &Sim{
 		State:     Paused,
 		Recording: false,
+		Symbols:   make(map[string]Symbol),
 	}
-}
-
-func (s *Sim) Peek(addr uint16) uint32 {
-	return uint32(*(*uint8)(unsafe.Pointer(uintptr(unsafe.Pointer(s.avr.data)) + uintptr(addr))))
 }
 
 func (s *Sim) SetRunning(running bool) {
@@ -120,7 +124,10 @@ func (s *Sim) Init() {
 		if sym.Name == "" {
 			continue
 		}
-		fmt.Printf("Symbol: %v @ 0x%08x+0x%02x\n", sym.Name, sym.Value-0x800100, sym.Size)
+		s.Symbols[sym.Name] = Symbol{
+			Address: int(sym.Value) - 0x800000,
+			Length:  int(sym.Size),
+		}
 	}
 
 	var f C.elf_firmware_t
@@ -133,14 +140,17 @@ func (s *Sim) Init() {
 		log.Fatalf("Failed to create AVR")
 	}
 
-	fmt.Printf("Ramend: %08x", s.avr.ramend)
-	// s.avr.data[0x00800135]
-
 	if C.avr_init(s.avr) != 0 {
 		log.Fatalf("Failed to initialize AVR")
 	}
 
 	C.avr_load_firmware(s.avr, &f)
+
+	// Point RAM to the AVR's RAM.
+	hdr := (*reflect.SliceHeader)(unsafe.Pointer(&s.RAM))
+	hdr.Data = uintptr(unsafe.Pointer(s.avr.data))
+	hdr.Len = int(s.avr.ramend)
+	hdr.Cap = int(s.avr.ramend)
 
 	s.Mouse = NewMouse(s.avr)
 	s.Mouse.Init()
