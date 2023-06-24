@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"encoding/binary"
 	"fmt"
 	"math"
 
@@ -118,9 +117,6 @@ func (s *mouseWindow) drawStatus() {
 
 	s.tableRow("Location:")
 	imgui.Text(fmt.Sprintf("x=%2.2f, y=%2.2f, theta=%2.2f", s.m.Environment.MouseX, s.m.Environment.MouseY, s.m.Environment.MouseAngle*180.0/math.Pi))
-
-	s.tableRow("Peeked:")
-	imgui.Text(fmt.Sprintf("%04x", binary.LittleEndian.Uint16(s.sim.RAM[s.sim.Symbols["adc_sensor_left"].Address:])))
 
 	imgui.EndTable()
 }

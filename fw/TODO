@@ -16,7 +16,6 @@ Modes:
   - Include wall-detection logic here and get rid of wall mode.
 
 Sim:
-- Filterable symbols window
 - Add a "maze" that shows up in the UI
 - Allow drag and drop of mouse within maze to update absolute position
 - Simulate IR readings based on wall distance in simulation
