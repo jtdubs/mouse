@@ -4,21 +4,34 @@
 #include <stdint.h>
 
 #define COMMAND_SET_MODE 0
-#define COMMAND_SET_ONBOARD_LED 1
-#define COMMAND_SET_LEFT_LED 2
-#define COMMAND_SET_RIGHT_LED 3
-#define COMMAND_SET_IR_LEDS 4
-#define COMMAND_SET_LEFT_MOTOR_SPEED 5
-#define COMMAND_SET_RIGHT_MOTOR_SPEED 6
-#define COMMAND_SET_LEFT_MOTOR_FORWARD 7
-#define COMMAND_SET_RIGHT_MOTOR_FORWARD 8
-#define COMMAND_MAX_VALUE 9
+#define COMMAND_SET_LEDS 1
+#define COMMAND_SET_MOTORS 2
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.
 typedef struct {
-  uint8_t  type;
-  uint16_t value;
+  uint8_t type;
+  union {
+    uint8_t padding[5];
+    struct {
+      uint8_t mode;
+      uint8_t padding[4];
+    } mode;
+    struct {
+      bool    builtin;
+      bool    left;
+      bool    right;
+      bool    ir;
+      uint8_t padding[1];
+    } leds;
+    struct {
+      uint8_t left_speed;
+      uint8_t right_speed;
+      bool    left_forward;
+      bool    right_forward;
+      uint8_t padding[1];
+    } motors;
+  } data;
 } command_t;
 #pragma pack(pop)
 

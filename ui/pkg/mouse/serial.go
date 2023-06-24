@@ -22,67 +22,14 @@ var (
 	scrollback = flag.Int("scrollback", 100000, "Number of lines to keep in the scrollback buffer")
 )
 
-type CommandType uint8
-
-const (
-	CommandSetMode           CommandType = 0
-	CommandOnboardLED        CommandType = 1
-	CommandLeftLED           CommandType = 2
-	CommandRightLED          CommandType = 3
-	CommandIRLEDs            CommandType = 4
-	CommandLeftMotorSpeed    CommandType = 5
-	CommandRightMotorSpeed   CommandType = 6
-	CommandLeftMotorForward  CommandType = 7
-	CommandRightMotorForward CommandType = 8
-)
-
-type MouseCommand struct {
-	Type  CommandType
-	Value uint16
-}
-
-type MouseReport struct {
-	BatteryVolts uint8
-	Mode         uint8
-	Sensors      uint32
-	LEDs         uint8
-	EncoderLeft  uint16
-	EncoderRight uint16
-	SpeedLeft    uint8
-	SpeedRight   uint8
-	Forward      uint8
-	Padding      uint8
-}
-
-func (r *MouseReport) DecodeSensors() (left, center, right uint16) {
-	left = uint16(r.Sensors & 0x3ff)
-	center = uint16((r.Sensors >> 10) & 0x3ff)
-	right = uint16((r.Sensors >> 20) & 0x3ff)
-	return
-}
-
-func (r *MouseReport) DecodeLEDs() (onboard, left, right, ir bool) {
-	onboard = (r.LEDs & 0x01) == 1
-	left = ((r.LEDs >> 1) & 0x01) == 1
-	right = ((r.LEDs >> 2) & 0x01) == 1
-	ir = ((r.LEDs >> 3) & 0x01) == 1
-	return
-}
-
-func (r *MouseReport) DecodeForward() (left, right bool) {
-	left = (r.Forward & 0x01) == 1
-	right = ((r.Forward >> 1) & 0x01) == 1
-	return
-}
-
 type SerialInterface struct {
 	status   string
 	portOpen bool
 	buffer   []byte
 	index    int
 	messages *Ring[string]
-	report   MouseReport
-	sendChan chan MouseCommand
+	report   Report
+	sendChan chan Command
 }
 
 func NewSerialInterface() *SerialInterface {
@@ -92,11 +39,11 @@ func NewSerialInterface() *SerialInterface {
 		status:   "Closed",
 		portOpen: false,
 		messages: NewRing[string](*scrollback),
-		report: MouseReport{
+		report: Report{
 			BatteryVolts: 0,
 			Mode:         0,
 		},
-		sendChan: make(chan MouseCommand, 1),
+		sendChan: make(chan Command, 1),
 	}
 }
 
@@ -140,12 +87,14 @@ func (s *SerialInterface) Clear() {
 	s.messages.Clear()
 }
 
-func (s *SerialInterface) Report() *MouseReport {
+func (s *SerialInterface) Report() *Report {
 	return &s.report
 }
 
-func (s *SerialInterface) SendCommand(c MouseCommand) {
-	s.sendChan <- c
+func (s *SerialInterface) SendCommand(c Command) {
+	if s.portOpen {
+		s.sendChan <- c
+	}
 }
 
 func (s *SerialInterface) open(ctx context.Context, signalChan <-chan os.Signal) serial.Port {
@@ -259,8 +208,8 @@ func (s *SerialInterface) decode(message string) {
 		return
 	}
 
-	if len(bs) != binary.Size(MouseReport{}) {
-		s.messages.Add(fmt.Sprintf("Incorrect size for %q: got %v, want %v", message, len(bs), binary.Size(MouseReport{})))
+	if len(bs) != binary.Size(Report{}) {
+		s.messages.Add(fmt.Sprintf("Incorrect size for %q: got %v, want %v", message, len(bs), binary.Size(Report{})))
 		return
 	}
 

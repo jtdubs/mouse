@@ -8,10 +8,11 @@ import (
 )
 
 type serialWindow struct {
-	mouse       *mouse.Mouse
-	autoScroll  bool
-	forceScroll bool
-	filter      imgui.TextFilter
+	mouse           *mouse.Mouse
+	autoScroll      bool
+	forceScroll     bool
+	filter          imgui.TextFilter
+	linkedThrottles bool
 }
 
 func newSerialWindow(m *mouse.Mouse) *serialWindow {
@@ -119,25 +120,75 @@ func (s *serialWindow) drawControls() {
 		imgui.TableSetColumnIndex(1)
 		imgui.ComboStr("##FSEL", &mode, "Remote\000Wall Sensor\000Error")
 		if mode != int32(r.Mode) {
-			s.mouse.Serial.SendCommand(mouse.MouseCommand{
-				Type:  mouse.CommandSetMode,
-				Value: uint16(mode),
-			})
+			s.mouse.Serial.SendCommand(mouse.NewModeCommand(uint8(mode)))
 		}
 	}
 
 	{
 		onboard, left, right, ir := r.DecodeLEDs()
-		s.drawLEDControl("Onboard LED", mouse.CommandOnboardLED, onboard)
-		s.drawLEDControl("Left LED", mouse.CommandLeftLED, left)
-		s.drawLEDControl("Right LED", mouse.CommandRightLED, right)
-		s.drawLEDControl("IR LEDs", mouse.CommandIRLEDs, ir)
+		changed := false
+		changed = changed || s.drawLEDControl("Onboard LED", &onboard)
+		changed = changed || s.drawLEDControl("Left LED", &left)
+		changed = changed || s.drawLEDControl("Right LED", &right)
+		changed = changed || s.drawLEDControl("IR LEDs", &ir)
+		if changed {
+			s.mouse.Serial.SendCommand(mouse.NewLEDCommand(onboard, left, right, ir))
+		}
 	}
 
 	{
-		left, right := r.DecodeForward()
-		s.drawMotorControl("Left Motor", mouse.CommandLeftMotorSpeed, mouse.CommandLeftMotorForward, int32(r.SpeedLeft), left)
-		s.drawMotorControl("Right Motor", mouse.CommandRightMotorSpeed, mouse.CommandRightMotorForward, int32(r.SpeedRight), right)
+		imgui.Checkbox("Linked Throttles", &s.linkedThrottles)
+		if s.linkedThrottles {
+			leftForward, rightForward := r.DecodeForward()
+			leftSpeed := int32(r.SpeedLeft)
+			rightSpeed := int32(r.SpeedRight)
+
+			speed := leftSpeed
+			if !leftForward {
+				speed = -speed
+			}
+			changed := s.drawMotorControl("Motors", &speed)
+			forward := speed >= 0
+			if !forward {
+				speed = -speed
+			}
+
+			if changed || forward != leftForward || forward != rightForward || speed != leftSpeed || speed != rightSpeed {
+				s.mouse.Serial.SendCommand(mouse.NewMotorCommand(uint8(speed), uint8(speed), forward, forward))
+			}
+		} else {
+			leftForward, rightForward := r.DecodeForward()
+			leftSpeed := int32(r.SpeedLeft)
+			rightSpeed := int32(r.SpeedRight)
+			if !leftForward {
+				leftSpeed = -leftSpeed
+			}
+			if !rightForward {
+				rightSpeed = -rightSpeed
+			}
+
+			changed := false
+			changed = s.drawMotorControl("Left Motor", &leftSpeed) || changed
+			changed = s.drawMotorControl("Right Motor", &rightSpeed) || changed
+
+			if leftSpeed >= 0 {
+				leftForward = true
+			} else {
+				leftSpeed = -leftSpeed
+				leftForward = false
+			}
+
+			if rightSpeed >= 0 {
+				rightForward = true
+			} else {
+				rightSpeed = -rightSpeed
+				rightForward = false
+			}
+
+			if changed {
+				s.mouse.Serial.SendCommand(mouse.NewMotorCommand(uint8(leftSpeed), uint8(rightSpeed), leftForward, rightForward))
+			}
+		}
 	}
 
 	imgui.EndTable()
@@ -227,53 +278,22 @@ func (s *serialWindow) drawLEDStatus(name string, value bool) {
 	}
 }
 
-func (s *serialWindow) drawLEDControl(name string, commandType mouse.CommandType, value bool) {
+func (s *serialWindow) drawLEDControl(name string, value *bool) (changed bool) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))
 	imgui.TableSetColumnIndex(1)
-	temp := value
-	imgui.Checkbox(fmt.Sprintf("##%v", name), &temp)
-	if temp != value {
-		s.mouse.Serial.SendCommand(mouse.MouseCommand{
-			Type: commandType,
-			Value: func() uint16 {
-				if temp {
-					return 1
-				} else {
-					return 0
-				}
-			}(),
-		})
-	}
+	oldValue := *value
+	imgui.Checkbox(fmt.Sprintf("##%v", name), value)
+	return oldValue != *value
 }
 
-func (s *serialWindow) drawMotorControl(name string, speedCommand mouse.CommandType, dirCommand mouse.CommandType, speed int32, forward bool) {
+func (s *serialWindow) drawMotorControl(name string, speed *int32) (changed bool) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))
 	imgui.TableSetColumnIndex(1)
-	tempSpeed := speed
-	imgui.SliderInt(fmt.Sprintf("##%vSpeed", name), &tempSpeed, 0, 255)
-	if tempSpeed != speed {
-		s.mouse.Serial.SendCommand(mouse.MouseCommand{
-			Type:  speedCommand,
-			Value: uint16(tempSpeed),
-		})
-	}
-	imgui.SameLineV(0, 20)
-	tempForward := forward
-	imgui.Checkbox(fmt.Sprintf("Forward##%vForward", name), &tempForward)
-	if tempForward != forward {
-		s.mouse.Serial.SendCommand(mouse.MouseCommand{
-			Type: dirCommand,
-			Value: func() uint16 {
-				if tempForward {
-					return 1
-				} else {
-					return 0
-				}
-			}(),
-		})
-	}
+	oldSpeed := *speed
+	imgui.SliderInt(fmt.Sprintf("##%vSpeed", name), speed, -50, 50)
+	return oldSpeed != *speed
 }

@@ -45,7 +45,7 @@ void mode_update() {
 
   // If a serial command has been received to set the mode, process it.
   if (command_available() && command.type == COMMAND_SET_MODE) {
-    mode_set(command.value);
+    mode_set(command.data.mode.mode);
     command_processed();
   }
 }
