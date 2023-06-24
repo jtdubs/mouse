@@ -72,11 +72,19 @@ func (s *Sim) Nanos() uint64 {
 
 func (s *Sim) SetRunning(running bool) {
 	if running && s.State == Paused {
-		go s.loop()
+		go s.loop(0)
 	} else if !running && s.State == Running {
 		s.loopShouldExit = true
 		<-s.loopChan
 		s.loopShouldExit = false
+	}
+}
+
+func (s *Sim) Step(nearestNanos uint64) {
+	if s.State == Paused {
+		nanos := s.Nanos()
+		target := nanos - (nanos % nearestNanos) + nearestNanos
+		go s.loop(target)
 	}
 }
 
@@ -175,14 +183,14 @@ func (s *Sim) Init() {
 	C.uart_pty_connect(&s.pty, '0')
 }
 
-func (s *Sim) loop() {
+func (s *Sim) loop(until uint64) {
 	s.loopChan = make(chan struct{})
 	defer close(s.loopChan)
 
 	s.State = Running
 
 	var state int = C.cpu_Running
-	for !s.loopShouldExit {
+	for !s.loopShouldExit && (until == 0 || s.Nanos() <= until) {
 		state = int(C.avr_run(s.avr))
 		if state == C.cpu_Done {
 			s.State = Done

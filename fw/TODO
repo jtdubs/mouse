@@ -17,8 +17,6 @@ Modes:
 
 Sim:
 - Filterable symbols window
-- Show sim time
-- Add "step" functions to advance sim by a millisecond?
 - Add a "maze" that shows up in the UI
 - Allow drag and drop of mouse within maze to update absolute position
 - Simulate IR readings based on wall distance in simulation

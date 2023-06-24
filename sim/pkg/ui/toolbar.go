@@ -59,6 +59,16 @@ func (s *toolbarWindow) drawToolbar() {
 			s.sim.SetRunning(false)
 		}
 	}
+	imgui.SameLine()
+	imgui.BeginDisabledV(s.sim.State != sim.Paused)
+	if s.toolbarButton("SimStep1", "step-forward") {
+		s.sim.Step(1000000)
+	}
+	imgui.SameLine()
+	if s.toolbarButton("SimStep2", "step-forward-2") {
+		s.sim.Step(100000000)
+	}
+	imgui.EndDisabled()
 	imgui.SameLineV(0, 20)
 
 	imgui.BeginDisabledV(s.sim.Recording)
