@@ -97,7 +97,7 @@ func (s *toolbarWindow) drawToolbar() {
 	imgui.Text(nanosText)
 }
 
-func (s *toolbarWindow) draw(dock imgui.ID) {
+func (s *toolbarWindow) draw() {
 	var toolbarFlags imgui.WindowFlags = imgui.WindowFlagsNoDocking |
 		imgui.WindowFlagsNoTitleBar |
 		imgui.WindowFlagsNoResize |
@@ -110,7 +110,7 @@ func (s *toolbarWindow) draw(dock imgui.ID) {
 	imgui.SetNextWindowSize(imgui.NewVec2(vp.Size().X, 48))
 	imgui.SetNextWindowViewport(vp.ID())
 	imgui.PushStyleVarFloat(imgui.StyleVarWindowBorderSize, 0)
-	imgui.BeginV("TOOLBAR", nil, toolbarFlags)
+	imgui.BeginV("Toolbar", nil, toolbarFlags)
 	imgui.PopStyleVar()
 	s.drawToolbar()
 	imgui.End()

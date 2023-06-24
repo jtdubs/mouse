@@ -24,10 +24,8 @@ func newMouseWindow(sim *sim.Sim) *mouseWindow {
 
 func (s *mouseWindow) init() {}
 
-func (s *mouseWindow) draw(dockID imgui.ID) {
-	imgui.SetNextWindowDockIDV(dockID, imgui.CondFirstUseEver)
-
-	imgui.Begin("Mouse Sim")
+func (s *mouseWindow) draw() {
+	imgui.Begin("Mouse")
 
 	imgui.SeparatorText("Controls")
 	imgui.Text("")
