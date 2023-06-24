@@ -24,11 +24,6 @@ Sim:
 - Simulate IR readings based on wall distance in simulation
   - Need a better characterization of IR reading based on angle for this
 
-
-UI:
-- Linked throttles
-- Sliders with range [-50, 50] for speed
-
 Fw:
 - Better documentation of modules, how they work and what they do.
 

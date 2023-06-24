@@ -29,14 +29,9 @@ var (
 )
 
 type Sim struct {
-	avr                                   *C.avr_t
-	pty                                   C.uart_pty_t
-	LEDs                                  *LEDs
-	Battery                               *Battery
-	FunctionSelector                      *FunctionSelector
-	LeftSensor, CenterSensor, RightSensor *Sensor
-	LeftMotor, RightMotor                 *Motor
-	Environment                           *Environment
+	avr   *C.avr_t
+	pty   C.uart_pty_t
+	Mouse *Mouse
 }
 
 func New() *Sim {
@@ -64,27 +59,8 @@ func (s *Sim) Run(ctx context.Context) {
 
 	C.avr_load_firmware(s.avr, &f)
 
-	encoderChan := make(chan EncoderTickEvent, 100)
-
-	s.LEDs = NewLEDs(s.avr)
-	s.Battery = NewBattery(s.avr, C.ADC_IRQ_ADC7)
-	s.FunctionSelector = NewFunctionSelect(s.avr, C.ADC_IRQ_ADC6)
-	s.LeftMotor = NewMotor(s.avr, true, encoderChan)
-	s.RightMotor = NewMotor(s.avr, false, encoderChan)
-	s.LeftSensor = NewSensor(s.avr, "SENSOR_LEFT", C.ADC_IRQ_ADC2)
-	s.CenterSensor = NewSensor(s.avr, "SENSOR_CENTER", C.ADC_IRQ_ADC1)
-	s.RightSensor = NewSensor(s.avr, "SENSOR_RIGHT", C.ADC_IRQ_ADC0)
-	s.Environment = NewEnvironment(16, 16, encoderChan)
-
-	s.LEDs.Init()
-	s.Battery.Init()
-	s.FunctionSelector.Init()
-	s.LeftMotor.Init()
-	s.RightMotor.Init()
-	s.LeftSensor.Init()
-	s.CenterSensor.Init()
-	s.RightSensor.Init()
-	s.Environment.Init()
+	s.Mouse = NewMouse(s.avr)
+	s.Mouse.Init()
 
 	if *gdbEnabled {
 		s.avr.state = C.cpu_Stopped
