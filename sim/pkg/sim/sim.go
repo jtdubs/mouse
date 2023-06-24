@@ -15,8 +15,12 @@ package sim
 import "C"
 
 import (
+	"debug/elf"
 	"flag"
+	"fmt"
 	"log"
+	"strings"
+	"unsafe"
 )
 
 var (
@@ -48,6 +52,10 @@ func New() *Sim {
 		State:     Paused,
 		Recording: false,
 	}
+}
+
+func (s *Sim) Peek(addr uint16) uint32 {
+	return uint32(*(*uint8)(unsafe.Pointer(uintptr(unsafe.Pointer(s.avr.data)) + uintptr(addr))))
 }
 
 func (s *Sim) SetRunning(running bool) {
@@ -90,6 +98,31 @@ func (s *Sim) Init() {
 		log.Fatalf("No firmware specified")
 	}
 
+	elfFile, err := elf.Open(*firmwarePath)
+	if err != nil {
+		log.Fatalf("Failed to open firmware: %s", *firmwarePath)
+	}
+	syms, err := elfFile.Symbols()
+	if err != nil {
+		log.Fatalf("Failed to read symbols from firmware: %s", *firmwarePath)
+	}
+	for _, sym := range syms {
+		if strings.HasPrefix(sym.Name, "_") {
+			continue
+		}
+		if int(sym.Section) >= len(elfFile.Sections) {
+			continue
+		}
+		section := elfFile.Sections[sym.Section]
+		if section.Name != ".bss" {
+			continue
+		}
+		if sym.Name == "" {
+			continue
+		}
+		fmt.Printf("Symbol: %v @ 0x%08x+0x%02x\n", sym.Name, sym.Value-0x800100, sym.Size)
+	}
+
 	var f C.elf_firmware_t
 	if C.elf_read_firmware(C.CString(*firmwarePath), &f) != 0 {
 		log.Fatalf("Failed to read firmware: %s", *firmwarePath)
@@ -99,6 +132,9 @@ func (s *Sim) Init() {
 	if s.avr == nil {
 		log.Fatalf("Failed to create AVR")
 	}
+
+	fmt.Printf("Ramend: %08x", s.avr.ramend)
+	// s.avr.data[0x00800135]
 
 	if C.avr_init(s.avr) != 0 {
 		log.Fatalf("Failed to initialize AVR")

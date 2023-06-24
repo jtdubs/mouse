@@ -42,6 +42,9 @@
     {
       "label": "Run Simulator",
       "command": "${workspaceFolder}/../sim/sim",
+      "options": {
+        "cwd": "${workspaceFolder}/../sim"
+      },
       "args": [
         "--gdb",
         "--firmware",

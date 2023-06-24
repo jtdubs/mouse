@@ -28,11 +28,13 @@ CFLAGS+=-Isrc/
 
 DBG_CFLAGS=-DDEBUG
 DBG_CFLAGS+=-gdwarf-2 -ggdb3           # Generate debug info in DWARF2 and GDB3 formats.
+DBG_CFLAGS+=-Wl,-Map,build/debug/$(TARGET).map  	# Generate map files.
 
 REL_CFLAGS=-DNDEBUG
 REL_CFLAGS+=-ffunction-sections        # Separate functions into their own sections to improve LTO.
 REL_CFLAGS+=-fdata-sections            # Separate data into their own sections to improve LTO.
 REL_CFLAGS+=-fno-fat-lto-objects -flto # Enable link-time optimization.
+REL_CFLAGS+=-Wl,-Map,build/release/$(TARGET).map  	# Generate map files.
 
 REL_TARGETS=build/release/$(TARGET).elf build/release/$(TARGET).hex build/release/$(TARGET).s
 DBG_TARGETS=build/debug/$(TARGET).elf build/debug/$(TARGET).hex build/debug/$(TARGET).s

@@ -120,5 +120,9 @@ func (s *mouseWindow) drawStatus() {
 	s.tableRow("Location:")
 	imgui.Text(fmt.Sprintf("x=%2.2f, y=%2.2f, theta=%2.2f", s.m.Environment.MouseX, s.m.Environment.MouseY, s.m.Environment.MouseAngle*180.0/math.Pi))
 
+	s.tableRow("Peeked ADC Sensor Left:")
+	sensorLeft := (s.sim.Peek(0x128) << 8) | s.sim.Peek(0x129)
+	imgui.Text(fmt.Sprintf("%04x", sensorLeft))
+
 	imgui.EndTable()
 }
