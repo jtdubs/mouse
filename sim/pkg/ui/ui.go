@@ -2,7 +2,6 @@ package ui
 
 import (
 	"context"
-	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -95,7 +94,6 @@ func (ui *UI) Run(ctx context.Context) {
 
 		if firstRun {
 			firstRun = false
-			fmt.Println("Setting layout...")
 			imgui.InternalDockBuilderRemoveNode(dockID)
 			imgui.InternalDockBuilderAddNodeV(dockID, imgui.DockNodeFlagsDockSpace)
 			imgui.InternalDockBuilderSetNodeSize(dockID, vp.Size().Sub(imgui.NewVec2(0, 48)))
@@ -123,6 +121,5 @@ func mustLoad(image string) *imgui.Texture {
 		panic(err)
 	}
 	tex := imgui.NewTextureFromRgba(img)
-	fmt.Printf("Loaded %s (%vx%v) as %d\n", image, tex.Width, tex.Height, tex.ID())
 	return tex
 }
