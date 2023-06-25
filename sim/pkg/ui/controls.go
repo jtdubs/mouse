@@ -36,14 +36,12 @@ func (s *controlsWindow) draw() {
 	imgui.SameLineV(0, 20)
 	imgui.Checkbox("Button", &s.m.FunctionSelector.ButtonPressed)
 
-	s.tableRow("Left Sensor:")
-	imgui.SliderInt("(V)##LEFT", &s.m.LeftSensor.Voltage, 0, 5000)
-
-	s.tableRow("Center Sensor:")
-	imgui.SliderInt("(V)##CENTER", &s.m.CenterSensor.Voltage, 0, 5000)
-
-	s.tableRow("Right Sensor:")
-	imgui.SliderInt("(V)##RIGHT", &s.m.RightSensor.Voltage, 0, 5000)
+	s.tableRow("IR Sensors:")
+	voltages := [3]int32{s.m.LeftSensor.Voltage, s.m.CenterSensor.Voltage, s.m.RightSensor.Voltage}
+	imgui.SliderInt3("(mV)##SENSORS", &voltages, 0, 5000)
+	s.m.LeftSensor.Voltage = voltages[0]
+	s.m.CenterSensor.Voltage = voltages[1]
+	s.m.RightSensor.Voltage = voltages[2]
 
 	imgui.EndTable()
 

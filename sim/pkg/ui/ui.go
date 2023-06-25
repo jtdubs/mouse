@@ -35,6 +35,7 @@ func New(sim *sim.Sim) *UI {
 			newControlsWindow(sim),
 			newSymbolsWindow(sim),
 			newStatusWindow(sim),
+			newMazeWindow(sim),
 		},
 	}
 
@@ -100,9 +101,11 @@ func (ui *UI) Run(ctx context.Context) {
 			imgui.InternalDockBuilderSetNodeSize(dockID, vp.Size().Sub(imgui.NewVec2(0, 48)))
 			symbols := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.3, nil, &dockID)
 			status := imgui.InternalDockBuilderSplitNode(symbols, imgui.DirDown, 0.15, nil, &symbols)
+			controls := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirDown, 0.15, nil, &dockID)
 			imgui.InternalDockBuilderDockWindow("Symbols", symbols)
 			imgui.InternalDockBuilderDockWindow("Status", status)
-			imgui.InternalDockBuilderDockWindow("Controls", dockID)
+			imgui.InternalDockBuilderDockWindow("Controls", controls)
+			imgui.InternalDockBuilderDockWindow("Maze", dockID)
 			imgui.InternalDockBuilderFinish(dockID)
 		}
 
