@@ -31,34 +31,34 @@ func (s *toolbarWindow) drawToolbar() {
 	case sim.Done:
 		imgui.Text("Done")
 	case sim.Paused:
-		if s.toolbarButton("SimPlay", "play") {
+		if s.toolbarButton("SimPlay", "play-black") {
 			s.sim.SetRunning(true)
 		}
 	case sim.Running:
-		if s.toolbarButton("SimPause", "pause") {
+		if s.toolbarButton("SimPause", "pause-black") {
 			s.sim.SetRunning(false)
 		}
 	}
 	imgui.SameLine()
 	imgui.BeginDisabledV(s.sim.State != sim.Paused)
-	if s.toolbarButton("SimStep1", "step-forward") {
+	if s.toolbarButton("SimStep1", "step-forward-black") {
 		s.sim.Step(1000000)
 	}
 	imgui.SameLine()
-	if s.toolbarButton("SimStep2", "step-forward-2") {
+	if s.toolbarButton("SimStep2", "step-forward-2-black") {
 		s.sim.Step(100000000)
 	}
 	imgui.EndDisabled()
 	imgui.SameLineV(0, 20)
 
 	imgui.BeginDisabledV(s.sim.Recording)
-	if s.toolbarButton("VCDRecord", "video-outline") {
+	if s.toolbarButton("VCDRecord", "video-outline-black") {
 		s.sim.SetRecording(true)
 	}
 	imgui.EndDisabled()
 	imgui.SameLine()
 	imgui.BeginDisabledV(!s.sim.Recording)
-	if s.toolbarButton("VCDStop", "video-off-outline") {
+	if s.toolbarButton("VCDStop", "video-off-outline-black") {
 		s.sim.SetRecording(false)
 	}
 	imgui.EndDisabled()

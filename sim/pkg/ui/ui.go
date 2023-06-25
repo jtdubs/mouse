@@ -45,7 +45,7 @@ func New(sim *sim.Sim) *UI {
 
 	imgui.CurrentIO().Fonts().AddFontFromFileTTF("fonts/DroidSans.ttf", 24)
 	imgui.CurrentIO().SetConfigFlags(imgui.ConfigFlagsDockingEnable)
-	imgui.StyleColorsLight()
+	imgui.StyleColorsClassic()
 
 	return ui
 }
@@ -99,7 +99,7 @@ func (ui *UI) Run(ctx context.Context) {
 			imgui.InternalDockBuilderAddNodeV(dockID, imgui.DockNodeFlagsDockSpace)
 			imgui.InternalDockBuilderSetNodeSize(dockID, vp.Size().Sub(imgui.NewVec2(0, 48)))
 			symbols := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.3, nil, &dockID)
-			status := imgui.InternalDockBuilderSplitNode(symbols, imgui.DirDown, 0.25, nil, &symbols)
+			status := imgui.InternalDockBuilderSplitNode(symbols, imgui.DirDown, 0.15, nil, &symbols)
 			imgui.InternalDockBuilderDockWindow("Symbols", symbols)
 			imgui.InternalDockBuilderDockWindow("Status", status)
 			imgui.InternalDockBuilderDockWindow("Controls", dockID)

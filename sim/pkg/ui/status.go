@@ -2,7 +2,6 @@ package ui
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/jtdubs/mouse/sim/pkg/sim"
 
@@ -30,19 +29,44 @@ func (s *statusWindow) draw() {
 	imgui.TableSetupColumnV("##StatusLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
 	imgui.TableSetupColumnV("##StatusControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
 
-	s.drawLed("Onboard LED:", s.m.LEDs.Onboard)
-	s.drawLed("Left LED:", s.m.LEDs.Left)
-	s.drawLed("Right LED:", s.m.LEDs.Right)
-	s.drawLed("IR LEDs:", s.m.LEDs.IR)
+	s.tableRow("Status LEDs:")
+	if s.m.LEDs.Left {
+		s.drawIcon("led-on-lightblue")
+	} else {
+		s.drawIcon("led-off-white")
+	}
+	imgui.SameLineV(0, 20)
+	if s.m.LEDs.Onboard {
+		s.drawIcon("led-on-orange")
+	} else {
+		s.drawIcon("led-off-white")
+	}
+	imgui.SameLineV(0, 20)
+	if s.m.LEDs.Right {
+		s.drawIcon("led-on-lightblue")
+	} else {
+		s.drawIcon("led-off-white")
+	}
 
-	s.tableRow("Left Motor:")
-	imgui.Text(fmt.Sprintf("%2.2f (Hz)", 16000000.0/float32(s.m.LeftMotor.ActualPeriod*240)))
+	s.tableRow("IR LEDs:")
+	if s.m.LEDs.IR {
+		s.drawIcon("led-on-red")
+		imgui.SameLineV(0, 20)
+		s.drawIcon("led-on-red")
+		imgui.SameLineV(0, 20)
+		s.drawIcon("led-on-red")
+	} else {
+		s.drawIcon("led-off-white")
+		imgui.SameLineV(0, 20)
+		s.drawIcon("led-off-white")
+		imgui.SameLineV(0, 20)
+		s.drawIcon("led-off-white")
+	}
 
-	s.tableRow("Right Motor:")
-	imgui.Text(fmt.Sprintf("%2.2f (Hz)", 16000000.0/float32(s.m.RightMotor.ActualPeriod*240)))
-
-	s.tableRow("Location:")
-	imgui.Text(fmt.Sprintf("x=%2.2f, y=%2.2f, theta=%2.2f", s.m.Environment.MouseX, s.m.Environment.MouseY, s.m.Environment.MouseAngle*180.0/math.Pi))
+	s.tableRow("Motors:")
+	imgui.Text(fmt.Sprintf("%02.2f (Hz)", 16000000.0/float32(s.m.LeftMotor.ActualPeriod*240)))
+	imgui.SameLineV(0, 20)
+	imgui.Text(fmt.Sprintf("%02.2f (Hz)", 16000000.0/float32(s.m.RightMotor.ActualPeriod*240)))
 
 	imgui.EndTable()
 	imgui.End()
@@ -55,11 +79,6 @@ func (s *statusWindow) tableRow(label string) {
 	imgui.TableSetColumnIndex(1)
 }
 
-func (s *statusWindow) drawLed(label string, value bool) {
-	s.tableRow(label)
-	if value {
-		imgui.ImageV(Textures["led-on"].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(1, 1, 1, 1), imgui.NewVec4(1, 1, 1, 1))
-	} else {
-		imgui.ImageV(Textures["led-off"].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(1, 1, 1, 1), imgui.NewVec4(1, 1, 1, 1))
-	}
+func (s *statusWindow) drawIcon(name string) {
+	imgui.ImageV(Textures[name].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(1, 1, 1, 1), imgui.NewVec4(0, 0, 0, 0))
 }
