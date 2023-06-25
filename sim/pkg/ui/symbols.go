@@ -13,13 +13,15 @@ import (
 )
 
 type symbolsWindow struct {
-	sim   *sim.Sim
-	names []string
+	sim    *sim.Sim
+	names  []string
+	filter imgui.TextFilter
 }
 
 func newSymbolsWindow(sim *sim.Sim) *symbolsWindow {
 	return &symbolsWindow{
-		sim: sim,
+		sim:    sim,
+		filter: imgui.NewTextFilter(""),
 	}
 }
 
@@ -31,11 +33,24 @@ func (s *symbolsWindow) init() {
 func (s *symbolsWindow) draw() {
 	imgui.Begin("Symbols")
 
-	imgui.BeginTable("##Symbols", 2)
-	imgui.TableSetupColumnV("##SymbolsLabel", imgui.TableColumnFlagsWidthFixed, 200, 0)
-	imgui.TableSetupColumnV("##SymbolsControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
+	imgui.Text("Filter: ")
+	imgui.SameLine()
+	s.filter.DrawV("", 180)
+	imgui.Separator()
+
+	var tableFlags imgui.TableFlags = imgui.TableFlagsResizable |
+		imgui.TableFlagsBorders |
+		imgui.TableFlagsBordersInnerV
+
+	imgui.BeginTableV("##Symbols", 2, tableFlags, imgui.NewVec2(0, 0), 0)
+	imgui.TableSetupColumnV("Variable##SymbolsLabel", imgui.TableColumnFlagsWidthFixed, 200, 0)
+	imgui.TableSetupColumnV("Value##SymbolsControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
+	imgui.TableHeadersRow()
 
 	for _, name := range s.names {
+		if !s.filter.PassFilter(name) {
+			continue
+		}
 		imgui.TableNextRow()
 		imgui.TableSetColumnIndex(0)
 		imgui.Text(name)
@@ -52,6 +67,8 @@ func (s *symbolsWindow) draw() {
 			imgui.Text(hex.EncodeToString(s.sim.RAM[sym.Address : sym.Address+sym.Length]))
 		}
 	}
+
+	imgui.PopStyleVar()
 
 	imgui.EndTable()
 	imgui.End()
