@@ -118,33 +118,7 @@ func (s *Sim) Init() {
 		log.Fatalf("No firmware specified")
 	}
 
-	elfFile, err := elf.Open(*firmwarePath)
-	if err != nil {
-		log.Fatalf("Failed to open firmware: %s", *firmwarePath)
-	}
-	syms, err := elfFile.Symbols()
-	if err != nil {
-		log.Fatalf("Failed to read symbols from firmware: %s", *firmwarePath)
-	}
-	for _, sym := range syms {
-		if strings.HasPrefix(sym.Name, "_") {
-			continue
-		}
-		if int(sym.Section) >= len(elfFile.Sections) {
-			continue
-		}
-		section := elfFile.Sections[sym.Section]
-		if section.Name != ".bss" {
-			continue
-		}
-		if sym.Name == "" {
-			continue
-		}
-		s.Symbols[sym.Name] = Symbol{
-			Address: int(sym.Value) - 0x800000,
-			Length:  int(sym.Size),
-		}
-	}
+	s.readSymbols()
 
 	var f C.elf_firmware_t
 	if C.elf_read_firmware(C.CString(*firmwarePath), &f) != 0 {
@@ -181,6 +155,38 @@ func (s *Sim) Init() {
 
 	C.uart_pty_init(s.avr, &s.pty)
 	C.uart_pty_connect(&s.pty, '0')
+}
+
+func (s *Sim) readSymbols() {
+	elfFile, err := elf.Open(*firmwarePath)
+	if err != nil {
+		log.Fatalf("Failed to open firmware: %s", *firmwarePath)
+	}
+
+	syms, err := elfFile.Symbols()
+	if err != nil {
+		log.Fatalf("Failed to read symbols from firmware: %s", *firmwarePath)
+	}
+
+	for _, sym := range syms {
+		if strings.HasPrefix(sym.Name, "_") {
+			continue
+		}
+		if int(sym.Section) >= len(elfFile.Sections) {
+			continue
+		}
+		section := elfFile.Sections[sym.Section]
+		if section.Name != ".bss" {
+			continue
+		}
+		if sym.Name == "" {
+			continue
+		}
+		s.Symbols[sym.Name] = Symbol{
+			Address: int(sym.Value) - 0x800000,
+			Length:  int(sym.Size),
+		}
+	}
 }
 
 func (s *Sim) loop(until uint64) {
