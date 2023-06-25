@@ -2,46 +2,26 @@ package ui
 
 import (
 	"fmt"
-	"path/filepath"
-	"strings"
 
 	"github.com/jtdubs/mouse/sim/pkg/sim"
 
 	imgui "github.com/AllenDang/cimgui-go"
 )
 
-func mustLoad(image string) *imgui.Texture {
-	img, err := imgui.LoadImage(image)
-	if err != nil {
-		panic(err)
-	}
-	tex := imgui.NewTextureFromRgba(img)
-	fmt.Printf("Loaded %s (%vx%v) as %d\n", image, tex.Width, tex.Height, tex.ID())
-	return tex
-}
-
 type toolbarWindow struct {
-	sim      *sim.Sim
-	textures map[string]*imgui.Texture
+	sim *sim.Sim
 }
 
 func newToolbarWindow(sim *sim.Sim) *toolbarWindow {
 	return &toolbarWindow{
-		sim:      sim,
-		textures: map[string]*imgui.Texture{},
+		sim: sim,
 	}
 }
 
-func (s *toolbarWindow) init() {
-	files, _ := filepath.Glob("icons/*.png")
-	for _, file := range files {
-		name := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
-		s.textures[name] = mustLoad(file)
-	}
-}
+func (s *toolbarWindow) init() {}
 
 func (s *toolbarWindow) toolbarButton(name string, icon string) bool {
-	return imgui.ImageButtonV(name, s.textures[icon].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(0, 0, 0, 0), imgui.NewVec4(1, 1, 1, 1))
+	return imgui.ImageButtonV(name, Textures[icon].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(0, 0, 0, 0), imgui.NewVec4(1, 1, 1, 1))
 }
 
 func (s *toolbarWindow) drawToolbar() {

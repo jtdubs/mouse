@@ -3,11 +3,15 @@ package ui
 import (
 	"context"
 	"fmt"
+	"path/filepath"
+	"strings"
 
 	"github.com/jtdubs/mouse/sim/pkg/sim"
 
 	imgui "github.com/AllenDang/cimgui-go"
 )
+
+var Textures map[string]*imgui.Texture = make(map[string]*imgui.Texture)
 
 type window interface {
 	init()
@@ -41,12 +45,18 @@ func New(sim *sim.Sim) *UI {
 
 	imgui.CurrentIO().Fonts().AddFontFromFileTTF("fonts/DroidSans.ttf", 24)
 	imgui.CurrentIO().SetConfigFlags(imgui.ConfigFlagsDockingEnable)
-	imgui.StyleColorsClassic()
+	imgui.StyleColorsLight()
 
 	return ui
 }
 
 func (ui *UI) init() {
+	files, _ := filepath.Glob("icons/*.png")
+	for _, file := range files {
+		name := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
+		Textures[name] = mustLoad(file)
+	}
+
 	for _, window := range ui.windows {
 		window.init()
 	}
@@ -102,4 +112,14 @@ func (ui *UI) Run(ctx context.Context) {
 
 		ui.backend.Refresh()
 	})
+}
+
+func mustLoad(image string) *imgui.Texture {
+	img, err := imgui.LoadImage(image)
+	if err != nil {
+		panic(err)
+	}
+	tex := imgui.NewTextureFromRgba(img)
+	fmt.Printf("Loaded %s (%vx%v) as %d\n", image, tex.Width, tex.Height, tex.ID())
+	return tex
 }

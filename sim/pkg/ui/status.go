@@ -58,8 +58,8 @@ func (s *statusWindow) tableRow(label string) {
 func (s *statusWindow) drawLed(label string, value bool) {
 	s.tableRow(label)
 	if value {
-		imgui.Text("On")
+		imgui.ImageV(Textures["led-on"].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(1, 1, 1, 1), imgui.NewVec4(1, 1, 1, 1))
 	} else {
-		imgui.Text("Off")
+		imgui.ImageV(Textures["led-off"].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(1, 1, 1, 1), imgui.NewVec4(1, 1, 1, 1))
 	}
 }
