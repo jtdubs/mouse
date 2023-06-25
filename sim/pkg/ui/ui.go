@@ -28,8 +28,9 @@ func New(sim *sim.Sim) *UI {
 		backend: backend,
 		windows: []window{
 			newToolbarWindow(sim),
-			newMouseWindow(sim),
+			newControlsWindow(sim),
 			newSymbolsWindow(sim),
+			newStatusWindow(sim),
 		},
 	}
 
@@ -87,9 +88,11 @@ func (ui *UI) Run(ctx context.Context) {
 			imgui.InternalDockBuilderRemoveNode(dockID)
 			imgui.InternalDockBuilderAddNodeV(dockID, imgui.DockNodeFlagsDockSpace)
 			imgui.InternalDockBuilderSetNodeSize(dockID, vp.Size().Sub(imgui.NewVec2(0, 48)))
-			dockRight := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.3, nil, &dockID)
-			imgui.InternalDockBuilderDockWindow("Symbols", dockRight)
-			imgui.InternalDockBuilderDockWindow("Mouse", dockID)
+			symbols := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.3, nil, &dockID)
+			status := imgui.InternalDockBuilderSplitNode(symbols, imgui.DirDown, 0.25, nil, &symbols)
+			imgui.InternalDockBuilderDockWindow("Symbols", symbols)
+			imgui.InternalDockBuilderDockWindow("Status", status)
+			imgui.InternalDockBuilderDockWindow("Controls", dockID)
 			imgui.InternalDockBuilderFinish(dockID)
 		}
 
