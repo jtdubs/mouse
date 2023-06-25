@@ -16,16 +16,32 @@ Modes:
   - Include wall-detection logic here and get rid of wall mode.
 
 Sim:
-- Generate a maze
+- Maze creation
+  - Bake-in some of the known competition mazes
   - Try using Wilson's algorithm with additional constraints:
     - The center 2x2
     - The start position and direction
-- Draw maze in UI
+- Maze selection
+  - Drop-down of standard mazes with option for "random"
+  - Textbox for "random seed"
+  - Button to generate a random seed
+- Maze representation
+  - For rendering
+    - Full size maze is 2880x2880mm, so a mm resolution image texture is tempting...
+    - Just render it to scale in however much space the UI has at the time...
+  - For ray intersections
+    - 68 lines representing all sides of every wall in the grid
+    - list of t-value ranges for each wall for when it exists
+    - do normal ray/line intersection for each line, filter on t being present, find min t value.
 - Draw mouse in maze
 - Allow drag and drop of mouse within maze to update absolute position
 - Simulate IR readings based on wall distance in simulation
   - Need a better characterization of IR reading based on angle for this
 - Auto-pause on collision with wall?
+- Some notion of "steps" in the firmware that raise a monitorable signal, then sim can "step" through them
+  - Wall ended
+  - Next square reached
+  - ??
 
 Fw:
 - Better documentation of modules, how they work and what they do.
