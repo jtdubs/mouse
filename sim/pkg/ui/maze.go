@@ -42,14 +42,14 @@ func (s *mazeWindow) draw() {
 	canvasSizePx := imgui.ContentRegionAvail()
 	cellSizePx := float32(math.Min(float64(canvasSizePx.X/gridDim.X), float64(canvasSizePx.Y/gridDim.Y)))
 	mazeSizePx := imgui.NewVec2(cellSizePx*gridDim.X, cellSizePx*gridDim.Y)
-	mmSizePx := cellSizePx / 180.0
+	mmSizePx := cellSizePx / float32(sim.GridSize)
 	marginPx := canvasSizePx.Sub(mazeSizePx).Div(2.0)
 	mazeOriginPx := imgui.CursorScreenPos().Add(imgui.NewVec2(0, canvasSizePx.Y)).Add(imgui.NewVec2(marginPx.X, -marginPx.Y))
 
 	imgui.Dummy(canvasSizePx)
 	if imgui.BeginPopupContextItem() {
 		if imgui.SelectableBool("Reset Position") {
-			s.m.Environment.MouseX, s.m.Environment.MouseY, s.m.Environment.MouseAngle = 90, 90, math.Pi/2
+			s.m.Environment.MouseX, s.m.Environment.MouseY, s.m.Environment.MouseAngle = sim.GridSize/2, sim.GridSize/2, math.Pi/2
 		}
 		imgui.EndPopup()
 	}
