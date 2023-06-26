@@ -16,19 +16,7 @@ Modes:
   - Include wall-detection logic here and get rid of wall mode.
 
 Sim:
-- Maze creation
-  - Bake-in some of the known competition mazes
-  - Try using Wilson's algorithm with additional constraints:
-    - The center 2x2
-    - The start position and direction
-- Maze selection
-  - Drop-down of standard mazes with option for "random"
-  - Textbox for "random seed"
-  - Button to generate a random seed
 - Maze representation
-  - For rendering
-    - Full size maze is 2880x2880mm, so a mm resolution image texture is tempting...
-    - Just render it to scale in however much space the UI has at the time...
   - For ray intersections
     - 68 lines representing all sides of every wall in the grid
     - list of t-value ranges for each wall for when it exists
