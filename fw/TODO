@@ -21,7 +21,6 @@ Sim:
     - 68 lines representing all sides of every wall in the grid
     - list of t-value ranges for each wall for when it exists
     - do normal ray/line intersection for each line, filter on t being present, find min t value.
-- Draw mouse in maze
 - Allow drag and drop of mouse within maze to update absolute position
 - Simulate IR readings based on wall distance in simulation
   - Need a better characterization of IR reading based on angle for this

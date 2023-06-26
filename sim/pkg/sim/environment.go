@@ -4,9 +4,9 @@ import "math"
 
 // Fundamental constants
 const (
-	GridSize                float64 = 18.0 // in mm
-	WheelBase               float64 = 90.0 // in mm
-	WheelDiameter           float64 = 32.0 // in mm
+	GridSize                float64 = 180.0 // in mm
+	WheelBase               float64 = 90.0  // in mm
+	WheelDiameter           float64 = 32.0  // in mm
 	EncoderTicksPerRotation int     = 240
 )
 
@@ -28,8 +28,8 @@ type Environment struct {
 func NewEnvironment(mazeWidth, mazeHeight int, encoderChan <-chan EncoderTickEvent) *Environment {
 	// start in the southwest corner, facing north
 	return &Environment{
-		MouseX:      -GridSize * ((float64(mazeWidth) / 2.0) - 0.5),
-		MouseY:      -GridSize * ((float64(mazeHeight) / 2.0) - 0.5),
+		MouseX:      GridSize / 2.0,
+		MouseY:      GridSize / 2.0,
 		MouseAngle:  math.Pi / 2.0,
 		encoderChan: encoderChan,
 	}

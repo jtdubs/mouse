@@ -74,7 +74,7 @@ func (m *Maze) Load(name string) {
 			if !ok {
 				log.Fatalf("Error loading maze: unknown character %c", post)
 			}
-			m.Posts[y][x] = p
+			m.Posts[len(lines)-y-1][x] = p
 		}
 	}
 }
