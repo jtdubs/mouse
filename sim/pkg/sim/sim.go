@@ -52,6 +52,7 @@ type Sim struct {
 	avr            *C.avr_t
 	pty            C.uart_pty_t
 	Mouse          *Mouse
+	Maze           *Maze
 }
 
 func New() *Sim {
@@ -59,6 +60,7 @@ func New() *Sim {
 		State:     Paused,
 		Recording: false,
 		Symbols:   make(map[string]Symbol),
+		Maze:      newMaze(),
 	}
 }
 
