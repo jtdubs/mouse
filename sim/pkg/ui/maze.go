@@ -63,15 +63,33 @@ func (s *mazeWindow) draw() {
 
 	x, y, theta := float32(s.m.Environment.MouseX), float32(s.m.Environment.MouseY), s.m.Environment.MouseAngle
 	centerPx := mazeOriginPx.Add(imgui.NewVec2(x, -y).Mul(mmSizePx))
-	mouseRadius := 45.0 * mmSizePx
 
-	drawList.AddTriangleV(
-		centerPx.Add(imgui.NewVec2(float32(math.Cos(theta+0.0*math.Pi/3.0)), float32(-math.Sin(theta+0.0*math.Pi/3.0))).Mul(mouseRadius)),
-		centerPx.Add(imgui.NewVec2(float32(math.Cos(theta+2.0*math.Pi/3.0)), float32(-math.Sin(theta+2.0*math.Pi/3.0))).Mul(mouseRadius)),
-		centerPx.Add(imgui.NewVec2(float32(math.Cos(theta+4.0*math.Pi/3.0)), float32(-math.Sin(theta+4.0*math.Pi/3.0))).Mul(mouseRadius)),
-		imgui.ColorConvertFloat4ToU32(imgui.NewVec4(0.5, 1, 0.5, 1)),
-		2.0,
-	)
+	// 65mm in front of wheels, 35mm behind
+	// axle width is 90mm
+
+	mouseXY := func(mm imgui.Vec2) (px imgui.Vec2) {
+		deltaPx := mm.Mul(mmSizePx)
+		return centerPx.Add(
+			imgui.NewVec2(
+				deltaPx.X*float32(math.Cos(theta))-deltaPx.Y*float32(math.Sin(theta)),
+				-(deltaPx.X*float32(math.Sin(theta)) + deltaPx.Y*float32(math.Cos(theta))),
+			))
+	}
+
+	outline := []imgui.Vec2{
+		mouseXY(imgui.NewVec2(0, 45)),
+		mouseXY(imgui.NewVec2(50, 45)),
+		mouseXY(imgui.NewVec2(65, 30)),
+		mouseXY(imgui.NewVec2(65, -30)),
+		mouseXY(imgui.NewVec2(50, -45)),
+		mouseXY(imgui.NewVec2(-35, -45)),
+		mouseXY(imgui.NewVec2(-35, 45)),
+	}
+
+	for i := range outline {
+		drawList.AddLineV(outline[i], outline[(i+1)%len(outline)], imgui.ColorConvertFloat4ToU32(imgui.NewVec4(0.5, 1, 0.5, 1)), 2.0)
+	}
+	drawList.AddLineV(mouseXY(imgui.NewVec2(0, 45)), mouseXY(imgui.NewVec2(0, -45)), imgui.ColorConvertFloat4ToU32(imgui.NewVec4(0.5, 1, 0.5, 1)), 2.0)
 
 	imgui.End()
 }
