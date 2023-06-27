@@ -17,11 +17,13 @@ import (
 type LEDs struct {
 	Right, Left, IR, Onboard bool
 	avr                      *C.avr_t
+	events                   chan<- struct{}
 }
 
-func NewLEDs(avr *C.avr_t) *LEDs {
+func NewLEDs(avr *C.avr_t, events chan<- struct{}) *LEDs {
 	return &LEDs{
-		avr: avr,
+		avr:    avr,
+		events: events,
 	}
 }
 
@@ -39,4 +41,5 @@ func (l *LEDs) OnIOWrite(avr *C.avr_t, addr C.avr_io_addr_t, v uint8, param unsa
 	case 0x2B:
 		l.Right = (v>>6)&1 == 1
 	}
+	l.events <- struct{}{}
 }

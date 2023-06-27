@@ -143,16 +143,22 @@ func (w *mazeWindow) draw() {
 			)
 		}
 	} else {
-		dragging = false
-		w.mouse.SetPosition(
-			math.Min(math.Max(w.mouse.X, 0), sim.GridSize*float64(gridDim.X)),
-			math.Min(math.Max(w.mouse.Y, 0), sim.GridSize*float64(gridDim.Y)),
-			w.mouse.Angle,
-		)
+		if dragging {
+			dragging = false
+			w.mouse.SetPosition(
+				math.Min(math.Max(w.mouse.X, 0), sim.GridSize*float64(gridDim.X)),
+				math.Min(math.Max(w.mouse.Y, 0), sim.GridSize*float64(gridDim.Y)),
+				w.mouse.Angle,
+			)
+		}
 	}
 
-	for _, hit := range w.mouse.IRHits {
-		s := mouseXY(imgui.NewVec2(float32(hit.Sensor.Pos.X), float32(hit.Sensor.Pos.Y)))
+	for sensor, hit := range w.mouse.IRHits {
+		if hit.Distance == math.Inf(1) {
+			continue
+		}
+
+		s := mouseXY(imgui.NewVec2(float32(sensor.Pos.X), float32(sensor.Pos.Y)))
 		h := imgui.NewVec2(float32(hit.Pos.X), -float32(hit.Pos.Y)).Mul(mmSizePx).Add(mazeOriginPx)
 
 		drawList.AddCircleFilled(h, 4, imgui.ColorConvertFloat4ToU32(imgui.NewVec4(1, 0, 0, 1)))
