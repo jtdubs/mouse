@@ -35,8 +35,9 @@ var (
 type Pos struct{ X, Y float64 }
 
 type IRHit struct {
-	Sensor *Sensor
-	Pos    Pos
+	Sensor   *Sensor
+	Pos      Pos
+	Distance float64
 }
 
 type Mouse struct {
@@ -150,6 +151,8 @@ func (m *Mouse) updateIRHits() {
 		sinSign := math.Signbit(math.Sin(angle))
 		cosSign := math.Signbit(math.Cos(angle))
 
+		bestHit := IRHit{nil, Pos{}, math.Inf(1)}
+
 		// horizontal walls
 		for y := 0; y < len(m.maze.Posts); y++ {
 			wallY := float64(y) * GridSize
@@ -166,10 +169,12 @@ func (m *Mouse) updateIRHits() {
 				continue
 			}
 			if m.maze.Posts[y][int(x/GridSize)].East {
-				m.IRHits = append(m.IRHits, IRHit{
-					sensor,
-					Pos{x, wallY},
-				})
+				d := math.Sqrt(dx*dx + dy*dy)
+				if d < bestHit.Distance {
+					bestHit.Sensor = sensor
+					bestHit.Pos = Pos{x, wallY}
+					bestHit.Distance = d
+				}
 			}
 		}
 
@@ -186,11 +191,17 @@ func (m *Mouse) updateIRHits() {
 				continue
 			}
 			if m.maze.Posts[int(y/GridSize)][x].North {
-				m.IRHits = append(m.IRHits, IRHit{
-					sensor,
-					Pos{wallX, y},
-				})
+				d := math.Sqrt(dx*dx + dy*dy)
+				if d < bestHit.Distance {
+					bestHit.Sensor = sensor
+					bestHit.Pos = Pos{wallX, y}
+					bestHit.Distance = d
+				}
 			}
+		}
+
+		if bestHit.Sensor != nil {
+			m.IRHits = append(m.IRHits, bestHit)
 		}
 	}
 }
