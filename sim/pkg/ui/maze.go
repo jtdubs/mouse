@@ -51,6 +51,9 @@ func (w *mazeWindow) draw() {
 		if imgui.SelectableBool("Reset Position") {
 			w.mouse.X, w.mouse.Y, w.mouse.Angle = sim.GridSize/2, sim.GridSize/2, math.Pi/2
 		}
+		if imgui.SelectableBool("Center in Cell") {
+			w.mouse.X, w.mouse.Y = (math.Floor(w.mouse.X/sim.GridSize)+0.5)*sim.GridSize, (math.Floor(w.mouse.Y/sim.GridSize)+0.5)*sim.GridSize
+		}
 		imgui.EndPopup()
 	}
 
@@ -134,6 +137,8 @@ func (w *mazeWindow) draw() {
 		}
 	} else {
 		dragging = false
+		w.mouse.X = math.Min(math.Max(w.mouse.X, 0), sim.GridSize*float64(gridDim.X))
+		w.mouse.Y = math.Min(math.Max(w.mouse.Y, 0), sim.GridSize*float64(gridDim.Y))
 	}
 
 	imgui.End()
