@@ -144,7 +144,7 @@ func (s *Sim) Init() {
 	hdr.Len = int(s.avr.ramend)
 	hdr.Cap = int(s.avr.ramend)
 
-	s.Mouse = NewMouse(s.avr)
+	s.Mouse = NewMouse(s.avr, s.Maze)
 	s.Mouse.Init()
 
 	if *gdbEnabled {

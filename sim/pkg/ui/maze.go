@@ -49,10 +49,14 @@ func (w *mazeWindow) draw() {
 	imgui.Dummy(canvasSizePx)
 	if imgui.BeginPopupContextItem() {
 		if imgui.SelectableBool("Reset Position") {
-			w.mouse.X, w.mouse.Y, w.mouse.Angle = sim.GridSize/2, sim.GridSize/2, math.Pi/2
+			w.mouse.SetPosition(sim.GridSize/2, sim.GridSize/2, math.Pi/2)
 		}
 		if imgui.SelectableBool("Center in Cell") {
-			w.mouse.X, w.mouse.Y = (math.Floor(w.mouse.X/sim.GridSize)+0.5)*sim.GridSize, (math.Floor(w.mouse.Y/sim.GridSize)+0.5)*sim.GridSize
+			w.mouse.SetPosition(
+				(math.Floor(w.mouse.X/sim.GridSize)+0.5)*sim.GridSize,
+				(math.Floor(w.mouse.Y/sim.GridSize)+0.5)*sim.GridSize,
+				math.Pi/2,
+			)
 		}
 		imgui.EndPopup()
 	}
@@ -132,13 +136,27 @@ func (w *mazeWindow) draw() {
 			dragging = true
 		} else {
 			delta := imgui.MouseDragDeltaV(imgui.MouseButtonLeft, 5.0).Mul(1.0 / mmSizePx)
-			w.mouse.X = dragStartX + float64(delta.X)
-			w.mouse.Y = dragStartY - float64(delta.Y)
+			w.mouse.SetPosition(
+				dragStartX+float64(delta.X),
+				dragStartY-float64(delta.Y),
+				w.mouse.Angle,
+			)
 		}
 	} else {
 		dragging = false
-		w.mouse.X = math.Min(math.Max(w.mouse.X, 0), sim.GridSize*float64(gridDim.X))
-		w.mouse.Y = math.Min(math.Max(w.mouse.Y, 0), sim.GridSize*float64(gridDim.Y))
+		w.mouse.SetPosition(
+			math.Min(math.Max(w.mouse.X, 0), sim.GridSize*float64(gridDim.X)),
+			math.Min(math.Max(w.mouse.Y, 0), sim.GridSize*float64(gridDim.Y)),
+			w.mouse.Angle,
+		)
+	}
+
+	for _, hit := range w.mouse.IRHits {
+		s := mouseXY(imgui.NewVec2(float32(hit.Sensor.Pos.X), float32(hit.Sensor.Pos.Y)))
+		h := imgui.NewVec2(float32(hit.Pos.X), -float32(hit.Pos.Y)).Mul(mmSizePx).Add(mazeOriginPx)
+
+		drawList.AddCircleFilled(h, 4, imgui.ColorConvertFloat4ToU32(imgui.NewVec4(1, 0, 0, 1)))
+		drawList.AddLineV(s, h, imgui.ColorConvertFloat4ToU32(imgui.NewVec4(1, 0, 0, 1)), 1.0)
 	}
 
 	imgui.End()
