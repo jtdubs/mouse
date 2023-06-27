@@ -41,6 +41,8 @@ type IRHit struct {
 
 type Mouse struct {
 	avr                                   *C.avr_t
+	maze                                  *Maze
+	encoderChan                           <-chan EncoderTickEvent
 	LEDs                                  *LEDs
 	Battery                               *Battery
 	FunctionSelector                      *FunctionSelector
@@ -48,9 +50,7 @@ type Mouse struct {
 	LeftMotor, RightMotor                 *Motor
 	X, Y                                  float64 // center of the axle, in mm from the maze center
 	Angle                                 float64 // in radians, 0 is the positive x-axis (east)
-	encoderChan                           <-chan EncoderTickEvent
 	IRHits                                []IRHit
-	maze                                  *Maze
 }
 
 func NewMouse(avr *C.avr_t, maze *Maze) *Mouse {
@@ -58,14 +58,15 @@ func NewMouse(avr *C.avr_t, maze *Maze) *Mouse {
 
 	return &Mouse{
 		avr:              avr,
+		maze:             maze,
 		LEDs:             NewLEDs(avr),
 		Battery:          NewBattery(avr, C.ADC_IRQ_ADC7),
 		FunctionSelector: NewFunctionSelect(avr, C.ADC_IRQ_ADC6),
 		LeftMotor:        NewMotor(avr, true, encoderChan),
 		RightMotor:       NewMotor(avr, false, encoderChan),
-		LeftSensor:       NewSensor(avr, "SENSOR_LEFT", C.ADC_IRQ_ADC2, Pos{X: 50, Y: 35}),
-		CenterSensor:     NewSensor(avr, "SENSOR_CENTER", C.ADC_IRQ_ADC1, Pos{X: 65, Y: 0}),
-		RightSensor:      NewSensor(avr, "SENSOR_RIGHT", C.ADC_IRQ_ADC0, Pos{X: 50, Y: -35}),
+		LeftSensor:       NewSensor(avr, "SENSOR_LEFT", C.ADC_IRQ_ADC2, Pos{X: 50, Y: 35}, math.Pi/6),
+		CenterSensor:     NewSensor(avr, "SENSOR_CENTER", C.ADC_IRQ_ADC1, Pos{X: 65, Y: 0}, 0),
+		RightSensor:      NewSensor(avr, "SENSOR_RIGHT", C.ADC_IRQ_ADC0, Pos{X: 50, Y: -35}, -math.Pi/6),
 		encoderChan:      encoderChan,
 		X:                GridSize / 2,
 		Y:                GridSize / 2,
@@ -139,7 +140,64 @@ func (m *Mouse) dt(left, forward bool) float64 {
 }
 
 func (m *Mouse) updateIRHits() {
-	m.IRHits = []IRHit{
-		{m.RightSensor, Pos{360, 360}},
+	m.IRHits = nil
+
+	for _, sensor := range []*Sensor{m.LeftSensor, m.CenterSensor, m.RightSensor} {
+		origin := m.mouse2Maze(sensor.Pos)
+		angle := sensor.Angle + m.Angle
+
+		tanTheta := math.Tan(angle)
+		sinSign := math.Signbit(math.Sin(angle))
+		cosSign := math.Signbit(math.Cos(angle))
+
+		// horizontal walls
+		for y := 0; y < len(m.maze.Posts); y++ {
+			wallY := float64(y) * GridSize
+			dy := wallY - origin.Y
+			dx := 0.0
+			if tanTheta != 0 {
+				dx = dy / tanTheta
+			}
+			if math.Signbit(dx) != cosSign {
+				continue
+			}
+			x := origin.X + dx
+			if x < 0 || x > float64(len(m.maze.Posts[y]))*GridSize {
+				continue
+			}
+			if m.maze.Posts[y][int(x/GridSize)].East {
+				m.IRHits = append(m.IRHits, IRHit{
+					sensor,
+					Pos{x, wallY},
+				})
+			}
+		}
+
+		// vertical walls
+		for x := 0; x < len(m.maze.Posts[0]); x++ {
+			wallX := float64(x) * GridSize
+			dx := wallX - origin.X
+			dy := dx * tanTheta
+			if math.Signbit(dy) != sinSign {
+				continue
+			}
+			y := origin.Y + dy
+			if y < 0 || y > float64(len(m.maze.Posts[0]))*GridSize {
+				continue
+			}
+			if m.maze.Posts[int(y/GridSize)][x].North {
+				m.IRHits = append(m.IRHits, IRHit{
+					sensor,
+					Pos{wallX, y},
+				})
+			}
+		}
+	}
+}
+
+func (m *Mouse) mouse2Maze(p Pos) Pos {
+	return Pos{
+		X: m.X + (p.X*math.Cos(m.Angle) - p.Y*math.Sin(m.Angle)),
+		Y: m.Y + (p.X*math.Sin(m.Angle) + p.Y*math.Cos(m.Angle)),
 	}
 }

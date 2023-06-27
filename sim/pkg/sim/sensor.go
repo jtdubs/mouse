@@ -20,15 +20,17 @@ type Sensor struct {
 	Voltage int32
 	Name    string
 	Pos     Pos // relative to the center of the mouse's axle
+	Angle   float64
 	avr     *C.avr_t
 	irq     *C.avr_irq_t
 }
 
-func NewSensor(avr *C.avr_t, name string, adc C.int, pos Pos) *Sensor {
+func NewSensor(avr *C.avr_t, name string, adc C.int, pos Pos, angle float64) *Sensor {
 	return &Sensor{
 		Voltage: 0,
 		Name:    name,
 		Pos:     pos,
+		Angle:   angle,
 		avr:     avr,
 		irq:     C.avr_io_getirq(avr, C.AVR_IOCTL_ADC_GETIRQ, adc),
 	}
