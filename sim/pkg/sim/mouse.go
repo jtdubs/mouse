@@ -13,6 +13,24 @@ package sim
 #include <sim_gdb.h>
 */
 import "C"
+import "math"
+
+// Fundamental constants
+const (
+	GridSize                float64 = 180.0 // in mm
+	WheelBase               float64 = 90.0  // in mm
+	WheelDiameter           float64 = 32.0  // in mm
+	EncoderTicksPerRotation int     = 240
+)
+
+// Derived constants
+var (
+	WheelCircumference     float64 = math.Pi * WheelDiameter
+	DistancePerEncoderTick float64 = WheelCircumference / float64(EncoderTicksPerRotation)
+	EncoderTickDtheta      float64 = DistancePerEncoderTick / WheelBase
+	EncoderTickDx          float64 = (WheelBase / 2.0) * math.Sin(EncoderTickDtheta)
+	EncoderTickDy          float64 = (WheelBase / 2.0) * (1.0 - math.Cos(EncoderTickDtheta))
+)
 
 type Mouse struct {
 	avr                                   *C.avr_t
@@ -21,7 +39,9 @@ type Mouse struct {
 	FunctionSelector                      *FunctionSelector
 	LeftSensor, CenterSensor, RightSensor *Sensor
 	LeftMotor, RightMotor                 *Motor
-	Environment                           *Environment
+	X, Y                                  float64 // center of the axle, in mm from the maze center
+	Angle                                 float64 // in radians, 0 is the positive x-axis (east)
+	encoderChan                           <-chan EncoderTickEvent
 }
 
 func NewMouse(avr *C.avr_t) *Mouse {
@@ -37,7 +57,10 @@ func NewMouse(avr *C.avr_t) *Mouse {
 		LeftSensor:       NewSensor(avr, "SENSOR_LEFT", C.ADC_IRQ_ADC2),
 		CenterSensor:     NewSensor(avr, "SENSOR_CENTER", C.ADC_IRQ_ADC1),
 		RightSensor:      NewSensor(avr, "SENSOR_RIGHT", C.ADC_IRQ_ADC0),
-		Environment:      NewEnvironment(16, 16, encoderChan),
+		encoderChan:      encoderChan,
+		X:                GridSize / 2,
+		Y:                GridSize / 2,
+		Angle:            math.Pi / 2,
 	}
 }
 
@@ -50,5 +73,53 @@ func (m *Mouse) Init() {
 	m.LeftSensor.Init()
 	m.CenterSensor.Init()
 	m.RightSensor.Init()
-	m.Environment.Init()
+
+	go func() {
+		for ev := range m.encoderChan {
+			m.EncoderTick(ev.Left, ev.Left != ev.Clockwise)
+		}
+	}()
+}
+
+func (m *Mouse) EncoderTick(left, forward bool) {
+	m.X += m.dx(left, forward)
+	m.Y += m.dy(left, forward)
+	m.Angle += m.dt(left, forward)
+	if m.Angle < 0 {
+		m.Angle += 2 * math.Pi
+	} else if m.Angle >= 2*math.Pi {
+		m.Angle -= 2 * math.Pi
+	}
+}
+
+func (m *Mouse) dx(left, forward bool) float64 {
+	dx := EncoderTickDx
+	if !forward {
+		dx = -dx
+	}
+	dy := EncoderTickDy
+	if left {
+		dy = -dy
+	}
+	return (dx * math.Cos(m.Angle)) - (dy * math.Sin(m.Angle))
+}
+
+func (m *Mouse) dy(left, forward bool) float64 {
+	dx := EncoderTickDx
+	if !forward {
+		dx = -dx
+	}
+	dy := EncoderTickDy
+	if left {
+		dy = -dy
+	}
+	return (dx * math.Sin(m.Angle)) + (dy * math.Cos(m.Angle))
+}
+
+func (m *Mouse) dt(left, forward bool) float64 {
+	if left != forward {
+		return EncoderTickDtheta
+	} else {
+		return -EncoderTickDtheta
+	}
 }

@@ -25,17 +25,17 @@ func newSymbolsWindow(sim *sim.Sim) *symbolsWindow {
 	}
 }
 
-func (s *symbolsWindow) init() {
-	s.names = maps.Keys(s.sim.Symbols)
-	sort.Strings(s.names)
+func (w *symbolsWindow) init() {
+	w.names = maps.Keys(w.sim.Symbols)
+	sort.Strings(w.names)
 }
 
-func (s *symbolsWindow) draw() {
+func (w *symbolsWindow) draw() {
 	imgui.Begin("Symbols")
 
 	imgui.Text("Filter: ")
 	imgui.SameLine()
-	s.filter.DrawV("", 180)
+	w.filter.DrawV("", 180)
 	imgui.Separator()
 
 	var tableFlags imgui.TableFlags = imgui.TableFlagsResizable |
@@ -47,24 +47,24 @@ func (s *symbolsWindow) draw() {
 	imgui.TableSetupColumnV("Value##SymbolsControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
 	imgui.TableHeadersRow()
 
-	for _, name := range s.names {
-		if !s.filter.PassFilter(name) {
+	for _, name := range w.names {
+		if !w.filter.PassFilter(name) {
 			continue
 		}
 		imgui.TableNextRow()
 		imgui.TableSetColumnIndex(0)
 		imgui.Text(name)
 		imgui.TableSetColumnIndex(1)
-		sym := s.sim.Symbols[name]
+		sym := w.sim.Symbols[name]
 		switch sym.Length {
 		case 1:
-			imgui.Text(fmt.Sprintf("0x%02x", s.sim.RAM[sym.Address]))
+			imgui.Text(fmt.Sprintf("0x%02x", w.sim.RAM[sym.Address]))
 		case 2:
-			imgui.Text(fmt.Sprintf("0x%04x", binary.LittleEndian.Uint16(s.sim.RAM[sym.Address:sym.Address+2])))
+			imgui.Text(fmt.Sprintf("0x%04x", binary.LittleEndian.Uint16(w.sim.RAM[sym.Address:sym.Address+2])))
 		case 4:
-			imgui.Text(fmt.Sprintf("0x%08x", binary.LittleEndian.Uint32(s.sim.RAM[sym.Address:sym.Address+4])))
+			imgui.Text(fmt.Sprintf("0x%08x", binary.LittleEndian.Uint32(w.sim.RAM[sym.Address:sym.Address+4])))
 		default:
-			imgui.Text(hex.EncodeToString(s.sim.RAM[sym.Address : sym.Address+sym.Length]))
+			imgui.Text(hex.EncodeToString(w.sim.RAM[sym.Address : sym.Address+sym.Length]))
 		}
 	}
 

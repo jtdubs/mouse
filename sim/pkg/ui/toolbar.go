@@ -18,53 +18,53 @@ func newToolbarWindow(sim *sim.Sim) *toolbarWindow {
 	}
 }
 
-func (s *toolbarWindow) init() {}
+func (w *toolbarWindow) init() {}
 
-func (s *toolbarWindow) toolbarButton(name string, icon string) bool {
+func (w *toolbarWindow) toolbarButton(name string, icon string) bool {
 	return imgui.ImageButtonV(name, Textures[icon].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(0, 0, 0, 0), imgui.NewVec4(1, 1, 1, 1))
 }
 
-func (s *toolbarWindow) drawToolbar() {
-	switch s.sim.State {
+func (w *toolbarWindow) drawToolbar() {
+	switch w.sim.State {
 	case sim.Crashed:
 		imgui.Text("Crashed")
 	case sim.Done:
 		imgui.Text("Done")
 	case sim.Paused:
-		if s.toolbarButton("SimPlay", "play-black") {
-			s.sim.SetRunning(true)
+		if w.toolbarButton("SimPlay", "play-black") {
+			w.sim.SetRunning(true)
 		}
 	case sim.Running:
-		if s.toolbarButton("SimPause", "pause-black") {
-			s.sim.SetRunning(false)
+		if w.toolbarButton("SimPause", "pause-black") {
+			w.sim.SetRunning(false)
 		}
 	}
 	imgui.SameLine()
-	imgui.BeginDisabledV(s.sim.State != sim.Paused)
-	if s.toolbarButton("SimStep1", "step-forward-black") {
-		s.sim.Step(1000000)
+	imgui.BeginDisabledV(w.sim.State != sim.Paused)
+	if w.toolbarButton("SimStep1", "step-forward-black") {
+		w.sim.Step(1000000)
 	}
 	imgui.SameLine()
-	if s.toolbarButton("SimStep2", "step-forward-2-black") {
-		s.sim.Step(100000000)
+	if w.toolbarButton("SimStep2", "step-forward-2-black") {
+		w.sim.Step(100000000)
 	}
 	imgui.EndDisabled()
 	imgui.SameLineV(0, 20)
 
-	imgui.BeginDisabledV(s.sim.Recording)
-	if s.toolbarButton("VCDRecord", "video-outline-black") {
-		s.sim.SetRecording(true)
+	imgui.BeginDisabledV(w.sim.Recording)
+	if w.toolbarButton("VCDRecord", "video-outline-black") {
+		w.sim.SetRecording(true)
 	}
 	imgui.EndDisabled()
 	imgui.SameLine()
-	imgui.BeginDisabledV(!s.sim.Recording)
-	if s.toolbarButton("VCDStop", "video-off-outline-black") {
-		s.sim.SetRecording(false)
+	imgui.BeginDisabledV(!w.sim.Recording)
+	if w.toolbarButton("VCDStop", "video-off-outline-black") {
+		w.sim.SetRecording(false)
 	}
 	imgui.EndDisabled()
 	imgui.SameLineV(0, 20)
 
-	nanos := s.sim.Nanos()
+	nanos := w.sim.Nanos()
 	nanosText := fmt.Sprintf("%d:%02d:%02d.%03d,%03d,%03d",
 		(nanos / 3600000000000),
 		(nanos/60000000000)%60,
@@ -77,7 +77,7 @@ func (s *toolbarWindow) drawToolbar() {
 	imgui.Text(nanosText)
 }
 
-func (s *toolbarWindow) draw() {
+func (w *toolbarWindow) draw() {
 	var toolbarFlags imgui.WindowFlags = imgui.WindowFlagsNoDocking |
 		imgui.WindowFlagsNoTitleBar |
 		imgui.WindowFlagsNoResize |
@@ -92,6 +92,6 @@ func (s *toolbarWindow) draw() {
 	imgui.PushStyleVarFloat(imgui.StyleVarWindowBorderSize, 0)
 	imgui.BeginV("Toolbar", nil, toolbarFlags)
 	imgui.PopStyleVar()
-	s.drawToolbar()
+	w.drawToolbar()
 	imgui.End()
 }

@@ -11,32 +11,32 @@ import (
 
 type mazeWindow struct {
 	sim       *sim.Sim
-	m         *sim.Mouse
+	mouse     *sim.Mouse
 	mazeList  string
 	mazeIndex int32
 }
 
 func newMazeWindow(sim *sim.Sim) *mazeWindow {
 	return &mazeWindow{
-		sim: sim,
-		m:   sim.Mouse,
+		sim:   sim,
+		mouse: sim.Mouse,
 	}
 }
 
-func (s *mazeWindow) init() {
-	s.mazeList = strings.Join(s.sim.Maze.ListMazes(), "\x00") + "\x00\x00"
+func (w *mazeWindow) init() {
+	w.mazeList = strings.Join(w.sim.Maze.ListMazes(), "\x00") + "\x00\x00"
 }
 
-func (s *mazeWindow) draw() {
-	postDim := imgui.NewVec2(float32(len(s.sim.Maze.Posts[0])), float32(len(s.sim.Maze.Posts)))
+func (w *mazeWindow) draw() {
+	postDim := imgui.NewVec2(float32(len(w.sim.Maze.Posts[0])), float32(len(w.sim.Maze.Posts)))
 	gridDim := postDim.Sub(imgui.NewVec2(1, 1))
 
 	imgui.Begin("Maze")
 
 	imgui.Text("Maze:")
 	imgui.SameLine()
-	if imgui.ComboStr("##MAZE", &s.mazeIndex, s.mazeList) {
-		s.sim.Maze.Load(s.sim.Maze.ListMazes()[s.mazeIndex])
+	if imgui.ComboStr("##MAZE", &w.mazeIndex, w.mazeList) {
+		w.sim.Maze.Load(w.sim.Maze.ListMazes()[w.mazeIndex])
 	}
 
 	canvasSizePx := imgui.ContentRegionAvail()
@@ -49,13 +49,13 @@ func (s *mazeWindow) draw() {
 	imgui.Dummy(canvasSizePx)
 	if imgui.BeginPopupContextItem() {
 		if imgui.SelectableBool("Reset Position") {
-			s.m.Environment.MouseX, s.m.Environment.MouseY, s.m.Environment.MouseAngle = sim.GridSize/2, sim.GridSize/2, math.Pi/2
+			w.mouse.X, w.mouse.Y, w.mouse.Angle = sim.GridSize/2, sim.GridSize/2, math.Pi/2
 		}
 		imgui.EndPopup()
 	}
 
 	drawList := imgui.WindowDrawList()
-	for i, row := range s.sim.Maze.Posts {
+	for i, row := range w.sim.Maze.Posts {
 		for j, post := range row {
 			cellOriginPx := mazeOriginPx.Add(imgui.NewVec2(float32(j)*cellSizePx, -float32(i)*cellSizePx))
 			if post.North {
@@ -67,7 +67,7 @@ func (s *mazeWindow) draw() {
 		}
 	}
 
-	x, y, theta := float32(s.m.Environment.MouseX), float32(s.m.Environment.MouseY), s.m.Environment.MouseAngle
+	x, y, theta := float32(w.mouse.X), float32(w.mouse.Y), w.mouse.Angle
 	centerPx := mazeOriginPx.Add(imgui.NewVec2(x, -y).Mul(mmSizePx))
 
 	mouseXY := func(mm imgui.Vec2) (px imgui.Vec2) {
@@ -116,21 +116,21 @@ func (s *mazeWindow) draw() {
 	if imgui.IsItemHovered() {
 		wheel := float64(imgui.CurrentIO().MouseWheel())
 		if wheel != 0 {
-			angle := s.m.Environment.MouseAngle * 180.0 / math.Pi
+			angle := w.mouse.Angle * 180.0 / math.Pi
 			angle = math.Round(angle/5.0) * 5.0
 			angle += 5.0 * wheel
-			s.m.Environment.MouseAngle = angle * math.Pi / 180.0
+			w.mouse.Angle = angle * math.Pi / 180.0
 		}
 	}
 	if imgui.IsItemActive() {
 		if !dragging {
-			dragStartX, dragStartY = s.m.Environment.MouseX, s.m.Environment.MouseY
+			dragStartX, dragStartY = w.mouse.X, w.mouse.Y
 			dragButtonX, dragButtonY = minX, minY
 			dragging = true
 		} else {
 			delta := imgui.MouseDragDeltaV(imgui.MouseButtonLeft, 5.0).Mul(1.0 / mmSizePx)
-			s.m.Environment.MouseX = dragStartX + float64(delta.X)
-			s.m.Environment.MouseY = dragStartY - float64(delta.Y)
+			w.mouse.X = dragStartX + float64(delta.X)
+			w.mouse.Y = dragStartY - float64(delta.Y)
 		}
 	} else {
 		dragging = false
