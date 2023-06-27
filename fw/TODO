@@ -16,8 +16,6 @@ Modes:
   - Include wall-detection logic here and get rid of wall mode.
 
 Sim:
-- Simulate IR readings based on wall distance in simulation
-  - Need a better characterization of IR reading based on angle for this
 - Auto-pause on collision with wall?
 - Some notion of "steps" in the firmware that raise a monitorable signal, then sim can "step" through them
   - Wall ended
