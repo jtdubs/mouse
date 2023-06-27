@@ -4,10 +4,10 @@
 
 #include "platform/pin.h"
 
-uint8_t motor_left_speed;
-uint8_t motor_right_speed;
-bool    motor_left_forward;
-bool    motor_right_forward;
+uint8_t motor_speed_left;
+uint8_t motor_speed_right;
+bool    motor_forward_left;
+bool    motor_forward_right;
 
 // motor_init initializes the motors.
 void motor_init() {
@@ -22,6 +22,6 @@ void motor_init() {
   TIFR0  = 0;              // Clear interrupt flags.
   TCNT1  = 0;              // Reset counter.
 
-  set_left_motor_forward(true);
-  set_right_motor_forward(true);
+  motor_set_forward_left(true);
+  motor_set_forward_right(true);
 }

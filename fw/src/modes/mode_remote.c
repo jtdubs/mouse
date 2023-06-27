@@ -16,10 +16,10 @@ void mode_remote_tick() {
         pin_set2(IR_LEDS, command.data.leds.ir > 0);
         break;
       case COMMAND_SET_MOTORS:
-        set_left_motor_speed(command.data.motors.left_speed);
-        set_right_motor_speed(command.data.motors.right_speed);
-        set_left_motor_forward(command.data.motors.left_forward);
-        set_right_motor_forward(command.data.motors.right_forward);
+        motor_set_speed_left(command.data.motors.speed_left);
+        motor_set_speed_right(command.data.motors.speed_right);
+        motor_set_forward_left(command.data.motors.forward_left);
+        motor_set_forward_right(command.data.motors.forward_right);
         break;
       default:
         return;

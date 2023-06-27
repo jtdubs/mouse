@@ -62,8 +62,8 @@ void mode_enter() {
   pin_clear(LED_LEFT);
   pin_clear(LED_RIGHT);
   pin_clear(IR_LEDS);
-  set_left_motor_forward(true);
-  set_left_motor_speed(0);
-  set_right_motor_forward(true);
-  set_right_motor_speed(0);
+  motor_set_forward_left(true);
+  motor_set_speed_left(0);
+  motor_set_forward_right(true);
+  motor_set_speed_right(0);
 }
