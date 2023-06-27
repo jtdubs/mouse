@@ -1,6 +1,7 @@
 #include "selector.h"
 
 #include <stdbool.h>
+#include <util/atomic.h>
 
 #include "platform/adc.h"
 
@@ -14,7 +15,10 @@ static const uint8_t SelectorThresholds[16] = {21,  42,  60,  77,  91,  102, 112
 
 uint8_t selector_update() {
   // Read the selector voltage.
-  uint8_t v = adc_selector >> 2;
+  uint8_t v;
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    v = adc_selector;
+  }
 
   if (v > 180) {
     // If the button was just pressed, return the selected value.

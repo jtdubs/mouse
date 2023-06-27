@@ -28,10 +28,8 @@ inline void timer_wait() {
 
   // Wait with interrupts enabled for the next timer interrupt,
   // then disable interrupts and clear the timer.
-  sei();
   while (!timer_elapsed) {};
   timer_elapsed = false;
-  cli();
 
   wdt_reset();
   pin_set(PROBE_0);

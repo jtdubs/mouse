@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <util/atomic.h>
 
 #include "modes/mode.h"
 #include "modes/mode_wall.h"
@@ -34,21 +35,23 @@ void report_init() {
 // report_send sends the report, if usart0 is ready.
 void report_send() {
   if (usart0_write_ready()) {
-    report.battery_volts        = adc_battery_voltage >> 2;
-    report.mode                 = mode_active;
-    report.motors.encoder_left  = encoder_left;
-    report.motors.encoder_right = encoder_right;
-    report.motors.forward_left  = motor_forward_left ? 1 : 0;
-    report.motors.forward_right = motor_forward_right ? 1 : 0;
-    report.motors.speed_left    = motor_speed_left;
-    report.motors.speed_right   = motor_speed_right;
-    report.sensors.left         = adc_sensor_left;
-    report.sensors.center       = adc_sensor_center;
-    report.sensors.right        = adc_sensor_right;
-    report.leds.onboard         = pin_is_set(LED_BUILTIN);
-    report.leds.left            = pin_is_set(LED_LEFT);
-    report.leds.right           = pin_is_set(LED_RIGHT);
-    report.leds.ir              = pin_is_set(IR_LEDS);
+    ATOMIC_BLOCK(ATOMIC_FORCEON) {
+      report.battery_volts        = adc_battery_voltage >> 2;
+      report.mode                 = mode_active;
+      report.motors.encoder_left  = encoder_left;
+      report.motors.encoder_right = encoder_right;
+      report.motors.forward_left  = motor_forward_left ? 1 : 0;
+      report.motors.forward_right = motor_forward_right ? 1 : 0;
+      report.motors.speed_left    = motor_speed_left;
+      report.motors.speed_right   = motor_speed_right;
+      report.sensors.left         = adc_sensor_left;
+      report.sensors.center       = adc_sensor_center;
+      report.sensors.right        = adc_sensor_right;
+      report.leds.onboard         = pin_is_set(LED_BUILTIN);
+      report.leds.left            = pin_is_set(LED_LEFT);
+      report.leds.right           = pin_is_set(LED_RIGHT);
+      report.leds.ir              = pin_is_set(IR_LEDS);
+    }
     base64_encode((uint8_t*)&report, (uint8_t*)&encoded_report[1], sizeof(report));
     usart0_write();
   }

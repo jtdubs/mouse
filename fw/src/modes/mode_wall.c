@@ -1,6 +1,7 @@
 #include "modes/mode_wall.h"
 
 #include <math.h>
+#include <util/atomic.h>
 
 #include "modes/mode.h"
 #include "platform/adc.h"
@@ -19,15 +20,20 @@ void mode_wall_enter() {
 }
 
 void mode_wall_tick() {
-  pin_set2(LED_LEFT, adc_sensor_left > 100);
-  pin_set2(LED_BUILTIN, adc_sensor_center > 100);
-  pin_set2(LED_RIGHT, adc_sensor_right > 100);
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    pin_set2(LED_LEFT, adc_sensor_left > 100);
+    pin_set2(LED_BUILTIN, adc_sensor_center > 100);
+    pin_set2(LED_RIGHT, adc_sensor_right > 100);
+  }
 
   distance_center = calc_distance_center();
 }
 
 uint8_t calc_distance_center() {
-  uint8_t sensor = adc_sensor_center >> 2;
+  uint8_t sensor;
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    sensor = adc_sensor_center >> 2;
+  }
 
   if (sensor < 4) {
     return 255 - (sensor << 4);
