@@ -38,19 +38,16 @@ func NewLEDCommand(builtin, left, right, ir bool) LEDCommand {
 func (c LEDCommand) isCommand() bool { return true }
 
 type MotorCommand struct {
-	Type                      uint8
-	LeftSpeed, RightSpeed     uint8
-	LeftForward, RightForward bool
-	Padding                   [1]uint8
+	Type                  uint8
+	LeftSpeed, RightSpeed int16
+	Padding               [1]uint8
 }
 
-func NewMotorCommand(leftSpeed, rightSpeed uint8, leftForward, rightForward bool) MotorCommand {
+func NewMotorCommand(leftSpeed, rightSpeed int16) MotorCommand {
 	return MotorCommand{
-		Type:         2,
-		LeftSpeed:    leftSpeed,
-		RightSpeed:   rightSpeed,
-		LeftForward:  leftForward,
-		RightForward: rightForward,
+		Type:       2,
+		LeftSpeed:  leftSpeed,
+		RightSpeed: rightSpeed,
 	}
 }
 

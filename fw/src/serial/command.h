@@ -5,7 +5,7 @@
 
 #define COMMAND_SET_MODE 0
 #define COMMAND_SET_LEDS 1
-#define COMMAND_SET_MOTORS 2
+#define COMMAND_SET_SPEED 2
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.
@@ -25,12 +25,10 @@ typedef struct {
       uint8_t padding[1];
     } leds;
     struct {
-      uint8_t speed_left;
-      uint8_t speed_right;
-      bool    forward_left;
-      bool    forward_right;
+      int16_t left;
+      int16_t right;
       uint8_t padding[1];
-    } motors;
+    } speed;
   } data;
 } command_t;
 #pragma pack(pop)

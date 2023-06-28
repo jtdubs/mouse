@@ -3,11 +3,20 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-#include "pin.h"
+#include "platform/pin.h"
+#include "platform/rtc.h"
 
 // Encoder counts.
 uint16_t encoder_left;
 uint16_t encoder_right;
+
+// Encoder timings.
+uint32_t encoder_times_left[2];   // 0: current, 1: previous
+uint32_t encoder_times_right[2];  // 0: current, 1: previous
+
+// Encoder directions.
+bool encoder_forward_left;
+bool encoder_forward_right;
 
 // encoders_init initializes the encoders.
 void encoders_init() {
@@ -34,9 +43,14 @@ ISR(INT0_vect, ISR_BLOCK) {
   // Update the encoder count based on rotation direction.
   if (a == last_b) {
     encoder_left++;
+    encoder_forward_left = true;
   } else {
     encoder_left--;
+    encoder_forward_left = false;
   }
+
+  encoder_times_left[1] = encoder_times_left[0];
+  encoder_times_left[0] = rtc_micros();
 
   last_b = b;
 }
@@ -56,9 +70,14 @@ ISR(INT1_vect, ISR_BLOCK) {
   // Update the encoder count based on rotation direction.
   if (a == last_b) {
     encoder_right--;
+    encoder_forward_right = false;
   } else {
     encoder_right++;
+    encoder_forward_right = true;
   }
+
+  encoder_times_right[1] = encoder_times_right[0];
+  encoder_times_right[0] = rtc_micros();
 
   last_b = b;
 }

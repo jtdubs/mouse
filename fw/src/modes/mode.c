@@ -1,5 +1,6 @@
 #include "modes/mode.h"
 
+#include "control/speed.h"
 #include "modes/mode_error.h"
 #include "modes/mode_remote.h"
 #include "modes/mode_wall.h"
@@ -63,8 +64,9 @@ void mode_enter() {
   pin_clear(LED_LEFT);
   pin_clear(LED_RIGHT);
   pin_clear(IR_LEDS);
+  speed_disable();
   motor_set_forward_left(true);
-  motor_set_speed_left(0);
+  motor_set_power_left(0);
   motor_set_forward_right(true);
-  motor_set_speed_right(0);
+  motor_set_power_right(0);
 }

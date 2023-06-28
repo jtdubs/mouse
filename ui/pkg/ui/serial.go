@@ -124,6 +124,7 @@ func (s *serialWindow) drawControls() {
 		}
 	}
 
+	// LEDs
 	{
 		onboard, left, right, ir := r.DecodeLEDs()
 		changed := false
@@ -136,57 +137,27 @@ func (s *serialWindow) drawControls() {
 		}
 	}
 
+	// Motors
 	{
 		imgui.Checkbox("Linked Throttles", &s.linkedThrottles)
 		if s.linkedThrottles {
-			leftForward, rightForward := r.DecodeForward()
-			leftSpeed := int32(r.SpeedLeft)
-			rightSpeed := int32(r.SpeedRight)
+			leftSetpoint := r.SpeedSetpointLeft
+			rightSetpoint := r.SpeedSetpointRight
 
-			speed := leftSpeed
-			if !leftForward {
-				speed = -speed
-			}
-			changed := s.drawMotorControl("Motors", &speed)
-			forward := speed >= 0
-			if !forward {
-				speed = -speed
-			}
+			changed := s.drawMotorControl("Motors", &leftSetpoint)
 
-			if changed || forward != leftForward || forward != rightForward || speed != leftSpeed || speed != rightSpeed {
-				s.mouse.Serial.SendCommand(mouse.NewMotorCommand(uint8(speed), uint8(speed), forward, forward))
+			if changed || leftSetpoint != rightSetpoint {
+				s.mouse.Serial.SendCommand(mouse.NewMotorCommand(leftSetpoint, leftSetpoint))
 			}
 		} else {
-			leftForward, rightForward := r.DecodeForward()
-			leftSpeed := int32(r.SpeedLeft)
-			rightSpeed := int32(r.SpeedRight)
-			if !leftForward {
-				leftSpeed = -leftSpeed
-			}
-			if !rightForward {
-				rightSpeed = -rightSpeed
-			}
+			leftSetpoint := r.SpeedSetpointLeft
+			rightSetpoint := r.SpeedSetpointRight
 
-			changed := false
-			changed = s.drawMotorControl("Left Motor", &leftSpeed) || changed
-			changed = s.drawMotorControl("Right Motor", &rightSpeed) || changed
+			leftChanged := s.drawMotorControl("Left Motor", &leftSetpoint)
+			rightChanged := s.drawMotorControl("Right Motor", &rightSetpoint)
 
-			if leftSpeed >= 0 {
-				leftForward = true
-			} else {
-				leftSpeed = -leftSpeed
-				leftForward = false
-			}
-
-			if rightSpeed >= 0 {
-				rightForward = true
-			} else {
-				rightSpeed = -rightSpeed
-				rightForward = false
-			}
-
-			if changed {
-				s.mouse.Serial.SendCommand(mouse.NewMotorCommand(uint8(leftSpeed), uint8(rightSpeed), leftForward, rightForward))
+			if leftChanged || rightChanged {
+				s.mouse.Serial.SendCommand(mouse.NewMotorCommand(leftSetpoint, rightSetpoint))
 			}
 		}
 	}
@@ -288,12 +259,28 @@ func (s *serialWindow) drawLEDControl(name string, value *bool) (changed bool) {
 	return oldValue != *value
 }
 
-func (s *serialWindow) drawMotorControl(name string, speed *int32) (changed bool) {
+func (s *serialWindow) drawMotorControl(name string, speed *int16) (changed bool) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))
 	imgui.TableSetColumnIndex(1)
+
+	var rpms float32
+	if *speed == 0 {
+		rpms = 0
+	} else {
+		rpms = (1000000.0 * 60.0) / (240.0 * float32(*speed))
+	}
+
 	oldSpeed := *speed
-	imgui.SliderInt(fmt.Sprintf("##%vSpeed", name), speed, -50, 50)
+	if imgui.SliderFloat(name, &rpms, -200, 200) {
+		if rpms == 0 {
+			*speed = 0
+		} else {
+			*speed = int16((60.0 * 1000000.0) / (240.0 * rpms))
+
+		}
+	}
+
 	return oldSpeed != *speed
 }

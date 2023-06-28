@@ -4,8 +4,8 @@
 
 #include "platform/pin.h"
 
-uint8_t motor_speed_left;
-uint8_t motor_speed_right;
+uint8_t motor_power_left;
+uint8_t motor_power_right;
 bool    motor_forward_left;
 bool    motor_forward_right;
 
@@ -24,4 +24,38 @@ void motor_init() {
 
   motor_set_forward_left(true);
   motor_set_forward_right(true);
+}
+
+// set_left_motor_forward sets the direction of the left motor.
+void motor_set_forward_left(bool forward) {
+  motor_forward_left = forward;
+  if (forward) {
+    pin_clear(LEFT_DIR);
+  } else {
+    pin_set(LEFT_DIR);
+  }
+}
+
+// set_right_motor_forward sets the direction of the right motor.
+void motor_set_forward_right(bool forward) {
+  motor_forward_right = forward;
+  if (forward) {
+    pin_set(RIGHT_DIR);
+  } else {
+    pin_clear(RIGHT_DIR);
+  }
+}
+
+// set_left_motor_power sets the power of the left motor.
+// NOTE: The power range is [0, 255].
+void motor_set_power_left(uint8_t power) {
+  motor_power_left = power;
+  OCR1A            = ((uint16_t)power) << 1;
+}
+
+// set_right_motor_power sets the power of the right motor.
+// NOTE: The power range is [0, 255].
+void motor_set_power_right(uint8_t power) {
+  motor_power_right = power;
+  OCR1B             = ((uint16_t)power) << 1;
 }

@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <util/atomic.h>
 
+#include "control/speed.h"
 #include "modes/mode.h"
 #include "modes/mode_wall.h"
 #include "platform/adc.h"
@@ -38,12 +39,16 @@ void report_send() {
     ATOMIC_BLOCK(ATOMIC_FORCEON) {
       report.battery_volts        = adc_battery_voltage >> 2;
       report.mode                 = mode_active;
-      report.motors.encoder_left  = encoder_left;
-      report.motors.encoder_right = encoder_right;
-      report.motors.forward_left  = motor_forward_left ? 1 : 0;
-      report.motors.forward_right = motor_forward_right ? 1 : 0;
-      report.motors.speed_left    = motor_speed_left;
-      report.motors.speed_right   = motor_speed_right;
+      report.encoders.left        = encoder_left;
+      report.encoders.right       = encoder_right;
+      report.motors.forward_left  = motor_forward_left;
+      report.motors.forward_right = motor_forward_right;
+      report.motors.power_left    = motor_power_left;
+      report.motors.power_right   = motor_power_right;
+      report.speed.measured_left  = speed_measured_left;
+      report.speed.measured_right = speed_measured_right;
+      report.speed.setpoint_left  = speed_setpoint_left;
+      report.speed.setpoint_right = speed_setpoint_right;
       report.sensors.left         = adc_sensor_left;
       report.sensors.center       = adc_sensor_center;
       report.sensors.right        = adc_sensor_right;
