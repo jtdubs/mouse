@@ -16,6 +16,7 @@ type symbolsWindow struct {
 	sim    *sim.Sim
 	names  []string
 	filter imgui.TextFilter
+	hex    bool
 }
 
 func newSymbolsWindow(sim *sim.Sim) *symbolsWindow {
@@ -36,6 +37,8 @@ func (w *symbolsWindow) draw() {
 	imgui.Text("Filter: ")
 	imgui.SameLine()
 	w.filter.DrawV("", 180)
+	imgui.SameLine()
+	imgui.Checkbox("Hex", &w.hex)
 	imgui.Separator()
 
 	var tableFlags imgui.TableFlags = imgui.TableFlagsResizable |
@@ -58,11 +61,23 @@ func (w *symbolsWindow) draw() {
 		sym := w.sim.Symbols[name]
 		switch sym.Length {
 		case 1:
-			imgui.Text(fmt.Sprintf("0x%02x", w.sim.RAM[sym.Address]))
+			if w.hex {
+				imgui.Text(fmt.Sprintf("0x%02x", w.sim.RAM[sym.Address]))
+			} else {
+				imgui.Text(fmt.Sprintf("%d", w.sim.RAM[sym.Address]))
+			}
 		case 2:
-			imgui.Text(fmt.Sprintf("0x%04x", binary.LittleEndian.Uint16(w.sim.RAM[sym.Address:sym.Address+2])))
+			if w.hex {
+				imgui.Text(fmt.Sprintf("0x%04x", binary.LittleEndian.Uint16(w.sim.RAM[sym.Address:sym.Address+2])))
+			} else {
+				imgui.Text(fmt.Sprintf("%d", binary.LittleEndian.Uint16(w.sim.RAM[sym.Address:sym.Address+2])))
+			}
 		case 4:
-			imgui.Text(fmt.Sprintf("0x%08x", binary.LittleEndian.Uint32(w.sim.RAM[sym.Address:sym.Address+4])))
+			if w.hex {
+				imgui.Text(fmt.Sprintf("0x%08x", binary.LittleEndian.Uint32(w.sim.RAM[sym.Address:sym.Address+4])))
+			} else {
+				imgui.Text(fmt.Sprintf("%d", binary.LittleEndian.Uint32(w.sim.RAM[sym.Address:sym.Address+4])))
+			}
 		default:
 			imgui.Text(hex.EncodeToString(w.sim.RAM[sym.Address : sym.Address+sym.Length]))
 		}
