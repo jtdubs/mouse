@@ -1,8 +1,3 @@
-Motor control:
-- Speed controller:
-  - If setpoint is zero, set motors to zero
-  - If setpoint is non-zero, simple PID loop to control encoder clock period, measured by time between interrupts
-
 Modes:
 - Calibration mode:
   - Place mouse in center of box facing wall, let sensor calibrate against the "wall is present" values
@@ -29,4 +24,6 @@ Sim:
 
 Fw:
 - Move report structs out into individual modules and consolidate them in report.h
+- Factor out PID logic into helper function and possibly struct.
+- Document PID code.
 - Better documentation of modules, how they work and what they do.
