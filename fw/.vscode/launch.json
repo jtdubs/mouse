@@ -1,7 +1,7 @@
 {
   "configurations": [
     {
-      "name": "Simulate",
+      "name": "Debug",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/debug/mouse.elf",
