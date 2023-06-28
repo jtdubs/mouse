@@ -30,6 +30,7 @@ void mode_init() {
 // mode_set sets the active mode.
 void mode_set(uint8_t mode) {
   if (mode != mode_active) {
+    assert(ASSERT_MODE + 0, mode < MODE_COUNT);
     mode_active = mode;
     // Enter the new mode.
     Modes[mode_active].enter();
