@@ -36,7 +36,6 @@ void adc_init() {
         | (1 << ADC2D);  // Disable digital input buffer on ADC2
 
   ADCSRA |= (1 << ADEN);  // Enable ADC
-  ADCSRA |= (1 << ADSC);  // Start the first conversion
 }
 
 ISR(ADC_vect, ISR_BLOCK) {
@@ -66,7 +65,11 @@ ISR(ADC_vect, ISR_BLOCK) {
       break;
   }
 
-  // Start the next conversion.
-  ADMUX   = (ADMUX & 0xF0) | adc_index;
-  ADCSRA |= (1 << ADSC);
+  // Select the next ADC channel
+  ADMUX = (ADMUX & 0xF0) | adc_index;
+
+  if (adc_index != 0) {
+    // Start the next conversion
+    ADCSRA |= (1 << ADSC);
+  }
 }
