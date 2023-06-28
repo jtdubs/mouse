@@ -4,10 +4,16 @@
 #include <stdint.h>
 
 #include "platform/encoders.h"
+#include "platform/motor.h"
 #include "platform/rtc.h"
 
-// At the lowest achievable speed, the encoder will trigger every 7.5ms.
-#define MAX_ENCODER_PERIOD 75000
+// The range of achievable encoder periods.
+#define MIN_ENCODER_PERIOD 1000
+#define MAX_ENCODER_PERIOD 7500
+
+// The range of reasonable motor power levels.
+#define MIN_MOTOR_POWER 12
+#define MAX_MOTOR_POWER 100
 
 static bool enabled;
 
@@ -29,7 +35,25 @@ void speed_update() {
   speed_measured_right = calculate_speed_right();
 
   if (enabled) {
-    // TODO: Implement PID control.
+    motor_set_forward_left(speed_setpoint_left > 0);
+    uint16_t left_magnitude = speed_setpoint_left > 0 ? speed_setpoint_left : -speed_setpoint_left;
+    if (left_magnitude == 0 || left_magnitude > MAX_ENCODER_PERIOD) {
+      motor_set_power_left(0);
+    } else if (left_magnitude < MIN_ENCODER_PERIOD) {
+      motor_set_power_left(MAX_MOTOR_POWER);
+    } else {
+      motor_set_power_left((MAX_ENCODER_PERIOD - left_magnitude) >> 6);
+    }
+
+    motor_set_forward_right(speed_setpoint_right > 0);
+    uint16_t right_magnitude = speed_setpoint_right > 0 ? speed_setpoint_right : -speed_setpoint_right;
+    if (right_magnitude == 0 || right_magnitude > MAX_ENCODER_PERIOD) {
+      motor_set_power_right(0);
+    } else if (right_magnitude < MIN_ENCODER_PERIOD) {
+      motor_set_power_right(MAX_MOTOR_POWER);
+    } else {
+      motor_set_power_right((MAX_ENCODER_PERIOD - right_magnitude) >> 6);
+    }
   }
 }
 

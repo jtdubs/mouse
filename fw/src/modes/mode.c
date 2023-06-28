@@ -17,9 +17,9 @@ uint8_t mode_active;
 // Register the modes and their mode functions.
 #define MODE_COUNT 3
 static const mode_t Modes[MODE_COUNT] = {
-    [MODE_REMOTE] = {&mode_enter, &mode_remote_tick},     //
-    [MODE_WALL]   = {&mode_wall_enter, &mode_wall_tick},  //
-    [MODE_ERROR]  = {&mode_enter, &mode_error_tick},      //
+    [MODE_REMOTE] = {&mode_remote_enter, &mode_remote_tick},  //
+    [MODE_WALL]   = {&mode_wall_enter, &mode_wall_tick},      //
+    [MODE_ERROR]  = {&mode_enter, &mode_error_tick},          //
 };
 
 // mode_init initializes the mode module.
