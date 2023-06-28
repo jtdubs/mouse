@@ -5,13 +5,13 @@
 #include "platform/pin.h"
 
 // The error code and associated blink pattern state.
-uint8_t         error_code;
-static uint8_t  bit_index;
-static uint16_t counter;
+uint8_t        error_code;
+static uint8_t bit_index;
+static uint8_t counter;
 
 void mode_error_tick() {
   // Blink for first 8 bits, and first 20ms of each blink period.
-  bool on = bit_index < 8 && counter < 20;
+  bool on = bit_index < 8 && counter < 2;
 
   // Determine the current bit value to blink (starts with high bit).
   bool bit = (error_code >> (7 - bit_index)) & 1;
@@ -24,7 +24,7 @@ void mode_error_tick() {
   // NOTE: We wrap at 16-bits even though there are only 8,
   // as the last 8 bits are the pause between blink patterns.
   counter = counter + 1;
-  if (counter > 250) {
+  if (counter > 25) {
     counter   = 0;
     bit_index = (bit_index + 1) & 0xF;
   }
