@@ -7,6 +7,7 @@
 #include "platform/encoders.h"
 #include "platform/motor.h"
 #include "platform/pin.h"
+#include "platform/rtc.h"
 #include "platform/timer.h"
 #include "platform/usart0.h"
 #include "serial/command.h"
@@ -29,6 +30,7 @@ void init() {
   command_init();
   mode_init();
   timer_init();
+  rtc_init();
 
   // Enable interrupts.
   sei();
