@@ -7,7 +7,7 @@ type Command interface {
 type ModeCommand struct {
 	Type    uint8
 	Mode    uint8
-	Padding [4]uint8
+	Padding [7]uint8
 }
 
 func NewModeCommand(mode uint8) ModeCommand {
@@ -22,7 +22,7 @@ func (c ModeCommand) isCommand() bool { return true }
 type LEDCommand struct {
 	Type                     uint8
 	Builtin, Left, Right, IR bool
-	Padding                  [1]uint8
+	Padding                  [4]uint8
 }
 
 func NewLEDCommand(builtin, left, right, ir bool) LEDCommand {
@@ -39,11 +39,10 @@ func (c LEDCommand) isCommand() bool { return true }
 
 type MotorCommand struct {
 	Type                  uint8
-	LeftSpeed, RightSpeed int16
-	Padding               [1]uint8
+	LeftSpeed, RightSpeed float32
 }
 
-func NewMotorCommand(leftSpeed, rightSpeed int16) MotorCommand {
+func NewMotorCommand(leftSpeed, rightSpeed float32) MotorCommand {
 	return MotorCommand{
 		Type:       2,
 		LeftSpeed:  leftSpeed,

@@ -10,10 +10,11 @@ type Report struct {
 	MotorPowerLeft     uint16
 	MotorPowerRight    uint16
 	MotorForward       uint8
-	SpeedMeasuredLeft  int16
-	SpeedMeasuredRight int16
-	SpeedSetpointLeft  int16
-	SpeedSetpointRight int16
+	SpeedMeasuredLeft  float32
+	SpeedMeasuredRight float32
+	SpeedSetpointLeft  float32
+	SpeedSetpointRight float32
+	Padding            [1]uint8
 }
 
 func (r *Report) DecodeSensors() (left, center, right uint16) {

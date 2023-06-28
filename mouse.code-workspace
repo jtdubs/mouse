@@ -35,7 +35,9 @@
       "io.h": "c",
       "stdint.h": "c",
       "rtc.h": "c",
-      "speed.h": "c"
+      "speed.h": "c",
+      "math.h": "c",
+      "encoders.h": "c"
     }
   },
 }

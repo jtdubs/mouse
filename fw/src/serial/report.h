@@ -32,11 +32,12 @@ typedef struct {
     uint8_t  padding       : 6;
   } motors;
   struct {
-    uint16_t measured_left;
-    uint16_t measured_right;
-    uint16_t setpoint_left;
-    uint16_t setpoint_right;
+    float measured_left;
+    float measured_right;
+    float setpoint_left;
+    float setpoint_right;
   } speed;
+  uint8_t padding[1];
 } report_t;
 #pragma pack(pop)
 

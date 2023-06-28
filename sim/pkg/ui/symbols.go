@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/jtdubs/mouse/sim/pkg/sim"
 	"golang.org/x/exp/maps"
@@ -72,10 +73,14 @@ func (w *symbolsWindow) draw() {
 				imgui.Text(fmt.Sprintf("%d", sym.ReadU16()))
 			}
 		case 4:
-			if w.hex {
-				imgui.Text(fmt.Sprintf("0x%08x", sym.ReadU32()))
+			if strings.HasPrefix(sym.Name, "speed_") {
+				imgui.Text(fmt.Sprintf("%0.2f", sym.ReadF32()))
 			} else {
-				imgui.Text(fmt.Sprintf("%d", sym.ReadU32()))
+				if w.hex {
+					imgui.Text(fmt.Sprintf("0x%08x", sym.ReadU32()))
+				} else {
+					imgui.Text(fmt.Sprintf("%d", sym.ReadU32()))
+				}
 			}
 		default:
 			imgui.Text(hex.EncodeToString(sym.Read()))

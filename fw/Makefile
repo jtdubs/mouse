@@ -24,6 +24,7 @@ CFLAGS+=-Wl,--undefined=_mmcu,--section-start=.mmcu=0x910000 # Define mmcu secti
 CFLAGS+=-DBASE64_NO_LOOKUPS            # Use slower but smaller base64 implementation.
 CFLAGS+=--param=min-pagesize=0         # Needed for AVR target.
 CFLAGS+=-O2                            # Optimize for speed.
+CFLAGS+=-lm                            # Use AVR math library.
 CFLAGS+=-Isrc/
 
 DBG_CFLAGS=-DDEBUG

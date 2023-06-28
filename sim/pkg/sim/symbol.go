@@ -49,6 +49,11 @@ func (s *Symbol) ReadU32() uint32 {
 	return binary.LittleEndian.Uint32(s.sim.RAM[s.Address : s.Address+4])
 }
 
+func (s *Symbol) ReadF32() float32 {
+	u32 := s.ReadU32()
+	return *(*float32)(unsafe.Pointer(&u32))
+}
+
 func (s *Symbol) ReadVCD() C.uint {
 	switch s.Length {
 	case 1:

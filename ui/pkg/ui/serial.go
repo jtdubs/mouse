@@ -259,28 +259,10 @@ func (s *serialWindow) drawLEDControl(name string, value *bool) (changed bool) {
 	return oldValue != *value
 }
 
-func (s *serialWindow) drawMotorControl(name string, speed *int16) (changed bool) {
+func (s *serialWindow) drawMotorControl(name string, rpms *float32) (changed bool) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))
 	imgui.TableSetColumnIndex(1)
-
-	var rpms float32
-	if *speed == 0 {
-		rpms = 0
-	} else {
-		rpms = (1000000.0 * 60.0) / (240.0 * float32(*speed))
-	}
-
-	oldSpeed := *speed
-	if imgui.SliderFloat(name, &rpms, -200, 200) {
-		if rpms == 0 {
-			*speed = 0
-		} else {
-			*speed = int16((60.0 * 1000000.0) / (240.0 * rpms))
-
-		}
-	}
-
-	return oldSpeed != *speed
+	return imgui.SliderFloat(name, rpms, -200, 200)
 }

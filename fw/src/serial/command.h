@@ -12,22 +12,21 @@
 typedef struct {
   uint8_t type;
   union {
-    uint8_t padding[5];
+    uint8_t padding[8];
     struct {
       uint8_t mode;
-      uint8_t padding[4];
+      uint8_t padding[7];
     } mode;
     struct {
       bool    builtin;
       bool    left;
       bool    right;
       bool    ir;
-      uint8_t padding[1];
+      uint8_t padding[4];
     } leds;
     struct {
-      int16_t left;
-      int16_t right;
-      uint8_t padding[1];
+      float left;
+      float right;
     } speed;
   } data;
 } command_t;
