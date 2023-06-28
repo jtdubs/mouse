@@ -9,17 +9,16 @@ package sim
 #include <parts/uart_pty.h>
 #include <sim_vcd_file.h>
 #include <sim_avr.h>
+#include <sim_io.h>
 #include <sim_elf.h>
 #include <sim_gdb.h>
 */
 import "C"
 
 import (
-	"debug/elf"
 	"flag"
 	"log"
 	"reflect"
-	"strings"
 	"unsafe"
 )
 
@@ -37,16 +36,11 @@ const (
 	Done
 )
 
-type Symbol struct {
-	Address int
-	Length  int
-}
-
 type Sim struct {
 	State          State
 	Recording      bool
 	RAM            []byte
-	Symbols        map[string]Symbol
+	Symbols        *SymbolManager
 	loopShouldExit bool
 	loopChan       chan struct{}
 	avr            *C.avr_t
@@ -59,8 +53,8 @@ func New() *Sim {
 	return &Sim{
 		State:     Paused,
 		Recording: false,
-		Symbols:   make(map[string]Symbol),
 		Maze:      newMaze(),
+		Symbols:   NewSymbolManager(),
 	}
 }
 
@@ -120,8 +114,6 @@ func (s *Sim) Init() {
 		log.Fatalf("No firmware specified")
 	}
 
-	s.readSymbols()
-
 	var f C.elf_firmware_t
 	if C.elf_read_firmware(C.CString(*firmwarePath), &f) != 0 {
 		log.Fatalf("Failed to read firmware: %s", *firmwarePath)
@@ -137,6 +129,8 @@ func (s *Sim) Init() {
 	}
 
 	C.avr_load_firmware(s.avr, &f)
+
+	s.Symbols.Init(s, *firmwarePath)
 
 	// Point RAM to the AVR's RAM.
 	hdr := (*reflect.SliceHeader)(unsafe.Pointer(&s.RAM))
@@ -157,38 +151,6 @@ func (s *Sim) Init() {
 
 	C.uart_pty_init(s.avr, &s.pty)
 	C.uart_pty_connect(&s.pty, '0')
-}
-
-func (s *Sim) readSymbols() {
-	elfFile, err := elf.Open(*firmwarePath)
-	if err != nil {
-		log.Fatalf("Failed to open firmware: %s", *firmwarePath)
-	}
-
-	syms, err := elfFile.Symbols()
-	if err != nil {
-		log.Fatalf("Failed to read symbols from firmware: %s", *firmwarePath)
-	}
-
-	for _, sym := range syms {
-		if strings.HasPrefix(sym.Name, "_") {
-			continue
-		}
-		if int(sym.Section) >= len(elfFile.Sections) {
-			continue
-		}
-		section := elfFile.Sections[sym.Section]
-		if section.Name != ".bss" {
-			continue
-		}
-		if sym.Name == "" {
-			continue
-		}
-		s.Symbols[sym.Name] = Symbol{
-			Address: int(sym.Value) - 0x800000,
-			Length:  int(sym.Size),
-		}
-	}
 }
 
 func (s *Sim) loop(until uint64) {

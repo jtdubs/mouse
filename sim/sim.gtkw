@@ -1,17 +1,17 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Wed Jun 28 14:44:50 2023
+[*] Wed Jun 28 19:52:39 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/sim/gtkwave_trace.fst"
-[dumpfile_mtime] "Wed Jun 28 14:37:50 2023"
-[dumpfile_size] 1297
+[dumpfile_mtime] "Wed Jun 28 19:48:17 2023"
+[dumpfile_size] 4476
 [savefile] "/home/jtdubs/dev/mouse/sim/sim.gtkw"
 [timestart] 0
 [size] 2482 1353
 [pos] -1 -1
-*-22.643951 29832870 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.643951 29832870 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 273
-[signals_width] 266
+[signals_width] 322
 [sst_expanded] 1
 [sst_vpaned_height] 399
 @200
@@ -44,14 +44,19 @@ logic.RIGHT_B
 -ADC
 @8022
 logic.BATTERY_VOLTAGE[15:0]
+@22
+logic.adc_battery_voltage[15:0]
+@8022
 logic.FUNCTION_SELECT[15:0]
-logic.SENSOR_LEFT[15:0]
-logic.SENSOR_CENTER[15:0]
-logic.SENSOR_RIGHT[15:0]
+@22
+logic.adc_selector[15:0]
+logic.adc_sensor_center[15:0]
+logic.adc_sensor_left[15:0]
+logic.adc_sensor_right[15:0]
 @200
 -Probes
 @28
-logic.PROBE_0
+logic.PROBE_TICK
 logic.PROBE_1
 logic.PROBE_2
 @200
@@ -61,5 +66,28 @@ logic.LED_LEFT
 logic.LED_BUILTIN
 logic.LED_RIGHT
 logic.IR_LEDS
+@22
+logic.enabled[7:0]
+@200
+-Encoders
+@22
+logic.encoder_forward_left[7:0]
+logic.encoder_forward_right[7:0]
+logic.encoder_left[15:0]
+logic.encoder_right[15:0]
+@200
+-Motors
+@22
+logic.motor_forward_left[7:0]
+logic.motor_forward_right[7:0]
+logic.motor_power_left[7:0]
+logic.motor_power_right[7:0]
+logic.speed_measured_left[15:0]
+@200
+-Speed
+@22
+logic.speed_measured_right[15:0]
+logic.speed_setpoint_left[15:0]
+logic.speed_setpoint_right[15:0]
 [pattern_trace] 1
 [pattern_trace] 0
