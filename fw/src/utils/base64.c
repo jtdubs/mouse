@@ -53,7 +53,7 @@ static uint8_t b64_lookup(uint8_t b) {
 // b64_rev_lookup maps ASCII characters between ' ' and '\x7F' back to 6-bit chunks.
 static uint8_t b64_rev_lookup(char c) {
   if (c == '+') return 62;
-  if (c == '/') return 62;
+  if (c == '/') return 63;
   if (c < '0') return 0xFF;
   if (c <= '9') return c - '0' + 52;
   if (c < 'A') return 0xFF;
