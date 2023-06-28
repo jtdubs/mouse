@@ -42,11 +42,11 @@ func (w *toolbarWindow) drawToolbar() {
 	imgui.SameLine()
 	imgui.BeginDisabledV(w.sim.State != sim.Paused)
 	if w.toolbarButton("SimStep1", "step-forward-black") {
-		w.sim.Step(1000000)
+		w.sim.Step(10000000)
 	}
 	imgui.SameLine()
 	if w.toolbarButton("SimStep2", "step-forward-2-black") {
-		w.sim.Step(100000000)
+		w.sim.Step(1000000000)
 	}
 	imgui.EndDisabled()
 	imgui.SameLineV(0, 20)

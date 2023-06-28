@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <util/atomic.h>
 
 #include "platform/encoders.h"
 #include "platform/motor.h"
@@ -38,11 +39,11 @@ float calculate_speed_left();
 float calculate_speed_right();
 
 void speed_init() {
-  speed_setpoint_left = 40.0;
+  speed_setpoint_left = 90.0;
 }
 
 void speed_update() {
-  const float kp = 0.05, ki = 0.01, kd = 0.0001;
+  const float kp = 0.05, ki = 0.07, kd = 0.01;
 
   speed_measured_left  = calculate_speed_left();
   speed_measured_right = calculate_speed_right();
@@ -60,9 +61,9 @@ void speed_update() {
       power = 100.0;
     }
     if (power == 0.0) {
-      motor_set_power_left(0);
+      motor_set_power_left((uint8_t)power);
     } else {
-      motor_set_power_left(((uint8_t)power) + 10);
+      motor_set_power_left(((uint8_t)power) + 12);
     }
 
     // uint16_t left_magnitude = speed_setpoint_left > 0 ? speed_setpoint_left : -speed_setpoint_left;
@@ -97,23 +98,37 @@ void speed_disable() {
 // encoders_left_period returns the period of the left encoder in microseconds.
 float calculate_speed_left() {
   uint32_t now = rtc_micros();
-  if (now - encoder_times_left[0] > MAX_ENCODER_PERIOD) {
+  uint32_t time0, time1;
+  bool     forward;
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    time0   = encoder_times_left[0];
+    time1   = encoder_times_left[1];
+    forward = encoder_forward_left;
+  }
+  if (now - time0 > MAX_ENCODER_PERIOD) {
     return 0;
   }
-  float period = (float)(encoder_times_left[0] - encoder_times_left[1]);
+  float period = (float)(time0 - time1);
   float rpm    = (1000000.0 * 60.0 / 240.0) / period;
-  return encoder_forward_left ? rpm : -rpm;
+  return forward ? rpm : -rpm;
 }
 
 // encoders_right_period returns the period of the right encoder in microseconds.
 float calculate_speed_right() {
   uint32_t now = rtc_micros();
-  if (now - encoder_times_right[0] > MAX_ENCODER_PERIOD) {
+  uint32_t time0, time1;
+  bool     forward;
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    time0   = encoder_times_right[0];
+    time1   = encoder_times_right[1];
+    forward = encoder_forward_right;
+  }
+  if ((now - time0) > MAX_ENCODER_PERIOD) {
     return 0;
   }
-  float period = (float)(encoder_times_right[0] - encoder_times_right[1]);
+  float period = (float)(time0 - time1);
   float rpm    = (1000000.0 * 60.0 / 240.0) / period;
-  return encoder_forward_right ? rpm : -rpm;
+  return forward ? rpm : -rpm;
 }
 
 void speed_set_left(float setpoint) {
