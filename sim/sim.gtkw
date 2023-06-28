@@ -1,10 +1,10 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Wed Jun 28 19:52:39 2023
+[*] Wed Jun 28 21:56:42 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/sim/gtkwave_trace.fst"
-[dumpfile_mtime] "Wed Jun 28 19:48:17 2023"
-[dumpfile_size] 4476
+[dumpfile_mtime] "Wed Jun 28 21:56:18 2023"
+[dumpfile_size] 62251
 [savefile] "/home/jtdubs/dev/mouse/sim/sim.gtkw"
 [timestart] 0
 [size] 2482 1353
@@ -26,7 +26,7 @@ logic.ADC
 logic.RTC
 @200
 -Left Motor
-@8022
+@88022
 logic.LEFT_PWM[7:0]
 @28
 logic.LEFT_DIR
@@ -42,13 +42,8 @@ logic.RIGHT_CLK_A
 logic.RIGHT_B
 @200
 -ADC
-@8022
-logic.BATTERY_VOLTAGE[15:0]
 @22
 logic.adc_battery_voltage[15:0]
-@8022
-logic.FUNCTION_SELECT[15:0]
-@22
 logic.adc_selector[15:0]
 logic.adc_sensor_center[15:0]
 logic.adc_sensor_left[15:0]
@@ -84,7 +79,7 @@ logic.motor_power_left[7:0]
 logic.motor_power_right[7:0]
 @200
 -Speed
-@48021
+@c8021
 logic.speed_measured_left[31:0]
 logic.speed_measured_right[31:0]
 logic.speed_setpoint_left[31:0]

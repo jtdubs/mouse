@@ -26,18 +26,44 @@ float speed_measured_right;
 float speed_setpoint_left;
 float speed_setpoint_right;
 
+// Error values
+float speed_error_left;
+float speed_error_right;
+
+// Integrator values
+float speed_integrator_left;
+float speed_integrator_right;
+
 float calculate_speed_left();
 float calculate_speed_right();
 
-void speed_init() {}
+void speed_init() {
+  speed_setpoint_left = 40.0;
+}
 
 void speed_update() {
+  const float kp = 0.05, ki = 0.01, kd = 0.0001;
+
   speed_measured_left  = calculate_speed_left();
   speed_measured_right = calculate_speed_right();
 
   if (enabled) {
-    motor_set_power_left(20);
-    motor_set_power_right(40);
+    float last_error_error = speed_error_left;
+    speed_error_left       = speed_setpoint_left - speed_measured_left;
+    float integrator       = speed_integrator_left + speed_error_left;
+    float power            = (kp * speed_error_left) + (ki * integrator) + (kd * (last_error_error - speed_error_left));
+    if (power > 0.0 && power < 100.0) {
+      speed_integrator_left = integrator;
+    } else if (power < 0) {
+      power = 0.0;
+    } else if (power > 100.0) {
+      power = 100.0;
+    }
+    if (power == 0.0) {
+      motor_set_power_left(0);
+    } else {
+      motor_set_power_left(((uint8_t)power) + 10);
+    }
 
     // uint16_t left_magnitude = speed_setpoint_left > 0 ? speed_setpoint_left : -speed_setpoint_left;
     // if (left_magnitude == 0 || left_magnitude > MAX_ENCODER_PERIOD) {
