@@ -45,7 +45,7 @@ void timer_init() {
 
 // timer_wait waits for timer to elapse.
 inline void timer_wait() {
-  pin_clear(PROBE_0);
+  pin_clear(PROBE_TICK);
 
   // Wait with interrupts enabled for the next timer interrupt,
   // then disable interrupts and clear the timer.
@@ -55,7 +55,7 @@ inline void timer_wait() {
   timer_elapsed = false;
 
   wdt_reset();
-  pin_set(PROBE_0);
+  pin_set(PROBE_TICK);
 }
 
 ISR(TIMER0_COMPA_vect, ISR_BLOCK) {

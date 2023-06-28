@@ -18,7 +18,7 @@ typedef struct {
 #define LED_LEFT    ((pin_t){.port = &PORTB, .ddr = &DDRB, .mask = _BV(3)})
 #define IR_LEDS     ((pin_t){.port = &PORTB, .ddr = &DDRB, .mask = _BV(4)})
 #define LED_BUILTIN ((pin_t){.port = &PORTB, .ddr = &DDRB, .mask = _BV(5)})
-#define PROBE_0     ((pin_t){.port = &PORTC, .ddr = &DDRC, .mask = _BV(3)})
+#define PROBE_TICK  ((pin_t){.port = &PORTC, .ddr = &DDRC, .mask = _BV(3)})
 #define PROBE_1     ((pin_t){.port = &PORTC, .ddr = &DDRC, .mask = _BV(4)})
 #define PROBE_2     ((pin_t){.port = &PORTC, .ddr = &DDRC, .mask = _BV(5)})
 #define LED_RIGHT   ((pin_t){.port = &PORTD, .ddr = &DDRD, .mask = _BV(6)})

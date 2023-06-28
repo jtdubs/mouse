@@ -9,7 +9,7 @@ void pin_init() {
        | (LED_LEFT.mask)      //
        | (IR_LEDS.mask)       //
        | (LED_BUILTIN.mask);  //
-  DDRC = (PROBE_0.mask)       //
+  DDRC = (PROBE_TICK.mask)    //
        | (PROBE_1.mask)       //
        | (PROBE_2.mask);      //
   DDRD = (LED_RIGHT.mask)     //
