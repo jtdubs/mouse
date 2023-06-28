@@ -24,6 +24,7 @@ Sim:
 
 Fw:
 - Move report structs out into individual modules and consolidate them in report.h
-- Factor out PID logic into helper function and possibly struct.
+- Fix PID to work with negative speeds
+- Compare timnig and performance against using avr libc's fmin, fmax, fmaf, 
 - Document PID code.
 - Better documentation of modules, how they work and what they do.

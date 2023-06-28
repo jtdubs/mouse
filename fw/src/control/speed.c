@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <util/atomic.h>
 
+#include "control/pid.h"
 #include "platform/encoders.h"
 #include "platform/motor.h"
 #include "platform/rtc.h"
@@ -17,8 +18,6 @@
 #define MIN_MOTOR_POWER 12
 #define MAX_MOTOR_POWER 100
 
-static bool enabled;
-
 // Motor speeds in RPM.
 float speed_measured_left;
 float speed_measured_right;
@@ -27,55 +26,43 @@ float speed_measured_right;
 float speed_setpoint_left;
 float speed_setpoint_right;
 
-// Error values
-float speed_error_left;
-float speed_error_right;
-
-// Integrator values
-float speed_integrator_left;
-float speed_integrator_right;
+static bool  enabled;
+static pid_t pid_left;
+static pid_t pid_right;
 
 float calculate_speed_left();
 float calculate_speed_right();
 
-void speed_init() {}
+void speed_init() {
+  pid_left.min = 0;
+  pid_left.max = 100;
+  pid_left.kp  = 0.05;
+  pid_left.ki  = 0.12;
+  pid_left.kd  = 0.02;
+
+  pid_right.min = 0;
+  pid_right.max = 100;
+  pid_right.kp  = 0.05;
+  pid_right.ki  = 0.12;
+  pid_right.kd  = 0.02;
+
+  speed_setpoint_left  = 90.0;
+  speed_setpoint_right = 90.0;
+}
 
 void speed_update() {
-  const float kp = 0.05, ki = 0.12, kd = 0.02;
-
   speed_measured_left  = calculate_speed_left();
   speed_measured_right = calculate_speed_right();
 
   if (enabled) {
-    float last_error_left = speed_error_left;
-    speed_error_left      = speed_setpoint_left - speed_measured_left;
-    float integrator_left = speed_integrator_left + speed_error_left;
-    float power_left = (kp * speed_error_left) + (ki * integrator_left) + (kd * (last_error_left - speed_error_left));
-    if (power_left > 0.0 && power_left < 100.0) {
-      speed_integrator_left = integrator_left;
-    } else if (power_left < 0) {
-      power_left = 0.0;
-    } else if (power_left > 100.0) {
-      power_left = 100.0;
-    }
+    float power_left = pid_update(&pid_left, speed_setpoint_left, speed_measured_left);
     if (power_left == 0.0) {
       motor_set_power_left((uint8_t)power_left);
     } else {
       motor_set_power_left(((uint8_t)power_left) + 12);
     }
 
-    float last_error_right = speed_error_right;
-    speed_error_right      = speed_setpoint_right - speed_measured_right;
-    float integrator_right = speed_integrator_right + speed_error_right;
-    float power_right =
-        (kp * speed_error_right) + (ki * integrator_right) + (kd * (last_error_right - speed_error_right));
-    if (power_right > 0.0 && power_right < 100.0) {
-      speed_integrator_right = integrator_right;
-    } else if (power_right < 0) {
-      power_right = 0.0;
-    } else if (power_right > 100.0) {
-      power_right = 100.0;
-    }
+    float power_right = pid_update(&pid_right, speed_setpoint_right, speed_measured_right);
     if (power_right == 0.0) {
       motor_set_power_right((uint8_t)power_right);
     } else {
