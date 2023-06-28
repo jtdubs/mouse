@@ -1,17 +1,17 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Wed Jun 28 22:10:33 2023
+[*] Wed Jun 28 22:48:59 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/sim/gtkwave_trace.fst"
-[dumpfile_mtime] "Wed Jun 28 22:10:01 2023"
-[dumpfile_size] 34053
+[dumpfile_mtime] "Wed Jun 28 22:47:31 2023"
+[dumpfile_size] 65544
 [savefile] "/home/jtdubs/dev/mouse/sim/sim.gtkw"
 [timestart] 0
 [size] 2482 1353
 [pos] -1 -1
-*-25.643951 29832870 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.643951 50591690 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 273
-[signals_width] 334
+[signals_width] 513
 [sst_expanded] 1
 [sst_vpaned_height] 399
 @200
@@ -78,12 +78,16 @@ logic.motor_forward_right[7:0]
 @88022
 logic.motor_power_left[7:0]
 logic.motor_power_right[7:0]
-@200
+@201
 -Speed
 @c8020
 logic.speed_measured_left[31:0]
 logic.speed_setpoint_left[31:0]
 logic.speed_error_left[31:0]
 logic.speed_integrator_left[31:0]
+logic.speed_measured_right[31:0]
+logic.speed_setpoint_right[31:0]
+logic.speed_error_right[31:0]
+logic.speed_integrator_right[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

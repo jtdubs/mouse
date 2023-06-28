@@ -38,52 +38,49 @@ float speed_integrator_right;
 float calculate_speed_left();
 float calculate_speed_right();
 
-void speed_init() {
-  speed_setpoint_left = 90.0;
-}
+void speed_init() {}
 
 void speed_update() {
-  const float kp = 0.05, ki = 0.07, kd = 0.01;
+  const float kp = 0.05, ki = 0.12, kd = 0.02;
 
   speed_measured_left  = calculate_speed_left();
   speed_measured_right = calculate_speed_right();
 
   if (enabled) {
-    float last_error_error = speed_error_left;
-    speed_error_left       = speed_setpoint_left - speed_measured_left;
-    float integrator       = speed_integrator_left + speed_error_left;
-    float power            = (kp * speed_error_left) + (ki * integrator) + (kd * (last_error_error - speed_error_left));
-    if (power > 0.0 && power < 100.0) {
-      speed_integrator_left = integrator;
-    } else if (power < 0) {
-      power = 0.0;
-    } else if (power > 100.0) {
-      power = 100.0;
+    float last_error_left = speed_error_left;
+    speed_error_left      = speed_setpoint_left - speed_measured_left;
+    float integrator_left = speed_integrator_left + speed_error_left;
+    float power_left = (kp * speed_error_left) + (ki * integrator_left) + (kd * (last_error_left - speed_error_left));
+    if (power_left > 0.0 && power_left < 100.0) {
+      speed_integrator_left = integrator_left;
+    } else if (power_left < 0) {
+      power_left = 0.0;
+    } else if (power_left > 100.0) {
+      power_left = 100.0;
     }
-    if (power == 0.0) {
-      motor_set_power_left((uint8_t)power);
+    if (power_left == 0.0) {
+      motor_set_power_left((uint8_t)power_left);
     } else {
-      motor_set_power_left(((uint8_t)power) + 12);
+      motor_set_power_left(((uint8_t)power_left) + 12);
     }
 
-    // uint16_t left_magnitude = speed_setpoint_left > 0 ? speed_setpoint_left : -speed_setpoint_left;
-    // if (left_magnitude == 0 || left_magnitude > MAX_ENCODER_PERIOD) {
-    //   motor_set_power_left(0);
-    // } else if (left_magnitude < MIN_ENCODER_PERIOD) {
-    //   motor_set_power_left(MAX_MOTOR_POWER);
-    // } else {
-    //   motor_set_power_left((MAX_ENCODER_PERIOD - left_magnitude) >> 6);
-    // }
-
-    // motor_set_forward_right(speed_setpoint_right > 0);
-    // uint16_t right_magnitude = speed_setpoint_right > 0 ? speed_setpoint_right : -speed_setpoint_right;
-    // if (right_magnitude == 0 || right_magnitude > MAX_ENCODER_PERIOD) {
-    //   motor_set_power_right(0);
-    // } else if (right_magnitude < MIN_ENCODER_PERIOD) {
-    //   motor_set_power_right(MAX_MOTOR_POWER);
-    // } else {
-    //   motor_set_power_right((MAX_ENCODER_PERIOD - right_magnitude) >> 6);
-    // }
+    float last_error_right = speed_error_right;
+    speed_error_right      = speed_setpoint_right - speed_measured_right;
+    float integrator_right = speed_integrator_right + speed_error_right;
+    float power_right =
+        (kp * speed_error_right) + (ki * integrator_right) + (kd * (last_error_right - speed_error_right));
+    if (power_right > 0.0 && power_right < 100.0) {
+      speed_integrator_right = integrator_right;
+    } else if (power_right < 0) {
+      power_right = 0.0;
+    } else if (power_right > 100.0) {
+      power_right = 100.0;
+    }
+    if (power_right == 0.0) {
+      motor_set_power_right((uint8_t)power_right);
+    } else {
+      motor_set_power_right(((uint8_t)power_right) + 12);
+    }
   }
 }
 

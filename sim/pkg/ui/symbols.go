@@ -74,7 +74,7 @@ func (w *symbolsWindow) draw() {
 			}
 		case 4:
 			if strings.HasPrefix(sym.Name, "speed_") {
-				imgui.Text(fmt.Sprintf("%0.2f", sym.ReadF32()))
+				imgui.Text(fmt.Sprintf("%8.2f", sym.ReadF32()))
 			} else {
 				if w.hex {
 					imgui.Text(fmt.Sprintf("0x%08x", sym.ReadU32()))
