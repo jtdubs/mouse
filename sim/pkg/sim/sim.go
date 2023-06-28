@@ -204,7 +204,7 @@ func (s *Sim) loop(until uint64) {
 			s.State = Done
 			return
 		} else if state == C.cpu_Crashed {
-			log.Fatalf("AVR crashed")
+			log.Printf("AVR crashed")
 			s.State = Crashed
 			return
 		}

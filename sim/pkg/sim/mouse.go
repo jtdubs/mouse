@@ -13,7 +13,11 @@ package sim
 #include <sim_gdb.h>
 */
 import "C"
-import "math"
+
+import (
+	"math"
+	"sync"
+)
 
 // Fundamental constants
 const (
@@ -52,7 +56,8 @@ type Mouse struct {
 	LeftMotor, RightMotor                 *Motor
 	X, Y                                  float64 // center of the axle, in mm from the maze center
 	Angle                                 float64 // in radians, 0 is the positive x-axis (east)
-	IRHits                                map[*Sensor]IRHit
+	irHits                                map[*Sensor]IRHit
+	irMutex                               sync.Mutex
 }
 
 func NewMouse(avr *C.avr_t, maze *Maze) *Mouse {
@@ -75,7 +80,8 @@ func NewMouse(avr *C.avr_t, maze *Maze) *Mouse {
 		X:                GridSize / 2,
 		Y:                GridSize / 2,
 		Angle:            math.Pi / 2,
-		IRHits:           make(map[*Sensor]IRHit, 3),
+		irHits:           make(map[*Sensor]IRHit, 3),
+		irMutex:          sync.Mutex{},
 	}
 }
 
@@ -149,7 +155,21 @@ func (m *Mouse) dt(left, forward bool) float64 {
 	}
 }
 
+func (m *Mouse) IRHits() map[*Sensor]IRHit {
+	m.irMutex.Lock()
+	defer m.irMutex.Unlock()
+
+	result := make(map[*Sensor]IRHit, len(m.irHits))
+	for k, v := range m.irHits {
+		result[k] = v
+	}
+	return result
+}
+
 func (m *Mouse) updateIRHits() {
+	m.irMutex.Lock()
+	defer m.irMutex.Unlock()
+
 	for _, sensor := range []*Sensor{m.LeftSensor, m.CenterSensor, m.RightSensor} {
 		bestHit := IRHit{Pos: Pos{}, Distance: math.Inf(1), WallAngle: 0}
 
@@ -210,7 +230,7 @@ func (m *Mouse) updateIRHits() {
 			}
 		}
 
-		m.IRHits[sensor] = bestHit
+		m.irHits[sensor] = bestHit
 
 		if bestHit.Distance == math.Inf(1) {
 			sensor.Voltage = 0

@@ -153,7 +153,7 @@ func (w *mazeWindow) draw() {
 		}
 	}
 
-	for sensor, hit := range w.mouse.IRHits {
+	for sensor, hit := range w.mouse.IRHits() {
 		if hit.Distance == math.Inf(1) {
 			continue
 		}
