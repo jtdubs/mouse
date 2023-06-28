@@ -10,13 +10,7 @@
 #include "platform/motor.h"
 #include "platform/rtc.h"
 
-// The range of achievable encoder periods.
-#define MIN_ENCODER_PERIOD 1000
-#define MAX_ENCODER_PERIOD 7500
-
-// The range of reasonable motor power levels.
-#define MIN_MOTOR_POWER 12
-#define MAX_MOTOR_POWER 100
+#define MAX_ENCODER_PERIOD 9000
 
 // Motor speeds in RPM.
 float speed_measured_left;
@@ -59,6 +53,7 @@ void speed_update() {
     if (power_left == 0.0) {
       motor_set_power_left((uint8_t)power_left);
     } else {
+      // avoid the motor's dead zone
       motor_set_power_left(((uint8_t)power_left) + 12);
     }
 
@@ -66,6 +61,7 @@ void speed_update() {
     if (power_right == 0.0) {
       motor_set_power_right((uint8_t)power_right);
     } else {
+      // avoid the motor's dead zone
       motor_set_power_right(((uint8_t)power_right) + 12);
     }
   }
