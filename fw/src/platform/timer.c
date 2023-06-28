@@ -2,6 +2,7 @@
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <avr/sleep.h>
 #include <avr/wdt.h>
 #include <stdbool.h>
 
@@ -27,7 +28,7 @@ void timer_init() {
          | (1 << CS00);  // Use clk/1024 prescaler (15.625kHz)
 
   OCR0A = (F_CPU / 1024 / (100 + 1)) + 1;  // 100Hz = 10ms
-  OCR0B = OCR0A - 8;                       // 500uc before OCR0A
+  OCR0B = OCR0A - 4;                       // 250us before OCR0A
 
   TIMSK0 = (1 << OCIE0B)  // Enable OCR0B match interrupt
          | (1 << OCIE0A)  // Enable OCR0A match interrupt
@@ -37,6 +38,9 @@ void timer_init() {
 
   // Enable watchdog timer to reset the device if the timer interrupt fails.
   wdt_enable(WDTO_15MS);
+
+  // Enable sleeping
+  set_sleep_mode(SLEEP_MODE_IDLE);
 }
 
 // timer_wait waits for timer to elapse.
@@ -45,7 +49,9 @@ inline void timer_wait() {
 
   // Wait with interrupts enabled for the next timer interrupt,
   // then disable interrupts and clear the timer.
-  while (!timer_elapsed) {};
+  while (!timer_elapsed) {
+    sleep_mode();
+  };
   timer_elapsed = false;
 
   wdt_reset();

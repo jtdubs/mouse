@@ -28,6 +28,4 @@ Sim:
   - ??
 
 Fw:
-- Sample ADCs at start of each tick, or just ahead of it if I can use OCRB to trigger that
-- Re-enable sleeping now that we have so much down time
 - Better documentation of modules, how they work and what they do.
