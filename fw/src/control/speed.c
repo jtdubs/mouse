@@ -22,25 +22,25 @@ float speed_measured_right;
 float speed_setpoint_left;
 float speed_setpoint_right;
 
-static bool  enabled;
-static pid_t pid_left;
-static pid_t pid_right;
+static bool  speed_enabled;
+static pid_t speed_pid_left;
+static pid_t speed_pid_right;
 
-float calculate_speed_left();
-float calculate_speed_right();
+static float calculate_speed_left();
+static float calculate_speed_right();
 
 void speed_init() {
-  pid_left.min = 0;
-  pid_left.max = 200;
-  pid_left.kp  = 0.08;
-  pid_left.ki  = 0.15;
-  pid_left.kd  = 0.005;
+  speed_pid_left.min = 0;
+  speed_pid_left.max = 200;
+  speed_pid_left.kp  = 0.08;
+  speed_pid_left.ki  = 0.15;
+  speed_pid_left.kd  = 0.005;
 
-  pid_right.min = 0;
-  pid_right.max = 200;
-  pid_right.kp  = 0.08;
-  pid_right.ki  = 0.15;
-  pid_right.kd  = 0.005;
+  speed_pid_right.min = 0;
+  speed_pid_right.max = 200;
+  speed_pid_right.kp  = 0.08;
+  speed_pid_right.ki  = 0.15;
+  speed_pid_right.kd  = 0.005;
 
   speed_setpoint_left  = 90.0;
   speed_setpoint_right = 90.0;
@@ -50,13 +50,13 @@ void speed_update() {
   speed_measured_left  = calculate_speed_left();
   speed_measured_right = calculate_speed_right();
 
-  if (enabled) {
+  if (speed_enabled) {
     uint8_t power_left;
     if (fabsf(speed_setpoint_left) < MIN_SPEED) {
-      pid_reset(&pid_left);
+      pid_reset(&speed_pid_left);
       power_left = 0;
     } else {
-      power_left = (uint8_t)pid_update(&pid_left, fabsf(speed_setpoint_left), fabsf(speed_measured_left));
+      power_left = (uint8_t)pid_update(&speed_pid_left, fabsf(speed_setpoint_left), fabsf(speed_measured_left));
       if (power_left != 0) {
         power_left += 26;
       }
@@ -64,10 +64,10 @@ void speed_update() {
 
     uint8_t power_right;
     if (fabsf(speed_setpoint_right) < MIN_SPEED) {
-      pid_reset(&pid_right);
+      pid_reset(&speed_pid_right);
       power_right = 0;
     } else {
-      power_right = (uint8_t)pid_update(&pid_right, fabsf(speed_setpoint_right), fabsf(speed_measured_right));
+      power_right = (uint8_t)pid_update(&speed_pid_right, fabsf(speed_setpoint_right), fabsf(speed_measured_right));
       if (power_right != 0) {
         power_right += 26;
       }
@@ -84,15 +84,15 @@ void speed_update() {
 }
 
 void speed_enable() {
-  enabled = true;
+  speed_enabled = true;
 }
 
 void speed_disable() {
-  enabled = false;
+  speed_enabled = false;
 }
 
 // encoders_left_period returns the period of the left encoder in microseconds.
-float calculate_speed_left() {
+static float calculate_speed_left() {
   uint32_t now, time0, time1;
   bool     forward;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
@@ -115,7 +115,7 @@ float calculate_speed_left() {
 }
 
 // encoders_right_period returns the period of the right encoder in microseconds.
-float calculate_speed_right() {
+static float calculate_speed_right() {
   uint32_t now, time0, time1;
   bool     forward;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {

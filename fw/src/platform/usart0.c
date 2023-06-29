@@ -37,44 +37,44 @@ void usart0_init() {
 }
 
 // The write buffer and associated state.
-static uint8_t *write_buffer;
-static uint8_t  write_size;
-static uint8_t  write_index;
+static uint8_t *usart0_write_buffer;
+static uint8_t  usart0_write_size;
+static uint8_t  usart0_write_index;
 
 // READY determines if USART0 is ready for a byte.
 #define READY (UCSR0A & (1 << UDRE0))
 
 // usart0_write_ready determines if a write request can be initiated.
 bool usart0_write_ready() {
-  return write_index == write_size;
+  return usart0_write_index == usart0_write_size;
 }
 
 // usart0_set_write_buffer sets the write buffer for USART0.
 void usart0_set_write_buffer(uint8_t *buffer, uint8_t size) {
   assert(ASSERT_USART0 + 0, buffer != NULL);
   assert(ASSERT_USART0 + 1, size > 0);
-  assert(ASSERT_USART0 + 2, write_buffer == NULL);
+  assert(ASSERT_USART0 + 2, usart0_write_buffer == NULL);
 
-  write_buffer = buffer;
-  write_index  = size;
-  write_size   = size;
+  usart0_write_buffer = buffer;
+  usart0_write_index  = size;
+  usart0_write_size   = size;
 }
 
 // usart0_write begins an asynchronous write to USART0.
 void usart0_write() {
-  assert(ASSERT_USART0 + 3, write_buffer != NULL);
+  assert(ASSERT_USART0 + 3, usart0_write_buffer != NULL);
   assert(ASSERT_USART0 + 4, usart0_write_ready());
 
   // Enable the Data Register Empty Interrupt to start the write.
-  write_index  = 0;
-  UCSR0B      |= 1 << UDRIE0;
+  usart0_write_index  = 0;
+  UCSR0B             |= 1 << UDRIE0;
 }
 
 // The read buffer and associated state.
-static uint8_t                   *read_buffer;
-static uint8_t                    read_size;
-static uint8_t                    read_index;
-static buffer_received_callback_t read_callback;
+static uint8_t                   *usart0_read_buffer;
+static uint8_t                    usart0_read_size;
+static uint8_t                    usart0_read_index;
+static buffer_received_callback_t usart0_read_callback;
 
 // usart0_disable_receiver disables the USART0 receiver.
 void usart0_disable_receiver() {
@@ -83,9 +83,9 @@ void usart0_disable_receiver() {
 
 // usart0_enable_receiver enables the USART0 receiver.
 void usart0_enable_receiver() {
-  assert(ASSERT_USART0 + 5, read_buffer != NULL);
-  assert(ASSERT_USART0 + 6, read_callback != NULL);
-  assert(ASSERT_USART0 + 7, read_size > 0);
+  assert(ASSERT_USART0 + 5, usart0_read_buffer != NULL);
+  assert(ASSERT_USART0 + 6, usart0_read_callback != NULL);
+  assert(ASSERT_USART0 + 7, usart0_read_size > 0);
 
   UCSR0B |= (1 << RXEN0);
 }
@@ -95,23 +95,23 @@ void usart0_set_read_buffer(uint8_t *buffer, uint8_t size) {
   assert(ASSERT_USART0 + 8, buffer != NULL);
   assert(ASSERT_USART0 + 9, size > 0);
 
-  read_buffer = buffer;
-  read_size   = size;
-  read_index  = 0;
+  usart0_read_buffer = buffer;
+  usart0_read_size   = size;
+  usart0_read_index  = 0;
 }
 
 // usart0_set_read_callback sets the read callback for USART0.
 void usart0_set_read_callback(buffer_received_callback_t callback) {
   assert(ASSERT_USART0 + 10, callback != NULL);
 
-  read_callback = callback;
+  usart0_read_callback = callback;
 }
 
 // The USART0 Data Register Empty Interrupt.
 ISR(USART_UDRE_vect, ISR_BLOCK) {
-  if (write_index < write_size) {
+  if (usart0_write_index < usart0_write_size) {
     // If there is more to transmit, send the next byte.
-    UDR0 = write_buffer[write_index++];
+    UDR0 = usart0_write_buffer[usart0_write_index++];
   } else {
     // Otherwise, disable the Data Register Empty Interrupt.
     UCSR0B &= ~(1 << UDRIE0);
@@ -123,13 +123,13 @@ ISR(USART_RX_vect, ISR_BLOCK) {
   uint8_t value = UDR0;
 
   // If we have room in the buffer, store the value.
-  if (read_index < read_size) {
-    read_buffer[read_index++] = value;
+  if (usart0_read_index < usart0_read_size) {
+    usart0_read_buffer[usart0_read_index++] = value;
   }
 
   // If we have a line, call the callback and start the next line.
   if (value == '\n') {
-    read_callback(read_index);
-    read_index = 0;
+    usart0_read_callback(usart0_read_index);
+    usart0_read_index = 0;
   }
 }

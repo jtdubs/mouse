@@ -19,18 +19,18 @@
 
 // The un-encoded and encoded report.
 report_t    report;
-static char encoded_report[ENCODED_SIZE];
+static char report_encoded[ENCODED_SIZE];
 
 // report_init initializes the report module.
 void report_init() {
   // Ensure the report_t is a multiple of 3 bytes, as that encodes easily into base64 w/o padding.
   _Static_assert((sizeof(report_t) % 3) == 0);
 
-  encoded_report[0]                = '[';
-  encoded_report[ENCODED_SIZE - 2] = ']';
-  encoded_report[ENCODED_SIZE - 1] = '\n';
+  report_encoded[0]                = '[';
+  report_encoded[ENCODED_SIZE - 2] = ']';
+  report_encoded[ENCODED_SIZE - 1] = '\n';
 
-  usart0_set_write_buffer((uint8_t*)encoded_report, ENCODED_SIZE);
+  usart0_set_write_buffer((uint8_t*)report_encoded, ENCODED_SIZE);
 }
 
 // report_send sends the report, if usart0 is ready.
@@ -57,7 +57,7 @@ void report_send() {
       report.leds.right           = pin_is_set(LED_RIGHT);
       report.leds.ir              = pin_is_set(IR_LEDS);
     }
-    base64_encode((uint8_t*)&report, (uint8_t*)&encoded_report[1], sizeof(report));
+    base64_encode((uint8_t*)&report, (uint8_t*)&report_encoded[1], sizeof(report));
     usart0_write();
   }
 }

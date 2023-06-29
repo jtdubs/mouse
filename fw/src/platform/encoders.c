@@ -30,7 +30,7 @@ void encoders_init() {
 
 // Left Encoder Clock
 ISR(INT0_vect, ISR_BLOCK) {
-  static uint8_t last_b = 0;
+  static uint8_t left_last_b = 0;
 
   // Read the encoder pins (b and clk) and calculate a.
   uint8_t d   = PIND;
@@ -39,7 +39,7 @@ ISR(INT0_vect, ISR_BLOCK) {
   uint8_t a   = clk ^ b;
 
   // Update the encoder count based on rotation direction.
-  if (a == last_b) {
+  if (a == left_last_b) {
     encoder_left++;
     encoder_forward_left = true;
   } else {
@@ -50,12 +50,12 @@ ISR(INT0_vect, ISR_BLOCK) {
   encoder_times_left[1] = encoder_times_left[0];
   encoder_times_left[0] = rtc_micros();
 
-  last_b = b;
+  left_last_b = b;
 }
 
 // Right Encoder Clock
 ISR(INT1_vect, ISR_BLOCK) {
-  static uint8_t last_b = 0;
+  static uint8_t right_last_b = 0;
 
   // Read the encoder pins (b and clk) and calculate a.
   uint8_t d   = PIND;
@@ -64,7 +64,7 @@ ISR(INT1_vect, ISR_BLOCK) {
   uint8_t a   = clk ^ b;
 
   // Update the encoder count based on rotation direction.
-  if (a == last_b) {
+  if (a == right_last_b) {
     encoder_right--;
     encoder_forward_right = false;
   } else {
@@ -75,5 +75,5 @@ ISR(INT1_vect, ISR_BLOCK) {
   encoder_times_right[1] = encoder_times_right[0];
   encoder_times_right[0] = rtc_micros();
 
-  last_b = b;
+  right_last_b = b;
 }

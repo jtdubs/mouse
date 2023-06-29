@@ -8,11 +8,11 @@
 #include "platform/motor.h"
 #include "platform/pin.h"
 
-uint8_t distance_left;
-uint8_t distance_center;
-uint8_t distance_right;
+uint8_t wall_distance_left;
+uint8_t wall_distance_center;
+uint8_t wall_distance_right;
 
-uint8_t calc_distance_center();
+static uint8_t calc_distance_center();
 
 void mode_wall_enter() {
   mode_enter();
@@ -26,10 +26,10 @@ void mode_wall_tick() {
     pin_set2(LED_RIGHT, adc_sensor_right > 100);
   }
 
-  distance_center = calc_distance_center();
+  wall_distance_center = calc_distance_center();
 }
 
-uint8_t calc_distance_center() {
+static uint8_t calc_distance_center() {
   uint8_t sensor;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     sensor = adc_sensor_center >> 2;

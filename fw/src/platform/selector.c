@@ -6,8 +6,8 @@
 #include "platform/adc.h"
 
 // The proposed value (from the DIP switches) and the button state.
-static uint8_t value;
-static bool    button_pressed;
+static uint8_t selector_value;
+static bool    selector_button_pressed;
 
 // Voltage thresholds for the DIP switches.
 static const uint8_t SelectorThresholds[16] = {21,  42,  60,  77,  91,  102, 112, 123,
@@ -22,16 +22,16 @@ uint8_t selector_update() {
 
   if (v > 180) {
     // If the button was just pressed, return the selected value.
-    if (!button_pressed) {
-      button_pressed = true;
-      return value;
+    if (!selector_button_pressed) {
+      selector_button_pressed = true;
+      return selector_value;
     }
   } else {
     // Otherwise, decode the selector voltage.
-    button_pressed = false;
+    selector_button_pressed = false;
     for (int i = 0; i < 16; i++) {
       if (v < SelectorThresholds[i]) {
-        value = 15 - i;
+        selector_value = 15 - i;
         break;
       }
     }
