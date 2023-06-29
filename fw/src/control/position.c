@@ -25,17 +25,17 @@ static pid_t position_pid_left;
 static pid_t position_pid_right;
 
 void position_init() {
-  position_pid_left.min = -172;
-  position_pid_left.max = 172;
-  position_pid_left.kp  = 4;
-  position_pid_left.ki  = 0.004;
-  position_pid_left.kd  = 0.01;
+  position_pid_left.min = -170;
+  position_pid_left.max = 170;
+  position_pid_left.kp  = 6;
+  position_pid_left.ki  = 0.02;
+  position_pid_left.kd  = 0.001;
 
-  position_pid_right.min = -172;
-  position_pid_right.max = 172;
-  position_pid_right.kp  = 4;
-  position_pid_right.ki  = 0.004;
-  position_pid_right.kd  = 0.01;
+  position_pid_right.min = -170;
+  position_pid_right.max = 170;
+  position_pid_right.kp  = 6;
+  position_pid_right.ki  = 0.02;
+  position_pid_right.kd  = 0.001;
 }
 
 #define ENC_TO_MM (32.0 * M_PI / 240.0)
