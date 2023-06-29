@@ -8,7 +8,7 @@ import (
 	"github.com/jtdubs/mouse/ui/pkg/mouse"
 )
 
-type serialWindow struct {
+type mouseWindow struct {
 	mouse           *mouse.Mouse
 	autoScroll      bool
 	forceScroll     bool
@@ -17,59 +17,55 @@ type serialWindow struct {
 	linkedPositions bool
 }
 
-func newSerialWindow(m *mouse.Mouse) *serialWindow {
-	return &serialWindow{
+func newMouseWindow(m *mouse.Mouse) *mouseWindow {
+	return &mouseWindow{
 		mouse:      m,
 		autoScroll: true,
 		filter:     imgui.NewTextFilter(""),
 	}
 }
 
-func (s *serialWindow) init() {
+func (w *mouseWindow) init() {
 }
 
-func (s *serialWindow) draw() {
-	if s.mouse.Serial == nil {
-		return
-	}
-
+func (w *mouseWindow) draw() {
 	imgui.Begin("Serial")
 
 	imgui.SeparatorText("Status")
 	imgui.Text("")
 	imgui.SameLineV(0, 20)
 	imgui.BeginGroup()
-	s.drawStatus()
+	w.drawStatus()
 	imgui.EndGroup()
 
 	imgui.SeparatorText("Controls")
 	imgui.Text("")
 	imgui.SameLineV(0, 20)
 	imgui.BeginGroup()
-	s.drawControls()
+	w.drawControls()
 	imgui.EndGroup()
 
 	imgui.SeparatorText("Log")
 	imgui.Text("")
 	imgui.SameLineV(0, 20)
 	imgui.BeginGroup()
-	s.drawLog()
+	w.drawLog()
 	imgui.EndGroup()
 
 	imgui.Separator()
-	imgui.Text(fmt.Sprintf("Status: %s", s.mouse.Serial.Status()))
+	imgui.Text(fmt.Sprintf("Status: %w", w.mouse.Status()))
 
 	imgui.End()
 }
 
-func (s *serialWindow) drawStatus() {
-	r := s.mouse.Serial.Report()
+func (w *mouseWindow) drawStatus() {
+	r := w.mouse.Report()
 
 	imgui.BeginTable("##Status", 2)
 	imgui.TableSetupColumnV("##StatusLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
 	imgui.TableSetupColumnV("##StatusControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
 
-	s.drawNumericStatus("Battery Voltage", int(r.BatteryVolts)*39, "mV")
+	w.drawNumericStatus("Battery Voltage", int(r.BatteryVolts)*39, "mV")
 
 	{
 		modes := []string{"Remote", "Wall Sensor", "Error", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}
@@ -77,38 +73,38 @@ func (s *serialWindow) drawStatus() {
 		imgui.TableSetColumnIndex(0)
 		imgui.Text("Mode:")
 		imgui.TableSetColumnIndex(1)
-		if s.mouse.Serial.Open() {
+		if w.mouse.Open() {
 			imgui.Text(modes[r.Mode])
 		} else {
 			imgui.Text("Disconnected")
 		}
 	}
 
-	s.drawNumericStatus("Left Encoder", int(r.EncoderLeft), "")
-	s.drawNumericStatus("Right Encoder", int(r.EncoderRight), "")
+	w.drawNumericStatus("Left Encoder", int(r.EncoderLeft), "")
+	w.drawNumericStatus("Right Encoder", int(r.EncoderRight), "")
 
 	{
 		left, center, right := r.DecodeSensors()
-		s.drawNumericStatus("Left Sensor", int(left), "")
-		s.drawNumericStatus("Center Sensor", int(center), "")
-		s.drawNumericStatus("Right Sensor", int(right), "")
+		w.drawNumericStatus("Left Sensor", int(left), "")
+		w.drawNumericStatus("Center Sensor", int(center), "")
+		w.drawNumericStatus("Right Sensor", int(right), "")
 	}
 
 	{
 		onboard, left, right, ir := r.DecodeLEDs()
-		s.drawLEDStatus("Onboard LED", onboard)
-		s.drawLEDStatus("Left LED", left)
-		s.drawLEDStatus("Right LED", right)
-		s.drawLEDStatus("IR LEDs", ir)
+		w.drawLEDStatus("Onboard LED", onboard)
+		w.drawLEDStatus("Left LED", left)
+		w.drawLEDStatus("Right LED", right)
+		w.drawLEDStatus("IR LEDs", ir)
 	}
 
 	imgui.EndTable()
 }
 
-func (s *serialWindow) drawControls() {
-	r := s.mouse.Serial.Report()
+func (w *mouseWindow) drawControls() {
+	r := w.mouse.Report()
 
-	if !s.mouse.Serial.Open() {
+	if !w.mouse.Open() {
 		imgui.BeginDisabled()
 	}
 
@@ -125,7 +121,7 @@ func (s *serialWindow) drawControls() {
 		imgui.TableSetColumnIndex(1)
 		imgui.ComboStr("##FSEL", &mode, "Remote\000Wall Sensor\000Error")
 		if mode != int32(r.Mode) {
-			s.mouse.Serial.SendCommand(mouse.NewModeCommand(uint8(mode)))
+			w.mouse.SendCommand(mouse.NewModeCommand(uint8(mode)))
 		}
 	}
 
@@ -133,88 +129,88 @@ func (s *serialWindow) drawControls() {
 	{
 		onboard, left, right, ir := r.DecodeLEDs()
 		changed := false
-		changed = changed || s.drawLEDControl("Onboard LED", &onboard)
-		changed = changed || s.drawLEDControl("Left LED", &left)
-		changed = changed || s.drawLEDControl("Right LED", &right)
-		changed = changed || s.drawLEDControl("IR LEDs", &ir)
+		changed = changed || w.drawLEDControl("Onboard LED", &onboard)
+		changed = changed || w.drawLEDControl("Left LED", &left)
+		changed = changed || w.drawLEDControl("Right LED", &right)
+		changed = changed || w.drawLEDControl("IR LEDs", &ir)
 		if changed {
-			s.mouse.Serial.SendCommand(mouse.NewLEDCommand(onboard, left, right, ir))
+			w.mouse.SendCommand(mouse.NewLEDCommand(onboard, left, right, ir))
 		}
 	}
 
 	// Speed
 	{
-		imgui.Checkbox("Linked Speeds", &s.linkedSpeeds)
-		if s.linkedSpeeds {
+		imgui.Checkbox("Linked Speeds", &w.linkedSpeeds)
+		if w.linkedSpeeds {
 			leftSetpoint := r.SpeedSetpointLeft
 			rightSetpoint := r.SpeedSetpointRight
 
-			changed := s.drawSpeedControl("Speed", &leftSetpoint)
+			changed := w.drawSpeedControl("Speed", &leftSetpoint)
 
 			if changed || leftSetpoint != rightSetpoint {
-				s.mouse.Serial.SendCommand(mouse.NewSpeedCommand(leftSetpoint, leftSetpoint))
+				w.mouse.SendCommand(mouse.NewSpeedCommand(leftSetpoint, leftSetpoint))
 			}
 		} else {
 			leftSetpoint := r.SpeedSetpointLeft
 			rightSetpoint := r.SpeedSetpointRight
 
-			leftChanged := s.drawSpeedControl("Left Speed", &leftSetpoint)
-			rightChanged := s.drawSpeedControl("Right Speed", &rightSetpoint)
+			leftChanged := w.drawSpeedControl("Left Speed", &leftSetpoint)
+			rightChanged := w.drawSpeedControl("Right Speed", &rightSetpoint)
 
 			if leftChanged || rightChanged {
-				s.mouse.Serial.SendCommand(mouse.NewSpeedCommand(leftSetpoint, rightSetpoint))
+				w.mouse.SendCommand(mouse.NewSpeedCommand(leftSetpoint, rightSetpoint))
 			}
 		}
 	}
 
 	// Position
 	{
-		imgui.Checkbox("Linked Positions", &s.linkedPositions)
-		if s.linkedPositions {
+		imgui.Checkbox("Linked Positions", &w.linkedPositions)
+		if w.linkedPositions {
 			leftSetpoint := r.PositionSetpointLeft
 			rightSetpoint := r.PositionSetpointRight
 
-			changed := s.drawPositionControl("Position", &leftSetpoint)
+			changed := w.drawPositionControl("Position", &leftSetpoint)
 
 			if changed || leftSetpoint != rightSetpoint {
-				s.mouse.Serial.SendCommand(mouse.NewPositionCommand(leftSetpoint, leftSetpoint))
+				w.mouse.SendCommand(mouse.NewPositionCommand(leftSetpoint, leftSetpoint))
 			}
 		} else {
 			leftSetpoint := r.PositionSetpointLeft
 			rightSetpoint := r.PositionSetpointRight
 
-			leftChanged := s.drawPositionControl("Left Position", &leftSetpoint)
-			rightChanged := s.drawPositionControl("Right Position", &rightSetpoint)
+			leftChanged := w.drawPositionControl("Left Position", &leftSetpoint)
+			rightChanged := w.drawPositionControl("Right Position", &rightSetpoint)
 
 			if leftChanged || rightChanged {
-				s.mouse.Serial.SendCommand(mouse.NewPositionCommand(leftSetpoint, rightSetpoint))
+				w.mouse.SendCommand(mouse.NewPositionCommand(leftSetpoint, rightSetpoint))
 			}
 		}
 	}
 
 	imgui.EndTable()
 
-	if !s.mouse.Serial.Open() {
+	if !w.mouse.Open() {
 		imgui.EndDisabled()
 	}
 }
 
-func (s *serialWindow) drawLog() {
+func (w *mouseWindow) drawLog() {
 	// Toolbar
 	imgui.Text("Filter: ")
 	imgui.SameLine()
-	s.filter.DrawV("", 180)
+	w.filter.DrawV("", 180)
 	imgui.SameLineV(0, 20)
 	if imgui.Button("Clear") {
-		s.mouse.Serial.Clear()
+		w.mouse.Clear()
 	}
 	imgui.SameLine()
 	copy := imgui.Button("Copy")
 	imgui.SameLineV(0, 20)
-	wasAutoScroll := s.autoScroll
-	imgui.Checkbox("Auto-scroll", &s.autoScroll)
-	if !wasAutoScroll && s.autoScroll {
-		s.forceScroll = true
+	wasAutoScroll := w.autoScroll
+	imgui.Checkbox("Auto-scroll", &w.autoScroll)
+	if !wasAutoScroll && w.autoScroll {
+		w.forceScroll = true
 	}
 	imgui.Separator()
 
@@ -225,9 +221,9 @@ func (s *serialWindow) drawLog() {
 			imgui.LogToClipboard()
 		}
 
-		s.mouse.Serial.ForEachMessage(func(line string) {
-			if s.filter.PassFilter(line) {
-				if s.mouse.Serial.Open() {
+		w.mouse.ForEachMessage(func(line string) {
+			if w.filter.PassFilter(line) {
+				if w.mouse.Open() {
 					imgui.TextUnformatted(line)
 				} else {
 					imgui.TextDisabled(line)
@@ -239,20 +235,20 @@ func (s *serialWindow) drawLog() {
 			imgui.LogFinish()
 		}
 
-		if s.forceScroll || (s.autoScroll && imgui.ScrollY() >= imgui.ScrollMaxY()) {
+		if w.forceScroll || (w.autoScroll && imgui.ScrollY() >= imgui.ScrollMaxY()) {
 			imgui.SetScrollHereYV(1.0)
 		}
-		s.forceScroll = false
+		w.forceScroll = false
 	}
 	imgui.EndChild()
 }
 
-func (s *serialWindow) drawNumericStatus(name string, value int, units string) {
+func (w *mouseWindow) drawNumericStatus(name string, value int, units string) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))
 	imgui.TableSetColumnIndex(1)
-	if s.mouse.Serial.Open() {
+	if w.mouse.Open() {
 		imgui.Text(fmt.Sprint(value))
 		if units != "" {
 			imgui.SameLine()
@@ -263,12 +259,12 @@ func (s *serialWindow) drawNumericStatus(name string, value int, units string) {
 	}
 }
 
-func (s *serialWindow) drawLEDStatus(name string, value bool) {
+func (w *mouseWindow) drawLEDStatus(name string, value bool) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))
 	imgui.TableSetColumnIndex(1)
-	if s.mouse.Serial.Open() {
+	if w.mouse.Open() {
 		if value {
 			imgui.Text("On")
 		} else {
@@ -279,7 +275,7 @@ func (s *serialWindow) drawLEDStatus(name string, value bool) {
 	}
 }
 
-func (s *serialWindow) drawLEDControl(name string, value *bool) (changed bool) {
+func (w *mouseWindow) drawLEDControl(name string, value *bool) (changed bool) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))
@@ -289,7 +285,7 @@ func (s *serialWindow) drawLEDControl(name string, value *bool) (changed bool) {
 	return oldValue != *value
 }
 
-func (s *serialWindow) drawSpeedControl(name string, rpms *float32) (changed bool) {
+func (w *mouseWindow) drawSpeedControl(name string, rpms *float32) (changed bool) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))
@@ -301,7 +297,7 @@ func (s *serialWindow) drawSpeedControl(name string, rpms *float32) (changed boo
 	return
 }
 
-func (s *serialWindow) drawPositionControl(name string, mms *float32) (changed bool) {
+func (w *mouseWindow) drawPositionControl(name string, mms *float32) (changed bool) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))

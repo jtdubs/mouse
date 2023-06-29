@@ -30,7 +30,7 @@ func New(mouse *mouse.Mouse) *UI {
 		mouse:   mouse,
 		backend: backend,
 		windows: []window{
-			newSerialWindow(mouse),
+			newMouseWindow(mouse),
 			newToolbarWindow(mouse),
 		},
 	}

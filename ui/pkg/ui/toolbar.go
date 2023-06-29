@@ -23,15 +23,15 @@ func (w *toolbarWindow) toolbarButton(name string, icon string) bool {
 }
 
 func (w *toolbarWindow) drawToolbar() {
-	imgui.BeginDisabledV(w.mouse.Serial.Recording)
+	imgui.BeginDisabledV(w.mouse.Recording)
 	if w.toolbarButton("VCDRecord", "video-outline-black") {
-		w.mouse.Serial.SetRecording(true)
+		w.mouse.SetRecording(true)
 	}
 	imgui.EndDisabled()
 	imgui.SameLine()
-	imgui.BeginDisabledV(!w.mouse.Serial.Recording)
+	imgui.BeginDisabledV(!w.mouse.Recording)
 	if w.toolbarButton("VCDStop", "video-off-outline-black") {
-		w.mouse.Serial.SetRecording(false)
+		w.mouse.SetRecording(false)
 	}
 	imgui.EndDisabled()
 	imgui.SameLineV(0, 20)
