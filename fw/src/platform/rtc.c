@@ -33,12 +33,9 @@ void rtc_init() {
 }
 
 // rtc_micros returns the number of microseconds since RTC initialization.
+// NOTE: MUST BE CALLED FROM AN ATOMIC BLOCK!
 uint32_t rtc_micros() {
-  uint8_t tcnt2;
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    tcnt2 = TCNT2;
-  }
-  return rtc_high | (tcnt2 << 1);
+  return rtc_high | (TCNT2 << 1);
 }
 
 ISR(TIMER2_OVF_vect, ISR_BLOCK) {

@@ -8,6 +8,7 @@
 #include "control/pid.h"
 #include "platform/encoders.h"
 #include "platform/motor.h"
+#include "platform/pin.h"
 #include "platform/rtc.h"
 
 #define MAX_ENCODER_PERIOD 9000
@@ -29,16 +30,16 @@ float calculate_speed_right();
 
 void speed_init() {
   pid_left.min = 0;
-  pid_left.max = 100;
-  pid_left.kp  = 0.045;
-  pid_left.ki  = 0.12;
-  pid_left.kd  = 0.02;
+  pid_left.max = 200;
+  pid_left.kp  = 0.07;
+  pid_left.ki  = 0.20;
+  pid_left.kd  = 0.001;
 
   pid_right.min = 0;
-  pid_right.max = 100;
-  pid_right.kp  = 0.045;
-  pid_right.ki  = 0.12;
-  pid_right.kd  = 0.02;
+  pid_right.max = 200;
+  pid_right.kp  = 0.07;
+  pid_right.ki  = 0.20;
+  pid_right.kd  = 0.001;
 }
 
 void speed_update() {
@@ -48,12 +49,12 @@ void speed_update() {
   if (enabled) {
     int8_t power_left = (int8_t)pid_update(&pid_left, fabsf(speed_setpoint_left), fabsf(speed_measured_left));
     if (power_left != 0) {
-      power_left += 10;
+      power_left += 26;
     }
 
     int8_t power_right = (int8_t)pid_update(&pid_right, fabsf(speed_setpoint_right), fabsf(speed_measured_right));
     if (power_right != 0) {
-      power_right += 10;
+      power_right += 26;
     }
 
     bool forward_left  = signbitf(speed_setpoint_left) == 0;
@@ -76,15 +77,16 @@ void speed_disable() {
 
 // encoders_left_period returns the period of the left encoder in microseconds.
 float calculate_speed_left() {
-  uint32_t now = rtc_micros();
-  uint32_t time0, time1;
+  uint32_t now, time0, time1;
   bool     forward;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     time0   = encoder_times_left[0];
     time1   = encoder_times_left[1];
     forward = encoder_forward_left;
+    now     = rtc_micros();
   }
-  if (now - time0 > MAX_ENCODER_PERIOD) {
+  if ((now - time0) > MAX_ENCODER_PERIOD) {
+    pin_toggle(PROBE_1);
     return 0;
   }
   float period = (float)(time0 - time1);
@@ -94,15 +96,16 @@ float calculate_speed_left() {
 
 // encoders_right_period returns the period of the right encoder in microseconds.
 float calculate_speed_right() {
-  uint32_t now = rtc_micros();
-  uint32_t time0, time1;
+  uint32_t now, time0, time1;
   bool     forward;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     time0   = encoder_times_right[0];
     time1   = encoder_times_right[1];
     forward = encoder_forward_right;
+    now     = rtc_micros();
   }
   if ((now - time0) > MAX_ENCODER_PERIOD) {
+    pin_toggle(PROBE_2);
     return 0;
   }
   float period = (float)(time0 - time1);

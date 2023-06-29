@@ -37,7 +37,8 @@
       "rtc.h": "c",
       "speed.h": "c",
       "math.h": "c",
-      "encoders.h": "c"
+      "encoders.h": "c",
+      "motor.h": "c"
     }
   },
 }
