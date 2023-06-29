@@ -51,12 +51,20 @@ func (w *commandWindow) draw() {
 
 	// LEDs
 	{
-		onboard, left, right, ir := r.DecodeLEDs()
 		changed := false
-		changed = changed || w.drawLEDControl("Onboard LED", &onboard)
-		changed = changed || w.drawLEDControl("Left LED", &left)
-		changed = changed || w.drawLEDControl("Right LED", &right)
-		changed = changed || w.drawLEDControl("IR LEDs", &ir)
+		onboard, left, right, ir := r.DecodeLEDs()
+		w.tableRow("Status LEDs:")
+		changed = w.drawIconToggleButton("##LeftLED", "led-off-white", "led-on-lightblue", &left) || changed
+		imgui.SameLineV(0, 20)
+		changed = w.drawIconToggleButton("##OnboardLED", "led-off-white", "led-on-orange", &onboard) || changed
+		imgui.SameLineV(0, 20)
+		changed = w.drawIconToggleButton("##RightLED", "led-off-white", "led-on-lightblue", &right) || changed
+		w.tableRow("IR LEDs:")
+		changed = w.drawIconToggleButton("##IR1", "led-off-white", "led-on-red", &ir) || changed
+		imgui.SameLineV(0, 20)
+		changed = w.drawIconToggleButton("##IR2", "led-off-white", "led-on-red", &ir) || changed
+		imgui.SameLineV(0, 20)
+		changed = w.drawIconToggleButton("##IR3", "led-off-white", "led-on-red", &ir) || changed
 		if changed {
 			w.mouse.SendCommand(mouse.NewLEDCommand(onboard, left, right, ir))
 		}
@@ -115,16 +123,6 @@ func (w *commandWindow) draw() {
 	imgui.End()
 }
 
-func (w *commandWindow) drawLEDControl(name string, value *bool) (changed bool) {
-	imgui.TableNextRow()
-	imgui.TableSetColumnIndex(0)
-	imgui.Text(fmt.Sprintf("%v:", name))
-	imgui.TableSetColumnIndex(1)
-	oldValue := *value
-	imgui.Checkbox(fmt.Sprintf("##%v", name), value)
-	return oldValue != *value
-}
-
 func (w *commandWindow) drawSpeedControl(name string, rpms *float32) (changed bool) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
@@ -143,4 +141,31 @@ func (w *commandWindow) drawPositionControl(name string, mms *float32) (changed 
 	imgui.Text(fmt.Sprintf("%v:", name))
 	imgui.TableSetColumnIndex(1)
 	return imgui.SliderFloat(name, mms, 0, 16.0*180.0)
+}
+
+func (w *commandWindow) drawIconButton(label, name string) bool {
+	return imgui.ImageButtonV(label, Textures[name].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(0, 0, 0, 0), imgui.NewVec4(1, 1, 1, 1))
+}
+
+func (w *commandWindow) drawIconToggleButton(label, off, on string, value *bool) bool {
+	var texture imgui.TextureID
+	if *value {
+		texture = Textures[on].ID()
+	} else {
+		texture = Textures[off].ID()
+	}
+
+	if imgui.ImageButtonV(label, texture, imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(0, 0, 0, 0), imgui.NewVec4(1, 1, 1, 1)) {
+		*value = !*value
+		return true
+	}
+
+	return false
+}
+
+func (w *commandWindow) tableRow(label string) {
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text(label)
+	imgui.TableSetColumnIndex(1)
 }
