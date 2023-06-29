@@ -15,9 +15,17 @@ Modes:
   - Eventually a "turn x degrees" and "move y mm" commands
   - Include wall-detection logic here and get rid of wall mode.
 
+UI:
+- Flatten Serial into Mouse
+- Pull out Toolbar/Status/Symbols/etc. windows (similar to sim)
+- Add maze UI and show mouse based on reported x,y,theta
+- Write VCD file from reports
+
+Firmware:
+- On tick, update approximate x,y,theta based on encoder deltas
+- Add x,y,theta to the report
+- Add an x,y,theta controller on top of the position one
+- Deal with encoder over/underflow
+
 Sim:
-- Auto-pause on collision with wall?
-- Some notion of "steps" in the firmware that raise a monitorable signal, then sim can "step" through them
-  - Wall ended
-  - Next square reached
-  - ??
+- Auto-pause on collision or out-of-bounds
