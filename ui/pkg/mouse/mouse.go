@@ -34,7 +34,7 @@ type Mouse struct {
 	report    Report
 	sendChan  chan Command
 	vcd       vcd.VcdWriter
-	startTime time.Time
+	vcdTime   uint64
 }
 
 func New() *Mouse {
@@ -65,7 +65,7 @@ func (m *Mouse) SetRecording(recording bool) {
 			return
 		}
 		m.vcd.RegisterVariableList("mouse", m.report.Variables())
-		m.startTime = time.Now()
+		m.vcdTime = 0
 	} else {
 		m.vcd.Close()
 	}
@@ -245,9 +245,9 @@ func (m *Mouse) decode(message string) {
 	}
 
 	if m.Recording {
-		t := uint64(time.Now().UnixMilli() - m.startTime.UnixMilli())
 		for k, v := range m.report.Symbols() {
-			m.vcd.SetValue(t, v, k)
+			m.vcd.SetValue(m.vcdTime, v, k)
 		}
+		m.vcdTime += 10
 	}
 }

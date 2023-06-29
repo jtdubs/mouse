@@ -1,43 +1,57 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Thu Jun 29 20:16:42 2023
+[*] Thu Jun 29 20:23:27 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/ui/mouse.vcd"
-[dumpfile_mtime] "Thu Jun 29 20:14:37 2023"
-[dumpfile_size] 109231
+[dumpfile_mtime] "Thu Jun 29 20:21:04 2023"
+[dumpfile_size] 819651
 [savefile] "/home/jtdubs/dev/mouse/ui/ui.gtkw"
-[timestart] 3306
-[size] 1905 1055
-[pos] -1 -1
-*-10.000000 6322 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 8524
+[size] 1885 2096
+[pos] 952 -521
+*-4.000000 11668 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 265
 [signals_width] 540
 [sst_expanded] 1
-[sst_vpaned_height] 295
+[sst_vpaned_height] 658
 @22
 mouse.adc_battery_voltage[9:0]
-mouse.adc_sensor_center[9:0]
+mouse.mode_active[7:0]
+@200
+-Sensors
+@22
 mouse.adc_sensor_left[9:0]
+mouse.adc_sensor_center[9:0]
 mouse.adc_sensor_right[9:0]
-@8023
+@200
+-Endoers
+@8022
 mouse.encoder_left[15:0]
 mouse.encoder_right[15:0]
-@22
-mouse.mode_active[7:0]
+@200
+-Motor
 @28
 mouse.motor_forward_left
-mouse.motor_forward_right
 @88022
 mouse.motor_power_left[15:0]
+@28
+mouse.motor_forward_right
+@88022
 mouse.motor_power_right[15:0]
+@200
+-Speed
+@c8020
+mouse.speed_measured_left[31:0]
+mouse.speed_setpoint_left[31:0]
+mouse.speed_measured_right[31:0]
+mouse.speed_setpoint_right[31:0]
+@200
+-Position
 @c8020
 mouse.position_measured_left[31:0]
-mouse.position_measured_right[31:0]
 mouse.position_setpoint_left[31:0]
+mouse.position_measured_right[31:0]
+@c8021
 mouse.position_setpoint_right[31:0]
-mouse.speed_measured_left[31:0]
-mouse.speed_measured_right[31:0]
-mouse.speed_setpoint_left[31:0]
-mouse.speed_setpoint_right[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

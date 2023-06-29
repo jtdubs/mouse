@@ -17,7 +17,6 @@ Modes:
 
 UI:
 - Add maze UI and show mouse based on reported x,y,theta
-- Write VCD file from reports
 
 Firmware:
 - On tick, update approximate x,y,theta based on encoder deltas
