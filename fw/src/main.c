@@ -20,7 +20,6 @@ static void init() {
   // Turn off unused hardware to save a few mA.
   power_spi_disable();
   power_twi_disable();
-  power_timer2_disable();
 
   // Initialize all the modules.
   pin_init();
