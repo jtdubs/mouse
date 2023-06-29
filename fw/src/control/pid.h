@@ -9,3 +9,5 @@ typedef struct {
 } pid_t;
 
 float pid_update(pid_t *pid, float sp, float pv);
+
+void pid_reset(pid_t *pid);

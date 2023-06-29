@@ -12,6 +12,7 @@
 #include "platform/rtc.h"
 
 #define MAX_ENCODER_PERIOD 9000
+#define MIN_SPEED 5.0
 
 // Motor speeds in RPM.
 float speed_measured_left;
@@ -31,13 +32,13 @@ float calculate_speed_right();
 void speed_init() {
   pid_left.min = 0;
   pid_left.max = 200;
-  pid_left.kp  = 0.07;
+  pid_left.kp  = 0.065;
   pid_left.ki  = 0.20;
   pid_left.kd  = 0.001;
 
   pid_right.min = 0;
   pid_right.max = 200;
-  pid_right.kp  = 0.07;
+  pid_right.kp  = 0.065;
   pid_right.ki  = 0.20;
   pid_right.kd  = 0.001;
 }
@@ -47,14 +48,26 @@ void speed_update() {
   speed_measured_right = calculate_speed_right();
 
   if (enabled) {
-    int8_t power_left = (int8_t)pid_update(&pid_left, fabsf(speed_setpoint_left), fabsf(speed_measured_left));
-    if (power_left != 0) {
-      power_left += 26;
+    uint8_t power_left;
+    if (fabsf(speed_setpoint_left) < MIN_SPEED) {
+      pid_reset(&pid_left);
+      power_left = 0;
+    } else {
+      power_left = (uint8_t)pid_update(&pid_left, fabsf(speed_setpoint_left), fabsf(speed_measured_left));
+      if (power_left != 0) {
+        power_left += 26;
+      }
     }
 
-    int8_t power_right = (int8_t)pid_update(&pid_right, fabsf(speed_setpoint_right), fabsf(speed_measured_right));
-    if (power_right != 0) {
-      power_right += 26;
+    uint8_t power_right;
+    if (fabsf(speed_setpoint_right) < MIN_SPEED) {
+      pid_reset(&pid_right);
+      power_right = 0;
+    } else {
+      power_right = (uint8_t)pid_update(&pid_right, fabsf(speed_setpoint_right), fabsf(speed_measured_right));
+      if (power_right != 0) {
+        power_right += 26;
+      }
     }
 
     bool forward_left  = signbitf(speed_setpoint_left) == 0;

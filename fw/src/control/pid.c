@@ -19,3 +19,8 @@ float pid_update(pid_t *pid, float sp /* setpoint */, float pv /* process variab
   }
   return fmaxf(pid->min, fminf(pid->max, out));
 }
+
+void pid_reset(pid_t *pid) {
+  pid->e = 0;
+  pid->i = 0;
+}
