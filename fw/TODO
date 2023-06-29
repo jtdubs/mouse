@@ -21,7 +21,3 @@ Sim:
   - Wall ended
   - Next square reached
   - ??
-
-Fw:
-- Position controller on top of speed controller.
-
