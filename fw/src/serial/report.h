@@ -37,7 +37,12 @@ typedef struct {
     float setpoint_left;
     float setpoint_right;
   } speed;
-  uint8_t padding[1];
+  struct {
+    float measured_left;
+    float measured_right;
+    float setpoint_left;
+    float setpoint_right;
+  } position;
 } report_t;
 #pragma pack(pop)
 

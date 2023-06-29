@@ -29,10 +29,10 @@ void mode_remote_tick() {
         speed_set_left(command.data.speed.left);
         speed_set_right(command.data.speed.right);
         break;
-      // case COMMAND_SET_POSITION:
-      //   position_set_left(command.data.speed.left);
-      //   position_set_right(command.data.speed.right);
-      //   break;
+      case COMMAND_SET_POSITION:
+        position_set_left(command.data.position.left);
+        position_set_right(command.data.position.right);
+        break;
       default:
         return;
     }

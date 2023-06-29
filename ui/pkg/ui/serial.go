@@ -13,7 +13,8 @@ type serialWindow struct {
 	autoScroll      bool
 	forceScroll     bool
 	filter          imgui.TextFilter
-	linkedThrottles bool
+	linkedSpeeds    bool
+	linkedPositions bool
 }
 
 func newSerialWindow(m *mouse.Mouse) *serialWindow {
@@ -138,27 +139,52 @@ func (s *serialWindow) drawControls() {
 		}
 	}
 
-	// Motors
+	// Speed
 	{
-		imgui.Checkbox("Linked Throttles", &s.linkedThrottles)
-		if s.linkedThrottles {
+		imgui.Checkbox("Linked Speeds", &s.linkedSpeeds)
+		if s.linkedSpeeds {
 			leftSetpoint := r.SpeedSetpointLeft
 			rightSetpoint := r.SpeedSetpointRight
 
-			changed := s.drawMotorControl("Motors", &leftSetpoint)
+			changed := s.drawSpeedControl("Speed", &leftSetpoint)
 
 			if changed || leftSetpoint != rightSetpoint {
-				s.mouse.Serial.SendCommand(mouse.NewMotorCommand(leftSetpoint, leftSetpoint))
+				s.mouse.Serial.SendCommand(mouse.NewSpeedCommand(leftSetpoint, leftSetpoint))
 			}
 		} else {
 			leftSetpoint := r.SpeedSetpointLeft
 			rightSetpoint := r.SpeedSetpointRight
 
-			leftChanged := s.drawMotorControl("Left Motor", &leftSetpoint)
-			rightChanged := s.drawMotorControl("Right Motor", &rightSetpoint)
+			leftChanged := s.drawSpeedControl("Left Speed", &leftSetpoint)
+			rightChanged := s.drawSpeedControl("Right Speed", &rightSetpoint)
 
 			if leftChanged || rightChanged {
-				s.mouse.Serial.SendCommand(mouse.NewMotorCommand(leftSetpoint, rightSetpoint))
+				s.mouse.Serial.SendCommand(mouse.NewSpeedCommand(leftSetpoint, rightSetpoint))
+			}
+		}
+	}
+
+	// Position
+	{
+		imgui.Checkbox("Linked Positions", &s.linkedPositions)
+		if s.linkedPositions {
+			leftSetpoint := r.PositionSetpointLeft
+			rightSetpoint := r.PositionSetpointRight
+
+			changed := s.drawPositionControl("Position", &leftSetpoint)
+
+			if changed || leftSetpoint != rightSetpoint {
+				s.mouse.Serial.SendCommand(mouse.NewPositionCommand(leftSetpoint, leftSetpoint))
+			}
+		} else {
+			leftSetpoint := r.PositionSetpointLeft
+			rightSetpoint := r.PositionSetpointRight
+
+			leftChanged := s.drawPositionControl("Left Position", &leftSetpoint)
+			rightChanged := s.drawPositionControl("Right Position", &rightSetpoint)
+
+			if leftChanged || rightChanged {
+				s.mouse.Serial.SendCommand(mouse.NewPositionCommand(leftSetpoint, rightSetpoint))
 			}
 		}
 	}
@@ -260,7 +286,7 @@ func (s *serialWindow) drawLEDControl(name string, value *bool) (changed bool) {
 	return oldValue != *value
 }
 
-func (s *serialWindow) drawMotorControl(name string, rpms *float32) (changed bool) {
+func (s *serialWindow) drawSpeedControl(name string, rpms *float32) (changed bool) {
 	imgui.TableNextRow()
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))
@@ -270,4 +296,12 @@ func (s *serialWindow) drawMotorControl(name string, rpms *float32) (changed boo
 		*rpms = 0
 	}
 	return
+}
+
+func (s *serialWindow) drawPositionControl(name string, mms *float32) (changed bool) {
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Text(fmt.Sprintf("%v:", name))
+	imgui.TableSetColumnIndex(1)
+	return imgui.SliderFloat(name, mms, 0, 16.0*180.0)
 }

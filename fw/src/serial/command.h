@@ -6,6 +6,7 @@
 #define COMMAND_SET_MODE 0
 #define COMMAND_SET_LEDS 1
 #define COMMAND_SET_SPEED 2
+#define COMMAND_SET_POSITION 3
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.
@@ -28,6 +29,10 @@ typedef struct {
       float left;
       float right;
     } speed;
+    struct {
+      float left;
+      float right;
+    } position;
   } data;
 } command_t;
 #pragma pack(pop)

@@ -1,20 +1,23 @@
 package mouse
 
 type Report struct {
-	BatteryVolts       uint8
-	Mode               uint8
-	Sensors            uint32
-	LEDs               uint8
-	EncoderLeft        uint16
-	EncoderRight       uint16
-	MotorPowerLeft     uint16
-	MotorPowerRight    uint16
-	MotorForward       uint8
-	SpeedMeasuredLeft  float32
-	SpeedMeasuredRight float32
-	SpeedSetpointLeft  float32
-	SpeedSetpointRight float32
-	Padding            [1]uint8
+	BatteryVolts          uint8
+	Mode                  uint8
+	Sensors               uint32
+	LEDs                  uint8
+	EncoderLeft           uint16
+	EncoderRight          uint16
+	MotorPowerLeft        uint16
+	MotorPowerRight       uint16
+	MotorForward          uint8
+	SpeedMeasuredLeft     float32
+	SpeedMeasuredRight    float32
+	SpeedSetpointLeft     float32
+	SpeedSetpointRight    float32
+	PositionMeasuredLeft  float32
+	PositionMeasuredRight float32
+	PositionSetpointLeft  float32
+	PositionSetpointRight float32
 }
 
 func (r *Report) DecodeSensors() (left, center, right uint16) {
