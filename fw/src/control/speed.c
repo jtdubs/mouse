@@ -32,15 +32,18 @@ float calculate_speed_right();
 void speed_init() {
   pid_left.min = 0;
   pid_left.max = 200;
-  pid_left.kp  = 0.065;
-  pid_left.ki  = 0.20;
-  pid_left.kd  = 0.001;
+  pid_left.kp  = 0.06;
+  pid_left.ki  = 0.17;
+  pid_left.kd  = 0.01;
 
   pid_right.min = 0;
   pid_right.max = 200;
-  pid_right.kp  = 0.065;
-  pid_right.ki  = 0.20;
-  pid_right.kd  = 0.001;
+  pid_right.kp  = 0.06;
+  pid_right.ki  = 0.17;
+  pid_right.kd  = 0.01;
+
+  speed_setpoint_left  = 90.0;
+  speed_setpoint_right = 90.0;
 }
 
 void speed_update() {
@@ -102,6 +105,10 @@ float calculate_speed_left() {
     pin_toggle(PROBE_1);
     return 0;
   }
+  uint32_t dt = time0 - time1;
+  if (dt == 0) {
+    return 0;
+  }
   float period = (float)(time0 - time1);
   float rpm    = (1000000.0 * 60.0 / 240.0) / period;
   return forward ? rpm : -rpm;
@@ -119,6 +126,10 @@ float calculate_speed_right() {
   }
   if ((now - time0) > MAX_ENCODER_PERIOD) {
     pin_toggle(PROBE_2);
+    return 0;
+  }
+  uint32_t dt = time0 - time1;
+  if (dt == 0) {
     return 0;
   }
   float period = (float)(time0 - time1);

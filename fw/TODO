@@ -23,7 +23,6 @@ Sim:
   - ??
 
 Fw:
-- Give PID access to low bit of motor speed precision (right now motor does a "<< 1")
-- What happens if we run every 5ms instead of 10ms?
+- What happens if we run every 5ms instead of 10ms?  Or every 20ms?
 - Move report structs out into individual modules and consolidate them in report.h
 - Better documentation of modules, how they work and what they do.

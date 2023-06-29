@@ -27,7 +27,7 @@ void timer_init() {
          | (0 << CS01)   // Use clk/1024 prescaler (15.625kHz)
          | (1 << CS00);  // Use clk/1024 prescaler (15.625kHz)
 
-  OCR0A = (F_CPU / 1024 / (100 + 1)) + 1;  // 100Hz = 10ms
+  OCR0A = (F_CPU / 1024 / (200 + 1)) + 1;  // 100Hz = 10ms
   OCR0B = OCR0A - 4;                       // 250us before OCR0A
 
   TIMSK0 = (1 << OCIE0B)  // Enable OCR0B match interrupt
