@@ -7,32 +7,42 @@
 #define COMMAND_SET_LEDS 1
 #define COMMAND_SET_SPEED 2
 #define COMMAND_SET_POSITION 3
+#define COMMAND_SET_SPEED_PID_VARS 4
+#define COMMAND_SET_POSITION_PID_VARS 5
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.
 typedef struct {
   uint8_t type;
   union {
-    uint8_t padding[8];
+    uint8_t padding[14];
     struct {
       uint8_t mode;
-      uint8_t padding[7];
+      uint8_t padding[13];
     } mode;
     struct {
       bool    builtin;
       bool    left;
       bool    right;
       bool    ir;
-      uint8_t padding[4];
+      uint8_t padding[10];
     } leds;
     struct {
-      float left;
-      float right;
+      float   left;
+      float   right;
+      uint8_t padding[6];
     } speed;
     struct {
-      float left;
-      float right;
+      float   left;
+      float   right;
+      uint8_t padding[6];
     } position;
+    struct {
+      float   kp;
+      float   ki;
+      float   kd;
+      uint8_t padding[2];
+    } pid;
   } data;
 } command_t;
 #pragma pack(pop)

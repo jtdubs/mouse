@@ -36,6 +36,13 @@ void mode_remote_tick() {
         position_set_left(command.data.position.left);
         position_set_right(command.data.position.right);
         break;
+      case COMMAND_SET_SPEED_PID_VARS:
+        speed_set_pid_vars(command.data.pid.kp, command.data.pid.ki, command.data.pid.kd);
+        break;
+      case COMMAND_SET_POSITION_PID_VARS:
+        position_set_pid_vars(command.data.pid.kp, command.data.pid.ki, command.data.pid.kd);
+        break;
+        break;
       default:
         return;
     }

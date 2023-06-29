@@ -141,3 +141,13 @@ void speed_set_left(float setpoint) {
 void speed_set_right(float setpoint) {
   speed_setpoint_right = setpoint;
 }
+
+void speed_set_pid_vars(float kp, float ki, float kd) {
+  speed_pid_left.kp = kp;
+  speed_pid_left.ki = ki;
+  speed_pid_left.kd = kd;
+
+  speed_pid_right.kp = kp;
+  speed_pid_right.ki = ki;
+  speed_pid_right.kd = kd;
+}

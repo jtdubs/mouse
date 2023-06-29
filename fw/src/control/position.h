@@ -18,3 +18,5 @@ void position_disable();
 
 void position_set_left(float setpoint);
 void position_set_right(float setpoint);
+
+void position_set_pid_vars(float kp, float ki, float kd);

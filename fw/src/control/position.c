@@ -89,3 +89,13 @@ void position_set_left(float setpoint) {
 void position_set_right(float setpoint) {
   position_setpoint_right = roundf(setpoint * MM_TO_ENC) * ENC_TO_MM;
 }
+
+void position_set_pid_vars(float kp, float ki, float kd) {
+  position_pid_left.kp = kp;
+  position_pid_left.ki = ki;
+  position_pid_left.kd = kd;
+
+  position_pid_right.kp = kp;
+  position_pid_right.ki = ki;
+  position_pid_right.kd = kd;
+}

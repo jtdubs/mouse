@@ -18,3 +18,5 @@ void speed_disable();
 
 void speed_set_left(float setpoint);
 void speed_set_right(float setpoint);
+
+void speed_set_pid_vars(float kp, float ki, float kd);
