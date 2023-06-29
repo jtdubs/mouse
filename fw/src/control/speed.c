@@ -12,7 +12,7 @@
 #include "platform/rtc.h"
 
 #define MAX_ENCODER_PERIOD 9000
-#define MIN_SPEED 5.0
+#define MIN_SPEED 30.0
 
 // Motor speeds in RPM.
 float speed_measured_left;
@@ -41,9 +41,6 @@ void speed_init() {
   speed_pid_right.kp  = 0.08;
   speed_pid_right.ki  = 0.15;
   speed_pid_right.kd  = 0.005;
-
-  speed_setpoint_left  = 90.0;
-  speed_setpoint_right = 90.0;
 }
 
 void speed_update() {
