@@ -266,7 +266,7 @@ func (s *serialWindow) drawMotorControl(name string, rpms *float32) (changed boo
 	imgui.Text(fmt.Sprintf("%v:", name))
 	imgui.TableSetColumnIndex(1)
 	changed = imgui.SliderFloat(name, rpms, -200, 200)
-	if math.Abs(float64(*rpms)) < 5 {
+	if math.Abs(float64(*rpms)) < 20 {
 		*rpms = 0
 	}
 	return

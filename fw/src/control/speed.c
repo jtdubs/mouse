@@ -28,15 +28,15 @@ float calculate_speed_left();
 float calculate_speed_right();
 
 void speed_init() {
-  pid_left.min = -100;
+  pid_left.min = 0;
   pid_left.max = 100;
-  pid_left.kp  = 0.05;
+  pid_left.kp  = 0.045;
   pid_left.ki  = 0.12;
   pid_left.kd  = 0.02;
 
-  pid_right.min = -100;
+  pid_right.min = 0;
   pid_right.max = 100;
-  pid_right.kp  = 0.05;
+  pid_right.kp  = 0.045;
   pid_right.ki  = 0.12;
   pid_right.kd  = 0.02;
 }
@@ -46,23 +46,18 @@ void speed_update() {
   speed_measured_right = calculate_speed_right();
 
   if (enabled) {
-    int8_t power_left   = (int8_t)pid_update(&pid_left, speed_setpoint_left, speed_measured_left);
-    bool   forward_left = power_left >= 0;
-    if (!forward_left) {
-      power_left = -power_left;
-    }
+    int8_t power_left = (int8_t)pid_update(&pid_left, fabsf(speed_setpoint_left), fabsf(speed_measured_left));
     if (power_left != 0) {
-      power_left += 12;
+      power_left += 10;
     }
 
-    int8_t power_right   = (int8_t)pid_update(&pid_right, speed_setpoint_right, speed_measured_right);
-    bool   forward_right = power_right >= 0;
-    if (!forward_right) {
-      power_right = -power_right;
-    }
+    int8_t power_right = (int8_t)pid_update(&pid_right, fabsf(speed_setpoint_right), fabsf(speed_measured_right));
     if (power_right != 0) {
-      power_right += 12;
+      power_right += 10;
     }
+
+    bool forward_left  = signbitf(speed_setpoint_left) == 0;
+    bool forward_right = signbitf(speed_setpoint_right) == 0;
 
     motor_set_forward_left(forward_left);
     motor_set_power_left(power_left);
