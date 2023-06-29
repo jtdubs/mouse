@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"math"
 
 	imgui "github.com/AllenDang/cimgui-go"
@@ -16,7 +15,9 @@ type commandWindow struct {
 
 func newCommandWindow(m *mouse.Mouse) *commandWindow {
 	return &commandWindow{
-		mouse: m,
+		mouse:           m,
+		linkedSpeeds:    true,
+		linkedPositions: true,
 	}
 }
 
@@ -39,10 +40,7 @@ func (w *commandWindow) draw() {
 	// Mode
 	{
 		mode := int32(r.Mode)
-		imgui.TableNextRow()
-		imgui.TableSetColumnIndex(0)
-		imgui.Text("Function: ")
-		imgui.TableSetColumnIndex(1)
+		w.tableRow("Function:")
 		imgui.ComboStr("##FSEL", &mode, "Remote\000Wall Sensor\000Error")
 		if mode != int32(r.Mode) {
 			w.mouse.SendCommand(mouse.NewModeCommand(uint8(mode)))
@@ -72,44 +70,41 @@ func (w *commandWindow) draw() {
 
 	// Speed
 	{
-		imgui.Checkbox("Linked Speeds", &w.linkedSpeeds)
+		left, right := r.SpeedSetpointLeft, r.SpeedSetpointRight
+		values := [2]float32{left, right}
+
+		w.tableRow("Speed:")
+		w.drawIconToggleButton("##LinkSpeeds", "link", "link-off", &w.linkedSpeeds)
+		imgui.SameLineV(0, 20)
 		if w.linkedSpeeds {
-			leftSetpoint := r.SpeedSetpointLeft
-			changed := w.drawSpeedControl("Speed", &leftSetpoint)
-			if changed {
-				w.mouse.SendCommand(mouse.NewSpeedCommand(leftSetpoint, leftSetpoint))
+			if imgui.SliderFloat("rpm", &left, -200, 200) {
+				if math.Abs(float64(left)) < 20 {
+					left = 0
+				}
+				w.mouse.SendCommand(mouse.NewSpeedCommand(left, left))
 			}
 		} else {
-			leftSetpoint := r.SpeedSetpointLeft
-			rightSetpoint := r.SpeedSetpointRight
-
-			leftChanged := w.drawSpeedControl("Left Speed", &leftSetpoint)
-			rightChanged := w.drawSpeedControl("Right Speed", &rightSetpoint)
-
-			if leftChanged || rightChanged {
-				w.mouse.SendCommand(mouse.NewSpeedCommand(leftSetpoint, rightSetpoint))
+			if imgui.SliderFloat2("rpm", &values, -200, 200) {
+				w.mouse.SendCommand(mouse.NewSpeedCommand(values[0], values[1]))
 			}
 		}
 	}
 
 	// Position
 	{
-		imgui.Checkbox("Linked Positions", &w.linkedPositions)
+		left, right := r.PositionSetpointLeft, r.PositionSetpointRight
+		values := [2]float32{left, right}
+
+		w.tableRow("Position:")
+		w.drawIconToggleButton("##LinkPositions", "link", "link-off", &w.linkedPositions)
+		imgui.SameLineV(0, 20)
 		if w.linkedPositions {
-			leftSetpoint := r.PositionSetpointLeft
-			changed := w.drawPositionControl("Position", &leftSetpoint)
-			if changed {
-				w.mouse.SendCommand(mouse.NewPositionCommand(leftSetpoint, leftSetpoint))
+			if imgui.SliderFloat("mm", &left, 0, 16.0*180.0) {
+				w.mouse.SendCommand(mouse.NewPositionCommand(left, left))
 			}
 		} else {
-			leftSetpoint := r.PositionSetpointLeft
-			rightSetpoint := r.PositionSetpointRight
-
-			leftChanged := w.drawPositionControl("Left Position", &leftSetpoint)
-			rightChanged := w.drawPositionControl("Right Position", &rightSetpoint)
-
-			if leftChanged || rightChanged {
-				w.mouse.SendCommand(mouse.NewPositionCommand(leftSetpoint, rightSetpoint))
+			if imgui.SliderFloat2("mm", &values, 0, 16.0*180.0) {
+				w.mouse.SendCommand(mouse.NewSpeedCommand(values[0], values[1]))
 			}
 		}
 	}
@@ -121,30 +116,6 @@ func (w *commandWindow) draw() {
 	}
 
 	imgui.End()
-}
-
-func (w *commandWindow) drawSpeedControl(name string, rpms *float32) (changed bool) {
-	imgui.TableNextRow()
-	imgui.TableSetColumnIndex(0)
-	imgui.Text(fmt.Sprintf("%v:", name))
-	imgui.TableSetColumnIndex(1)
-	changed = imgui.SliderFloat(name, rpms, -200, 200)
-	if math.Abs(float64(*rpms)) < 20 {
-		*rpms = 0
-	}
-	return
-}
-
-func (w *commandWindow) drawPositionControl(name string, mms *float32) (changed bool) {
-	imgui.TableNextRow()
-	imgui.TableSetColumnIndex(0)
-	imgui.Text(fmt.Sprintf("%v:", name))
-	imgui.TableSetColumnIndex(1)
-	return imgui.SliderFloat(name, mms, 0, 16.0*180.0)
-}
-
-func (w *commandWindow) drawIconButton(label, name string) bool {
-	return imgui.ImageButtonV(label, Textures[name].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(0, 0, 0, 0), imgui.NewVec4(1, 1, 1, 1))
 }
 
 func (w *commandWindow) drawIconToggleButton(label, off, on string, value *bool) bool {
