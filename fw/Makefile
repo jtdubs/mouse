@@ -21,7 +21,6 @@ CFLAGS+=-DF_CPU=16000000UL             # Tell AVR libc what the CPU frequency is
 CFLAGS+=-mmcu=atmega328p               # Target microcontroller.
 CFLAGS+=-Wl,--relax,--gc-sections      # Remove unused sections.
 CFLAGS+=-Wl,--undefined=_mmcu,--section-start=.mmcu=0x910000 # Define mmcu section.
-CFLAGS+=-DBASE64_NO_LOOKUPS            # Use slower but smaller base64 implementation.
 CFLAGS+=--param=min-pagesize=0         # Needed for AVR target.
 CFLAGS+=-O2                            # Optimize for speed.
 CFLAGS+=-lm                            # Use AVR math library.
