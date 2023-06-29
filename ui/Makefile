@@ -5,3 +5,9 @@ sim:
 
 board:
 	go run . --port /dev/ttyNano
+
+wave: mouse.fst
+	gtkwave ui.gtkw
+
+mouse.fst: mouse.vcd
+	vcd2fst $< $@

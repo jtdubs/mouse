@@ -3,6 +3,8 @@ github.com/AllenDang/cimgui-go v0.0.0-20230531022628-0e1b12c67c0d/go.mod h1:iNfb
 github.com/creack/goselect v0.1.2 h1:2DNy14+JPjRBgPzAd1thbQp4BSIihxcBf0IXhQXDRa0=
 github.com/creack/goselect v0.1.2/go.mod h1:a/NhLweNvqIYMuxcMOuWY516Cimucms3DglDzQP3hKY=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
+github.com/elamre/vcd v0.1.2 h1:j5Io2hwSowW4jsC5WVm1fiM6UvsbqdvbP5cppdoKh/I=
+github.com/elamre/vcd v0.1.2/go.mod h1:jb74ufbxFp+159mjCHcIOBD7MDJteRlQu6C/3HlZV2c=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 go.bug.st/serial v1.5.0 h1:ThuUkHpOEmCVXxGEfpoExjQCS2WBVV4ZcUKVYInM9T4=

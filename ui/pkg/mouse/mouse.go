@@ -7,12 +7,14 @@ import (
 	"encoding/binary"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
 	"time"
 
+	"github.com/elamre/vcd"
 	"go.bug.st/serial"
 )
 
@@ -31,6 +33,8 @@ type Mouse struct {
 	messages  *Ring[string]
 	report    Report
 	sendChan  chan Command
+	vcd       vcd.VcdWriter
+	startTime time.Time
 }
 
 func New() *Mouse {
@@ -48,7 +52,26 @@ func New() *Mouse {
 	}
 }
 
-func (m *Mouse) SetRecording(recording bool) {}
+func (m *Mouse) SetRecording(recording bool) {
+	if recording == m.Recording {
+		return
+	}
+
+	if recording {
+		var err error
+		m.vcd, err = vcd.New("mouse.vcd", "1ms")
+		if err != nil {
+			log.Printf("Failed to enable recording: %v", err)
+			return
+		}
+		m.vcd.RegisterVariableList("mouse", m.report.Variables())
+		m.startTime = time.Now()
+	} else {
+		m.vcd.Close()
+	}
+
+	m.Recording = recording
+}
 
 func (m *Mouse) Run(ctx context.Context) {
 	signalChan := make(chan os.Signal, 1)
@@ -219,5 +242,12 @@ func (m *Mouse) decode(message string) {
 	if err := binary.Read(bytes.NewReader(bs), binary.LittleEndian, &m.report); err != nil {
 		m.messages.Add(fmt.Sprintf("Error reading %q: %v", message, err))
 		return
+	}
+
+	if m.Recording {
+		t := uint64(time.Now().UnixMilli() - m.startTime.UnixMilli())
+		for k, v := range m.report.Symbols() {
+			m.vcd.SetValue(t, v, k)
+		}
 	}
 }
