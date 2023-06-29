@@ -23,6 +23,5 @@ Sim:
   - ??
 
 Fw:
-- Figure out what's up with the weird bumps in the measured speed.  Feels like an issue w/ the rtc? 
 - Move report structs out into individual modules and consolidate them in report.h
 - Better documentation of modules, how they work and what they do.
