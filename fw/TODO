@@ -29,3 +29,10 @@ Firmware:
 
 Sim:
 - Auto-pause on collision or out-of-bounds
+- Merge sim and ui app interfaces based on some structure representing the mouse state
+  - For Sim it is populated based on simulare hardware events
+  - For UI it is populated based on serial reports
+
+
+Hardware:
+- Tune speed and position pids on the actual motors
