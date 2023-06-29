@@ -28,20 +28,17 @@ float calculate_speed_left();
 float calculate_speed_right();
 
 void speed_init() {
-  pid_left.min = 0;
+  pid_left.min = -100;
   pid_left.max = 100;
   pid_left.kp  = 0.05;
   pid_left.ki  = 0.12;
   pid_left.kd  = 0.02;
 
-  pid_right.min = 0;
+  pid_right.min = -100;
   pid_right.max = 100;
   pid_right.kp  = 0.05;
   pid_right.ki  = 0.12;
   pid_right.kd  = 0.02;
-
-  speed_setpoint_left  = 90.0;
-  speed_setpoint_right = 90.0;
 }
 
 void speed_update() {
@@ -49,21 +46,28 @@ void speed_update() {
   speed_measured_right = calculate_speed_right();
 
   if (enabled) {
-    float power_left = pid_update(&pid_left, speed_setpoint_left, speed_measured_left);
-    if (power_left == 0.0) {
-      motor_set_power_left((uint8_t)power_left);
-    } else {
-      // avoid the motor's dead zone
-      motor_set_power_left(((uint8_t)power_left) + 12);
+    int8_t power_left   = (int8_t)pid_update(&pid_left, speed_setpoint_left, speed_measured_left);
+    bool   forward_left = power_left >= 0;
+    if (!forward_left) {
+      power_left = -power_left;
+    }
+    if (power_left != 0) {
+      power_left += 12;
     }
 
-    float power_right = pid_update(&pid_right, speed_setpoint_right, speed_measured_right);
-    if (power_right == 0.0) {
-      motor_set_power_right((uint8_t)power_right);
-    } else {
-      // avoid the motor's dead zone
-      motor_set_power_right(((uint8_t)power_right) + 12);
+    int8_t power_right   = (int8_t)pid_update(&pid_right, speed_setpoint_right, speed_measured_right);
+    bool   forward_right = power_right >= 0;
+    if (!forward_right) {
+      power_right = -power_right;
     }
+    if (power_right != 0) {
+      power_right += 12;
+    }
+
+    motor_set_forward_left(forward_left);
+    motor_set_power_left(power_left);
+    motor_set_forward_right(forward_right);
+    motor_set_power_right(power_right);
   }
 }
 

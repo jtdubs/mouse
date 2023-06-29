@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"math"
 
 	imgui "github.com/AllenDang/cimgui-go"
 	"github.com/jtdubs/mouse/ui/pkg/mouse"
@@ -264,5 +265,9 @@ func (s *serialWindow) drawMotorControl(name string, rpms *float32) (changed boo
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(fmt.Sprintf("%v:", name))
 	imgui.TableSetColumnIndex(1)
-	return imgui.SliderFloat(name, rpms, -200, 200)
+	changed = imgui.SliderFloat(name, rpms, -200, 200)
+	if math.Abs(float64(*rpms)) < 5 {
+		*rpms = 0
+	}
+	return
 }
