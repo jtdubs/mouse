@@ -26,10 +26,13 @@ void mode_remote_tick() {
         pin_set2(IR_LEDS, command.data.leds.ir > 0);
         break;
       case COMMAND_SET_SPEED:
+        position_disable();
+        speed_enable();
         speed_set_left(command.data.speed.left);
         speed_set_right(command.data.speed.right);
         break;
       case COMMAND_SET_POSITION:
+        position_enable();
         position_set_left(command.data.position.left);
         position_set_right(command.data.position.right);
         break;

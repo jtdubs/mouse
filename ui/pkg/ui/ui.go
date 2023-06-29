@@ -30,16 +30,17 @@ func New(mouse *mouse.Mouse) *UI {
 		mouse:   mouse,
 		backend: backend,
 		windows: []window{
-			newMouseWindow(mouse),
-			newReportWindow(mouse),
-			newToolbarWindow(mouse),
 			newCommandWindow(mouse),
+			newLogWindow(mouse),
+			newReportWindow(mouse),
+			newStatusWindow(mouse),
+			newToolbarWindow(mouse),
 		},
 	}
 
 	backend.SetBgColor(imgui.NewVec4(0.45, 0.55, 0.6, 1.0))
 	backend.SetAfterCreateContextHook(ui.init)
-	backend.CreateWindow("Mouse Remote", 1600, 1200, imgui.GLFWWindowFlags(0))
+	backend.CreateWindow("Mouse Remote", 1600, 800, imgui.GLFWWindowFlags(0))
 	backend.SetTargetFPS(60)
 
 	imgui.CurrentIO().Fonts().AddFontFromFileTTF("fonts/DroidSans.ttf", 24)
@@ -80,7 +81,7 @@ func (ui *UI) Run(ctx context.Context) {
 
 		vp := imgui.MainViewport()
 		imgui.SetNextWindowPos(vp.Pos().Add(imgui.NewVec2(0, 48)))
-		imgui.SetNextWindowSize(vp.Size().Sub(imgui.NewVec2(0, 48)))
+		imgui.SetNextWindowSize(vp.Size().Sub(imgui.NewVec2(0, 88)))
 		imgui.SetNextWindowViewport(vp.ID())
 		imgui.PushStyleVarVec2(imgui.StyleVarWindowPadding, imgui.NewVec2(0, 0))
 		imgui.PushStyleVarFloat(imgui.StyleVarWindowRounding, 0)
@@ -98,11 +99,11 @@ func (ui *UI) Run(ctx context.Context) {
 			imgui.InternalDockBuilderSetNodeSize(dockID, vp.Size().Sub(imgui.NewVec2(0, 48)))
 			imgui.InternalDockBuilderDockWindow("Serial", dockID)
 			imgui.InternalDockBuilderFinish(dockID)
-			report := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirUp, 0.35, nil, &dockID)
-			mouse := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirDown, 0.35, nil, &dockID)
-			imgui.InternalDockBuilderDockWindow("Report", report)
-			imgui.InternalDockBuilderDockWindow("Command", dockID)
-			imgui.InternalDockBuilderDockWindow("Mouse", mouse)
+			log := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirDown, 0.35, nil, &dockID)
+			command := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.50, nil, &dockID)
+			imgui.InternalDockBuilderDockWindow("Report", dockID)
+			imgui.InternalDockBuilderDockWindow("Command", command)
+			imgui.InternalDockBuilderDockWindow("Log", log)
 		}
 
 		for _, window := range ui.windows {

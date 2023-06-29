@@ -1,47 +1,31 @@
 package ui
 
 import (
-	"fmt"
-
 	imgui "github.com/AllenDang/cimgui-go"
 	"github.com/jtdubs/mouse/ui/pkg/mouse"
 )
 
-type mouseWindow struct {
+type logWindow struct {
 	mouse       *mouse.Mouse
 	autoScroll  bool
 	forceScroll bool
 	filter      imgui.TextFilter
 }
 
-func newMouseWindow(m *mouse.Mouse) *mouseWindow {
-	return &mouseWindow{
+func newLogWindow(m *mouse.Mouse) *logWindow {
+	return &logWindow{
 		mouse:      m,
 		autoScroll: true,
 		filter:     imgui.NewTextFilter(""),
 	}
 }
 
-func (w *mouseWindow) init() {
+func (w *logWindow) init() {
 }
 
-func (w *mouseWindow) draw() {
-	imgui.Begin("Mouse")
+func (w *logWindow) draw() {
+	imgui.Begin("Log")
 
-	imgui.SeparatorText("Log")
-	imgui.Text("")
-	imgui.SameLineV(0, 20)
-	imgui.BeginGroup()
-	w.drawLog()
-	imgui.EndGroup()
-
-	imgui.Separator()
-	imgui.Text(fmt.Sprintf("Status: %s", w.mouse.Status()))
-
-	imgui.End()
-}
-
-func (w *mouseWindow) drawLog() {
 	// Toolbar
 	imgui.Text("Filter: ")
 	imgui.SameLine()
@@ -87,4 +71,6 @@ func (w *mouseWindow) drawLog() {
 		w.forceScroll = false
 	}
 	imgui.EndChild()
+
+	imgui.End()
 }

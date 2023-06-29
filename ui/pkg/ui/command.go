@@ -67,11 +67,8 @@ func (w *commandWindow) draw() {
 		imgui.Checkbox("Linked Speeds", &w.linkedSpeeds)
 		if w.linkedSpeeds {
 			leftSetpoint := r.SpeedSetpointLeft
-			rightSetpoint := r.SpeedSetpointRight
-
 			changed := w.drawSpeedControl("Speed", &leftSetpoint)
-
-			if changed || leftSetpoint != rightSetpoint {
+			if changed {
 				w.mouse.SendCommand(mouse.NewSpeedCommand(leftSetpoint, leftSetpoint))
 			}
 		} else {
@@ -92,11 +89,8 @@ func (w *commandWindow) draw() {
 		imgui.Checkbox("Linked Positions", &w.linkedPositions)
 		if w.linkedPositions {
 			leftSetpoint := r.PositionSetpointLeft
-			rightSetpoint := r.PositionSetpointRight
-
 			changed := w.drawPositionControl("Position", &leftSetpoint)
-
-			if changed || leftSetpoint != rightSetpoint {
+			if changed {
 				w.mouse.SendCommand(mouse.NewPositionCommand(leftSetpoint, leftSetpoint))
 			}
 		} else {
