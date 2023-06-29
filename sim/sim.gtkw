@@ -1,19 +1,19 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Thu Jun 29 00:43:40 2023
+[*] Thu Jun 29 14:13:27 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/sim/gtkwave_trace.fst"
-[dumpfile_mtime] "Thu Jun 29 00:43:11 2023"
-[dumpfile_size] 46328
+[dumpfile_mtime] "Thu Jun 29 14:11:08 2023"
+[dumpfile_size] 213749
 [savefile] "/home/jtdubs/dev/mouse/sim/sim.gtkw"
 [timestart] 0
-[size] 2482 1353
-[pos] -1 -1
-*-25.643951 50591690 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 1777 2096
+[pos] 1348 -372
+*-27.643951 26229870 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 273
 [signals_width] 513
 [sst_expanded] 1
-[sst_vpaned_height] 399
+[sst_vpaned_height] 658
 @200
 -Interrupts
 @28
@@ -46,7 +46,6 @@ logic.RIGHT_B
 logic.adc_battery_voltage[15:0]
 logic.adc_selector[15:0]
 logic.adc_sensor_center[15:0]
-logic.adc_sensor_left[15:0]
 logic.adc_sensor_right[15:0]
 @200
 -Probes
@@ -61,8 +60,6 @@ logic.LED_LEFT
 logic.LED_BUILTIN
 logic.LED_RIGHT
 logic.IR_LEDS
-@22
-logic.enabled[7:0]
 @200
 -Encoders
 @22
@@ -74,18 +71,29 @@ logic.encoder_right[15:0]
 -Motors
 @22
 logic.motor_forward_left[7:0]
-@88023
+@88022
 logic.motor_power_left[15:0]
 @22
 logic.motor_forward_right[7:0]
-@88023
+@88022
 logic.motor_power_right[15:0]
 @200
 -Speed
+@22
+logic.speed_enabled[7:0]
 @c8020
 logic.speed_measured_left[31:0]
 logic.speed_setpoint_left[31:0]
 logic.speed_measured_right[31:0]
 logic.speed_setpoint_right[31:0]
+@200
+-Position
+@22
+logic.position_enabled[7:0]
+@c8021
+logic.position_measured_left[31:0]
+logic.position_setpoint_left[31:0]
+logic.position_measured_right[31:0]
+logic.position_setpoint_right[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

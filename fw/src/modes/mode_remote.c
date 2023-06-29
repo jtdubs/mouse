@@ -1,5 +1,6 @@
 #include "modes/mode_remote.h"
 
+#include "control/position.h"
 #include "control/speed.h"
 #include "modes/mode.h"
 #include "platform/motor.h"
@@ -8,12 +9,12 @@
 
 void mode_remote_enter() {
   mode_enter();
-  speed_enable();
+  position_enable();
 }
 
 // mode_remote_tick is the remote mode's tick function.
 void mode_remote_tick() {
-  speed_update();
+  position_update();
 
   // If a serial command has been received, process it.
   if (command_available()) {
@@ -28,6 +29,10 @@ void mode_remote_tick() {
         speed_set_left(command.data.speed.left);
         speed_set_right(command.data.speed.right);
         break;
+      // case COMMAND_SET_POSITION:
+      //   position_set_left(command.data.speed.left);
+      //   position_set_right(command.data.speed.right);
+      //   break;
       default:
         return;
     }

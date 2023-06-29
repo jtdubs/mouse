@@ -2,6 +2,7 @@
 #include <avr/power.h>
 #include <stddef.h>
 
+#include "control/position.h"
 #include "control/speed.h"
 #include "modes/mode.h"
 #include "platform/adc.h"
@@ -30,6 +31,7 @@ static void init() {
   report_init();
   command_init();
   speed_init();
+  position_init();
   mode_init();
   timer_init();
   rtc_init();
