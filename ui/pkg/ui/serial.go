@@ -25,12 +25,15 @@ func newSerialWindow(m *mouse.Mouse) *serialWindow {
 	}
 }
 
+func (s *serialWindow) init() {
+}
+
 func (s *serialWindow) draw() {
 	if s.mouse.Serial == nil {
 		return
 	}
 
-	imgui.Begin(fmt.Sprintf("Port - %s", s.mouse.Serial.PortName()))
+	imgui.Begin("Serial")
 
 	imgui.SeparatorText("Status")
 	imgui.Text("")

@@ -23,13 +23,14 @@ var (
 )
 
 type SerialInterface struct {
-	status   string
-	portOpen bool
-	buffer   []byte
-	index    int
-	messages *Ring[string]
-	report   Report
-	sendChan chan Command
+	Recording bool
+	status    string
+	portOpen  bool
+	buffer    []byte
+	index     int
+	messages  *Ring[string]
+	report    Report
+	sendChan  chan Command
 }
 
 func NewSerialInterface() *SerialInterface {
@@ -45,6 +46,9 @@ func NewSerialInterface() *SerialInterface {
 		},
 		sendChan: make(chan Command, 1),
 	}
+}
+
+func (s *SerialInterface) SetRecording(recording bool) {
 }
 
 func (s *SerialInterface) Run(ctx context.Context) {
