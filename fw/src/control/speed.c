@@ -32,15 +32,15 @@ static float calculate_speed_right();
 void speed_init() {
   speed_pid_left.min = 0;
   speed_pid_left.max = 200;
-  speed_pid_left.kp  = 0.08;
+  speed_pid_left.kp  = 0.3;
   speed_pid_left.ki  = 0.15;
-  speed_pid_left.kd  = 0.005;
+  speed_pid_left.kd  = 0.002;
 
   speed_pid_right.min = 0;
   speed_pid_right.max = 200;
-  speed_pid_right.kp  = 0.08;
+  speed_pid_right.kp  = 0.3;
   speed_pid_right.ki  = 0.15;
-  speed_pid_right.kd  = 0.005;
+  speed_pid_right.kd  = 0.002;
 }
 
 void speed_update() {
