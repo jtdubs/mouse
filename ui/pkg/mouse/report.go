@@ -25,6 +25,8 @@ type Report struct {
 	PositionMeasuredRight float32
 	PositionSetpointLeft  float32
 	PositionSetpointRight float32
+	RTCMicros             uint32
+	Padding               [2]uint8
 }
 
 func (r *Report) DecodeSensors() (left, center, right uint16) {
@@ -69,6 +71,7 @@ func (r *Report) Variables() []vcd.VcdDataType {
 		vcd.NewVariable("position_measured_right", "wire", 32),
 		vcd.NewVariable("position_setpoint_left", "wire", 32),
 		vcd.NewVariable("position_setpoint_right", "wire", 32),
+		vcd.NewVariable("rtc_now", "wire", 32),
 	}
 }
 
@@ -76,11 +79,9 @@ func (r *Report) Symbols() map[string]string {
 	sl, sc, sr := r.DecodeSensors()
 	lf, rf := r.DecodeMotorForward()
 
-	bool2Int := func(b bool) int {
-		if b {
-			return 1
-		}
-		return 0
+	bool2Int := map[bool]int{
+		true:  1,
+		false: 0,
 	}
 
 	return map[string]string{
@@ -93,15 +94,16 @@ func (r *Report) Symbols() map[string]string {
 		"encoder_right":           fmt.Sprint(r.EncoderRight),
 		"motor_power_left":        fmt.Sprint(r.MotorPowerLeft),
 		"motor_power_right":       fmt.Sprint(r.MotorPowerRight),
-		"motor_forward_left":      fmt.Sprint(bool2Int(lf)),
-		"motor_forward_right":     fmt.Sprint(bool2Int(rf)),
-		"speed_measured_left":     fmt.Sprint(*(*int32)(unsafe.Pointer(&r.SpeedMeasuredLeft))),
-		"speed_measured_right":    fmt.Sprint(*(*int32)(unsafe.Pointer(&r.SpeedMeasuredRight))),
-		"speed_setpoint_left":     fmt.Sprint(*(*int32)(unsafe.Pointer(&r.SpeedSetpointLeft))),
-		"speed_setpoint_right":    fmt.Sprint(*(*int32)(unsafe.Pointer(&r.SpeedSetpointRight))),
-		"position_measured_left":  fmt.Sprint(*(*int32)(unsafe.Pointer(&r.PositionMeasuredLeft))),
-		"position_measured_right": fmt.Sprint(*(*int32)(unsafe.Pointer(&r.PositionMeasuredRight))),
-		"position_setpoint_left":  fmt.Sprint(*(*int32)(unsafe.Pointer(&r.PositionSetpointLeft))),
-		"position_setpoint_right": fmt.Sprint(*(*int32)(unsafe.Pointer(&r.PositionSetpointRight))),
+		"motor_forward_left":      fmt.Sprint(bool2Int[lf]),
+		"motor_forward_right":     fmt.Sprint(bool2Int[rf]),
+		"speed_measured_left":     fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedMeasuredLeft))),
+		"speed_measured_right":    fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedMeasuredRight))),
+		"speed_setpoint_left":     fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedSetpointLeft))),
+		"speed_setpoint_right":    fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedSetpointRight))),
+		"position_measured_left":  fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.PositionMeasuredLeft))),
+		"position_measured_right": fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.PositionMeasuredRight))),
+		"position_setpoint_left":  fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.PositionSetpointLeft))),
+		"position_setpoint_right": fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.PositionSetpointRight))),
+		"rtc_now":                 fmt.Sprint(r.RTCMicros),
 	}
 }

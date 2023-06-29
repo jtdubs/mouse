@@ -43,6 +43,10 @@ typedef struct {
     float setpoint_left;
     float setpoint_right;
   } position;
+  struct {
+    uint32_t micros;
+  } rtc;
+  uint8_t padding[2];
 } report_t;
 #pragma pack(pop)
 

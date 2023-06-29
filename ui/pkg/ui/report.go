@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"fmt"
+
 	"github.com/jtdubs/mouse/ui/pkg/mouse"
 
 	imgui "github.com/AllenDang/cimgui-go"
@@ -26,6 +28,20 @@ func (w *reportWindow) draw() {
 	imgui.TableSetupColumnV("##StatusControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
 
 	r := w.mouse.Report()
+
+	{
+		w.tableRow("Time:")
+		imgui.Text(
+			fmt.Sprintf(
+				"%02d:%02d:%02d.%03d.%03d",
+				(r.RTCMicros / 3600000000),
+				(r.RTCMicros/60000000)%60,
+				(r.RTCMicros/1000000)%60,
+				(r.RTCMicros/1000)%1000,
+				r.RTCMicros%1000,
+			),
+		)
+	}
 
 	{
 		modes := []string{"Remote", "Wall Sensor", "Error", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}

@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Thu Jun 29 20:23:27 2023
+[*] Thu Jun 29 22:15:48 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/ui/mouse.vcd"
-[dumpfile_mtime] "Thu Jun 29 20:21:04 2023"
-[dumpfile_size] 819651
+[dumpfile_mtime] "Thu Jun 29 22:15:07 2023"
+[dumpfile_size] 36746
 [savefile] "/home/jtdubs/dev/mouse/ui/ui.gtkw"
-[timestart] 8524
+[timestart] 1934
 [size] 1885 2096
-[pos] 952 -521
-*-4.000000 11668 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 952 0
+*-7.000000 1980 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 265
 [signals_width] 540
 [sst_expanded] 1
@@ -19,12 +19,13 @@ mouse.adc_battery_voltage[9:0]
 mouse.mode_active[7:0]
 @200
 -Sensors
-@22
+@88023
 mouse.adc_sensor_left[9:0]
+@88022
 mouse.adc_sensor_center[9:0]
 mouse.adc_sensor_right[9:0]
 @200
--Endoers
+-Encoders
 @8022
 mouse.encoder_left[15:0]
 mouse.encoder_right[15:0]
@@ -51,7 +52,6 @@ mouse.speed_setpoint_right[31:0]
 mouse.position_measured_left[31:0]
 mouse.position_setpoint_left[31:0]
 mouse.position_measured_right[31:0]
-@c8021
 mouse.position_setpoint_right[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

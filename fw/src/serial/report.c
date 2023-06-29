@@ -12,6 +12,7 @@
 #include "platform/encoders.h"
 #include "platform/motor.h"
 #include "platform/pin.h"
+#include "platform/rtc.h"
 #include "platform/usart0.h"
 #include "utils/assert.h"
 #include "utils/base64.h"
@@ -61,6 +62,7 @@ void report_send() {
       report.leds.left               = pin_is_set(LED_LEFT);
       report.leds.right              = pin_is_set(LED_RIGHT);
       report.leds.ir                 = pin_is_set(IR_LEDS);
+      report.rtc.micros              = rtc_micros();
     }
     base64_encode((uint8_t*)&report, (uint8_t*)&report_encoded[1], sizeof(report));
     usart0_write();

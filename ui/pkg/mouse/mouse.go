@@ -59,7 +59,7 @@ func (m *Mouse) SetRecording(recording bool) {
 
 	if recording {
 		var err error
-		m.vcd, err = vcd.New("mouse.vcd", "1ms")
+		m.vcd, err = vcd.New("mouse.vcd", "1us")
 		if err != nil {
 			log.Printf("Failed to enable recording: %v", err)
 			return
@@ -246,7 +246,7 @@ func (m *Mouse) decode(message string) {
 
 	if m.Recording {
 		for k, v := range m.report.Symbols() {
-			m.vcd.SetValue(m.vcdTime, v, k)
+			m.vcd.SetValue(uint64(m.report.RTCMicros), v, k)
 		}
 		m.vcdTime += 10
 	}
