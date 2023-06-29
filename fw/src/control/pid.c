@@ -7,10 +7,9 @@ float pid_update(pid_t *pid, float sp /* setpoint */, float pv /* process variab
   float i = pid->i + (pid->ki * p);
   float d = pv - pid->last_pv;
 
-  pid->e       = p;
   pid->last_pv = pv;
 
-  float out = fmaf(pid->kp, pid->e, fmaf(pid->kd, d, i));
+  float out = fmaf(pid->kp, p, fmaf(pid->kd, d, i));
 
   if (out >= pid->min && out < pid->max) {
     // Only update the integrator if the output is within the min/max range.
@@ -22,7 +21,6 @@ float pid_update(pid_t *pid, float sp /* setpoint */, float pv /* process variab
 }
 
 void pid_reset(pid_t *pid) {
-  pid->e       = 0;
   pid->i       = 0;
   pid->last_pv = 0;
 }

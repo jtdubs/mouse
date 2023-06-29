@@ -5,7 +5,7 @@
 typedef struct {
   float min, max;    // bounds for pid output
   float kp, ki, kd;  // pid constants
-  float e, i;        // error and integral
+  float i;           // integral
   float last_pv;
 } pid_t;
 
