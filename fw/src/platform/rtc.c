@@ -35,7 +35,14 @@ void rtc_init() {
 // rtc_micros returns the number of microseconds since RTC initialization.
 // NOTE: MUST BE CALLED FROM AN ATOMIC BLOCK!
 uint32_t rtc_micros() {
-  return rtc_high | (TCNT2 << 1);
+  uint8_t low = TCNT2;
+  if (TIFR2 & (1 << TOV2)) {
+    // overflow flag is set, but the interrupt hasn't run, so deal with it manually.
+    rtc_high += 512;
+    TIFR2    |= (1 << TOV2);  // clear overflow flag
+    low       = TCNT2;
+  }
+  return rtc_high | (low << 1);
 }
 
 ISR(TIMER2_OVF_vect, ISR_BLOCK) {
