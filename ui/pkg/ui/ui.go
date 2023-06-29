@@ -31,7 +31,9 @@ func New(mouse *mouse.Mouse) *UI {
 		backend: backend,
 		windows: []window{
 			newMouseWindow(mouse),
+			newReportWindow(mouse),
 			newToolbarWindow(mouse),
+			newCommandWindow(mouse),
 		},
 	}
 
@@ -96,6 +98,11 @@ func (ui *UI) Run(ctx context.Context) {
 			imgui.InternalDockBuilderSetNodeSize(dockID, vp.Size().Sub(imgui.NewVec2(0, 48)))
 			imgui.InternalDockBuilderDockWindow("Serial", dockID)
 			imgui.InternalDockBuilderFinish(dockID)
+			report := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirUp, 0.35, nil, &dockID)
+			mouse := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirDown, 0.35, nil, &dockID)
+			imgui.InternalDockBuilderDockWindow("Report", report)
+			imgui.InternalDockBuilderDockWindow("Command", dockID)
+			imgui.InternalDockBuilderDockWindow("Mouse", mouse)
 		}
 
 		for _, window := range ui.windows {

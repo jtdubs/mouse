@@ -175,7 +175,7 @@ func (m *Mouse) read(ctx context.Context, port serial.Port, signalChan <-chan os
 		case cmd := <-m.sendChan:
 			var b bytes.Buffer
 			binary.Write(&b, binary.LittleEndian, cmd)
-			c := fmt.Sprintf("[%m]\n", base64.StdEncoding.EncodeToString(b.Bytes()))
+			c := fmt.Sprintf("[%s]\n", base64.StdEncoding.EncodeToString(b.Bytes()))
 			m.messages.Add(fmt.Sprintf("Sending %q", c))
 			port.Write([]byte(c))
 		case <-closedChan:
