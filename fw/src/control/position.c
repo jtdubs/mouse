@@ -25,21 +25,21 @@ static pid_t position_pid_left;
 static pid_t position_pid_right;
 
 void position_init() {
-  position_pid_left.min = -200;
-  position_pid_left.max = 200;
-  position_pid_left.kp  = 8;
-  position_pid_left.ki  = 0.05;
+  position_pid_left.min = -172;
+  position_pid_left.max = 172;
+  position_pid_left.kp  = 4;
+  position_pid_left.ki  = 0.004;
   position_pid_left.kd  = 0.01;
 
-  position_pid_right.min = -200;
-  position_pid_right.max = 200;
-  position_pid_right.kp  = 8;
-  position_pid_right.ki  = 0.05;
+  position_pid_right.min = -172;
+  position_pid_right.max = 172;
+  position_pid_right.kp  = 4;
+  position_pid_right.ki  = 0.004;
   position_pid_right.kd  = 0.01;
-
-  position_setpoint_left  = 500;
-  position_setpoint_right = 500;
 }
+
+#define ENC_TO_MM (32.0 * M_PI / 240.0)
+#define MM_TO_ENC (240.0 / (32.0 * M_PI))
 
 void position_update() {
   uint16_t l, r;
@@ -47,12 +47,26 @@ void position_update() {
     l = encoder_left;
     r = encoder_right;
   }
-  position_measured_left  = ((float)l) * ((32.0 * M_PI) / 240.0);
-  position_measured_right = ((float)r) * ((32.0 * M_PI) / 240.0);
+  position_measured_left  = ((float)l) * ENC_TO_MM;
+  position_measured_right = ((float)r) * ENC_TO_MM;
 
   if (position_enabled) {
-    speed_set_left(pid_update(&position_pid_left, position_setpoint_left, position_measured_left));
-    speed_set_right(pid_update(&position_pid_right, position_setpoint_right, position_measured_right));
+    float speed_left = pid_update(&position_pid_left, position_setpoint_left, position_measured_left);
+    if (fabsf(speed_left) < 0.5) {
+      speed_left = 0;
+    } else {
+      speed_left += signbitf(speed_left) ? -29.5 : 29.5;
+    }
+
+    float speed_right = pid_update(&position_pid_right, position_setpoint_right, position_measured_right);
+    if (fabsf(speed_right) < 0.5) {
+      speed_right = 0;
+    } else {
+      speed_right += signbitf(speed_right) ? -29.5 : 29.5;
+    }
+
+    speed_set_left(speed_left);
+    speed_set_right(speed_right);
   }
 
   speed_update();
@@ -69,9 +83,9 @@ void position_disable() {
 }
 
 void position_set_left(float setpoint) {
-  position_setpoint_left = setpoint;
+  position_setpoint_left = roundf(setpoint * MM_TO_ENC) * ENC_TO_MM;
 }
 
 void position_set_right(float setpoint) {
-  position_setpoint_right = setpoint;
+  position_setpoint_right = roundf(setpoint * MM_TO_ENC) * ENC_TO_MM;
 }
