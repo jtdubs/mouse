@@ -3,12 +3,15 @@
 #include <math.h>
 
 float pid_update(pid_t *pid, float sp /* setpoint */, float pv /* process variable */) {
-  pid->e       = sp - pv;
-  float d      = pid->last_pv - pv;  // maybe backwards??
+  float p = sp - pv;
+  float i = pid->i + (pid->ki * p);
+  float d = pv - pid->last_pv;
+
+  pid->e       = p;
   pid->last_pv = pv;
 
-  float i   = pid->i + (pid->ki * pid->e);  // + (pid->kp * e); ??
   float out = fmaf(pid->kp, pid->e, fmaf(pid->kd, d, i));
+
   if (out >= pid->min && out < pid->max) {
     // Only update the integrator if the output is within the min/max range.
     // This helps prevent the integrator from running away.

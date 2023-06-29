@@ -34,13 +34,13 @@ void speed_init() {
   pid_left.max = 200;
   pid_left.kp  = 0.08;
   pid_left.ki  = 0.13;
-  pid_left.kd  = 0.002;
+  pid_left.kd  = 0.01;
 
   pid_right.min = 0;
   pid_right.max = 200;
   pid_right.kp  = 0.08;
   pid_right.ki  = 0.13;
-  pid_right.kd  = 0.002;
+  pid_right.kd  = 0.01;
 
   speed_setpoint_left  = 90.0;
   speed_setpoint_right = 90.0;
