@@ -22,9 +22,9 @@ float speed_measured_right;
 float speed_setpoint_left;
 float speed_setpoint_right;
 
-static bool  speed_enabled;
-static pid_t speed_pid_left;
-static pid_t speed_pid_right;
+static bool speed_enabled;
+pid_t       speed_pid_left;
+pid_t       speed_pid_right;
 
 static float calculate_speed_left();
 static float calculate_speed_right();

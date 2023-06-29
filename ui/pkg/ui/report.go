@@ -93,23 +93,25 @@ func (w *reportWindow) draw() {
 		}
 	}
 
-	{
-		w.tableRow("Position:")
-		measured := [2]float32{r.PositionMeasuredLeft, r.PositionMeasuredRight}
-		setpoint := [2]float32{r.PositionSetpointLeft, r.PositionSetpointRight}
-		imgui.BeginDisabled()
-		imgui.SliderFloat2("mm (setpoint)##PositionSetpoint", &setpoint, 0, 16.0*180.0)
-		imgui.SliderFloat2("mm (measured)##PositionMeasured", &measured, 0, 16.0*180.0)
-		imgui.EndDisabled()
-	}
+	// {
+	// 	w.tableRow("Position:")
+	// 	measured := [2]float32{r.PositionMeasuredLeft, r.PositionMeasuredRight}
+	// 	setpoint := [2]float32{r.PositionSetpointLeft, r.PositionSetpointRight}
+	// 	imgui.BeginDisabled()
+	// 	imgui.SliderFloat2("mm (setpoint)##PositionSetpoint", &setpoint, 0, 16.0*180.0)
+	// 	imgui.SliderFloat2("mm (measured)##PositionMeasured", &measured, 0, 16.0*180.0)
+	// 	imgui.EndDisabled()
+	// }
 
 	{
 		w.tableRow("Speed:")
 		measured := [2]float32{r.SpeedMeasuredLeft, r.SpeedMeasuredRight}
 		setpoint := [2]float32{r.SpeedSetpointLeft, r.SpeedSetpointRight}
+		pid := [3]float32{r.SpeedKp, r.SpeedKi, r.SpeedKd}
 		imgui.BeginDisabled()
 		imgui.SliderFloat2("rpm (setpoint)##SpeedSetpoint", &setpoint, -200, 200)
 		imgui.SliderFloat2("rpm (measured)##SpeedMeasured", &measured, -200, 200)
+		imgui.SliderFloat3("##SpeedPID", &pid, 0, 1)
 		imgui.EndDisabled()
 	}
 

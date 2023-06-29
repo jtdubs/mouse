@@ -71,6 +71,7 @@ func (w *commandWindow) draw() {
 	// Speed
 	{
 		left, right := r.SpeedSetpointLeft, r.SpeedSetpointRight
+		pid := [3]float32{r.SpeedKp, r.SpeedKi, r.SpeedKd}
 		values := [2]float32{left, right}
 
 		w.tableRow("Speed:")
@@ -88,26 +89,29 @@ func (w *commandWindow) draw() {
 				w.mouse.SendCommand(mouse.NewSpeedCommand(values[0], values[1]))
 			}
 		}
+		if imgui.SliderFloat3("PID", &pid, 0, 0.2) {
+			w.mouse.SendCommand(mouse.NewSpeedPIDCommand(pid[0], pid[1], pid[2]))
+		}
 	}
 
 	// Position
-	{
-		left, right := r.PositionSetpointLeft, r.PositionSetpointRight
-		values := [2]float32{left, right}
+	// {
+	// 	left, right := r.PositionSetpointLeft, r.PositionSetpointRight
+	// 	values := [2]float32{left, right}
 
-		w.tableRow("Position:")
-		w.drawIconToggleButton("##LinkPositions", "link", "link-off", &w.linkedPositions)
-		imgui.SameLineV(0, 20)
-		if w.linkedPositions {
-			if imgui.SliderFloat("mm", &left, 0, 16.0*180.0) {
-				w.mouse.SendCommand(mouse.NewPositionCommand(left, left))
-			}
-		} else {
-			if imgui.SliderFloat2("mm", &values, 0, 16.0*180.0) {
-				w.mouse.SendCommand(mouse.NewSpeedCommand(values[0], values[1]))
-			}
-		}
-	}
+	// 	w.tableRow("Position:")
+	// 	w.drawIconToggleButton("##LinkPositions", "link", "link-off", &w.linkedPositions)
+	// 	imgui.SameLineV(0, 20)
+	// 	if w.linkedPositions {
+	// 		if imgui.SliderFloat("mm", &left, 0, 16.0*180.0) {
+	// 			w.mouse.SendCommand(mouse.NewPositionCommand(left, left))
+	// 		}
+	// 	} else {
+	// 		if imgui.SliderFloat2("mm", &values, 0, 16.0*180.0) {
+	// 			w.mouse.SendCommand(mouse.NewSpeedCommand(values[0], values[1]))
+	// 		}
+	// 	}
+	// }
 
 	imgui.EndTable()
 

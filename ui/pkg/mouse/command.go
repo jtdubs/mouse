@@ -7,7 +7,7 @@ type Command interface {
 type ModeCommand struct {
 	Type    uint8
 	Mode    uint8
-	Padding [7]uint8
+	Padding [13]uint8
 }
 
 func NewModeCommand(mode uint8) ModeCommand {
@@ -22,7 +22,7 @@ func (c ModeCommand) isCommand() bool { return true }
 type LEDCommand struct {
 	Type                     uint8
 	Builtin, Left, Right, IR bool
-	Padding                  [4]uint8
+	Padding                  [10]uint8
 }
 
 func NewLEDCommand(builtin, left, right, ir bool) LEDCommand {
@@ -40,6 +40,7 @@ func (c LEDCommand) isCommand() bool { return true }
 type SpeedCommand struct {
 	Type                  uint8
 	LeftSpeed, RightSpeed float32
+	Padding               [6]uint8
 }
 
 func NewSpeedCommand(leftSpeed, rightSpeed float32) SpeedCommand {
@@ -55,6 +56,7 @@ func (c SpeedCommand) isCommand() bool { return true }
 type PositionCommand struct {
 	Type                        uint8
 	LeftPosition, RightPosition float32
+	Padding                     [6]uint8
 }
 
 func NewPositionCommand(leftPosition, rightPosition float32) PositionCommand {
@@ -66,3 +68,37 @@ func NewPositionCommand(leftPosition, rightPosition float32) PositionCommand {
 }
 
 func (c PositionCommand) isCommand() bool { return true }
+
+type SpeedPIDCommand struct {
+	Type    uint8
+	P, I, D float32
+	Padding [2]uint8
+}
+
+func NewSpeedPIDCommand(p, i, d float32) SpeedPIDCommand {
+	return SpeedPIDCommand{
+		Type: 4,
+		P:    p,
+		I:    i,
+		D:    d,
+	}
+}
+
+func (c SpeedPIDCommand) isCommand() bool { return true }
+
+type PositionPIDCommand struct {
+	Type    uint8
+	P, I, D float32
+	Padding [2]uint8
+}
+
+func NewPositionPIDCommand(p, i, d float32) PositionPIDCommand {
+	return PositionPIDCommand{
+		Type: 5,
+		P:    p,
+		I:    i,
+		D:    d,
+	}
+}
+
+func (c PositionPIDCommand) isCommand() bool { return true }
