@@ -25,25 +25,33 @@ var (
 )
 
 type Mouse struct {
-	Recording bool
-	status    string
-	portOpen  bool
-	buffer    []byte
-	index     int
-	messages  *Ring[string]
-	report    Report
-	sendChan  chan Command
-	vcd       vcd.VcdWriter
-	vcdTime   uint64
+	Recording              bool
+	status                 string
+	portOpen               bool
+	buffer                 []byte
+	index                  int
+	messages               *Ring[string]
+	LeftSpeedSetpoints     *Ring[float32]
+	LeftSpeedMeasurements  *Ring[float32]
+	RightSpeedSetpoints    *Ring[float32]
+	RightSpeedMeasurements *Ring[float32]
+	report                 Report
+	sendChan               chan Command
+	vcd                    vcd.VcdWriter
+	vcdTime                uint64
 }
 
 func New() *Mouse {
 	return &Mouse{
-		buffer:   make([]byte, 256),
-		index:    0,
-		status:   "Closed",
-		portOpen: false,
-		messages: NewRing[string](*scrollback),
+		buffer:                 make([]byte, 256),
+		index:                  0,
+		status:                 "Closed",
+		portOpen:               false,
+		messages:               NewRing[string](*scrollback),
+		LeftSpeedSetpoints:     NewRing[float32](1000),
+		LeftSpeedMeasurements:  NewRing[float32](1000),
+		RightSpeedSetpoints:    NewRing[float32](1000),
+		RightSpeedMeasurements: NewRing[float32](1000),
 		report: Report{
 			BatteryVolts: 0,
 			Mode:         0,
@@ -243,6 +251,11 @@ func (m *Mouse) decode(message string) {
 		m.messages.Add(fmt.Sprintf("Error reading %q: %v", message, err))
 		return
 	}
+
+	m.LeftSpeedSetpoints.Add(m.report.SpeedSetpointLeft)
+	m.LeftSpeedMeasurements.Add(m.report.SpeedMeasuredLeft)
+	m.RightSpeedSetpoints.Add(m.report.SpeedSetpointRight)
+	m.RightSpeedMeasurements.Add(m.report.SpeedMeasuredRight)
 
 	if m.Recording {
 		for k, v := range m.report.Symbols() {

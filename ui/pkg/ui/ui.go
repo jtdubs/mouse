@@ -99,11 +99,11 @@ func (ui *UI) Run(ctx context.Context) {
 			imgui.InternalDockBuilderSetNodeSize(dockID, vp.Size().Sub(imgui.NewVec2(0, 48)))
 			imgui.InternalDockBuilderDockWindow("Serial", dockID)
 			imgui.InternalDockBuilderFinish(dockID)
-			log := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirDown, 0.35, nil, &dockID)
-			command := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.50, nil, &dockID)
+			right := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.50, nil, &dockID)
+			bottomRight := imgui.InternalDockBuilderSplitNode(right, imgui.DirDown, 0.50, nil, &right)
 			imgui.InternalDockBuilderDockWindow("Report", dockID)
-			imgui.InternalDockBuilderDockWindow("Command", command)
-			imgui.InternalDockBuilderDockWindow("Log", log)
+			imgui.InternalDockBuilderDockWindow("Command", right)
+			imgui.InternalDockBuilderDockWindow("Log", bottomRight)
 		}
 
 		for _, window := range ui.windows {

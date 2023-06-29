@@ -107,11 +107,9 @@ func (w *reportWindow) draw() {
 		w.tableRow("Speed:")
 		measured := [2]float32{r.SpeedMeasuredLeft, r.SpeedMeasuredRight}
 		setpoint := [2]float32{r.SpeedSetpointLeft, r.SpeedSetpointRight}
-		pid := [3]float32{r.SpeedKp, r.SpeedKi, r.SpeedKd}
 		imgui.BeginDisabled()
 		imgui.SliderFloat2("rpm (setpoint)##SpeedSetpoint", &setpoint, -200, 200)
 		imgui.SliderFloat2("rpm (measured)##SpeedMeasured", &measured, -200, 200)
-		imgui.SliderFloat3("##SpeedPID", &pid, 0, 1)
 		imgui.EndDisabled()
 	}
 
@@ -144,6 +142,28 @@ func (w *reportWindow) draw() {
 		sensors := [3]int32{int32(l), int32(c), int32(r)}
 		imgui.BeginDisabled()
 		imgui.SliderInt3("##Encoders", &sensors, 0, 1023)
+		imgui.EndDisabled()
+	}
+
+	{
+		w.tableRow("Speed PID:")
+		pid := [3]float32{r.SpeedKp, r.SpeedKi, r.SpeedKd}
+		imgui.SliderFloat3("##SpeedPID", &pid, 0, 1)
+	}
+
+	{
+		w.tableRow("Left PID:")
+		imgui.BeginDisabled()
+		imgui.PlotLinesFloatPtrV("PV##LeftPV", w.mouse.LeftSpeedMeasurements.Buffer(), 1000, 0, "", 0, 200, imgui.NewVec2(0, 80), 4)
+		imgui.PlotLinesFloatPtrV("SP##LeftSP", w.mouse.LeftSpeedSetpoints.Buffer(), 1000, 0, "", 0, 200, imgui.NewVec2(0, 80), 4)
+		imgui.EndDisabled()
+	}
+
+	{
+		w.tableRow("Right PID:")
+		imgui.BeginDisabled()
+		imgui.PlotLinesFloatPtrV("PV##RightPV", w.mouse.RightSpeedMeasurements.Buffer(), 1000, 0, "", 0, 200, imgui.NewVec2(0, 80), 4)
+		imgui.PlotLinesFloatPtrV("SP##RightSP", w.mouse.RightSpeedSetpoints.Buffer(), 1000, 0, "", 0, 200, imgui.NewVec2(0, 80), 4)
 		imgui.EndDisabled()
 	}
 

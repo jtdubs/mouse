@@ -78,18 +78,18 @@ func (w *commandWindow) draw() {
 		w.drawIconToggleButton("##LinkSpeeds", "link", "link-off", &w.linkedSpeeds)
 		imgui.SameLineV(0, 20)
 		if w.linkedSpeeds {
-			if imgui.SliderFloat("rpm", &left, -200, 200) {
+			if imgui.InputFloatV("rpm", &left, 1, 10, "%.2f", imgui.InputTextFlagsEnterReturnsTrue) {
 				if math.Abs(float64(left)) < 20 {
 					left = 0
 				}
 				w.mouse.SendCommand(mouse.NewSpeedCommand(left, left))
 			}
 		} else {
-			if imgui.SliderFloat2("rpm", &values, -200, 200) {
+			if imgui.InputFloat2V("rpm", &values, "%.2f", imgui.InputTextFlagsEnterReturnsTrue) {
 				w.mouse.SendCommand(mouse.NewSpeedCommand(values[0], values[1]))
 			}
 		}
-		if imgui.SliderFloat3("PID", &pid, 0, 0.2) {
+		if imgui.InputFloat3V("PID", &pid, "%.4f", imgui.InputTextFlagsEnterReturnsTrue) {
 			w.mouse.SendCommand(mouse.NewSpeedPIDCommand(pid[0], pid[1], pid[2]))
 		}
 	}

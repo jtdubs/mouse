@@ -17,6 +17,10 @@ func NewRing[T any](len int) *Ring[T] {
 	}
 }
 
+func (r *Ring[T]) Buffer() []T {
+	return r.buffer
+}
+
 func (r *Ring[T]) Clear() {
 	r.lock.Lock()
 	defer r.lock.Unlock()
