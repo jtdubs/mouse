@@ -68,20 +68,3 @@ func NewSpeedCommand(leftSpeed, rightSpeed float32) SpeedCommand {
 }
 
 func (c SpeedCommand) isCommand() bool { return true }
-
-type SpeedPIDCommand struct {
-	Type    uint8
-	P, I, D float32
-	Padding [2]uint8
-}
-
-func NewSpeedPIDCommand(p, i, d float32) SpeedPIDCommand {
-	return SpeedPIDCommand{
-		Type: 5,
-		P:    p,
-		I:    i,
-		D:    d,
-	}
-}
-
-func (c SpeedPIDCommand) isCommand() bool { return true }

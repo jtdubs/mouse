@@ -36,12 +36,6 @@ typedef struct {
       float   right;
       uint8_t padding[6];
     } speed;
-    struct {
-      float   kp;
-      float   ki;
-      float   kd;
-      uint8_t padding[2];
-    } pid;
   } data;
 } command_t;
 #pragma pack(pop)

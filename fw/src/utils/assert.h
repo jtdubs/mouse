@@ -9,7 +9,7 @@ void _assert_failed(uint8_t error);
 #define ASSERT_USART0_WRITE 0x20
 #define ASSERT_USART0_READ 0x30
 #define ASSERT_COMMAND 0x40
-#define ASSERT_BASE64 0x50
+#define ASSERT_PLAN 0x50
 
 #if !defined(NOASSERT)
 #define assert(n, e)     \

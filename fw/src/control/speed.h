@@ -16,12 +16,9 @@ extern pi_t speed_pi_left;
 extern pi_t speed_pi_right;
 
 void speed_init();
+void speed_read();
 void speed_update();
 
-void speed_enable();
-void speed_disable();
-
-void speed_set_left(float setpoint);
-void speed_set_right(float setpoint);
+void speed_set(float left, float right);
 
 void speed_set_pi_vars(float kp, float ki);

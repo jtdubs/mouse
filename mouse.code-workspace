@@ -41,7 +41,9 @@
       "motor.h": "c",
       "adc.h": "c",
       "serial.h": "c",
-      "delay_basic.h": "c"
+      "delay_basic.h": "c",
+      "stdbool.h": "c",
+      "timer.h": "c"
     }
   },
 }

@@ -4,10 +4,8 @@
 
 #include "platform/pin.h"
 
-uint16_t motor_power_left;
-uint16_t motor_power_right;
-bool     motor_forward_left;
-bool     motor_forward_right;
+int16_t motor_power_left;
+int16_t motor_power_right;
 
 // motor_init initializes the motors.
 void motor_init() {
@@ -22,40 +20,17 @@ void motor_init() {
   TIFR0  = 0;              // Clear interrupt flags.
   TCNT1  = 0;              // Reset counter.
 
-  motor_set_forward_left(true);
-  motor_set_forward_right(true);
+  motor_set(0, 0);
 }
 
-// set_left_motor_forward sets the direction of the left motor.
-void motor_set_forward_left(bool forward) {
-  motor_forward_left = forward;
-  if (forward) {
-    pin_clear(LEFT_DIR);
-  } else {
-    pin_set(LEFT_DIR);
-  }
-}
-
-// set_right_motor_forward sets the direction of the right motor.
-void motor_set_forward_right(bool forward) {
-  motor_forward_right = forward;
-  if (forward) {
-    pin_set(RIGHT_DIR);
-  } else {
-    pin_clear(RIGHT_DIR);
-  }
-}
-
-// set_left_motor_power sets the power of the left motor.
-// NOTE: The power range is [0, 255].
-void motor_set_power_left(uint16_t power) {
-  motor_power_left = power;
-  OCR1A            = power;
-}
-
-// set_right_motor_power sets the power of the right motor.
-// NOTE: The power range is [0, 255].
-void motor_set_power_right(uint16_t power) {
-  motor_power_right = power;
-  OCR1B             = power;
+// motor_set sets the direction of the motors.
+void motor_set(int16_t left, int16_t right) {
+  motor_power_left   = left;
+  motor_power_right  = right;
+  bool left_forward  = left >= 0;
+  bool right_forward = right >= 0;
+  pin_set2(LEFT_DIR, !left_forward);
+  pin_set2(RIGHT_DIR, right_forward);
+  OCR1A = left_forward ? left : -left;
+  OCR1B = right_forward ? right : -right;
 }

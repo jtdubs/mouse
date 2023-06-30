@@ -4,3 +4,8 @@ Firmware:
 - Motion planning for linear motion with accel / coast / decel phases?
 - On tick, update approximate x,y,theta based on encoder deltas
 - Add x,y,theta to the report
+
+
+plans:
+- move to position with risidual speed, completes once position is reached
+- turn to angle, completes once angle is reached
