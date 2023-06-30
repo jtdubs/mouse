@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/jtdubs/mouse/ui/pkg/mouse"
 
@@ -82,7 +83,7 @@ func (w *reportWindow) draw() {
 
 	{
 		w.tableRow("Position:")
-		measured := [2]float32{r.PositionDistance, r.PositionTheta}
+		measured := [2]float32{r.PositionDistance, r.PositionTheta * 180.0 / math.Pi}
 		imgui.BeginDisabled()
 		imgui.InputFloat2("##Position", &measured)
 		imgui.EndDisabled()

@@ -24,4 +24,7 @@ void position_read() {
   position_distance = fma(forward, TickDistance, position_distance);
   position_theta    = fma(rotation, TickDTheta, position_theta);
   position_theta    = fmodf(position_theta, 2 * M_PI);
+  if (position_theta < 0) {
+    position_theta += 2 * M_PI;
+  }
 }
