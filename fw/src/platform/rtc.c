@@ -3,7 +3,7 @@
 #include <avr/io.h>
 #include <util/atomic.h>
 
-static uint32_t rtc_high;
+static uint32_t rtc_overflow_count;
 
 // rtc_init initializes the real-time clock.
 void rtc_init() {
@@ -38,14 +38,14 @@ uint32_t rtc_micros() {
   uint8_t low = TCNT2;
   if (TIFR2 & (1 << TOV2)) {
     // overflow flag is set, but the interrupt hasn't run, so deal with it manually.
-    rtc_high += 512;
-    TIFR2    |= (1 << TOV2);  // clear overflow flag
-    low       = TCNT2;
+    rtc_overflow_count++;
+    TIFR2 |= (1 << TOV2);  // clear overflow flag
+    // and resample the counter, as the overflow may have happened just after the original sample.
+    low = TCNT2;
   }
-  return rtc_high | (low << 1);
+  return (rtc_overflow_count << 9) | (low << 1);
 }
 
 ISR(TIMER2_OVF_vect, ISR_BLOCK) {
-  // timer clock period is 2us, so overflow is 256 * 2us = 512us
-  rtc_high += 512;
+  rtc_overflow_count++;
 }

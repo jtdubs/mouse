@@ -11,8 +11,8 @@ uint16_t encoder_left;
 uint16_t encoder_right;
 
 // Encoder timings.
-uint32_t encoder_times_left[2];   // 0: current, 1: previous
-uint32_t encoder_times_right[2];  // 0: current, 1: previous
+uint32_t encoder_times_left[2];   // 0: current, 1..n: previous
+uint32_t encoder_times_right[2];  // 0: current, 1..n: previous
 
 // Encoder directions.
 bool encoder_forward_left;
@@ -30,6 +30,8 @@ void encoders_init() {
 
 // Left Encoder Clock
 ISR(INT0_vect, ISR_BLOCK) {
+  uint32_t now = rtc_micros();
+
   pin_toggle(PROBE_1);
 
   static uint8_t left_last_b = 0;
@@ -50,13 +52,15 @@ ISR(INT0_vect, ISR_BLOCK) {
   }
 
   encoder_times_left[1] = encoder_times_left[0];
-  encoder_times_left[0] = rtc_micros();
+  encoder_times_left[0] = now;
 
   left_last_b = b;
 }
 
 // Right Encoder Clock
 ISR(INT1_vect, ISR_BLOCK) {
+  uint32_t now = rtc_micros();
+
   pin_toggle(PROBE_2);
 
   static uint8_t right_last_b = 0;
@@ -77,7 +81,7 @@ ISR(INT1_vect, ISR_BLOCK) {
   }
 
   encoder_times_right[1] = encoder_times_right[0];
-  encoder_times_right[0] = rtc_micros();
+  encoder_times_right[0] = now;
 
   right_last_b = b;
 }

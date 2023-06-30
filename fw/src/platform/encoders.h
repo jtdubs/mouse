@@ -8,8 +8,8 @@ extern uint16_t encoder_left;
 extern uint16_t encoder_right;
 
 // Encoder timings.
-extern uint32_t encoder_times_left[2];   // 0: current, 1: previous
-extern uint32_t encoder_times_right[2];  // 0: current, 1: previous
+extern uint32_t encoder_times_left[2];   // 0: current, 1..n: previous
+extern uint32_t encoder_times_right[2];  // 0: current, 1..n: previous
 
 // Encoder directions.
 extern bool encoder_forward_left;
