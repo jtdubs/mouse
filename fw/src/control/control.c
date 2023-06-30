@@ -2,6 +2,7 @@
 
 #include "control/plan.h"
 #include "control/speed.h"
+#include "platform/encoders.h"
 #include "platform/motor.h"
 #include "platform/timer.h"
 #include "serial/report.h"

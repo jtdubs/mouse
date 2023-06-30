@@ -3,6 +3,7 @@
 #include <avr/io.h>
 
 #include "platform/pin.h"
+#include "utils/math.h"
 
 int16_t motor_power_left;
 int16_t motor_power_right;
@@ -25,16 +26,14 @@ void motor_init() {
 
 // motor_set sets the direction of the motors.
 void motor_set(int16_t left, int16_t right) {
-  motor_power_left   = left;
-  motor_power_right  = right;
-  bool left_forward  = left >= 0;
-  bool right_forward = right >= 0;
+  motor_power_left  = left;
+  motor_power_right = right;
 
   // set the direction of the motors
-  pin_set2(LEFT_DIR, !left_forward);
-  pin_set2(RIGHT_DIR, right_forward);
+  pin_set2(LEFT_DIR, left < 0);
+  pin_set2(RIGHT_DIR, right >= 0);
 
   // set the PWM duty cycle for each motor
-  OCR1A = left_forward ? left : -left;
-  OCR1B = right_forward ? right : -right;
+  OCR1A = abs16(left);
+  OCR1B = abs16(right);
 }

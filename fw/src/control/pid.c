@@ -2,10 +2,7 @@
 
 #include <math.h>
 
-// clampf constrains x to the range [min, max].
-inline float clampf(float x, float min, float max) {
-  return fmaxf(min, fminf(max, x));
-}
+#include "utils/math.h"
 
 // pid_update determines the manipulated value, given a setpoint and process variable.
 float pid_update(pid_t *pid, float sp /* setpoint */, float pv /* process variable */) {
