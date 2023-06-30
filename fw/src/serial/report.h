@@ -1,3 +1,16 @@
+//
+// System: serial
+// Module: report
+//
+// Purpose:
+// - Defines the data structure used to send serial reports to the host.
+// - Provides functions to trigger building and sending of the report.
+// - Communicates with the usart0 module to send the report.
+//
+// Dependencies:
+// - Uses the usart0 module to transmit reports.
+// - Reads from most platform modules to populate the report.
+//
 #pragma once
 
 #include <stdint.h>

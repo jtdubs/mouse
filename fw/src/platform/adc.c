@@ -5,7 +5,7 @@
 
 #include "platform/pin.h"
 
-// Raw 10-bit readings from ADC channels.
+// Raw 10-bit readings from the ADC channels.
 uint16_t adc_sensor_right;
 uint16_t adc_sensor_center;
 uint16_t adc_sensor_left;
@@ -14,28 +14,19 @@ uint16_t adc_battery_voltage;
 
 // adc_init initializes the ADC.
 void adc_init() {
-  ADMUX = (1 << REFS0)   // AVCC with external capacitor at AREF pin
-        | (0 << REFS1)   // AVCC with external capacitor at AREF pin
-        | (0 << ADLAR);  // Don't left adjust result
+  ADMUX  = _BV(REFS0);                             // AVCC with external capacitor at AREF pin
+  ADCSRA = _BV(ADIE)                               // Enable ADC interrupt
+         | _BV(ADPS0) | _BV(ADPS1) | _BV(ADPS2);   // Prescaler 128 (slow but accurate ADC readings)
+  ADCSRB  = 0;                                     // Free running mode
+  DIDR0   = _BV(ADC0D) | _BV(ADC1D) | _BV(ADC2D);  // Disable digital input buffer on ADC2
+  ADCSRA |= _BV(ADEN);                             // Enable ADC
+}
 
-  ADCSRA = (0 << ADEN)    // Disable ADC
-         | (0 << ADSC)    // Don't start conversion
-         | (0 << ADATE)   // Disable auto trigger
-         | (0 << ADIF)    // Clear interrupt flag
-         | (1 << ADIE)    // Enable interrupt
-         | (1 << ADPS0)   // Prescaler 128
-         | (1 << ADPS1)   // Prescaler 128
-         | (1 << ADPS2);  // Prescaler 128
-
-  ADCSRB = (0 << ADTS0)   // Free running mode
-         | (0 << ADTS1)   // Free running mode
-         | (0 << ADTS2);  // Free running mode
-
-  DIDR0 = (1 << ADC0D)   // Disable digital input buffer on ADC0
-        | (1 << ADC1D)   // Disable digital input buffer on ADC1
-        | (1 << ADC2D);  // Disable digital input buffer on ADC2
-
-  ADCSRA |= (1 << ADEN);  // Enable ADC
+// adc_sample samples the ADC channels.
+void adc_sample() {
+  // Start reading from channel 0.
+  ADMUX   = (ADMUX & 0xF0);
+  ADCSRA |= _BV(ADSC);
 }
 
 ISR(ADC_vect, ISR_BLOCK) {
@@ -70,6 +61,6 @@ ISR(ADC_vect, ISR_BLOCK) {
 
   if (adc_index != 0) {
     // Start the next conversion
-    ADCSRA |= (1 << ADSC);
+    ADCSRA |= _BV(ADSC);
   }
 }

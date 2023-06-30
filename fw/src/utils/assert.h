@@ -1,3 +1,11 @@
+//
+// System: utils
+// Module: assert
+//
+// Purpose:
+// - Defines the system assert macro
+// - Provides an error state which visually blinks the error code to the user.
+//
 #pragma once
 
 #include <stdint.h>

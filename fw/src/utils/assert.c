@@ -3,6 +3,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
+#include "platform/motor.h"
 #include "platform/pin.h"
 
 // _assert_failed is called when an assertion fails.

@@ -1,13 +1,26 @@
+//
+// System: serial
+// Module: command
+//
+// Purpose:
+// - Defines the data structure used to receive serial commands from the host.
+// - Provides functions to determine if a command is available, and to indicate
+//   when it has been processed.
+// - Receives callbacks from the usart0 module when a command is received.
+// - Manages the state of the usart0 receiver, based on whether or not a command
+//   is already in the buffer waiting to be processed.
+//
+// Dependencies:
+// - Uses the usart0 module to receive commands.
+//
 #pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
 
-#define COMMAND_SET_MODE 0
-#define COMMAND_SET_LEDS 1
-#define COMMAND_SET_POWER 2
-#define COMMAND_SET_SPEED 3
-#define COMMAND_SET_SPEED_PI_VARS 5
+#define COMMAND_SET_LEDS 0
+#define COMMAND_SET_POWER 1
+#define COMMAND_SET_SPEED 2
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.
@@ -15,10 +28,6 @@ typedef struct {
   uint8_t type;
   union {
     uint8_t padding[8];
-    struct {
-      uint8_t mode;
-      uint8_t padding[7];
-    } mode;
     struct {
       bool    builtin;
       bool    left;

@@ -1,3 +1,11 @@
+//
+// System: utils
+// Module: sim
+//
+// Purpose:
+// - Creates data in the "mmcu" region of the debug binary which is
+//   interpreted by simavr to define the simulation parameters.
+//
 #pragma once
 
 #include <avr/avr_mcu_section.h>

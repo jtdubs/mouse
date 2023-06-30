@@ -2,7 +2,6 @@
 #include <avr/io.h>
 #include <stddef.h>
 
-#include "platform/pin.h"
 #include "platform/usart0.h"
 #include "utils/assert.h"
 
@@ -25,13 +24,13 @@ static uint8_t                    usart0_read_checksum;
 
 // usart0_disable_receiver disables the USART0 receiver.
 void usart0_disable_receiver() {
-  UCSR0B &= ~(1 << RXEN0);
+  UCSR0B &= ~_BV(RXEN0);
 }
 
 // usart0_enable_receiver enables the USART0 receiver.
 void usart0_enable_receiver() {
   assert(ASSERT_USART0_READ + 0, usart0_read_callback != NULL);
-  UCSR0B |= (1 << RXEN0);
+  UCSR0B |= _BV(RXEN0);
 }
 
 // usart0_set_read_callback sets the read callback for USART0.

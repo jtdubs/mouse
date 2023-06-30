@@ -16,12 +16,10 @@ int8_t encoders_right_delta;
 
 // encoders_init initializes the encoders.
 void encoders_init() {
-  EICRA = (1 << ISC00)   // Trigger INT0 on any logical change
-        | (0 << ISC01)   // Trigger INT0 on any logical change
-        | (1 << ISC10)   // Trigger INT1 on any logical change
-        | (0 << ISC11);  // Trigger INT1 on any logical change
-  EIMSK = (1 << INT0)    // Enable INT0
-        | (1 << INT1);   // Enable INT1
+  EICRA = _BV(ISC00)   // Trigger INT0 on any logical change
+        | _BV(ISC10);  // Trigger INT1 on any logical change
+  EIMSK = _BV(INT0)    // Enable INT0
+        | _BV(INT1);   // Enable INT1
 }
 
 // encoders_update applies changes since the last update.

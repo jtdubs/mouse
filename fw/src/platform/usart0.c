@@ -1,11 +1,7 @@
 #include "platform/usart0.h"
 
-#include <avr/interrupt.h>
 #include <avr/io.h>
-#include <stddef.h>
-
-#include "platform/pin.h"
-#include "utils/assert.h"
+#include <stdint.h>
 
 // usart0_init initializes USART0.
 void usart0_init() {
@@ -17,21 +13,9 @@ void usart0_init() {
 #endif
 
   UBRR0  = baud;
-  UCSR0A = (1 << TXC0)     // Output register is empty.
-         | (1 << U2X0)     // Double speed mode.
-         | (0 << MPCM0);   // Disable multi-processor.
-  UCSR0B = (1 << RXCIE0)   // Disable RX Complete Interrupt.
-         | (0 << TXCIE0)   // Disable TX Complete Interrupt.
-         | (0 << UDRIE0)   // Disable Data Register Empty Interrupt.
-         | (0 << RXEN0)    // Disable receiver.
-         | (1 << TXEN0)    // Enable transmitter.
-         | (0 << UCSZ02);  // 8-bit data.
-  UCSR0C = (0 << UMSEL01)  // Asynchronous USART.
-         | (0 << UMSEL00)  // Asynchronous USART.
-         | (0 << UPM01)    // Parity disabled.
-         | (0 << UPM00)    // Parity disabled.
-         | (0 << USBS0)    // 1 stop bit.
-         | (1 << UCSZ01)   // 8-bit data.
-         | (1 << UCSZ00)   // 8-bit data.
-         | (0 << UCPOL0);  // Clock polarity (ignored in async mode).
+  UCSR0A = _BV(TXC0)                   // Output register is empty.
+         | _BV(U2X0);                  // Double speed mode.
+  UCSR0B = _BV(RXCIE0)                 // Enable RX Complete Interrupt.
+         | _BV(TXEN0);                 // Enable transmitter.
+  UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);  // 8-bit data.
 }

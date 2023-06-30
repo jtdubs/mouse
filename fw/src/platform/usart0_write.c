@@ -2,7 +2,6 @@
 #include <avr/io.h>
 #include <stddef.h>
 
-#include "platform/pin.h"
 #include "platform/usart0.h"
 #include "utils/assert.h"
 
@@ -69,12 +68,12 @@ ISR(USART_UDRE_vect, ISR_BLOCK) {
       // Write the checksum, disable the interrupt (nothing left to send), and transition to the next state.
       UDR0                = -usart0_write_checksum;
       usart0_write_state  = WRITE_IDLE;
-      UCSR0B             &= ~(1 << UDRIE0);
+      UCSR0B             &= ~_BV(UDRIE0);
       break;
     case WRITE_IDLE:
       // Should never happens, as the CHECKSUM state disables the interrupt.
       // But if it does, just turn off the interrupt again...
-      UCSR0B &= ~(1 << UDRIE0);
+      UCSR0B &= ~_BV(UDRIE0);
       break;
   }
 }

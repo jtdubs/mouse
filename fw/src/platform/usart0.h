@@ -1,3 +1,26 @@
+//
+// System: platform
+// Module: usart0
+//
+// Purpose:
+// - Provides functions to send/receive frames the usart0 peripheral.
+//
+// Peripherals:
+// - Owns the USART0 peripheral.
+//
+// Interrupts:
+// - USART_RX when a byte is received.
+// - USART_UDRE when a byte can be transmitted.
+//
+// Protocol:
+// - Frames are formatted as follows:
+//     Field      | Size (bytes) | Description
+//     -----------|--------------|-----------------------------------------------
+//     START_BYTE | 1            | Always 0x02, used for frame synchronization
+//     LENGTH     | 1            | len(DATA)
+//     DATA       | LENGTH       |
+//     CHECKSUM   | 1            | -sum(DATA), used for error detection
+//
 #pragma once
 
 #include <stdbool.h>
