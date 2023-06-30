@@ -7,7 +7,7 @@
 #define COMMAND_SET_LEDS 1
 #define COMMAND_SET_POWER 2
 #define COMMAND_SET_SPEED 3
-#define COMMAND_SET_SPEED_PID_VARS 5
+#define COMMAND_SET_SPEED_PI_VARS 5
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.

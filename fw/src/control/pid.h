@@ -20,6 +20,6 @@ typedef struct {
   float last_pv;   // last process variable
 } pi_t;
 
-float pi_update(pid_t *pid, float sp, float pv);
+float pi_update(pi_t *pi, float sp, float pv);
 
-void pi_reset(pid_t *pid);
+void pi_reset(pi_t *pi);

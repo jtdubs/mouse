@@ -54,8 +54,8 @@ void remote() {
         speed_set_left(command->data.speed.left);
         speed_set_right(command->data.speed.right);
         break;
-      case COMMAND_SET_SPEED_PID_VARS:
-        speed_set_pid_vars(command->data.pid.kp, command->data.pid.ki, command->data.pid.kd);
+      case COMMAND_SET_SPEED_PI_VARS:
+        speed_set_pi_vars(command->data.pid.kp, command->data.pid.ki);
         break;
       default:
         return;

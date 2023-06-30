@@ -12,8 +12,8 @@ extern float speed_measured_right;
 extern float speed_setpoint_left;
 extern float speed_setpoint_right;
 
-extern pid_t speed_pid_left;
-extern pid_t speed_pid_right;
+extern pi_t speed_pi_left;
+extern pi_t speed_pi_right;
 
 void speed_init();
 void speed_update();
@@ -24,4 +24,4 @@ void speed_disable();
 void speed_set_left(float setpoint);
 void speed_set_right(float setpoint);
 
-void speed_set_pid_vars(float kp, float ki, float kd);
+void speed_set_pi_vars(float kp, float ki);

@@ -25,24 +25,24 @@ void pid_reset(pid_t *pid) {
   pid->last_pv = 0;
 }
 
-float pi_update(pi_t *pid, float sp /* setpoint */, float pv /* process variable */) {
+float pi_update(pi_t *pi, float sp /* setpoint */, float pv /* process variable */) {
   float p = sp - pv;
-  float i = pid->i + p;
+  float i = pi->i + p;
 
-  pid->last_pv = pv;
+  pi->last_pv = pv;
 
-  float out = fmaf(pid->kp, p, pid->ki * i);
+  float out = fmaf(pi->kp, p, pi->ki * i);
 
-  if (out >= pid->min && out < pid->max) {
+  if (out >= pi->min && out < pi->max) {
     // Only update the integrator if the output is within the min/max range.
     // This helps prevent the integrator from running away.
-    pid->i = i;
+    pi->i = i;
   }
 
-  return fmaxf(pid->min, fminf(pid->max, out));
+  return fmaxf(pi->min, fminf(pi->max, out));
 }
 
-void pi_reset(pi_t *pid) {
-  pid->i       = 0;
-  pid->last_pv = 0;
+void pi_reset(pi_t *pi) {
+  pi->i       = 0;
+  pi->last_pv = 0;
 }
