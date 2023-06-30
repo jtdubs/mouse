@@ -38,7 +38,8 @@
       "speed.h": "c",
       "math.h": "c",
       "encoders.h": "c",
-      "motor.h": "c"
+      "motor.h": "c",
+      "adc.h": "c"
     }
   },
 }

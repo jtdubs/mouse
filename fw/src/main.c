@@ -1,39 +1,15 @@
 #include <avr/interrupt.h>
-#include <avr/power.h>
-#include <stddef.h>
 
-#include "control/position.h"
-#include "control/speed.h"
+#include "control/control.h"
 #include "modes/mode.h"
-#include "platform/adc.h"
-#include "platform/encoders.h"
-#include "platform/motor.h"
-#include "platform/pin.h"
-#include "platform/rtc.h"
-#include "platform/timer.h"
-#include "platform/usart0.h"
-#include "serial/command.h"
-#include "serial/report.h"
-#include "utils/sim.h"
+#include "platform/platform.h"
+#include "serial/serial.h"
 
 static void init() {
-  // Turn off unused hardware to save a few mA.
-  power_spi_disable();
-  power_twi_disable();
-
-  // Initialize all the modules.
-  pin_init();
-  usart0_init();
-  adc_init();
-  encoders_init();
-  motor_init();
-  report_init();
-  command_init();
-  speed_init();
-  position_init();
+  platform_init();
+  serial_init();
+  control_init();
   mode_init();
-  timer_init();
-  rtc_init();
 
   // Enable interrupts.
   sei();
