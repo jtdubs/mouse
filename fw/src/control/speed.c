@@ -26,26 +26,30 @@ static bool speed_enabled;
 pid_t       speed_pid_left;
 pid_t       speed_pid_right;
 
-static float calculate_speed_left();
-static float calculate_speed_right();
-
 void speed_init() {
   speed_pid_left.min = 0;
   speed_pid_left.max = 200;
   speed_pid_left.kp  = 0.3;
-  speed_pid_left.ki  = 0.15;
-  speed_pid_left.kd  = 0.002;
+  speed_pid_left.ki  = 0.04;
+  speed_pid_left.kd  = 0;
 
   speed_pid_right.min = 0;
   speed_pid_right.max = 200;
   speed_pid_right.kp  = 0.3;
-  speed_pid_right.ki  = 0.15;
-  speed_pid_right.kd  = 0.002;
+  speed_pid_right.ki  = 0.04;
+  speed_pid_right.kd  = 0;
 }
 
+#define LOW_PASS_ALPHA 0.1
+
 void speed_update() {
-  speed_measured_left  = calculate_speed_left();
-  speed_measured_right = calculate_speed_right();
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    speed_measured_left = (LOW_PASS_ALPHA * ((float)encoders_left_delta) * 50.0)  //
+                        + ((1.0 - LOW_PASS_ALPHA) * speed_measured_left);
+    speed_measured_right = (LOW_PASS_ALPHA * ((float)encoders_right_delta) * 50.0)  //
+                         + ((1.0 - LOW_PASS_ALPHA) * speed_measured_right);
+    encoders_update();
+  }
 
   if (speed_enabled) {
     uint8_t power_left;
@@ -86,50 +90,6 @@ void speed_enable() {
 
 void speed_disable() {
   speed_enabled = false;
-}
-
-// encoders_left_period returns the period of the left encoder in microseconds.
-static float calculate_speed_left() {
-  uint32_t now, time0, time1;
-  bool     forward;
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    time0   = encoder_times_left[0];
-    time1   = encoder_times_left[1];
-    forward = encoder_forward_left;
-    now     = rtc_micros();
-  }
-  if ((now - time0) > MAX_ENCODER_PERIOD) {
-    return 0;
-  }
-  uint32_t dt = time0 - time1;
-  if (dt == 0) {
-    return 0;
-  }
-  float period = (float)(time0 - time1);
-  float rpm    = (1000000.0 * 60.0 / 240.0) / period;
-  return forward ? rpm : -rpm;
-}
-
-// encoders_right_period returns the period of the right encoder in microseconds.
-static float calculate_speed_right() {
-  uint32_t now, time0, time1;
-  bool     forward;
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    time0   = encoder_times_right[0];
-    time1   = encoder_times_right[1];
-    forward = encoder_forward_right;
-    now     = rtc_micros();
-  }
-  if ((now - time0) > MAX_ENCODER_PERIOD) {
-    return 0;
-  }
-  uint32_t dt = time0 - time1;
-  if (dt == 0) {
-    return 0;
-  }
-  float period = (float)(time0 - time1);
-  float rpm    = (1000000.0 * 60.0 / 240.0) / period;
-  return forward ? rpm : -rpm;
 }
 
 void speed_set_left(float setpoint) {

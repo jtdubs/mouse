@@ -42,13 +42,10 @@ void position_init() {
 #define MM_TO_ENC (240.0 / (32.0 * M_PI))
 
 void position_update() {
-  uint16_t l, r;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    l = encoder_left;
-    r = encoder_right;
+    position_measured_left  += ((float)encoders_left_delta) * ENC_TO_MM;
+    position_measured_right += ((float)encoders_right_delta) * ENC_TO_MM;
   }
-  position_measured_left  = ((float)l) * ENC_TO_MM;
-  position_measured_right = ((float)r) * ENC_TO_MM;
 
   if (position_enabled) {
     float speed_left = pid_update(&position_pid_left, position_setpoint_left, position_measured_left);

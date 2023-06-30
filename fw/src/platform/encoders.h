@@ -4,16 +4,15 @@
 #include <stdint.h>
 
 // Encoder counts.
-extern uint16_t encoder_left;
-extern uint16_t encoder_right;
+extern int32_t encoders_left;
+extern int32_t encoders_right;
 
-// Encoder timings.
-extern uint32_t encoder_times_left[2];   // 0: current, 1..n: previous
-extern uint32_t encoder_times_right[2];  // 0: current, 1..n: previous
-
-// Encoder directions.
-extern bool encoder_forward_left;
-extern bool encoder_forward_right;
+// Changes to encoder counts since the last update.
+extern int8_t encoders_left_delta;
+extern int8_t encoders_right_delta;
 
 // encoders_init initializes the encoders.
 void encoders_init();
+
+// encoders_update applies changes since the last update.
+void encoders_update();

@@ -7,16 +7,12 @@
 #include "platform/rtc.h"
 
 // Encoder counts.
-uint16_t encoder_left;
-uint16_t encoder_right;
+int32_t encoders_left;
+int32_t encoders_right;
 
-// Encoder timings.
-uint32_t encoder_times_left[2];   // 0: current, 1..n: previous
-uint32_t encoder_times_right[2];  // 0: current, 1..n: previous
-
-// Encoder directions.
-bool encoder_forward_left;
-bool encoder_forward_right;
+// Changes to encoder counts since the last update.
+int8_t encoders_left_delta;
+int8_t encoders_right_delta;
 
 // encoders_init initializes the encoders.
 void encoders_init() {
@@ -28,10 +24,17 @@ void encoders_init() {
         | (1 << INT1);   // Enable INT1
 }
 
+// encoders_update applies changes since the last update.
+// NOTE: MUST BE CALLED FROM AN ATOMIC BLOCK!
+void encoders_update() {
+  encoders_left        += (int32_t)encoders_left_delta;
+  encoders_right       += (int32_t)encoders_right_delta;
+  encoders_left_delta   = 0;
+  encoders_right_delta  = 0;
+}
+
 // Left Encoder Clock
 ISR(INT0_vect, ISR_BLOCK) {
-  uint32_t now = rtc_micros();
-
   pin_toggle(PROBE_1);
 
   static uint8_t left_last_b = 0;
@@ -44,23 +47,16 @@ ISR(INT0_vect, ISR_BLOCK) {
 
   // Update the encoder count based on rotation direction.
   if (a == left_last_b) {
-    encoder_left++;
-    encoder_forward_left = true;
+    encoders_left_delta++;
   } else {
-    encoder_left--;
-    encoder_forward_left = false;
+    encoders_left_delta--;
   }
-
-  encoder_times_left[1] = encoder_times_left[0];
-  encoder_times_left[0] = now;
 
   left_last_b = b;
 }
 
 // Right Encoder Clock
 ISR(INT1_vect, ISR_BLOCK) {
-  uint32_t now = rtc_micros();
-
   pin_toggle(PROBE_2);
 
   static uint8_t right_last_b = 0;
@@ -73,15 +69,10 @@ ISR(INT1_vect, ISR_BLOCK) {
 
   // Update the encoder count based on rotation direction.
   if (a == right_last_b) {
-    encoder_right--;
-    encoder_forward_right = false;
+    encoders_right_delta--;
   } else {
-    encoder_right++;
-    encoder_forward_right = true;
+    encoders_right_delta++;
   }
-
-  encoder_times_right[1] = encoder_times_right[0];
-  encoder_times_right[0] = now;
 
   right_last_b = b;
 }
