@@ -43,55 +43,55 @@ func (w *reportWindow) draw() {
 		)
 	}
 
-	{
-		modes := []string{"Remote", "Wall Sensor", "Error", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}
-		imgui.TableNextRow()
-		imgui.TableSetColumnIndex(0)
-		imgui.Text("Mode:")
-		imgui.TableSetColumnIndex(1)
-		if w.mouse.Open() {
-			imgui.Text(modes[r.Mode])
-		} else {
-			imgui.Text("Disconnected")
-		}
-	}
+	// {
+	// 	modes := []string{"Remote", "Wall Sensor", "Error", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}
+	// 	imgui.TableNextRow()
+	// 	imgui.TableSetColumnIndex(0)
+	// 	imgui.Text("Mode:")
+	// 	imgui.TableSetColumnIndex(1)
+	// 	if w.mouse.Open() {
+	// 		imgui.Text(modes[r.Mode])
+	// 	} else {
+	// 		imgui.Text("Disconnected")
+	// 	}
+	// }
 
-	w.tableRow("Status LEDs:")
-	{
-		onboard, left, right, ir := r.DecodeLEDs()
-		if left {
-			w.drawIcon("led-on-lightblue")
-		} else {
-			w.drawIcon("led-off-white")
-		}
-		imgui.SameLineV(0, 20)
-		if onboard {
-			w.drawIcon("led-on-orange")
-		} else {
-			w.drawIcon("led-off-white")
-		}
-		imgui.SameLineV(0, 20)
-		if right {
-			w.drawIcon("led-on-lightblue")
-		} else {
-			w.drawIcon("led-off-white")
-		}
+	// w.tableRow("Status LEDs:")
+	// {
+	// 	onboard, left, right, ir := r.DecodeLEDs()
+	// 	if left {
+	// 		w.drawIcon("led-on-lightblue")
+	// 	} else {
+	// 		w.drawIcon("led-off-white")
+	// 	}
+	// 	imgui.SameLineV(0, 20)
+	// 	if onboard {
+	// 		w.drawIcon("led-on-orange")
+	// 	} else {
+	// 		w.drawIcon("led-off-white")
+	// 	}
+	// 	imgui.SameLineV(0, 20)
+	// 	if right {
+	// 		w.drawIcon("led-on-lightblue")
+	// 	} else {
+	// 		w.drawIcon("led-off-white")
+	// 	}
 
-		w.tableRow("IR LEDs:")
-		if ir {
-			w.drawIcon("led-on-red")
-			imgui.SameLineV(0, 20)
-			w.drawIcon("led-on-red")
-			imgui.SameLineV(0, 20)
-			w.drawIcon("led-on-red")
-		} else {
-			w.drawIcon("led-off-white")
-			imgui.SameLineV(0, 20)
-			w.drawIcon("led-off-white")
-			imgui.SameLineV(0, 20)
-			w.drawIcon("led-off-white")
-		}
-	}
+	// 	w.tableRow("IR LEDs:")
+	// 	if ir {
+	// 		w.drawIcon("led-on-red")
+	// 		imgui.SameLineV(0, 20)
+	// 		w.drawIcon("led-on-red")
+	// 		imgui.SameLineV(0, 20)
+	// 		w.drawIcon("led-on-red")
+	// 	} else {
+	// 		w.drawIcon("led-off-white")
+	// 		imgui.SameLineV(0, 20)
+	// 		w.drawIcon("led-off-white")
+	// 		imgui.SameLineV(0, 20)
+	// 		w.drawIcon("led-off-white")
+	// 	}
+	// }
 
 	// {
 	// 	w.tableRow("Position:")
@@ -121,13 +121,13 @@ func (w *reportWindow) draw() {
 		imgui.EndDisabled()
 	}
 
-	{
-		w.tableRow("Encoders:")
-		power := [2]int32{int32(r.EncoderLeft), int32(r.EncoderRight)}
-		imgui.BeginDisabled()
-		imgui.SliderInt2("##Encoders", &power, 0, 16383)
-		imgui.EndDisabled()
-	}
+	// {
+	// 	w.tableRow("Encoders:")
+	// 	power := [2]int32{int32(r.EncoderLeft), int32(r.EncoderRight)}
+	// 	imgui.BeginDisabled()
+	// 	imgui.SliderInt2("##Encoders", &power, 0, 16383)
+	// 	imgui.EndDisabled()
+	// }
 
 	{
 		w.tableRow("Sensors:")
@@ -147,9 +147,9 @@ func (w *reportWindow) draw() {
 	{
 		w.tableRow("Right PID:")
 		if imgui.PlotBeginPlotV("Right##RightPlot", imgui.NewVec2(-1, 200), imgui.PlotFlagsNoLegend|imgui.PlotFlagsNoTitle) {
-			imgui.PlotSetupAxesLimits(0, 1000, 0, 200)
-			imgui.PlotPlotLineFloatPtrIntV("PV##RightPV", w.mouse.RightSpeedMeasurements.Buffer(), 1000, 1, 0, 0, 0, 4)
-			imgui.PlotPlotLineFloatPtrIntV("SP##RightPV", w.mouse.RightSpeedSetpoints.Buffer(), 1000, 1, 0, 0, 0, 4)
+			imgui.PlotSetupAxesLimits(0, 2000, 0, 200)
+			imgui.PlotPlotLineFloatPtrIntV("PV##RightPV", w.mouse.RightSpeedMeasurements.Buffer(), 2000, 1, 0, 0, 0, 4)
+			imgui.PlotPlotLineFloatPtrIntV("SP##RightPV", w.mouse.RightSpeedSetpoints.Buffer(), 2000, 1, 0, 0, 0, 4)
 			imgui.PlotEndPlot()
 		}
 	}
@@ -157,9 +157,9 @@ func (w *reportWindow) draw() {
 	{
 		w.tableRow("Left PID:")
 		if imgui.PlotBeginPlotV("Left##LeftPlot", imgui.NewVec2(-1, 200), imgui.PlotFlagsNoLegend|imgui.PlotFlagsNoTitle) {
-			imgui.PlotSetupAxesLimits(0, 1000, 0, 200)
-			imgui.PlotPlotLineFloatPtrIntV("PV##LeftPV", w.mouse.LeftSpeedMeasurements.Buffer(), 1000, 1, 0, 0, 0, 4)
-			imgui.PlotPlotLineFloatPtrIntV("SP##LeftPV", w.mouse.LeftSpeedSetpoints.Buffer(), 1000, 1, 0, 0, 0, 4)
+			imgui.PlotSetupAxesLimits(0, 2000, 0, 200)
+			imgui.PlotPlotLineFloatPtrIntV("PV##LeftPV", w.mouse.LeftSpeedMeasurements.Buffer(), 2000, 1, 0, 0, 0, 4)
+			imgui.PlotPlotLineFloatPtrIntV("SP##LeftPV", w.mouse.LeftSpeedSetpoints.Buffer(), 2000, 1, 0, 0, 0, 4)
 			imgui.PlotEndPlot()
 		}
 	}

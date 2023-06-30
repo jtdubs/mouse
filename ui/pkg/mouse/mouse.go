@@ -48,15 +48,12 @@ func New() *Mouse {
 		status:                 "Closed",
 		portOpen:               false,
 		messages:               NewRing[string](*scrollback),
-		LeftSpeedSetpoints:     NewRing[float32](1000),
-		LeftSpeedMeasurements:  NewRing[float32](1000),
-		RightSpeedSetpoints:    NewRing[float32](1000),
-		RightSpeedMeasurements: NewRing[float32](1000),
-		report: Report{
-			BatteryVolts: 0,
-			Mode:         0,
-		},
-		sendChan: make(chan Command, 1),
+		LeftSpeedSetpoints:     NewRing[float32](2000),
+		LeftSpeedMeasurements:  NewRing[float32](2000),
+		RightSpeedSetpoints:    NewRing[float32](2000),
+		RightSpeedMeasurements: NewRing[float32](2000),
+		report:                 Report{},
+		sendChan:               make(chan Command, 1),
 	}
 }
 

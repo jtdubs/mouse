@@ -39,36 +39,36 @@ func (w *commandWindow) draw() {
 	imgui.TableSetupColumnV("##ControlsLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
 	imgui.TableSetupColumnV("##ControlsControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
 
-	// Mode
-	{
-		mode := int32(r.Mode)
-		w.tableRow("Function:")
-		imgui.ComboStr("##FSEL", &mode, "Remote\000Wall Sensor\000Error")
-		if mode != int32(r.Mode) {
-			w.mouse.SendCommand(mouse.NewModeCommand(uint8(mode)))
-		}
-	}
+	// // Mode
+	// {
+	// 	mode := int32(r.Mode)
+	// 	w.tableRow("Function:")
+	// 	imgui.ComboStr("##FSEL", &mode, "Remote\000Wall Sensor\000Error")
+	// 	if mode != int32(r.Mode) {
+	// 		w.mouse.SendCommand(mouse.NewModeCommand(uint8(mode)))
+	// 	}
+	// }
 
-	// LEDs
-	{
-		changed := false
-		onboard, left, right, ir := r.DecodeLEDs()
-		w.tableRow("Status LEDs:")
-		changed = w.drawIconToggleButton("##LeftLED", "led-off-white", "led-on-lightblue", &left) || changed
-		imgui.SameLineV(0, 20)
-		changed = w.drawIconToggleButton("##OnboardLED", "led-off-white", "led-on-orange", &onboard) || changed
-		imgui.SameLineV(0, 20)
-		changed = w.drawIconToggleButton("##RightLED", "led-off-white", "led-on-lightblue", &right) || changed
-		w.tableRow("IR LEDs:")
-		changed = w.drawIconToggleButton("##IR1", "led-off-white", "led-on-red", &ir) || changed
-		imgui.SameLineV(0, 20)
-		changed = w.drawIconToggleButton("##IR2", "led-off-white", "led-on-red", &ir) || changed
-		imgui.SameLineV(0, 20)
-		changed = w.drawIconToggleButton("##IR3", "led-off-white", "led-on-red", &ir) || changed
-		if changed {
-			w.mouse.SendCommand(mouse.NewLEDCommand(onboard, left, right, ir))
-		}
-	}
+	// // LEDs
+	// {
+	// 	changed := false
+	// 	onboard, left, right, ir := r.DecodeLEDs()
+	// 	w.tableRow("Status LEDs:")
+	// 	changed = w.drawIconToggleButton("##LeftLED", "led-off-white", "led-on-lightblue", &left) || changed
+	// 	imgui.SameLineV(0, 20)
+	// 	changed = w.drawIconToggleButton("##OnboardLED", "led-off-white", "led-on-orange", &onboard) || changed
+	// 	imgui.SameLineV(0, 20)
+	// 	changed = w.drawIconToggleButton("##RightLED", "led-off-white", "led-on-lightblue", &right) || changed
+	// 	w.tableRow("IR LEDs:")
+	// 	changed = w.drawIconToggleButton("##IR1", "led-off-white", "led-on-red", &ir) || changed
+	// 	imgui.SameLineV(0, 20)
+	// 	changed = w.drawIconToggleButton("##IR2", "led-off-white", "led-on-red", &ir) || changed
+	// 	imgui.SameLineV(0, 20)
+	// 	changed = w.drawIconToggleButton("##IR3", "led-off-white", "led-on-red", &ir) || changed
+	// 	if changed {
+	// 		w.mouse.SendCommand(mouse.NewLEDCommand(onboard, left, right, ir))
+	// 	}
+	// }
 
 	// Power
 	{
@@ -79,11 +79,11 @@ func (w *commandWindow) draw() {
 		w.drawIconToggleButton("##LinkPowers", "link", "link-off", &w.linkedPowers)
 		imgui.SameLineV(0, 20)
 		if w.linkedPowers {
-			if imgui.InputIntV("rpm", &left, 1, 10, imgui.InputTextFlagsEnterReturnsTrue) {
+			if imgui.InputIntV("power", &left, 1, 10, imgui.InputTextFlagsEnterReturnsTrue) {
 				w.mouse.SendCommand(mouse.NewPowerCommand(int16(left), int16(left)))
 			}
 		} else {
-			if imgui.InputInt2V("rpm", &values, imgui.InputTextFlagsEnterReturnsTrue) {
+			if imgui.InputInt2V("power", &values, imgui.InputTextFlagsEnterReturnsTrue) {
 				w.mouse.SendCommand(mouse.NewPowerCommand(int16(values[0]), int16(values[1])))
 			}
 		}
