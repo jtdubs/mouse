@@ -26,7 +26,6 @@ type Report struct {
 	// PositionSetpointLeft  float32
 	// PositionSetpointRight float32
 	RTCMicros uint32
-	Padding   [1]uint8
 }
 
 func (r *Report) DecodeSensors() (left, center, right uint16) {

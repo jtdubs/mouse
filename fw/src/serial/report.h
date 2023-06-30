@@ -44,7 +44,6 @@ typedef struct {
   struct {
     uint32_t micros;
   } rtc;
-  uint8_t padding[1];
 } report_t;
 #pragma pack(pop)
 

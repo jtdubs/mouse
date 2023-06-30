@@ -3,14 +3,13 @@ package mouse
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/binary"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
@@ -28,7 +27,12 @@ type Mouse struct {
 	Recording              bool
 	status                 string
 	portOpen               bool
-	buffer                 []byte
+	serialBuffer           []byte
+	frameBuffer            []byte
+	readState              readState
+	readLength             uint8
+	readIndex              uint8
+	checksum               uint8
 	index                  int
 	messages               *Ring[string]
 	LeftSpeedSetpoints     *Ring[float32]
@@ -43,7 +47,8 @@ type Mouse struct {
 
 func New() *Mouse {
 	return &Mouse{
-		buffer:                 make([]byte, 256),
+		serialBuffer:           make([]byte, 256),
+		frameBuffer:            make([]byte, 256),
 		index:                  0,
 		status:                 "Closed",
 		portOpen:               false,
@@ -171,18 +176,12 @@ func (m *Mouse) read(ctx context.Context, port serial.Port, signalChan <-chan os
 	go func() {
 		defer close(closedChan)
 		for {
-			n, err := port.Read(m.buffer[m.index:])
+			n, err := port.Read(m.serialBuffer)
 			if err != nil {
 				return
 			}
-			if n == 0 {
-				continue
-			}
-			m.index += n
-			if end := bytes.IndexRune(m.buffer[:m.index], '\n'); end >= 0 {
-				m.decode(string(m.buffer[:end]))
-				copy(m.buffer, m.buffer[end+1:m.index])
-				m.index -= end + 1
+			for _, b := range m.serialBuffer[:n] {
+				m.receiveByte(b)
 			}
 		}
 	}()
@@ -201,11 +200,17 @@ func (m *Mouse) read(ctx context.Context, port serial.Port, signalChan <-chan os
 			}
 			return true
 		case cmd := <-m.sendChan:
-			var b bytes.Buffer
-			binary.Write(&b, binary.LittleEndian, cmd)
-			c := fmt.Sprintf("[%s]\n", base64.StdEncoding.EncodeToString(b.Bytes()))
-			m.messages.Add(fmt.Sprintf("Sending %q", c))
-			port.Write([]byte(c))
+			var buf bytes.Buffer
+			buf.WriteByte(0x02)
+			buf.WriteByte(byte(binary.Size(cmd)))
+			binary.Write(&buf, binary.LittleEndian, cmd)
+			var checksum byte
+			for _, b := range buf.Bytes()[2:] {
+				checksum += b
+			}
+			buf.WriteByte(-checksum)
+			m.messages.Add(fmt.Sprintf("Sending %q", hex.EncodeToString(buf.Bytes())))
+			port.Write(buf.Bytes())
 		case <-closedChan:
 			return true
 		}
@@ -227,37 +232,58 @@ func (m *Mouse) sleep(ctx context.Context, signalChan <-chan os.Signal) bool {
 	}
 }
 
-func (m *Mouse) decode(message string) {
-	if !strings.HasPrefix(message, "[") || !strings.HasSuffix(message, "]") {
-		m.messages.Add(fmt.Sprintf("Invalid message: %q", message))
-		return
-	}
+type readState uint8
 
-	bs, err := base64.StdEncoding.DecodeString(message[1 : len(message)-1])
-	if err != nil {
-		m.messages.Add(fmt.Sprintf("Error decoding %q: %v", message, err))
-		return
-	}
+const (
+	Idle readState = iota
+	Length
+	Data
+	Checksum
+)
 
-	if len(bs) != binary.Size(Report{}) {
-		m.messages.Add(fmt.Sprintf("Incorrect size for %q: got %v, want %v", message, len(bs), binary.Size(Report{})))
-		return
-	}
-
-	if err := binary.Read(bytes.NewReader(bs), binary.LittleEndian, &m.report); err != nil {
-		m.messages.Add(fmt.Sprintf("Error reading %q: %v", message, err))
-		return
-	}
-
-	m.LeftSpeedSetpoints.Add(m.report.SpeedSetpointLeft)
-	m.LeftSpeedMeasurements.Add(m.report.SpeedMeasuredLeft)
-	m.RightSpeedSetpoints.Add(m.report.SpeedSetpointRight)
-	m.RightSpeedMeasurements.Add(m.report.SpeedMeasuredRight)
-
-	if m.Recording {
-		for k, v := range m.report.Symbols() {
-			m.vcd.SetValue(uint64(m.report.RTCMicros), v, k)
+func (m *Mouse) receiveByte(value byte) {
+	switch m.readState {
+	case Idle:
+		if value == 0x02 {
+			m.readState = Length
+			m.checksum = 0
+			m.readIndex = 0
 		}
-		m.vcdTime += 10
+	case Length:
+		m.readLength = value
+		m.readState = Data
+		if value == 0 || value > 64 {
+			m.readState = Idle
+		}
+	case Data:
+		m.frameBuffer[m.readIndex] = value
+		m.checksum += value
+		m.readIndex++
+		if m.readIndex == m.readLength {
+			m.readState = Checksum
+		}
+	case Checksum:
+		m.readState = Idle
+		m.checksum += value
+		if m.checksum == 0 {
+			if m.readLength != uint8(binary.Size(m.report)) {
+				m.messages.Add(fmt.Sprintf("Incorrect size for report: got %v, want %v", m.readLength, binary.Size(Report{})))
+			}
+			if err := binary.Read(bytes.NewReader(m.frameBuffer), binary.LittleEndian, &m.report); err != nil {
+				m.messages.Add(fmt.Sprintf("Error reading report: %v", err))
+			}
+
+			m.LeftSpeedSetpoints.Add(m.report.SpeedSetpointLeft)
+			m.LeftSpeedMeasurements.Add(m.report.SpeedMeasuredLeft)
+			m.RightSpeedSetpoints.Add(m.report.SpeedSetpointRight)
+			m.RightSpeedMeasurements.Add(m.report.SpeedMeasuredRight)
+
+			if m.Recording {
+				for k, v := range m.report.Symbols() {
+					m.vcd.SetValue(uint64(m.report.RTCMicros), v, k)
+				}
+				m.vcdTime += 10
+			}
+		}
 	}
 }

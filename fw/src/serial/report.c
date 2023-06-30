@@ -15,25 +15,12 @@
 #include "platform/rtc.h"
 #include "platform/usart0.h"
 #include "utils/assert.h"
-#include "utils/base64.h"
-
-#define ENCODED_SIZE ((sizeof(report_t) * 4 / 3) + 3)
 
 // The un-encoded and encoded report.
-report_t    report;
-static char report_encoded[ENCODED_SIZE];
+report_t report;
 
 // report_init initializes the report module.
-void report_init() {
-  // Ensure the report_t is a multiple of 3 bytes, as that encodes easily into base64 w/o padding.
-  _Static_assert((sizeof(report_t) % 3) == 0);
-
-  report_encoded[0]                = '[';
-  report_encoded[ENCODED_SIZE - 2] = ']';
-  report_encoded[ENCODED_SIZE - 1] = '\n';
-
-  usart0_set_write_buffer((uint8_t*)report_encoded, ENCODED_SIZE);
-}
+void report_init() {}
 
 // report_send sends the report, if usart0 is ready.
 void report_send() {
@@ -65,7 +52,6 @@ void report_send() {
       // report.leds.ir        = pin_is_set(IR_LEDS);
       report.rtc.micros = rtc_micros();
     }
-    base64_encode((uint8_t*)&report, (uint8_t*)&report_encoded[1], sizeof(report));
-    usart0_write();
+    usart0_write((uint8_t*)&report, sizeof(report_t));
   }
 }

@@ -1,0 +1,78 @@
+#include <avr/interrupt.h>
+#include <avr/io.h>
+#include <stddef.h>
+
+#include "platform/pin.h"
+#include "platform/usart0.h"
+#include "utils/assert.h"
+
+#define MAX_READ_SIZE 64
+
+// Read states
+typedef uint8_t read_state_t;
+#define READ_IDLE 0
+#define READ_LENGTH 1
+#define READ_DATA 2
+#define READ_CHECKSUM 3
+
+// The read buffer and associated state.
+static uint8_t                    usart0_read_buffer[MAX_READ_SIZE];
+static uint8_t                    usart0_read_index;
+static uint8_t                    usart0_read_length;
+static buffer_received_callback_t usart0_read_callback;
+static read_state_t               usart0_read_state;
+static uint8_t                    usart0_read_checksum;
+
+// usart0_disable_receiver disables the USART0 receiver.
+void usart0_disable_receiver() {
+  UCSR0B &= ~(1 << RXEN0);
+}
+
+// usart0_enable_receiver enables the USART0 receiver.
+void usart0_enable_receiver() {
+  assert(ASSERT_USART0_READ + 0, usart0_read_callback != NULL);
+  UCSR0B |= (1 << RXEN0);
+}
+
+// usart0_set_read_callback sets the read callback for USART0.
+void usart0_set_read_callback(buffer_received_callback_t callback) {
+  assert(ASSERT_USART0_READ + 1, callback != NULL);
+
+  usart0_read_callback = callback;
+}
+
+// The USART0 Receive Complete Interrupt.
+ISR(USART_RX_vect, ISR_BLOCK) {
+  uint8_t value = UDR0;
+
+  switch (usart0_read_state) {
+    case READ_IDLE:
+      if (value == START_BYTE) {
+        usart0_read_state    = READ_LENGTH;
+        usart0_read_checksum = 0;
+        usart0_read_index    = 0;
+      }
+      break;
+    case READ_LENGTH:
+      usart0_read_length = value;
+      usart0_read_state  = READ_DATA;
+      if (usart0_read_length == 0 || usart0_read_length > MAX_READ_SIZE) {
+        usart0_read_state = READ_IDLE;
+      }
+      break;
+    case READ_DATA:
+      usart0_read_buffer[usart0_read_index++]  = value;
+      usart0_read_checksum                    += value;
+      if (usart0_read_index == usart0_read_length) {
+        usart0_read_state = READ_CHECKSUM;
+      }
+      break;
+    case READ_CHECKSUM:
+      usart0_read_checksum += value;
+      if (usart0_read_checksum == 0) {
+        usart0_disable_receiver();
+        usart0_read_callback(usart0_read_buffer, usart0_read_length);
+      }
+      usart0_read_state = READ_IDLE;
+  }
+}
