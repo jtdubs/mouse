@@ -43,19 +43,6 @@ func (w *reportWindow) draw() {
 		)
 	}
 
-	{
-		modes := []string{"Remote", "Wall Sensor", "Error", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}
-		imgui.TableNextRow()
-		imgui.TableSetColumnIndex(0)
-		imgui.Text("Mode:")
-		imgui.TableSetColumnIndex(1)
-		if w.mouse.Open() {
-			imgui.Text(modes[r.Mode])
-		} else {
-			imgui.Text("Disconnected")
-		}
-	}
-
 	w.tableRow("Status LEDs:")
 	{
 		onboard, left, right, ir := r.DecodeLEDs()

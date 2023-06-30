@@ -39,7 +39,9 @@
       "math.h": "c",
       "encoders.h": "c",
       "motor.h": "c",
-      "adc.h": "c"
+      "adc.h": "c",
+      "serial.h": "c",
+      "delay_basic.h": "c"
     }
   },
 }

@@ -1,23 +1,30 @@
-#include "modes/mode_remote.h"
+#include "modes/remote.h"
 
-#include "control/position.h"
+#include <util/delay.h>
+
 #include "control/speed.h"
-#include "modes/mode.h"
 #include "platform/motor.h"
 #include "platform/pin.h"
 #include "serial/command.h"
 
-void mode_remote_enter() {
-  mode_enter();
-  position_enable();
-}
+// remote is a mode that allows the robot to be controlled remotely.
+void remote() {
+  pin_clear(LED_BUILTIN);
+  pin_clear(LED_LEFT);
+  pin_clear(LED_RIGHT);
+  pin_clear(IR_LEDS);
+  motor_set_forward_left(true);
+  motor_set_power_left(0);
+  motor_set_forward_right(true);
+  motor_set_power_right(0);
+  speed_enable();
 
-// mode_remote_tick is the remote mode's tick function.
-void mode_remote_tick() {
-  position_update();
+  for (;;) {
+    if (!command_available()) {
+      _delay_ms(10);
+      continue;
+    }
 
-  // If a serial command has been received, process it.
-  if (command_available()) {
     switch (command->type) {
       case COMMAND_SET_LEDS:
         pin_set2(LED_BUILTIN, command->data.leds.builtin > 0);
@@ -36,7 +43,6 @@ void mode_remote_tick() {
         if (!forward_right) {
           right = -right;
         }
-        position_disable();
         speed_disable();
         motor_set_power_left(left);
         motor_set_power_right(right);
@@ -44,22 +50,12 @@ void mode_remote_tick() {
         motor_set_forward_right(forward_right);
         break;
       case COMMAND_SET_SPEED:
-        position_disable();
         speed_enable();
         speed_set_left(command->data.speed.left);
         speed_set_right(command->data.speed.right);
         break;
-      case COMMAND_SET_POSITION:
-        position_enable();
-        position_set_left(command->data.position.left);
-        position_set_right(command->data.position.right);
-        break;
       case COMMAND_SET_SPEED_PID_VARS:
         speed_set_pid_vars(command->data.pid.kp, command->data.pid.ki, command->data.pid.kd);
-        break;
-      case COMMAND_SET_POSITION_PID_VARS:
-        position_set_pid_vars(command->data.pid.kp, command->data.pid.ki, command->data.pid.kd);
-        break;
         break;
       default:
         return;

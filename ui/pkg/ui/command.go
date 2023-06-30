@@ -39,16 +39,6 @@ func (w *commandWindow) draw() {
 	imgui.TableSetupColumnV("##ControlsLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
 	imgui.TableSetupColumnV("##ControlsControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
 
-	// Mode
-	{
-		mode := int32(r.Mode)
-		w.tableRow("Function:")
-		imgui.ComboStr("##FSEL", &mode, "Remote\000Wall Sensor\000Error")
-		if mode != int32(r.Mode) {
-			w.mouse.SendCommand(mouse.NewModeCommand(uint8(mode)))
-		}
-	}
-
 	// LEDs
 	{
 		changed := false

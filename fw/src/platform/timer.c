@@ -7,7 +7,11 @@
 
 #include "platform/pin.h"
 
-static volatile bool timer_elapsed;
+timer_callback_t timer_callback;
+
+void timer_set_callback(timer_callback_t callback) {
+  timer_callback = callback;
+}
 
 // timer_init initializes timer.
 void timer_init() {
@@ -39,21 +43,11 @@ void timer_init() {
   wdt_enable(WDTO_15MS);
 }
 
-// timer_wait waits for timer to elapse.
-inline void timer_wait() {
-  pin_clear(PROBE_TICK);
-
-  // Wait with interrupts enabled for the next timer interrupt,
-  // then disable interrupts and clear the timer.
-  while (!timer_elapsed) {};
-  timer_elapsed = false;
-
-  wdt_reset();
-  pin_set(PROBE_TICK);
-}
-
 ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
-  timer_elapsed = true;
+  wdt_reset();
+  if (timer_callback) {
+    timer_callback();
+  }
 }
 
 ISR(TIMER0_COMPB_vect, ISR_BLOCK) {

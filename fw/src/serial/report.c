@@ -4,10 +4,7 @@
 #include <stdint.h>
 #include <util/atomic.h>
 
-#include "control/position.h"
 #include "control/speed.h"
-#include "modes/mode.h"
-#include "modes/mode_wall.h"
 #include "platform/adc.h"
 #include "platform/encoders.h"
 #include "platform/motor.h"
@@ -27,7 +24,6 @@ void report_send() {
   if (usart0_write_ready()) {
     ATOMIC_BLOCK(ATOMIC_FORCEON) {
       report.battery_volts        = adc_battery_voltage >> 2;
-      report.mode                 = mode_active;
       report.sensors.left         = adc_sensor_left;
       report.sensors.center       = adc_sensor_center;
       report.sensors.right        = adc_sensor_right;

@@ -9,7 +9,6 @@ import (
 
 type Report struct {
 	BatteryVolts       uint8
-	Mode               uint8
 	Sensors            uint32
 	LEDs               uint8
 	EncoderLeft        int32
@@ -41,7 +40,6 @@ func (r *Report) DecodeLEDs() (onboard, left, right, ir bool) {
 func (r *Report) Variables() []vcd.VcdDataType {
 	return []vcd.VcdDataType{
 		vcd.NewVariable("adc_battery_voltage", "wire", 10),
-		vcd.NewVariable("mode_active", "wire", 8),
 		vcd.NewVariable("adc_sensor_center", "wire", 10),
 		vcd.NewVariable("adc_sensor_left", "wire", 10),
 		vcd.NewVariable("adc_sensor_right", "wire", 10),
@@ -65,7 +63,6 @@ func (r *Report) Symbols() map[string]string {
 
 	return map[string]string{
 		"adc_battery_voltage":  fmt.Sprint(r.BatteryVolts * 2),
-		"mode_active":          fmt.Sprint(r.Mode),
 		"adc_sensor_center":    fmt.Sprint(sc),
 		"adc_sensor_left":      fmt.Sprint(sl),
 		"adc_sensor_right":     fmt.Sprint(sr),
