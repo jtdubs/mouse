@@ -1,8 +1,6 @@
 Firmware:
 - Pull out lots of constants into some sort header file or something i dunno
 - Motion planning for linear motion with accel / coast / decel phases?
-- On tick, update approximate x,y,theta based on encoder deltas
-- Add x,y,theta to the report
 
 plans:
 - move to position with risidual speed, completes once position is reached
