@@ -4,14 +4,15 @@
 
 #include "control/pid.h"
 
-// The measured motor speeds via encoder period in microseconds.
-extern float speed_measured_left;
-extern float speed_measured_right;
+// Measured motor speeds.
+extern float speed_measured_left;   // rpms
+extern float speed_measured_right;  // rpms
 
-// The speeds setpoints via encoder period in microsecond
-extern float speed_setpoint_left;
-extern float speed_setpoint_right;
+// Speed setpoints.
+extern float speed_setpoint_left;   // rpms
+extern float speed_setpoint_right;  // rpms
 
+// PI controllers for the motors.
 extern pi_t speed_pi_left;
 extern pi_t speed_pi_right;
 
@@ -21,4 +22,4 @@ void speed_update();
 
 void speed_set(float left, float right);
 
-void speed_set_pi_vars(float kp, float ki);
+void speed_set_pi_coefficients(float kp, float ki);

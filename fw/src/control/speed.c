@@ -11,17 +11,21 @@
 #include "platform/pin.h"
 #include "platform/rtc.h"
 
-#define MAX_ENCODER_PERIOD 9000
+// The lowest achievable motor speed in RPMs.
 #define MIN_SPEED 30.0
 
-// Motor speeds in RPM.
+// Low-pass filter alpha, for smoothing the encoder deltas.
+#define LOW_PASS_ALPHA 0.1
+
+// Motor speeds in RPMs.
 float speed_measured_left;
 float speed_measured_right;
 
-// Motor speed setpoints.
+// Motor speed setpointss in RPMs.
 float speed_setpoint_left;
 float speed_setpoint_right;
 
+// PI controllers for the motors.
 pi_t speed_pi_left;
 pi_t speed_pi_right;
 
@@ -36,8 +40,6 @@ void speed_init() {
   speed_pi_right.kp  = 0.3;
   speed_pi_right.ki  = 0.04;
 }
-
-#define LOW_PASS_ALPHA 0.1
 
 void speed_read() {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
@@ -83,7 +85,7 @@ void speed_set(float left, float right) {
   speed_setpoint_right = right;
 }
 
-void speed_set_pi_vars(float kp, float ki) {
+void speed_set_pi_coefficients(float kp, float ki) {
   speed_pi_left.kp = kp;
   speed_pi_left.ki = ki;
 
