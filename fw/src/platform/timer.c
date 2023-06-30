@@ -2,7 +2,6 @@
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
-#include <avr/sleep.h>
 #include <avr/wdt.h>
 #include <stdbool.h>
 
@@ -38,9 +37,6 @@ void timer_init() {
 
   // Enable watchdog timer to reset the device if the timer interrupt fails.
   wdt_enable(WDTO_15MS);
-
-  // Enable sleeping
-  // set_sleep_mode(SLEEP_MODE_IDLE);
 }
 
 // timer_wait waits for timer to elapse.
@@ -49,9 +45,7 @@ inline void timer_wait() {
 
   // Wait with interrupts enabled for the next timer interrupt,
   // then disable interrupts and clear the timer.
-  while (!timer_elapsed) {
-    // sleep_mode();
-  };
+  while (!timer_elapsed) {};
   timer_elapsed = false;
 
   wdt_reset();
