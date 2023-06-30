@@ -19,6 +19,8 @@ type Report struct {
 	SpeedMeasuredRight float32
 	SpeedSetpointLeft  float32
 	SpeedSetpointRight float32
+	PositionDistance   float32
+	PositionTheta      float32
 	RTCMicros          uint32
 }
 
@@ -51,9 +53,8 @@ func (r *Report) Variables() []vcd.VcdDataType {
 		vcd.NewVariable("speed_measured_right", "wire", 32),
 		vcd.NewVariable("speed_setpoint_left", "wire", 32),
 		vcd.NewVariable("speed_setpoint_right", "wire", 32),
-		// vcd.NewVariable("speed_kp", "wire", 32),
-		// vcd.NewVariable("speed_ki", "wire", 32),
-		// vcd.NewVariable("speed_kd", "wire", 32),
+		vcd.NewVariable("position_distance", "wire", 32),
+		vcd.NewVariable("position_theta", "wire", 32),
 		vcd.NewVariable("rtc_now", "wire", 32),
 	}
 }
@@ -74,9 +75,8 @@ func (r *Report) Symbols() map[string]string {
 		"speed_measured_right": fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedMeasuredRight))),
 		"speed_setpoint_left":  fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedSetpointLeft))),
 		"speed_setpoint_right": fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedSetpointRight))),
-		// "speed_kp":             fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedKp))),
-		// "speed_ki":             fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedKi))),
-		// "speed_kd":             fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedKd))),
-		"rtc_now": fmt.Sprint(r.RTCMicros),
+		"position_distance":    fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.PositionDistance))),
+		"position_theta":       fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.PositionTheta))),
+		"rtc_now":              fmt.Sprint(r.RTCMicros),
 	}
 }

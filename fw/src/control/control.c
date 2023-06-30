@@ -1,6 +1,7 @@
 #include "control.h"
 
 #include "control/plan.h"
+#include "control/position.h"
 #include "control/speed.h"
 #include "platform/encoders.h"
 #include "platform/motor.h"
@@ -10,12 +11,14 @@
 void control_init() {
   plan_init();
   speed_init();
+  position_init();
   timer_set_callback(control_update);
 }
 
 void control_update() {
   pin_set(PROBE_TICK);
   speed_read();
+  position_read();
   encoders_update();
 
   switch (current_plan.type) {

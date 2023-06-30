@@ -81,6 +81,14 @@ func (w *reportWindow) draw() {
 	}
 
 	{
+		w.tableRow("Position:")
+		measured := [2]float32{r.PositionDistance, r.PositionTheta}
+		imgui.BeginDisabled()
+		imgui.InputFloat2("##Position", &measured)
+		imgui.EndDisabled()
+	}
+
+	{
 		w.tableRow("Speed:")
 		measured := [2]float32{r.SpeedMeasuredLeft, r.SpeedMeasuredRight}
 		setpoint := [2]float32{r.SpeedSetpointLeft, r.SpeedSetpointRight}
@@ -114,12 +122,6 @@ func (w *reportWindow) draw() {
 		imgui.SliderInt3("##Encoders", &sensors, 0, 1023)
 		imgui.EndDisabled()
 	}
-
-	// {
-	// 	w.tableRow("Speed PID:")
-	// 	pid := [3]float32{r.SpeedKp, r.SpeedKi, r.SpeedKd}
-	// 	imgui.SliderFloat3("##SpeedPID", &pid, 0, 1)
-	// }
 
 	{
 		height := imgui.ContentRegionAvail().Y / 2

@@ -47,6 +47,10 @@ typedef struct {
     float setpoint_right;
   } speed;
   struct {
+    float distance;
+    float theta;
+  } position;
+  struct {
     uint32_t micros;
   } rtc;
 } report_t;

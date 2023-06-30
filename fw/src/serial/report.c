@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <util/atomic.h>
 
+#include "control/position.h"
 #include "control/speed.h"
 #include "platform/adc.h"
 #include "platform/encoders.h"
@@ -39,6 +40,8 @@ void report_send() {
       report.speed.measured_right = speed_measured_right;
       report.speed.setpoint_left  = speed_setpoint_left;
       report.speed.setpoint_right = speed_setpoint_right;
+      report.position.distance    = position_distance;
+      report.position.theta       = position_theta;
       report.rtc.micros           = rtc_micros();
     }
     usart0_write((uint8_t*)&report, sizeof(report_t));
