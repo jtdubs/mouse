@@ -43,65 +43,55 @@ func (w *reportWindow) draw() {
 		)
 	}
 
-	// {
-	// 	modes := []string{"Remote", "Wall Sensor", "Error", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}
-	// 	imgui.TableNextRow()
-	// 	imgui.TableSetColumnIndex(0)
-	// 	imgui.Text("Mode:")
-	// 	imgui.TableSetColumnIndex(1)
-	// 	if w.mouse.Open() {
-	// 		imgui.Text(modes[r.Mode])
-	// 	} else {
-	// 		imgui.Text("Disconnected")
-	// 	}
-	// }
+	{
+		modes := []string{"Remote", "Wall Sensor", "Error", "Unknown #3", "Unknown #4", "Unknown #5", "Unknown #6", "Unknown #7"}
+		imgui.TableNextRow()
+		imgui.TableSetColumnIndex(0)
+		imgui.Text("Mode:")
+		imgui.TableSetColumnIndex(1)
+		if w.mouse.Open() {
+			imgui.Text(modes[r.Mode])
+		} else {
+			imgui.Text("Disconnected")
+		}
+	}
 
-	// w.tableRow("Status LEDs:")
-	// {
-	// 	onboard, left, right, ir := r.DecodeLEDs()
-	// 	if left {
-	// 		w.drawIcon("led-on-lightblue")
-	// 	} else {
-	// 		w.drawIcon("led-off-white")
-	// 	}
-	// 	imgui.SameLineV(0, 20)
-	// 	if onboard {
-	// 		w.drawIcon("led-on-orange")
-	// 	} else {
-	// 		w.drawIcon("led-off-white")
-	// 	}
-	// 	imgui.SameLineV(0, 20)
-	// 	if right {
-	// 		w.drawIcon("led-on-lightblue")
-	// 	} else {
-	// 		w.drawIcon("led-off-white")
-	// 	}
+	w.tableRow("Status LEDs:")
+	{
+		onboard, left, right, ir := r.DecodeLEDs()
+		if left {
+			w.drawIcon("led-on-lightblue")
+		} else {
+			w.drawIcon("led-off-white")
+		}
+		imgui.SameLineV(0, 20)
+		if onboard {
+			w.drawIcon("led-on-orange")
+		} else {
+			w.drawIcon("led-off-white")
+		}
+		imgui.SameLineV(0, 20)
+		if right {
+			w.drawIcon("led-on-lightblue")
+		} else {
+			w.drawIcon("led-off-white")
+		}
 
-	// 	w.tableRow("IR LEDs:")
-	// 	if ir {
-	// 		w.drawIcon("led-on-red")
-	// 		imgui.SameLineV(0, 20)
-	// 		w.drawIcon("led-on-red")
-	// 		imgui.SameLineV(0, 20)
-	// 		w.drawIcon("led-on-red")
-	// 	} else {
-	// 		w.drawIcon("led-off-white")
-	// 		imgui.SameLineV(0, 20)
-	// 		w.drawIcon("led-off-white")
-	// 		imgui.SameLineV(0, 20)
-	// 		w.drawIcon("led-off-white")
-	// 	}
-	// }
-
-	// {
-	// 	w.tableRow("Position:")
-	// 	measured := [2]float32{r.PositionMeasuredLeft, r.PositionMeasuredRight}
-	// 	setpoint := [2]float32{r.PositionSetpointLeft, r.PositionSetpointRight}
-	// 	imgui.BeginDisabled()
-	// 	imgui.SliderFloat2("mm (setpoint)##PositionSetpoint", &setpoint, 0, 16.0*180.0)
-	// 	imgui.SliderFloat2("mm (measured)##PositionMeasured", &measured, 0, 16.0*180.0)
-	// 	imgui.EndDisabled()
-	// }
+		w.tableRow("IR LEDs:")
+		if ir {
+			w.drawIcon("led-on-red")
+			imgui.SameLineV(0, 20)
+			w.drawIcon("led-on-red")
+			imgui.SameLineV(0, 20)
+			w.drawIcon("led-on-red")
+		} else {
+			w.drawIcon("led-off-white")
+			imgui.SameLineV(0, 20)
+			w.drawIcon("led-off-white")
+			imgui.SameLineV(0, 20)
+			w.drawIcon("led-off-white")
+		}
+	}
 
 	{
 		w.tableRow("Speed:")
@@ -138,11 +128,11 @@ func (w *reportWindow) draw() {
 		imgui.EndDisabled()
 	}
 
-	{
-		w.tableRow("Speed PID:")
-		pid := [3]float32{r.SpeedKp, r.SpeedKi, r.SpeedKd}
-		imgui.SliderFloat3("##SpeedPID", &pid, 0, 1)
-	}
+	// {
+	// 	w.tableRow("Speed PID:")
+	// 	pid := [3]float32{r.SpeedKp, r.SpeedKi, r.SpeedKd}
+	// 	imgui.SliderFloat3("##SpeedPID", &pid, 0, 1)
+	// }
 
 	{
 		height := imgui.ContentRegionAvail().Y / 2
