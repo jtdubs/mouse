@@ -47,7 +47,6 @@ void speed_read() {
                         + ((1.0 - LOW_PASS_ALPHA) * speed_measured_left);
     speed_measured_right = (LOW_PASS_ALPHA * ((float)encoders_right_delta) * 50.0)  //
                          + ((1.0 - LOW_PASS_ALPHA) * speed_measured_right);
-    encoders_update();
   }
 }
 

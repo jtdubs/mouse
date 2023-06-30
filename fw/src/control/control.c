@@ -15,6 +15,7 @@ void control_init() {
 void control_update() {
   pin_set(PROBE_TICK);
   speed_read();
+  encoders_update();
 
   switch (current_plan.type) {
     case PLAN_IDLE:
