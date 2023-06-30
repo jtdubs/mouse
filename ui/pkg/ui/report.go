@@ -152,22 +152,27 @@ func (w *reportWindow) draw() {
 	}
 
 	{
-		w.tableRow("Left PID:")
-		imgui.BeginDisabled()
-		imgui.PlotLinesFloatPtrV("PV##LeftPV", w.mouse.LeftSpeedMeasurements.Buffer(), 1000, 0, "", 0, 200, imgui.NewVec2(0, 80), 4)
-		imgui.PlotLinesFloatPtrV("SP##LeftSP", w.mouse.LeftSpeedSetpoints.Buffer(), 1000, 0, "", 0, 200, imgui.NewVec2(0, 80), 4)
-		imgui.EndDisabled()
+		w.tableRow("Right PID:")
+		if imgui.PlotBeginPlotV("Right##RightPlot", imgui.NewVec2(-1, 200), imgui.PlotFlagsNoLegend|imgui.PlotFlagsNoTitle) {
+			imgui.PlotSetupAxesLimits(0, 1000, 0, 200)
+			imgui.PlotPlotLineFloatPtrIntV("PV##RightPV", w.mouse.RightSpeedMeasurements.Buffer(), 1000, 1, 0, 0, 0, 4)
+			imgui.PlotPlotLineFloatPtrIntV("SP##RightPV", w.mouse.RightSpeedSetpoints.Buffer(), 1000, 1, 0, 0, 0, 4)
+			imgui.PlotEndPlot()
+		}
 	}
 
 	{
-		w.tableRow("Right PID:")
-		imgui.BeginDisabled()
-		imgui.PlotLinesFloatPtrV("PV##RightPV", w.mouse.RightSpeedMeasurements.Buffer(), 1000, 0, "", 0, 200, imgui.NewVec2(0, 80), 4)
-		imgui.PlotLinesFloatPtrV("SP##RightSP", w.mouse.RightSpeedSetpoints.Buffer(), 1000, 0, "", 0, 200, imgui.NewVec2(0, 80), 4)
-		imgui.EndDisabled()
+		w.tableRow("Left PID:")
+		if imgui.PlotBeginPlotV("Left##LeftPlot", imgui.NewVec2(-1, 200), imgui.PlotFlagsNoLegend|imgui.PlotFlagsNoTitle) {
+			imgui.PlotSetupAxesLimits(0, 1000, 0, 200)
+			imgui.PlotPlotLineFloatPtrIntV("PV##LeftPV", w.mouse.LeftSpeedMeasurements.Buffer(), 1000, 1, 0, 0, 0, 4)
+			imgui.PlotPlotLineFloatPtrIntV("SP##LeftPV", w.mouse.LeftSpeedSetpoints.Buffer(), 1000, 1, 0, 0, 0, 4)
+			imgui.PlotEndPlot()
+		}
 	}
 
 	imgui.EndTable()
+
 	imgui.End()
 }
 
