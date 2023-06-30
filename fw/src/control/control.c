@@ -36,6 +36,16 @@ void control_update() {
       }
       speed_update();
       break;
+    case PLAN_LINEAR_MOTION:
+      if (!current_plan.implemented) {
+        current_plan.implemented = true;
+      }
+      break;
+    case PLAN_ROTATIONAL_MOTION:
+      if (!current_plan.implemented) {
+        current_plan.implemented = true;
+      }
+      break;
     default:
       break;
   }
