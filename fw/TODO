@@ -1,6 +1,5 @@
 Board:
 - Why are the speed measurements sooooo noisy on the board?
-- Why does it seem like opening the serial port reset the board??
 
 Modes:
 - Calibration mode:

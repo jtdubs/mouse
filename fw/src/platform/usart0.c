@@ -21,7 +21,7 @@ void usart0_init() {
          | (1 << U2X0)     // Double speed mode.
          | (0 << MPCM0);   // Disable multi-processor.
   UCSR0B = (1 << RXCIE0)   // Disable RX Complete Interrupt.
-         | (0 << TXCIE0)   // Enable TX Complete Interrupt.
+         | (0 << TXCIE0)   // Disable TX Complete Interrupt.
          | (0 << UDRIE0)   // Disable Data Register Empty Interrupt.
          | (0 << RXEN0)    // Disable receiver.
          | (1 << TXEN0)    // Enable transmitter.

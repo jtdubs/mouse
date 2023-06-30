@@ -115,16 +115,9 @@ func (w *reportWindow) draw() {
 
 	{
 		w.tableRow("Motor:")
-		left, right := r.DecodeMotorForward()
 		power := [2]int32{int32(r.MotorPowerLeft), int32(r.MotorPowerRight)}
-		if !left {
-			power[0] = -power[0]
-		}
-		if !right {
-			power[1] = -power[1]
-		}
 		imgui.BeginDisabled()
-		imgui.SliderInt2("##Motor", &power, 512, 512)
+		imgui.SliderInt2("##Motor", &power, -512, 512)
 		imgui.EndDisabled()
 	}
 

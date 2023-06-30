@@ -5,10 +5,11 @@
 
 #define COMMAND_SET_MODE 0
 #define COMMAND_SET_LEDS 1
-#define COMMAND_SET_SPEED 2
-#define COMMAND_SET_POSITION 3
-#define COMMAND_SET_SPEED_PID_VARS 4
-#define COMMAND_SET_POSITION_PID_VARS 5
+#define COMMAND_SET_POWER 2
+#define COMMAND_SET_SPEED 3
+#define COMMAND_SET_POSITION 4
+#define COMMAND_SET_SPEED_PID_VARS 5
+#define COMMAND_SET_POSITION_PID_VARS 6
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.
@@ -27,6 +28,11 @@ typedef struct {
       bool    ir;
       uint8_t padding[10];
     } leds;
+    struct {
+      int16_t left;
+      int16_t right;
+      uint8_t padding[10];
+    } power;
     struct {
       float   left;
       float   right;

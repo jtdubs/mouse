@@ -43,10 +43,8 @@ void report_send() {
       report.mode                 = mode_active;
       report.encoders.left        = encoder_left;
       report.encoders.right       = encoder_right;
-      report.motors.forward_left  = motor_forward_left;
-      report.motors.forward_right = motor_forward_right;
-      report.motors.power_left    = motor_power_left;
-      report.motors.power_right   = motor_power_right;
+      report.motors.left          = motor_forward_left ? motor_power_left : -motor_power_left;
+      report.motors.right         = motor_forward_right ? motor_power_right : -motor_power_right;
       report.speed.measured_left  = speed_measured_left;
       report.speed.measured_right = speed_measured_right;
       report.speed.setpoint_left  = speed_setpoint_left;

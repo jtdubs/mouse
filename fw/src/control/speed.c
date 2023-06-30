@@ -99,7 +99,6 @@ static float calculate_speed_left() {
     now     = rtc_micros();
   }
   if ((now - time0) > MAX_ENCODER_PERIOD) {
-    pin_toggle(PROBE_1);
     return 0;
   }
   uint32_t dt = time0 - time1;
@@ -122,7 +121,6 @@ static float calculate_speed_right() {
     now     = rtc_micros();
   }
   if ((now - time0) > MAX_ENCODER_PERIOD) {
-    pin_toggle(PROBE_2);
     return 0;
   }
   uint32_t dt = time0 - time1;

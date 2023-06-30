@@ -40,7 +40,7 @@ void timer_init() {
   wdt_enable(WDTO_15MS);
 
   // Enable sleeping
-  set_sleep_mode(SLEEP_MODE_IDLE);
+  // set_sleep_mode(SLEEP_MODE_IDLE);
 }
 
 // timer_wait waits for timer to elapse.
@@ -50,7 +50,7 @@ inline void timer_wait() {
   // Wait with interrupts enabled for the next timer interrupt,
   // then disable interrupts and clear the timer.
   while (!timer_elapsed) {
-    sleep_mode();
+    // sleep_mode();
   };
   timer_elapsed = false;
 

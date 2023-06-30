@@ -9,6 +9,7 @@ import (
 
 type commandWindow struct {
 	mouse           *mouse.Mouse
+	linkedPowers    bool
 	linkedSpeeds    bool
 	linkedPositions bool
 }
@@ -16,6 +17,7 @@ type commandWindow struct {
 func newCommandWindow(m *mouse.Mouse) *commandWindow {
 	return &commandWindow{
 		mouse:           m,
+		linkedPowers:    true,
 		linkedSpeeds:    true,
 		linkedPositions: true,
 	}
@@ -65,6 +67,25 @@ func (w *commandWindow) draw() {
 		changed = w.drawIconToggleButton("##IR3", "led-off-white", "led-on-red", &ir) || changed
 		if changed {
 			w.mouse.SendCommand(mouse.NewLEDCommand(onboard, left, right, ir))
+		}
+	}
+
+	// Power
+	{
+		left, right := int32(r.MotorPowerLeft), int32(r.MotorPowerRight)
+		values := [2]int32{left, right}
+
+		w.tableRow("Power:")
+		w.drawIconToggleButton("##LinkPowers", "link", "link-off", &w.linkedPowers)
+		imgui.SameLineV(0, 20)
+		if w.linkedPowers {
+			if imgui.InputIntV("rpm", &left, 1, 10, imgui.InputTextFlagsEnterReturnsTrue) {
+				w.mouse.SendCommand(mouse.NewPowerCommand(int16(left), int16(left)))
+			}
+		} else {
+			if imgui.InputInt2V("rpm", &values, imgui.InputTextFlagsEnterReturnsTrue) {
+				w.mouse.SendCommand(mouse.NewPowerCommand(int16(values[0]), int16(values[1])))
+			}
 		}
 	}
 

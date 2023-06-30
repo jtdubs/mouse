@@ -30,6 +30,8 @@ void encoders_init() {
 
 // Left Encoder Clock
 ISR(INT0_vect, ISR_BLOCK) {
+  pin_toggle(PROBE_1);
+
   static uint8_t left_last_b = 0;
 
   // Read the encoder pins (b and clk) and calculate a.
@@ -55,6 +57,8 @@ ISR(INT0_vect, ISR_BLOCK) {
 
 // Right Encoder Clock
 ISR(INT1_vect, ISR_BLOCK) {
+  pin_toggle(PROBE_2);
+
   static uint8_t right_last_b = 0;
 
   // Read the encoder pins (b and clk) and calculate a.

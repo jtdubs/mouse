@@ -14,9 +14,8 @@ type Report struct {
 	LEDs                      uint8
 	EncoderLeft               uint16
 	EncoderRight              uint16
-	MotorPowerLeft            uint16
-	MotorPowerRight           uint16
-	MotorForward              uint8
+	MotorPowerLeft            int16
+	MotorPowerRight           int16
 	SpeedMeasuredLeft         float32
 	SpeedMeasuredRight        float32
 	SpeedSetpointLeft         float32
@@ -27,7 +26,7 @@ type Report struct {
 	// PositionSetpointLeft  float32
 	// PositionSetpointRight float32
 	RTCMicros uint32
-	// Padding               [2]uint8
+	Padding   [1]uint8
 }
 
 func (r *Report) DecodeSensors() (left, center, right uint16) {
@@ -45,12 +44,6 @@ func (r *Report) DecodeLEDs() (onboard, left, right, ir bool) {
 	return
 }
 
-func (r *Report) DecodeMotorForward() (left, right bool) {
-	left = (r.MotorForward & 0x01) == 1
-	right = ((r.MotorForward >> 1) & 0x01) == 1
-	return
-}
-
 func (r *Report) Variables() []vcd.VcdDataType {
 	return []vcd.VcdDataType{
 		vcd.NewVariable("adc_battery_voltage", "wire", 10),
@@ -62,8 +55,6 @@ func (r *Report) Variables() []vcd.VcdDataType {
 		vcd.NewVariable("encoder_right", "wire", 16),
 		vcd.NewVariable("motor_power_left", "wire", 16),
 		vcd.NewVariable("motor_power_right", "wire", 16),
-		vcd.NewVariable("motor_forward_left", "wire", 1),
-		vcd.NewVariable("motor_forward_right", "wire", 1),
 		vcd.NewVariable("speed_measured_left", "wire", 32),
 		vcd.NewVariable("speed_measured_right", "wire", 32),
 		vcd.NewVariable("speed_setpoint_left", "wire", 32),
@@ -81,12 +72,6 @@ func (r *Report) Variables() []vcd.VcdDataType {
 
 func (r *Report) Symbols() map[string]string {
 	sl, sc, sr := r.DecodeSensors()
-	lf, rf := r.DecodeMotorForward()
-
-	bool2Int := map[bool]int{
-		true:  1,
-		false: 0,
-	}
 
 	return map[string]string{
 		"adc_battery_voltage":  fmt.Sprint(r.BatteryVolts * 2),
@@ -98,8 +83,6 @@ func (r *Report) Symbols() map[string]string {
 		"encoder_right":        fmt.Sprint(r.EncoderRight),
 		"motor_power_left":     fmt.Sprint(r.MotorPowerLeft),
 		"motor_power_right":    fmt.Sprint(r.MotorPowerRight),
-		"motor_forward_left":   fmt.Sprint(bool2Int[lf]),
-		"motor_forward_right":  fmt.Sprint(bool2Int[rf]),
 		"speed_measured_left":  fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedMeasuredLeft))),
 		"speed_measured_right": fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedMeasuredRight))),
 		"speed_setpoint_left":  fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedSetpointLeft))),

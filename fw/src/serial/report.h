@@ -25,11 +25,8 @@ typedef struct {
     uint16_t right;
   } encoders;
   struct {
-    uint16_t power_left;
-    uint16_t power_right;
-    uint8_t  forward_left  : 1;
-    uint8_t  forward_right : 1;
-    uint8_t  padding       : 6;
+    int16_t left;
+    int16_t right;
   } motors;
   struct {
     float measured_left;
@@ -47,7 +44,7 @@ typedef struct {
   struct {
     uint32_t micros;
   } rtc;
-  // uint8_t padding[2];
+  uint8_t padding[1];
 } report_t;
 #pragma pack(pop)
 
