@@ -41,8 +41,8 @@ void report_send() {
     ATOMIC_BLOCK(ATOMIC_FORCEON) {
       // report.battery_volts        = adc_battery_voltage >> 2;
       // report.mode                 = mode_active;
-      // report.encoders.left        = encoder_left;
-      // report.encoders.right       = encoder_right;
+      report.encoders.left        = encoders_left;
+      report.encoders.right       = encoders_right;
       report.motors.left          = motor_forward_left ? motor_power_left : -motor_power_left;
       report.motors.right         = motor_forward_right ? motor_power_right : -motor_power_right;
       report.speed.measured_left  = speed_measured_left;

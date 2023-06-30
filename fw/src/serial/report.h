@@ -20,10 +20,10 @@ typedef struct {
   //   uint8_t ir      : 1;
   //   uint8_t padding : 4;
   // } leds;
-  // struct {
-  //   uint16_t left;
-  //   uint16_t right;
-  // } encoders;
+  struct {
+    int32_t left;
+    int32_t right;
+  } encoders;
   struct {
     int16_t left;
     int16_t right;
@@ -44,7 +44,7 @@ typedef struct {
   struct {
     uint32_t micros;
   } rtc;
-  // uint8_t padding[1];
+  uint8_t padding[1];
 } report_t;
 #pragma pack(pop)
 

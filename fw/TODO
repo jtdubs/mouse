@@ -1,6 +1,3 @@
-Board:
-- Why are the speed measurements sooooo noisy on the board?
-
 Modes:
 - Calibration mode:
   - Place mouse in center of box facing wall, let sensor calibrate against the "wall is present" values

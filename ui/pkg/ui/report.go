@@ -121,13 +121,13 @@ func (w *reportWindow) draw() {
 		imgui.EndDisabled()
 	}
 
-	// {
-	// 	w.tableRow("Encoders:")
-	// 	power := [2]int32{int32(r.EncoderLeft), int32(r.EncoderRight)}
-	// 	imgui.BeginDisabled()
-	// 	imgui.SliderInt2("##Encoders", &power, 0, 16383)
-	// 	imgui.EndDisabled()
-	// }
+	{
+		w.tableRow("Encoders:")
+		encoders := [2]int32{r.EncoderLeft, r.EncoderRight}
+		imgui.BeginDisabled()
+		imgui.InputInt2("##Encoders", &encoders)
+		imgui.EndDisabled()
+	}
 
 	{
 		w.tableRow("Sensors:")

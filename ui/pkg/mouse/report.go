@@ -12,8 +12,8 @@ type Report struct {
 	// Mode                      uint8
 	// Sensors                   uint32
 	// LEDs                      uint8
-	// EncoderLeft               uint16
-	// EncoderRight              uint16
+	EncoderLeft               int32
+	EncoderRight              int32
 	MotorPowerLeft            int16
 	MotorPowerRight           int16
 	SpeedMeasuredLeft         float32
@@ -26,7 +26,7 @@ type Report struct {
 	// PositionSetpointLeft  float32
 	// PositionSetpointRight float32
 	RTCMicros uint32
-	// Padding   [1]uint8
+	Padding   [1]uint8
 }
 
 func (r *Report) DecodeSensors() (left, center, right uint16) {
@@ -53,8 +53,8 @@ func (r *Report) Variables() []vcd.VcdDataType {
 		// vcd.NewVariable("adc_sensor_center", "wire", 10),
 		// vcd.NewVariable("adc_sensor_left", "wire", 10),
 		// vcd.NewVariable("adc_sensor_right", "wire", 10),
-		// vcd.NewVariable("encoder_left", "wire", 16),
-		// vcd.NewVariable("encoder_right", "wire", 16),
+		vcd.NewVariable("encoder_left", "wire", 32),
+		vcd.NewVariable("encoder_right", "wire", 32),
 		vcd.NewVariable("motor_power_left", "wire", 16),
 		vcd.NewVariable("motor_power_right", "wire", 16),
 		vcd.NewVariable("speed_measured_left", "wire", 32),
@@ -81,8 +81,8 @@ func (r *Report) Symbols() map[string]string {
 		// "adc_sensor_center":    fmt.Sprint(sc),
 		// "adc_sensor_left":      fmt.Sprint(sl),
 		// "adc_sensor_right":     fmt.Sprint(sr),
-		// "encoder_left":         fmt.Sprint(r.EncoderLeft),
-		// "encoder_right":        fmt.Sprint(r.EncoderRight),
+		"encoder_left":         fmt.Sprint(r.EncoderLeft),
+		"encoder_right":        fmt.Sprint(r.EncoderRight),
 		"motor_power_left":     fmt.Sprint(r.MotorPowerLeft),
 		"motor_power_right":    fmt.Sprint(r.MotorPowerRight),
 		"speed_measured_left":  fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.SpeedMeasuredLeft))),
