@@ -37,7 +37,6 @@ void usart0_enable_receiver() {
 // usart0_set_read_callback sets the read callback for USART0.
 void usart0_set_read_callback(buffer_received_callback_t callback) {
   assert(ASSERT_USART0_READ + 1, callback != NULL);
-
   usart0_read_callback = callback;
 }
 
@@ -47,6 +46,7 @@ ISR(USART_RX_vect, ISR_BLOCK) {
 
   switch (usart0_read_state) {
     case READ_IDLE:
+      // If the start byte is received, transition to the next state.
       if (value == START_BYTE) {
         usart0_read_state    = READ_LENGTH;
         usart0_read_checksum = 0;
@@ -54,6 +54,8 @@ ISR(USART_RX_vect, ISR_BLOCK) {
       }
       break;
     case READ_LENGTH:
+      // Validate the length and transition to the next state.
+      // Fall back to the idle state if the length is invalid.
       usart0_read_length = value;
       usart0_read_state  = READ_DATA;
       if (usart0_read_length == 0 || usart0_read_length > MAX_READ_SIZE) {
@@ -61,6 +63,8 @@ ISR(USART_RX_vect, ISR_BLOCK) {
       }
       break;
     case READ_DATA:
+      // Receive the next byte and update the checksum.
+      // Transition to the next state after all bytes are received.
       usart0_read_buffer[usart0_read_index++]  = value;
       usart0_read_checksum                    += value;
       if (usart0_read_index == usart0_read_length) {
@@ -68,8 +72,12 @@ ISR(USART_RX_vect, ISR_BLOCK) {
       }
       break;
     case READ_CHECKSUM:
+      // Receive the checksum, validate it, and return to the idle state.
       usart0_read_checksum += value;
       if (usart0_read_checksum == 0) {
+        // If the command is valid:
+        // - Disable the receiver (there's nowhere to store the next command).
+        // - Invoke the callback.
         usart0_disable_receiver();
         usart0_read_callback(usart0_read_buffer, usart0_read_length);
       }

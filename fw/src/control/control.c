@@ -7,6 +7,7 @@
 #include "serial/report.h"
 
 void control_init() {
+  plan_init();
   speed_init();
   timer_set_callback(control_update);
 }

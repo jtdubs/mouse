@@ -47,14 +47,17 @@ void usart0_write(uint8_t *buffer, uint8_t length) {
 ISR(USART_UDRE_vect, ISR_BLOCK) {
   switch (usart0_write_state) {
     case WRITE_START:
+      // Write the start byte and transition to the next state.
       UDR0               = START_BYTE;
       usart0_write_state = WRITE_LENGTH;
       break;
     case WRITE_LENGTH:
+      // Write the length byte and transition to the next state.
       UDR0               = usart0_write_length;
       usart0_write_state = WRITE_DATA;
       break;
     case WRITE_DATA:
+      // Write the next byte, update the checksum, and transition after all bytes are written.
       uint8_t byte           = usart0_write_buffer[usart0_write_index++];
       UDR0                   = byte;
       usart0_write_checksum += byte;
@@ -63,11 +66,14 @@ ISR(USART_UDRE_vect, ISR_BLOCK) {
       }
       break;
     case WRITE_CHECKSUM:
+      // Write the checksum, disable the interrupt (nothing left to send), and transition to the next state.
       UDR0                = -usart0_write_checksum;
       usart0_write_state  = WRITE_IDLE;
       UCSR0B             &= ~(1 << UDRIE0);
       break;
     case WRITE_IDLE:
+      // Should never happens, as the CHECKSUM state disables the interrupt.
+      // But if it does, just turn off the interrupt again...
       UCSR0B &= ~(1 << UDRIE0);
       break;
   }

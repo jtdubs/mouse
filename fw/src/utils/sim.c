@@ -1,5 +1,6 @@
 #include "utils/sim.h"
 
+// Define the CPU model, frequency and voltages.
 AVR_MCU(F_CPU, "atmega328p");
 AVR_MCU_VOLTAGES(5000, 5000, 5000);
 

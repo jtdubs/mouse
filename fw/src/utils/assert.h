@@ -2,16 +2,15 @@
 
 #include <stdint.h>
 
-void _assert_failed(uint8_t error);
-
 // Assert ID ranges.
-#define ASSERT_MODE 0x10
+#define ASSERT_MAIN 0x10
 #define ASSERT_USART0_WRITE 0x20
 #define ASSERT_USART0_READ 0x30
 #define ASSERT_COMMAND 0x40
 #define ASSERT_PLAN 0x50
 
 #if !defined(NOASSERT)
+// assert asserts that the expression is true, and does not return if it is false.
 #define assert(n, e)     \
   {                      \
     if (!(e)) {          \
@@ -22,3 +21,6 @@ void _assert_failed(uint8_t error);
 #else
 #define assert(n, e)
 #endif
+
+// _assert_failed is a permanent error state.
+void _assert_failed(uint8_t error);

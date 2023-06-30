@@ -5,16 +5,21 @@
 #include "modes/remote.h"
 #include "platform/platform.h"
 #include "serial/serial.h"
+#include "utils/assert.h"
 
 int main() {
-  platform_init();
-  serial_init();
-  plan_init();
-  control_init();
+  platform_init();  // hardware peripherals
+  serial_init();    // serial report/command system
+  control_init();   // control planning
+
+  // enable interrupts
   sei();
 
-  // we are remote-controlled
+  // remote control mode (never returns)
   remote();
+
+  // seriously... it should never return.
+  _assert_failed(ASSERT_MAIN + 0);
 
   return 0;
 }

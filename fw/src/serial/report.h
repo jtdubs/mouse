@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #pragma pack(push, 1)
-// report_t represents mouse status report.
+// report_t represents a mouse status report.
 typedef struct {
   uint8_t battery_volts;
   struct {

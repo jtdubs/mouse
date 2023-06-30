@@ -16,7 +16,7 @@ typedef struct {
       int16_t left;
       int16_t right;
     } power;
-    // PLAN_FIXED_SPEEED
+    // PLAN_FIXED_SPEED
     struct {
       float left;
       float right;
