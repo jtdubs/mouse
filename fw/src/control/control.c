@@ -23,21 +23,21 @@ void control_update() {
   encoders_update();
 
   switch (current_plan.type) {
-    case PLAN_IDLE:
+    case PLAN_TYPE_IDLE:
       if (current_plan.state == PLAN_STATE_SCHEDULED) {
         motor_set(0, 0);
         plan_set_state(PLAN_STATE_UNDERWAY);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
-    case PLAN_FIXED_POWER:
+    case PLAN_TYPE_FIXED_POWER:
       if (current_plan.state == PLAN_STATE_SCHEDULED) {
         motor_set(current_plan.data.power.left, current_plan.data.power.right);
         plan_set_state(PLAN_STATE_UNDERWAY);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
-    case PLAN_FIXED_SPEED:
+    case PLAN_TYPE_FIXED_SPEED:
       if (current_plan.state == PLAN_STATE_SCHEDULED) {
         speed_set(current_plan.data.speed.left, current_plan.data.speed.right);
         plan_set_state(PLAN_STATE_UNDERWAY);
@@ -45,7 +45,7 @@ void control_update() {
       }
       speed_update();
       break;
-    case PLAN_LINEAR_MOTION:
+    case PLAN_TYPE_LINEAR_MOTION:
       switch (current_plan.state) {
         case PLAN_STATE_SCHEDULED:
           linear_start(current_plan.data.linear.distance, current_plan.data.linear.exit_speed, 9810.0 * 0.2 /* 0.2g */);
@@ -61,7 +61,7 @@ void control_update() {
           break;
       }
       break;
-    case PLAN_ROTATIONAL_MOTION:
+    case PLAN_TYPE_ROTATIONAL_MOTION:
       if (current_plan.state == PLAN_STATE_SCHEDULED) {
         plan_set_state(PLAN_STATE_UNDERWAY);
         plan_set_state(PLAN_STATE_IMPLEMENTED);

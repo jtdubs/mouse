@@ -10,7 +10,7 @@ volatile plan_t current_plan;
 
 // plan_init initializes the plan module.
 void plan_init() {
-  current_plan.type = PLAN_IDLE;
+  current_plan.type = PLAN_TYPE_IDLE;
   plan_set_state(PLAN_STATE_SCHEDULED);
 }
 

@@ -12,10 +12,10 @@
 #include "platform/rtc.h"
 
 // The lowest achievable motor speed in RPMs.
-#define MIN_SPEED 30.0
+constexpr float MIN_SPEED = 30.0;
 
 // Low-pass filter alpha, for smoothing the encoder deltas.
-#define LOW_PASS_ALPHA 0.1
+constexpr float LOW_PASS_ALPHA = 0.1;
 
 // Motor speeds in RPMs.
 float speed_measured_left;

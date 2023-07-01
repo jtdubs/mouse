@@ -12,17 +12,21 @@
 #include <avr/io.h>
 #include <stdint.h>
 
+#include "control/plan.h"
+
 // SIM_COMMAND_REG is used to send commands to simavr.
 #define SIM_COMMAND_REG GPIOR0
 
 // SIM_CONSOLE_REG is used to send log data to simavr.
 #define SIM_CONSOLE_REG GPIOR1
 
-// SIMAVR_CMD_WATCH_PLAN is a custom command that notifies
-// the simulator an interesting plan event is occuring.
-#define SIMAVR_CMD_WATCH_PLAN 0x10
+typedef enum : uint8_t {
+  // SIMAVR_CMD_WATCH_PLAN is a custom command that notifies
+  // the simulator an interesting plan event is occuring.
+  SIMAVR_CMD_WATCH_PLAN = 0x10,
+} simavr_command_t;
 
-inline void sim_watch_plan([[maybe_unused]] uint8_t state) {
+inline void sim_watch_plan([[maybe_unused]] plan_state_t state) {
 #if defined(DEBUG)
   SIM_COMMAND_REG = SIMAVR_CMD_WATCH_PLAN | state;
 #endif

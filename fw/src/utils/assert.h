@@ -10,12 +10,13 @@
 
 #include <stdint.h>
 
-// Assert ID ranges.
-#define ASSERT_MAIN 0x10
-#define ASSERT_USART0_WRITE 0x20
-#define ASSERT_USART0_READ 0x30
-#define ASSERT_COMMAND 0x40
-#define ASSERT_PLAN 0x50
+enum assert_range_t : uint8_t {
+  ASSERT_MAIN         = 0x10,
+  ASSERT_USART0_WRITE = 0x20,
+  ASSERT_USART0_READ  = 0x30,
+  ASSERT_COMMAND      = 0x40,
+  ASSERT_PLAN         = 0x50,
+};
 
 #if !defined(NOASSERT)
 // assert asserts that the expression is true, and does not return if it is false.

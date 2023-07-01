@@ -8,11 +8,12 @@
 #define MAX_READ_SIZE 64
 
 // Read states
-typedef uint8_t read_state_t;
-#define READ_IDLE 0
-#define READ_LENGTH 1
-#define READ_DATA 2
-#define READ_CHECKSUM 3
+typedef enum : uint8_t {
+  READ_IDLE,
+  READ_LENGTH,
+  READ_DATA,
+  READ_CHECKSUM,
+} read_state_t;
 
 // The read buffer and associated state.
 static uint8_t                    usart0_read_buffer[MAX_READ_SIZE];

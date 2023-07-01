@@ -24,10 +24,10 @@ void report_init() {}
 void report_send() {
   if (usart0_write_ready()) {
     ATOMIC_BLOCK(ATOMIC_FORCEON) {
-      report.battery_volts        = adc_battery_voltage >> 2;
-      report.sensors.left         = adc_sensor_left;
-      report.sensors.center       = adc_sensor_center;
-      report.sensors.right        = adc_sensor_right;
+      report.battery_volts        = adc_values[ADC_BATTERY_VOLTAGE] >> 2;
+      report.sensors.left         = adc_values[ADC_SENSOR_LEFT];
+      report.sensors.center       = adc_values[ADC_SENSOR_CENTER];
+      report.sensors.right        = adc_values[ADC_SENSOR_RIGHT];
       report.leds.onboard         = pin_is_set(LED_BUILTIN);
       report.leds.left            = pin_is_set(LED_LEFT);
       report.leds.right           = pin_is_set(LED_RIGHT);

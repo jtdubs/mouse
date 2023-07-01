@@ -4,13 +4,13 @@
 
 #include "platform/encoders.h"
 
-#define WHEEL_BASE 90.0
-#define WHEEL_DIAMETER 32.0
-#define ENCODER_TICKS_PER_ROTATION 240
+constexpr float WHEEL_BASE                 = 90.0;
+constexpr float WHEEL_DIAMETER             = 32.0;
+constexpr float ENCODER_TICKS_PER_ROTATION = 240;
 
-static const float WheelCircumference = M_PI * WHEEL_DIAMETER;
-static const float TickDistance       = WheelCircumference / ENCODER_TICKS_PER_ROTATION;
-static const float TickDTheta         = TickDistance / WHEEL_BASE;
+constexpr float WheelCircumference = M_PI * WHEEL_DIAMETER;
+constexpr float TickDistance       = WheelCircumference / ENCODER_TICKS_PER_ROTATION;
+constexpr float TickDTheta         = TickDistance / WHEEL_BASE;
 
 float position_distance;  // in mms
 float position_theta;     // in radians

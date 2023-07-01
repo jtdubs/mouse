@@ -3,29 +3,27 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef uint8_t plan_state_t;
+typedef enum : uint8_t {
+  PLAN_STATE_SCHEDULED,
+  PLAN_STATE_UNDERWAY,
+  PLAN_STATE_IMPLEMENTED,
+} plan_state_t;
 
-#define PLAN_STATE_SCHEDULED 0
-#define PLAN_STATE_UNDERWAY 1
-#define PLAN_STATE_IMPLEMENTED 2
-
-// Plan is "implemented" as soon as the board is put into an idle state.
-#define PLAN_IDLE 0
-
-// Plan is "implemented" as soon as the fixed power mode is set.
-#define PLAN_FIXED_POWER 1
-
-// Plan is "implemented" as soon as the fixed speed mode is set.
-#define PLAN_FIXED_SPEED 2
-
-// Plan is "implemented" once the linear motion has been completed.
-#define PLAN_LINEAR_MOTION 3
-
-// Plan is "implemented" once the rotational motion has been completed.
-#define PLAN_ROTATIONAL_MOTION 4
+typedef enum : uint8_t {
+  // Plan is "implemented" as soon as the board is put into an idle state.
+  PLAN_TYPE_IDLE,
+  // Plan is "implemented" as soon as the fixed power mode is set.
+  PLAN_TYPE_FIXED_POWER,
+  // Plan is "implemented" as soon as the fixed speed mode is set.
+  PLAN_TYPE_FIXED_SPEED,
+  // Plan is "implemented" once the linear motion has been completed.
+  PLAN_TYPE_LINEAR_MOTION,
+  // Plan is "implemented" once the rotational motion has been completed.
+  PLAN_TYPE_ROTATIONAL_MOTION,
+} plan_type_t;
 
 typedef struct {
-  uint8_t      type;
+  plan_type_t  type;
   plan_state_t state;
   union {
     // PLAN_FIXED_POWER

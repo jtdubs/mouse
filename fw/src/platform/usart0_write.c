@@ -6,12 +6,13 @@
 #include "utils/assert.h"
 
 // Write states
-typedef uint8_t write_state_t;
-#define WRITE_IDLE 0
-#define WRITE_START 1
-#define WRITE_LENGTH 2
-#define WRITE_DATA 3
-#define WRITE_CHECKSUM 4
+typedef enum : uint8_t {
+  WRITE_IDLE,
+  WRITE_START,
+  WRITE_LENGTH,
+  WRITE_DATA,
+  WRITE_CHECKSUM,
+} write_state_t;
 
 // The write buffer and associated state.
 static uint8_t      *usart0_write_buffer;

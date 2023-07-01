@@ -1,5 +1,17 @@
 #include "platform/pin.h"
 
+const pin_t RIGHT_DIR   = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)};
+const pin_t LEFT_PWM    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(1)};
+const pin_t RIGHT_PWM   = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(2)};
+const pin_t LED_LEFT    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(3)};
+const pin_t IR_LEDS     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(4)};
+const pin_t LED_BUILTIN = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(5)};
+const pin_t PROBE_TICK  = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(3)};
+const pin_t PROBE_1     = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(4)};
+const pin_t PROBE_2     = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(5)};
+const pin_t LED_RIGHT   = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(6)};
+const pin_t LEFT_DIR    = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(7)};
+
 // pin_init initializes all pins.
 void pin_init() {
   // Set all output pins to output mode.

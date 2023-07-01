@@ -26,7 +26,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define START_BYTE 0x02
+constexpr uint8_t START_BYTE = 0x02;
 
 // usart0_init initializes USART0.
 void usart0_init();

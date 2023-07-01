@@ -19,19 +19,17 @@ typedef struct {
   uint8_t           mask;
 } pin_t;
 
-// clang-format off
-#define RIGHT_DIR   ((pin_t){.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)})
-#define LEFT_PWM    ((pin_t){.port = &PORTB, .ddr = &DDRB, .mask = _BV(1)})
-#define RIGHT_PWM   ((pin_t){.port = &PORTB, .ddr = &DDRB, .mask = _BV(2)})
-#define LED_LEFT    ((pin_t){.port = &PORTB, .ddr = &DDRB, .mask = _BV(3)})
-#define IR_LEDS     ((pin_t){.port = &PORTB, .ddr = &DDRB, .mask = _BV(4)})
-#define LED_BUILTIN ((pin_t){.port = &PORTB, .ddr = &DDRB, .mask = _BV(5)})
-#define PROBE_TICK  ((pin_t){.port = &PORTC, .ddr = &DDRC, .mask = _BV(3)})
-#define PROBE_1     ((pin_t){.port = &PORTC, .ddr = &DDRC, .mask = _BV(4)})
-#define PROBE_2     ((pin_t){.port = &PORTC, .ddr = &DDRC, .mask = _BV(5)})
-#define LED_RIGHT   ((pin_t){.port = &PORTD, .ddr = &DDRD, .mask = _BV(6)})
-#define LEFT_DIR    ((pin_t){.port = &PORTD, .ddr = &DDRD, .mask = _BV(7)})
-// clang-format on
+extern const pin_t RIGHT_DIR;
+extern const pin_t LEFT_PWM;
+extern const pin_t RIGHT_PWM;
+extern const pin_t LED_LEFT;
+extern const pin_t IR_LEDS;
+extern const pin_t LED_BUILTIN;
+extern const pin_t PROBE_TICK;
+extern const pin_t PROBE_1;
+extern const pin_t PROBE_2;
+extern const pin_t LED_RIGHT;
+extern const pin_t LEFT_DIR;
 
 // pin_init initializes all pins.
 void pin_init();

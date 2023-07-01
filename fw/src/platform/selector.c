@@ -17,7 +17,7 @@ uint8_t selector_update() {
   // Read the selector voltage.
   uint8_t v;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    v = adc_selector >> 2;
+    v = adc_values[ADC_SELECTOR] >> 2;
   }
 
   if (v > 180) {

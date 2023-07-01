@@ -18,16 +18,18 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define COMMAND_SET_LEDS 0
-#define COMMAND_PLAN_POWER 1
-#define COMMAND_PLAN_SPEED 2
-#define COMMAND_PLAN_LINEAR 3
-#define COMMAND_PLAN_EXECUTE 4
+typedef enum : uint8_t {
+  COMMAND_SET_LEDS,
+  COMMAND_PLAN_POWER,
+  COMMAND_PLAN_SPEED,
+  COMMAND_PLAN_LINEAR,
+  COMMAND_PLAN_EXECUTE,
+} command_type_t;
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.
 typedef struct {
-  uint8_t type;
+  command_type_t type;
   union {
     struct {
       bool builtin;

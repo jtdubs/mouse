@@ -23,8 +23,8 @@ void remote() {
   pin_clear(LED_RIGHT);
   pin_clear(IR_LEDS);
 
-  plan_submit_and_wait(                          //
-      &(plan_t){.type       = PLAN_FIXED_POWER,  //
+  plan_submit_and_wait(                               //
+      &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,  //
                 .data.power = {0, 0}});
 
   for (;;) {
@@ -41,19 +41,19 @@ void remote() {
         break;
       case COMMAND_PLAN_POWER:
         remote_enqueue(  //
-            &(plan_t){.type       = PLAN_FIXED_POWER,
+            &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,
                       .data.power = {.left  = command->data.power.left,  //
                                      .right = command->data.power.right}});
         break;
       case COMMAND_PLAN_SPEED:
         remote_enqueue(  //
-            &(plan_t){.type       = PLAN_FIXED_SPEED,
+            &(plan_t){.type       = PLAN_TYPE_FIXED_SPEED,
                       .data.speed = {.left  = command->data.speed.left,  //
                                      .right = command->data.speed.right}});
         break;
       case COMMAND_PLAN_LINEAR:
         remote_enqueue(  //
-            &(plan_t){.type        = PLAN_LINEAR_MOTION,
+            &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,
                       .data.linear = {.distance   = command->data.linear.distance,  //
                                       .exit_speed = command->data.linear.exit_speed}});
         break;
