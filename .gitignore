@@ -1,1 +1,4 @@
 *.dwf3work
+*.fst
+*.vcd
+build/

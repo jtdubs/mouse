@@ -2,5 +2,8 @@
   "[plaintext]": {
     // "editor.lineHeight": 0.6,
     // "editor.fontSize": 64
-  }
+  },
+  "go.toolsEnvVars": {
+    "GOOS": "linux",
+  },
 }

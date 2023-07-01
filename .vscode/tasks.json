@@ -2,54 +2,186 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Launch Simavr",
-      "command": "/usr/bin/simavr",
+      "label": "Build Firmware",
+      "command": "/usr/bin/make",
       "type": "shell",
-      "isBackground": true,
       "args": [
-        "-m",
-        "atmega328p",
-        "-f",
-        "16000000",
-        "-g",
-        "-v",
-        "${workspaceFolder}/fw/build/debug/cmouse.elf"
+        "all"
       ],
       "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/fw"
+      },
+      "group": "none",
+    },
+    {
+      "label": "Clean",
+      "command": "/usr/bin/make",
+      "type": "shell",
+      "args": [
+        "clean"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/fw"
+      },
+      "group": "none"
+    },
+    {
+      "label": "Run Simulator",
+      "command": "/usr/local/go/bin/go",
+      "options": {
+        "cwd": "${workspaceFolder}/sim"
+      },
+      "args": [
+        "run",
+        ".",
+        "--gdb",
+        "--firmware",
+        "${workspaceFolder}/fw/build/debug/mouse.elf"
+      ],
+      "dependsOn": [
+        "Build"
+      ],
+      "type": "shell",
+      "isBackground": true,
+      "problemMatcher": [
         {
+          "background": {
+            "beginsPattern": ".",
+            "endsPattern": ".",
+          },
           "pattern": [
             {
-              "regexp": ".",
+              "regexp": "$gcc",
               "file": 1,
               "location": 2,
               "message": 3
             }
-          ],
-          "background": {
-            "beginsPattern": ".",
-            "endsPattern": "."
-          }
+          ]
         }
       ],
       "presentation": {
-        "reveal": "always"
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
       },
-      "group": "build"
+      "group": "none"
     },
     {
-      "label": "Kill Simavr",
+      "label": "Kill Simulator",
       "command": "/usr/bin/killall",
       "type": "shell",
       "args": [
-        "simavr",
+        "-e",
+        "sim",
       ],
       "problemMatcher": [
-        "$tsc"
+        "$gcc"
       ],
       "presentation": {
-        "reveal": "always"
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
       },
-      "group": "build"
-    }
+      "group": "none"
+    },
+    {
+      "label": "Upload",
+      "command": "/usr/bin/make",
+      "type": "shell",
+      "args": [
+        "upload"
+      ],
+      "dependsOn": [
+        "Build"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/fw"
+      },
+      "group": "none"
+    },
+    {
+      "label": "Run Remote (Board)",
+      "command": "/usr/local/go/bin/go",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/remote"
+      },
+      "args": [
+        "run",
+        ".",
+        "--port",
+        "/dev/ttyNano"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
+    {
+      "label": "Run Remote (Sim)",
+      "command": "/usr/local/go/bin/go",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/remote"
+      },
+      "args": [
+        "run",
+        ".",
+        "--port",
+        "/tmp/simavr-uart0"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "group": "none"
+    },
   ]
 }

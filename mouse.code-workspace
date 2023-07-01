@@ -1,26 +1,8 @@
 {
   "folders": [
     {
-      "path": "fw"
+      "path": "."
     },
-    {
-      "path": "sim"
-    },
-    {
-      "path": "remote"
-    },
-    {
-      "path": "icons"
-    },
-    {
-      "path": "fonts"
-    },
-    {
-      "path": "docs"
-    },
-    {
-      "path": "toolchain"
-    }
   ],
   "settings": {
     "files.associations": {

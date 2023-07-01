@@ -1,6 +1,6 @@
 .PHONY: all release debug clean upload sim simattach size
 
-AVR_BIN=/opt/avr-gcc-12.1.0-x64-linux/bin
+AVR_BIN=/opt/avr-toolchain/bin
 
 GCC = $(AVR_BIN)/avr-gcc
 OBJCOPY = $(AVR_BIN)/avr-objcopy

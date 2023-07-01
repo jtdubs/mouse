@@ -1,20 +1,44 @@
 {
   "configurations": [
     {
-      "name": "Simavr",
+      "name": "Debug Firmware",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/fw/build/debug/cmouse.elf",
-      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/fw/build/debug/mouse.elf",
+      "cwd": "${workspaceFolder}/sim",
       "externalConsole": false,
       "stopAtEntry": true,
       "stopAtConnect": true,
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/avr-gdb",
+      "miDebuggerPath": "/opt/avr-toolchain/bin/avr-gdb",
       "miDebuggerServerAddress": "localhost:1234",
-      "preLaunchTask": "Launch Simavr",
-      "postDebugTask": "Kill Simavr",
-      "serverLaunchTimeout": 4000
+      "serverLaunchTimeout": 4000,
+      "preLaunchTask": "Run Simulator",
+      "postDebugTask": "Kill Simulator"
     },
+    {
+      "name": "Debug Simulator",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/sim",
+      "cwd": "${workspaceFolder}/sim",
+      "args": [
+        "--firmware",
+        "${workspaceFolder}/fw/build/debug/mouse.elf"
+      ]
+    },
+    {
+      "name": "Debug Remote",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/remote",
+      "cwd": "${workspaceFolder}/remote",
+      "args": [
+        "--port",
+        "/tmp/simavr-uart0"
+      ],
+    }
   ]
 }
