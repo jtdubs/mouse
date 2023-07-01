@@ -4,7 +4,7 @@ import (
 	"math"
 
 	imgui "github.com/AllenDang/cimgui-go"
-	"github.com/jtdubs/mouse/ui/pkg/mouse"
+	"github.com/jtdubs/mouse/remote/pkg/mouse"
 )
 
 type commandWindow struct {
