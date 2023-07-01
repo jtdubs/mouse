@@ -28,18 +28,15 @@
 typedef struct {
   uint8_t type;
   union {
-    uint8_t padding[8];
     struct {
-      bool    builtin;
-      bool    left;
-      bool    right;
-      bool    ir;
-      uint8_t padding[4];
+      bool builtin;
+      bool left;
+      bool right;
+      bool ir;
     } leds;
     struct {
       int16_t left;
       int16_t right;
-      uint8_t padding[4];
     } power;
     struct {
       float left;

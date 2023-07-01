@@ -7,7 +7,6 @@ type Command interface {
 type LEDCommand struct {
 	Type                     uint8
 	Builtin, Left, Right, IR bool
-	Padding                  [4]uint8
 }
 
 func NewLEDCommand(builtin, left, right, ir bool) LEDCommand {
@@ -25,7 +24,6 @@ func (c LEDCommand) isCommand() bool { return true }
 type PowerPlanCommand struct {
 	Type        uint8
 	Left, Right int16
-	Padding     [4]uint8
 }
 
 func NewPowerPlanCommand(left, right int16) PowerPlanCommand {
