@@ -58,9 +58,9 @@ func (w *toolbarWindow) drawToolbar() {
 	imgui.SameLine()
 	imgui.BeginDisabledV(w.sim.State != sim.Paused)
 	if w.toolbarButton("SimSkip", "skip-forward") {
-		currentPlanState := w.sim.Symbols.Symbols["current_plan"].ReadU16()
+		currentPlanState := w.sim.PlanState
 		w.sim.StepUntil(func() bool {
-			return w.sim.Symbols.Symbols["current_plan"].ReadU16() != currentPlanState
+			return w.sim.PlanState != currentPlanState
 		})
 	}
 	if imgui.IsItemHovered() {

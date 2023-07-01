@@ -20,11 +20,24 @@ import (
 	"log"
 	"reflect"
 	"unsafe"
+
+	"github.com/mattn/go-pointer"
 )
 
 var (
 	firmwarePath = flag.String("firmware", "", "Firmware to load")
 	gdbEnabled   = flag.Bool("gdb", false, "Enable GDB")
+)
+
+const CommandWatchPlan uint8 = 0x10
+
+type PlanState uint8
+
+const (
+	PlanScheduled PlanState = iota
+	PlanUnderway
+	PlanImplemented
+	PlanStateCount
 )
 
 type State int
@@ -47,6 +60,7 @@ type Sim struct {
 	pty            C.uart_pty_t
 	Mouse          *Mouse
 	Maze           *Maze
+	PlanState      PlanState
 }
 
 func New() *Sim {
@@ -134,6 +148,10 @@ func (s *Sim) Init() {
 		log.Fatalf("Failed to initialize AVR")
 	}
 
+	for i := uint8(0); i < uint8(PlanStateCount); i++ {
+		C.avr_cmd_register(s.avr, C.uchar(CommandWatchPlan|i), on_command_cgo, pointer.Save(s))
+	}
+
 	C.avr_load_firmware(s.avr, &f)
 
 	s.Symbols.Init(s, *firmwarePath)
@@ -179,4 +197,9 @@ func (s *Sim) loop(until uint64, breakpointFn func() bool) {
 	}
 
 	s.State = Paused
+}
+
+func (s *Sim) OnCommand(avr *C.avr_t, v uint8, param unsafe.Pointer) C.int {
+	s.PlanState = PlanState(v - CommandWatchPlan)
+	return 0
 }

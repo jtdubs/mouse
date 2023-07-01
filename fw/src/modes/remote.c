@@ -25,7 +25,6 @@ void remote() {
 
   plan_submit_and_wait(                          //
       &(plan_t){.type       = PLAN_FIXED_POWER,  //
-                .state      = PLAN_STATE_SCHEDULED,
                 .data.power = {0, 0}});
 
   for (;;) {
@@ -43,21 +42,18 @@ void remote() {
       case COMMAND_PLAN_POWER:
         remote_enqueue(  //
             &(plan_t){.type       = PLAN_FIXED_POWER,
-                      .state      = PLAN_STATE_SCHEDULED,
                       .data.power = {.left  = command->data.power.left,  //
                                      .right = command->data.power.right}});
         break;
       case COMMAND_PLAN_SPEED:
         remote_enqueue(  //
             &(plan_t){.type       = PLAN_FIXED_SPEED,
-                      .state      = PLAN_STATE_SCHEDULED,
                       .data.speed = {.left  = command->data.speed.left,  //
                                      .right = command->data.speed.right}});
         break;
       case COMMAND_PLAN_LINEAR:
         remote_enqueue(  //
             &(plan_t){.type        = PLAN_LINEAR_MOTION,
-                      .state       = PLAN_STATE_SCHEDULED,
                       .data.linear = {.distance   = command->data.linear.distance,  //
                                       .exit_speed = command->data.linear.exit_speed}});
         break;
