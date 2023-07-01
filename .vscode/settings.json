@@ -6,4 +6,6 @@
   "go.toolsEnvVars": {
     "GOOS": "linux",
   },
+  // FIXME: Remove this once intellisence has better C23 support.
+  "C_Cpp.errorSquiggles": "disabled",
 }

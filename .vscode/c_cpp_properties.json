@@ -13,8 +13,8 @@
         "F_CPU=16000000UL"
       ],
       "compilerPath": "/opt/avr-toolchain/bin/avr-gcc",
-      "cStandard": "c17",
-      "cppStandard": "c++17",
+      "cStandard": "c23",
+      "cppStandard": "c++23",
       "intelliSenseMode": "linux-gcc-x64"
     }
   ],
