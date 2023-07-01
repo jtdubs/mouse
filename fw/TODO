@@ -1,10 +1,10 @@
 Firmware:
-- Pull out lots of constants into some sort header file or something i dunno
-- Motion planning for linear motion with accel / coast / decel phases?
+- FIX: Linear motion planning, if it finishes braking to 0 early, is stuck "running" forever.
+- Rotational motion: turn to angle, completes once angle is reached.
+- Pull out lots of constants into some sort header file or something i dunno.
 
-plans:
-- linear motion: move to position with risidual speed, completes once position is reached
-- rotational motion: turn to angle, completes once angle is reached
+UI:
+- Allow building and transmitting of a multi-step plan to the firmware for execution.
 
-sim:
-- the current_plan.state field is a super cool idea for a breakpoint.........!
+Sim:
+- Use avr_cmd_register to register a breakpoint command, which we can call on plan state change.

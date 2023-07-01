@@ -21,10 +21,11 @@ void linear_start(float distance /* mm */, float speed /* mm/s */, float acceler
   linear_acceleration    = acceleration * ((60.0 * 0.005) / (32.0 * M_PI));
 
   if (linear_start_speed > linear_target_speed) {
-    float brake_ticks = (linear_target_speed - linear_start_speed) / linear_acceleration;
-    // TODO: jarsus wtf is this bullshit fuck man
-    linear_brake_distance = linear_start_distance + (linear_start_speed * (60 * 32 / 200) * brake_ticks)
-                          - (0.5 * linear_acceleration * (60 * 32 / 200) * brake_ticks * brake_ticks);
+    float brake_ticks      = (linear_start_speed - linear_target_speed) / linear_acceleration;
+    float brake_distance   = ((linear_start_speed * (32.0 * M_PI / 60.0) * 0.005) * brake_ticks);
+    brake_distance        -= (0.5 * (acceleration * (0.005 * .005)) * brake_ticks * brake_ticks);
+    brake_distance        -= 3.0;  // fudge factor :p
+    linear_brake_distance  = linear_target_distance - brake_distance;
   } else {
     linear_brake_distance = linear_target_distance;
   }
@@ -33,6 +34,7 @@ void linear_start(float distance /* mm */, float speed /* mm/s */, float acceler
 bool linear_update() {
   // if we are there, then we are done.
   if (position_distance >= linear_target_distance) {
+    speed_set(linear_target_speed, linear_target_speed);
     return true;
   }
 
