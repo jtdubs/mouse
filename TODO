@@ -1,12 +1,14 @@
 Firmware:
+- Allow for linear motion that starts and ends at 0, but has a non-zero velocity in the middle.
+- Rotational motion: turn to angle, completes once angle is reached.  Would never want risidual rotational velocity.
+- Test stuff w/ the actual robot... but like where though?
+
 - Once all the math is more generic (using contants), consider tightening up the tick to run every 1ms?
 - FIX: Linear motion planning, if it finishes braking to 0 early, is stuck "running" forever.
   - Should the braking be adaptive?  Add a backup "crawl" mode to close the gap?
-- Rotational motion: turn to angle, completes once angle is reached.
 
 Firmware:
 - Include plan in report
-- Increase baud rate??
 
 Monitor:
 - Show the current plan
