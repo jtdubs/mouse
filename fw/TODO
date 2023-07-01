@@ -5,3 +5,10 @@ Firmware:
 - Pull out lots of constants into some sort header file or something i dunno.
 - Once all the math is more generic (using contants), consider tightening up the tick to run every 1ms?
 - __attribute__ ((__packed__)) for enums....
+
+Firmware:
+- Include plan in report
+- Increase baud rate??
+
+Monitor:
+- Show the current plan

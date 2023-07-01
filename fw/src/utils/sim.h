@@ -22,7 +22,7 @@
 // the simulator an interesting plan event is occuring.
 #define SIMAVR_CMD_WATCH_PLAN 0x10
 
-inline void sim_watch_plan(uint8_t __attribute__((unused)) state) {
+inline void sim_watch_plan([[maybe_unused]] uint8_t state) {
 #if defined(DEBUG)
   SIM_COMMAND_REG = SIMAVR_CMD_WATCH_PLAN | state;
 #endif

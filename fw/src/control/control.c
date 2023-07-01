@@ -50,7 +50,7 @@ void control_update() {
         case PLAN_STATE_SCHEDULED:
           linear_start(current_plan.data.linear.distance, current_plan.data.linear.exit_speed, 9810.0 * 0.2 /* 0.2g */);
           plan_set_state(PLAN_STATE_UNDERWAY);
-          __attribute__((fallthrough));
+          [[fallthrough]];
         case PLAN_STATE_UNDERWAY:
           if (linear_update()) {
             plan_set_state(PLAN_STATE_IMPLEMENTED);
