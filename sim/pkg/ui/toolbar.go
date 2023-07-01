@@ -44,9 +44,27 @@ func (w *toolbarWindow) drawToolbar() {
 	if w.toolbarButton("SimStep1", "step-forward-black") {
 		w.sim.Step(10000000)
 	}
+	if imgui.IsItemHovered() {
+		imgui.SetTooltip("10ms")
+	}
 	imgui.SameLine()
 	if w.toolbarButton("SimStep2", "step-forward-2-black") {
 		w.sim.Step(1000000000)
+	}
+	if imgui.IsItemHovered() {
+		imgui.SetTooltip("1s")
+	}
+	imgui.EndDisabled()
+	imgui.SameLine()
+	imgui.BeginDisabledV(w.sim.State != sim.Paused)
+	if w.toolbarButton("SimSkip", "skip-forward") {
+		currentPlanState := w.sim.Symbols.Symbols["current_plan"].ReadU16()
+		w.sim.StepUntil(func() bool {
+			return w.sim.Symbols.Symbols["current_plan"].ReadU16() != currentPlanState
+		})
+	}
+	if imgui.IsItemHovered() {
+		imgui.SetTooltip("plan")
 	}
 	imgui.EndDisabled()
 	imgui.SameLineV(0, 20)

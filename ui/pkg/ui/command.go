@@ -8,10 +8,13 @@ import (
 )
 
 type commandWindow struct {
-	mouse           *mouse.Mouse
-	linkedPowers    bool
-	linkedSpeeds    bool
-	linkedPositions bool
+	mouse                       *mouse.Mouse
+	linkedPowers                bool
+	linkedSpeeds                bool
+	linkedPositions             bool
+	powerLeft, powerRight       int32
+	speedLeft, speedRight       float32
+	linearDistance, linearSpeed float32
 }
 
 func newCommandWindow(m *mouse.Mouse) *commandWindow {
@@ -35,9 +38,10 @@ func (w *commandWindow) draw() {
 		imgui.BeginDisabled()
 	}
 
-	imgui.BeginTable("##Controls", 2)
+	imgui.BeginTable("##Controls", 3)
 	imgui.TableSetupColumnV("##ControlsLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
 	imgui.TableSetupColumnV("##ControlsControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
+	imgui.TableSetupColumnV("##ControlsButton", imgui.TableColumnFlagsWidthFixed, 48, 0)
 
 	// LEDs
 	{
@@ -62,47 +66,59 @@ func (w *commandWindow) draw() {
 
 	// Power
 	{
-		left, right := int32(r.MotorPowerLeft), int32(r.MotorPowerRight)
-		values := [2]int32{left, right}
-
 		w.tableRow("Power:")
 		w.drawIconToggleButton("##LinkPowers", "link", "link-off", &w.linkedPowers)
 		imgui.SameLineV(0, 20)
 		if w.linkedPowers {
-			if imgui.InputIntV("power", &left, 1, 10, imgui.InputTextFlagsEnterReturnsTrue) {
-				w.mouse.SendCommand(mouse.NewPowerCommand(int16(left), int16(left)))
+			if imgui.InputInt("##power", &w.powerLeft) {
+				w.powerRight = w.powerLeft
 			}
 		} else {
-			if imgui.InputInt2V("power", &values, imgui.InputTextFlagsEnterReturnsTrue) {
-				w.mouse.SendCommand(mouse.NewPowerCommand(int16(values[0]), int16(values[1])))
+			values := [2]int32{w.powerLeft, w.powerRight}
+			if imgui.InputInt2("##power", &values) {
+				w.powerLeft, w.powerRight = values[0], values[1]
 			}
+		}
+		imgui.TableSetColumnIndex(2)
+		if w.toolbarButton("##PowerPlan", "play-black") {
+			w.mouse.SendCommand(mouse.NewPowerPlanCommand(int16(w.powerLeft), int16(w.powerRight)))
 		}
 	}
 
 	// Speed
 	{
-		left, right := r.SpeedSetpointLeft, r.SpeedSetpointRight
-		// pid := [3]float32{r.SpeedKp, r.SpeedKi, r.SpeedKd}
-		values := [2]float32{left, right}
 
-		w.tableRow("Speed:")
+		w.tableRow("Speed (RPM):")
 		w.drawIconToggleButton("##LinkSpeeds", "link", "link-off", &w.linkedSpeeds)
 		imgui.SameLineV(0, 20)
 		if w.linkedSpeeds {
-			if imgui.InputFloatV("rpm", &left, 1, 10, "%.2f", imgui.InputTextFlagsEnterReturnsTrue) {
-				if math.Abs(float64(left)) < 20 {
-					left = 0
+			if imgui.InputFloatV("##rpm", &w.speedLeft, 1, 10, "%.2f", 0) {
+				if math.Abs(float64(w.speedLeft)) < 20 {
+					w.speedLeft = 0
 				}
-				w.mouse.SendCommand(mouse.NewSpeedCommand(left, left))
+				w.speedRight = w.speedLeft
 			}
 		} else {
-			if imgui.InputFloat2V("rpm", &values, "%.2f", imgui.InputTextFlagsEnterReturnsTrue) {
-				w.mouse.SendCommand(mouse.NewSpeedCommand(values[0], values[1]))
+			values := [2]float32{w.speedLeft, w.speedRight}
+			if imgui.InputFloat2V("##rpm", &values, "%.2f", 0) {
+				w.speedLeft, w.speedRight = values[0], values[1]
 			}
 		}
-		// if imgui.InputFloat3V("PID", &pid, "%.4f", imgui.InputTextFlagsEnterReturnsTrue) {
-		// 	w.mouse.SendCommand(mouse.NewSpeedPIDCommand(pid[0], pid[1], pid[2]))
-		// }
+		imgui.TableSetColumnIndex(2)
+		if w.toolbarButton("##SpeedPlan", "play-black") {
+			w.mouse.SendCommand(mouse.NewSpeedPlanCommand(w.speedLeft, w.speedRight))
+		}
+	}
+
+	// Linear
+	{
+		w.tableRow("Linear:")
+		imgui.InputFloat("mm", &w.linearDistance)
+		imgui.InputFloat("mm/s", &w.linearSpeed)
+		imgui.TableSetColumnIndex(2)
+		if w.toolbarButton("##LinearPlan", "play-black") {
+			w.mouse.SendCommand(mouse.NewLinearPlanCommand(w.linearDistance, w.linearSpeed))
+		}
 	}
 
 	imgui.EndTable()
@@ -135,4 +151,8 @@ func (w *commandWindow) tableRow(label string) {
 	imgui.TableSetColumnIndex(0)
 	imgui.Text(label)
 	imgui.TableSetColumnIndex(1)
+}
+
+func (w *commandWindow) toolbarButton(name string, icon string) bool {
+	return imgui.ImageButtonV(name, Textures[icon].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(0, 0, 0, 0), imgui.NewVec4(1, 1, 1, 1))
 }

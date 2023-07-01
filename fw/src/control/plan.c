@@ -16,7 +16,7 @@ void plan_init() {
 // plan_submit submits a new plan to be implemented.
 void plan_submit(plan_t *plan) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    assert(ASSERT_PLAN + 0, current_plan.state == PLAN_STATE_SCHEDULED);
+    assert(ASSERT_PLAN + 0, plan->state == PLAN_STATE_SCHEDULED);
     current_plan = *plan;
   }
 }

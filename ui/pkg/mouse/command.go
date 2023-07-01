@@ -22,33 +22,48 @@ func NewLEDCommand(builtin, left, right, ir bool) LEDCommand {
 
 func (c LEDCommand) isCommand() bool { return true }
 
-type PowerCommand struct {
+type PowerPlanCommand struct {
 	Type        uint8
 	Left, Right int16
 	Padding     [4]uint8
 }
 
-func NewPowerCommand(left, right int16) PowerCommand {
-	return PowerCommand{
+func NewPowerPlanCommand(left, right int16) PowerPlanCommand {
+	return PowerPlanCommand{
 		Type:  1,
 		Left:  left,
 		Right: right,
 	}
 }
 
-func (c PowerCommand) isCommand() bool { return true }
+func (c PowerPlanCommand) isCommand() bool { return true }
 
-type SpeedCommand struct {
+type SpeedPlanCommand struct {
 	Type                  uint8
 	LeftSpeed, RightSpeed float32
 }
 
-func NewSpeedCommand(leftSpeed, rightSpeed float32) SpeedCommand {
-	return SpeedCommand{
+func NewSpeedPlanCommand(leftSpeed, rightSpeed float32) SpeedPlanCommand {
+	return SpeedPlanCommand{
 		Type:       2,
 		LeftSpeed:  leftSpeed,
 		RightSpeed: rightSpeed,
 	}
 }
 
-func (c SpeedCommand) isCommand() bool { return true }
+func (c SpeedPlanCommand) isCommand() bool { return true }
+
+type LinearPlanCommand struct {
+	Type                uint8
+	Distance, ExitSpeed float32
+}
+
+func NewLinearPlanCommand(distance, exitSpeed float32) LinearPlanCommand {
+	return LinearPlanCommand{
+		Type:      3,
+		Distance:  distance,
+		ExitSpeed: exitSpeed,
+	}
+}
+
+func (c LinearPlanCommand) isCommand() bool { return true }

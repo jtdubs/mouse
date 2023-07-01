@@ -16,6 +16,7 @@ void remote() {
 
   plan_submit_and_wait(                          //
       &(plan_t){.type       = PLAN_FIXED_POWER,  //
+                .state      = PLAN_STATE_SCHEDULED,
                 .data.power = {0, 0}});
 
   for (;;) {
@@ -30,17 +31,26 @@ void remote() {
         pin_set2(LED_RIGHT, command->data.leds.right);
         pin_set2(IR_LEDS, command->data.leds.ir);
         break;
-      case COMMAND_SET_POWER:
+      case COMMAND_PLAN_POWER:
         plan_submit_and_wait(  //
             &(plan_t){.type       = PLAN_FIXED_POWER,
+                      .state      = PLAN_STATE_SCHEDULED,
                       .data.power = {.left  = command->data.power.left,  //
                                      .right = command->data.power.right}});
         break;
-      case COMMAND_SET_SPEED:
+      case COMMAND_PLAN_SPEED:
         plan_submit_and_wait(  //
             &(plan_t){.type       = PLAN_FIXED_SPEED,
+                      .state      = PLAN_STATE_SCHEDULED,
                       .data.speed = {.left  = command->data.speed.left,  //
                                      .right = command->data.speed.right}});
+        break;
+      case COMMAND_PLAN_LINEAR:
+        plan_submit_and_wait(  //
+            &(plan_t){.type        = PLAN_LINEAR_MOTION,
+                      .state       = PLAN_STATE_SCHEDULED,
+                      .data.linear = {.distance   = command->data.linear.distance,
+                                      .exit_speed = command->data.linear.exit_speed}});
         break;
       default:
         break;
