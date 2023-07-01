@@ -47,7 +47,7 @@ typedef struct {
     } speed;
     struct {
       float distance;
-      float exit_speed;
+      bool  coast;
     } linear;
   } data;
 } command_t;

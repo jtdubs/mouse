@@ -8,13 +8,14 @@ import (
 )
 
 type commandWindow struct {
-	mouse                       *mouse.Mouse
-	linkedPowers                bool
-	linkedSpeeds                bool
-	linkedPositions             bool
-	powerLeft, powerRight       int32
-	speedLeft, speedRight       float32
-	linearDistance, linearSpeed float32
+	mouse                 *mouse.Mouse
+	linkedPowers          bool
+	linkedSpeeds          bool
+	linkedPositions       bool
+	powerLeft, powerRight int32
+	speedLeft, speedRight float32
+	linearDistance        float32
+	linearCoast           bool
 }
 
 func newCommandWindow(m *mouse.Mouse) *commandWindow {
@@ -114,10 +115,11 @@ func (w *commandWindow) draw() {
 	{
 		w.tableRow("Linear:")
 		imgui.InputFloat("mm", &w.linearDistance)
-		imgui.InputFloat("mm/s", &w.linearSpeed)
+		imgui.SameLine()
+		imgui.Checkbox("coast", &w.linearCoast)
 		imgui.TableSetColumnIndex(2)
 		if w.toolbarButton("##LinearPlan", "plus-thick") {
-			w.mouse.SendCommand(mouse.NewLinearPlanCommand(w.linearDistance, w.linearSpeed))
+			w.mouse.SendCommand(mouse.NewLinearPlanCommand(w.linearDistance, w.linearCoast))
 		}
 	}
 
