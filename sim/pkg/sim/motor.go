@@ -65,7 +65,7 @@ func (m *Motor) Init() {
 
 func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 	if irq == m.pwmIRQ {
-		if value < 28 {
+		if value < 26 {
 			// Not enough power to start the motor turning.
 			m.DesiredPeriod = 0
 		} else {

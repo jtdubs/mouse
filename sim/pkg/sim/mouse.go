@@ -22,8 +22,8 @@ import (
 // Fundamental constants
 const (
 	GridSize                float64 = 180.0 // in mm
-	WheelBase               float64 = 90.0  // in mm
-	WheelDiameter           float64 = 32.0  // in mm
+	WheelBase               float64 = 90.5  // in mm
+	WheelDiameter           float64 = 32.5  // in mm
 	EncoderTicksPerRotation int     = 240
 )
 
