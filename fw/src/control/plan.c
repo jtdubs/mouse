@@ -9,21 +9,21 @@ volatile plan_t current_plan;
 
 // plan_init initializes the plan module.
 void plan_init() {
-  current_plan.type        = PLAN_IDLE;
-  current_plan.implemented = true;
+  current_plan.type  = PLAN_IDLE;
+  current_plan.state = PLAN_STATE_SCHEDULED;
 }
 
 // plan_submit submits a new plan to be implemented.
 void plan_submit(plan_t *plan) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    assert(ASSERT_PLAN + 0, current_plan.implemented);
+    assert(ASSERT_PLAN + 0, current_plan.state == PLAN_STATE_SCHEDULED);
     current_plan = *plan;
   }
 }
 
 // plan_wait waits for the current plan to be implemented.
 void plan_wait() {
-  while (!current_plan.implemented) {
+  while (current_plan.state != PLAN_STATE_IMPLEMENTED) {
     // wait
   }
 }

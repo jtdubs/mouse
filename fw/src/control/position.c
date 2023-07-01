@@ -28,3 +28,8 @@ void position_read() {
     position_theta += 2 * M_PI;
   }
 }
+
+void position_clear() {
+  position_distance = 0;
+  position_theta    = 0;
+}

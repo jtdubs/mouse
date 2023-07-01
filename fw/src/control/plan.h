@@ -3,6 +3,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+typedef uint8_t plan_state_t;
+
+#define PLAN_STATE_SCHEDULED 0
+#define PLAN_STATE_UNDERWAY 1
+#define PLAN_STATE_IMPLEMENTED 2
+
 // Plan is "implemented" as soon as the board is put into an idle state.
 #define PLAN_IDLE 0
 
@@ -19,8 +25,8 @@
 #define PLAN_ROTATIONAL_MOTION 4
 
 typedef struct {
-  uint8_t type;
-  bool    implemented;
+  uint8_t      type;
+  plan_state_t state;
   union {
     // PLAN_FIXED_POWER
     struct {
@@ -29,19 +35,17 @@ typedef struct {
     } power;
     // PLAN_FIXED_SPEED
     struct {
-      float left;   // m/s
-      float right;  // m/s
+      float left;   // rpm
+      float right;  // rpm
     } speed;
     // PLAN_LINEAR_MOTION
     struct {
-      float distance;    // m
-      float exit_speed;  // m/s
-      float max_speed;   // m/s
+      float distance;    // mm
+      float exit_speed;  // mm/s
     } linear;
     // PLAN_ROTATIONAL_MOTION
     struct {
-      float d_theta;        // radians
-      float max_dtheta_dt;  // radians/s
+      float d_theta;  // radians
     } rotational;
   } data;
 } plan_t;

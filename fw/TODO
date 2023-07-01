@@ -3,5 +3,8 @@ Firmware:
 - Motion planning for linear motion with accel / coast / decel phases?
 
 plans:
-- move to position with risidual speed, completes once position is reached
-- turn to angle, completes once angle is reached
+- linear motion: move to position with risidual speed, completes once position is reached
+- rotational motion: turn to angle, completes once angle is reached
+
+sim:
+- the current_plan.state field is a super cool idea for a breakpoint.........!

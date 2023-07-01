@@ -1,5 +1,6 @@
 #include "control.h"
 
+#include "control/linear.h"
 #include "control/plan.h"
 #include "control/position.h"
 #include "control/speed.h"
@@ -23,32 +24,43 @@ void control_update() {
 
   switch (current_plan.type) {
     case PLAN_IDLE:
-      if (!current_plan.implemented) {
+      if (current_plan.state == PLAN_STATE_SCHEDULED) {
         motor_set(0, 0);
-        current_plan.implemented = true;
+        current_plan.state = PLAN_STATE_IMPLEMENTED;
       }
       break;
     case PLAN_FIXED_POWER:
-      if (!current_plan.implemented) {
+      if (current_plan.state == PLAN_STATE_SCHEDULED) {
         motor_set(current_plan.data.power.left, current_plan.data.power.right);
-        current_plan.implemented = true;
+        current_plan.state = PLAN_STATE_IMPLEMENTED;
       }
       break;
     case PLAN_FIXED_SPEED:
-      if (!current_plan.implemented) {
+      if (current_plan.state == PLAN_STATE_SCHEDULED) {
         speed_set(current_plan.data.speed.left, current_plan.data.speed.right);
-        current_plan.implemented = true;
+        current_plan.state = PLAN_STATE_IMPLEMENTED;
       }
       speed_update();
       break;
     case PLAN_LINEAR_MOTION:
-      if (!current_plan.implemented) {
-        current_plan.implemented = true;
+      switch (current_plan.state) {
+        case PLAN_STATE_SCHEDULED:
+          linear_start(current_plan.data.linear.distance, current_plan.data.linear.exit_speed, 9810.0 * 0.2 /* 0.2g */);
+          current_plan.state = PLAN_STATE_UNDERWAY;
+          break;
+        case PLAN_STATE_UNDERWAY:
+          if (linear_update()) {
+            current_plan.state = PLAN_STATE_IMPLEMENTED;
+          }
+          break;
+        default:
+          speed_update();
+          break;
       }
       break;
     case PLAN_ROTATIONAL_MOTION:
-      if (!current_plan.implemented) {
-        current_plan.implemented = true;
+      if (current_plan.state == PLAN_STATE_SCHEDULED) {
+        current_plan.state = PLAN_STATE_IMPLEMENTED;
       }
       break;
     default:
