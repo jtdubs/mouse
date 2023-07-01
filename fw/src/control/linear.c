@@ -16,7 +16,7 @@ void linear_start(float distance /* mm */, float speed /* mm/s */, float acceler
   linear_start_distance  = position_distance;
   linear_target_distance = position_distance + distance;
   linear_start_speed     = (speed_measured_left + speed_measured_right) / 2.0;
-  linear_target_speed    = speed * (60.0 / 32.0);
+  linear_target_speed    = speed * (60.0 / (32.0 * M_PI));
   linear_acceleration    = acceleration * (60.0 * 0.000005 / 32.0);
 
   if (linear_start_speed > linear_target_speed) {
