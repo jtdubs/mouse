@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jtdubs/mouse/sim/pkg/sim"
+	"github.com/jtdubs/mouse/remote/pkg/mouse"
 
 	imgui "github.com/AllenDang/cimgui-go"
 )
@@ -18,29 +18,29 @@ type window interface {
 }
 
 type UI struct {
-	sim     *sim.Sim
+	mouse   *mouse.Mouse
 	backend imgui.Backend
 	windows []window
 }
 
-func New(sim *sim.Sim) *UI {
+func New(mouse *mouse.Mouse) *UI {
 	backend := imgui.CreateBackend(imgui.NewGLFWBackend())
 
 	ui := &UI{
-		sim:     sim,
+		mouse:   mouse,
 		backend: backend,
 		windows: []window{
-			newToolbarWindow(sim),
-			newControlsWindow(sim),
-			newSymbolsWindow(sim),
-			newStatusWindow(sim),
-			newMazeWindow(sim),
+			newCommandWindow(mouse),
+			newLogWindow(mouse),
+			newReportWindow(mouse),
+			newStatusWindow(mouse),
+			newToolbarWindow(mouse),
 		},
 	}
 
 	backend.SetBgColor(imgui.NewVec4(0.45, 0.55, 0.6, 1.0))
 	backend.SetAfterCreateContextHook(ui.init)
-	backend.CreateWindow("Mouse Simulator", 1600, 1200, imgui.GLFWWindowFlags(0))
+	backend.CreateWindow("Mouse Remote", 1600, 900, imgui.GLFWWindowFlags(0))
 	backend.SetTargetFPS(60)
 
 	imgui.CurrentIO().Fonts().AddFontFromFileTTF("../fonts/DroidSans.ttf", 24)
@@ -51,6 +51,8 @@ func New(sim *sim.Sim) *UI {
 }
 
 func (ui *UI) init() {
+	imgui.PlotCreateContext()
+
 	files, _ := filepath.Glob("../icons/*.png")
 	for _, file := range files {
 		name := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
@@ -81,7 +83,7 @@ func (ui *UI) Run(ctx context.Context) {
 
 		vp := imgui.MainViewport()
 		imgui.SetNextWindowPos(vp.Pos().Add(imgui.NewVec2(0, 48)))
-		imgui.SetNextWindowSize(vp.Size().Sub(imgui.NewVec2(0, 48)))
+		imgui.SetNextWindowSize(vp.Size().Sub(imgui.NewVec2(0, 88)))
 		imgui.SetNextWindowViewport(vp.ID())
 		imgui.PushStyleVarVec2(imgui.StyleVarWindowPadding, imgui.NewVec2(0, 0))
 		imgui.PushStyleVarFloat(imgui.StyleVarWindowRounding, 0)
@@ -97,14 +99,13 @@ func (ui *UI) Run(ctx context.Context) {
 			imgui.InternalDockBuilderRemoveNode(dockID)
 			imgui.InternalDockBuilderAddNodeV(dockID, imgui.DockNodeFlagsDockSpace)
 			imgui.InternalDockBuilderSetNodeSize(dockID, vp.Size().Sub(imgui.NewVec2(0, 48)))
-			symbols := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.3, nil, &dockID)
-			status := imgui.InternalDockBuilderSplitNode(symbols, imgui.DirDown, 0.15, nil, &symbols)
-			controls := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirDown, 0.15, nil, &dockID)
-			imgui.InternalDockBuilderDockWindow("Symbols", symbols)
-			imgui.InternalDockBuilderDockWindow("Status", status)
-			imgui.InternalDockBuilderDockWindow("Controls", controls)
-			imgui.InternalDockBuilderDockWindow("Maze", dockID)
+			imgui.InternalDockBuilderDockWindow("Serial", dockID)
 			imgui.InternalDockBuilderFinish(dockID)
+			right := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.40, nil, &dockID)
+			bottomRight := imgui.InternalDockBuilderSplitNode(right, imgui.DirDown, 0.50, nil, &right)
+			imgui.InternalDockBuilderDockWindow("Report", dockID)
+			imgui.InternalDockBuilderDockWindow("Command", right)
+			imgui.InternalDockBuilderDockWindow("Log", bottomRight)
 		}
 
 		for _, window := range ui.windows {

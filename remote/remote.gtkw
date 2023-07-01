@@ -1,0 +1,38 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Fri Jun 30 15:39:07 2023
+[*]
+[dumpfile] "/home/jtdubs/dev/mouse/remote/mouse.vcd"
+[dumpfile_mtime] "Fri Jun 30 15:38:18 2023"
+[dumpfile_size] 153117
+[savefile] "/home/jtdubs/dev/mouse/remote/remote.gtkw"
+[timestart] 120747000
+[size] 1885 2096
+[pos] 952 0
+*-19.000000 119397546 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 265
+[signals_width] 540
+[sst_expanded] 1
+[sst_vpaned_height] 658
+@200
+-Sensors
+-Encoders
+@88023
+mouse.encoder_left[31:0]
+mouse.encoder_right[31:0]
+@200
+-Motor
+@88022
+mouse.motor_power_left[15:0]
+mouse.motor_power_right[15:0]
+@200
+-Speed
+@c8020
+mouse.speed_measured_left[31:0]
+mouse.speed_setpoint_left[31:0]
+mouse.speed_measured_right[31:0]
+mouse.speed_setpoint_right[31:0]
+@200
+-Position
+[pattern_trace] 1
+[pattern_trace] 0

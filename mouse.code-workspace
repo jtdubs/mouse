@@ -10,6 +10,12 @@
       "path": "remote"
     },
     {
+      "path": "icons"
+    },
+    {
+      "path": "fonts"
+    },
+    {
       "path": "docs"
     }
   ],

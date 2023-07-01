@@ -1,15 +1,9 @@
-.PHONY: all clean fw run wave
+.PHONY: all fw run wave
 
 all: run
 
-clean:
-	go clean .
-
-run: sim
+run: fw
 	go run . --firmware ../fw/build/debug/mouse.elf
-
-sim: fw
-	go build .
 
 fw:
 	make -C ../fw all
