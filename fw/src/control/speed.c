@@ -5,17 +5,12 @@
 #include <stdint.h>
 #include <util/atomic.h>
 
+#include "control/config.h"
 #include "control/pid.h"
 #include "platform/encoders.h"
 #include "platform/motor.h"
 #include "platform/pin.h"
 #include "platform/rtc.h"
-
-// The lowest achievable motor speed in RPMs.
-constexpr float MIN_SPEED = 30.0;
-
-// Low-pass filter alpha, for smoothing the encoder deltas.
-constexpr float LOW_PASS_ALPHA = 0.1;
 
 // Motor speeds in RPMs.
 float speed_measured_left;
@@ -31,45 +26,45 @@ pi_t speed_pi_right;
 
 void speed_init() {
   speed_pi_left.min = 0;
-  speed_pi_left.max = 200;
-  speed_pi_left.kp  = 0.3;
-  speed_pi_left.ki  = 0.04;
+  speed_pi_left.max = MAX_MOTOR_POWER - MIN_MOTOR_POWER;
+  speed_pi_left.kp  = SPEED_KP;
+  speed_pi_left.ki  = SPEED_KI;
 
   speed_pi_right.min = 0;
-  speed_pi_right.max = 200;
-  speed_pi_right.kp  = 0.3;
-  speed_pi_right.ki  = 0.04;
+  speed_pi_right.max = MAX_MOTOR_POWER - MIN_MOTOR_POWER;
+  speed_pi_right.kp  = SPEED_KP;
+  speed_pi_right.ki  = SPEED_KI;
 }
 
 void speed_read() {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    speed_measured_left = (LOW_PASS_ALPHA * ((float)encoders_left_delta) * 50.0)  //
-                        + ((1.0 - LOW_PASS_ALPHA) * speed_measured_left);
-    speed_measured_right = (LOW_PASS_ALPHA * ((float)encoders_right_delta) * 50.0)  //
-                         + ((1.0 - LOW_PASS_ALPHA) * speed_measured_right);
+    speed_measured_left = (SPEED_LOW_PASS_ALPHA * COUNTS_TO_RPM(encoders_left_delta))  //
+                        + ((1.0 - SPEED_LOW_PASS_ALPHA) * speed_measured_left);
+    speed_measured_right = (SPEED_LOW_PASS_ALPHA * COUNTS_TO_RPM(encoders_right_delta))  //
+                         + ((1.0 - SPEED_LOW_PASS_ALPHA) * speed_measured_right);
   }
 }
 
 void speed_update() {
   uint8_t power_left;
-  if (fabsf(speed_setpoint_left) < MIN_SPEED) {
+  if (fabsf(speed_setpoint_left) < MIN_MOTOR_RPM) {
     pi_reset(&speed_pi_left);
     power_left = 0;
   } else {
     power_left = (uint8_t)pi_update(&speed_pi_left, fabsf(speed_setpoint_left), fabsf(speed_measured_left));
     if (power_left != 0) {
-      power_left += 26;
+      power_left += MIN_MOTOR_POWER;
     }
   }
 
   uint8_t power_right;
-  if (fabsf(speed_setpoint_right) < MIN_SPEED) {
+  if (fabsf(speed_setpoint_right) < MIN_MOTOR_RPM) {
     pi_reset(&speed_pi_right);
     power_right = 0;
   } else {
     power_right = (uint8_t)pi_update(&speed_pi_right, fabsf(speed_setpoint_right), fabsf(speed_measured_right));
     if (power_right != 0) {
-      power_right += 26;
+      power_right += MIN_MOTOR_POWER;
     }
   }
 

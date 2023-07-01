@@ -5,7 +5,7 @@
 #include "platform/usart0.h"
 #include "utils/assert.h"
 
-#define MAX_READ_SIZE 64
+constexpr uint8_t MAX_READ_SIZE = 64;
 
 // Read states
 typedef enum : uint8_t {

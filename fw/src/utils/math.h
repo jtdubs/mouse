@@ -17,3 +17,11 @@ inline uint16_t abs16(int16_t x) {
 inline uint8_t abs8(int16_t x) {
   return x < 0 ? -x : x;
 }
+
+inline float clampthetaf(float theta) {
+  theta = fmodf(theta, 2.0 * M_PI);
+  if (theta < 0) {
+    theta += 2.0 * M_PI;
+  }
+  return theta;
+}

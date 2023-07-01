@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 
+#include "control/config.h"
 #include "control/position.h"
 #include "control/speed.h"
 #include "utils/math.h"
@@ -16,14 +17,14 @@ float linear_brake_distance;   // mm
 void linear_start(float distance /* mm */, float speed /* mm/s */, float acceleration /* mm/s^2 */) {
   linear_start_distance  = position_distance;
   linear_target_distance = position_distance + distance;
-  linear_start_speed     = clampf((speed_measured_left + speed_measured_right) / 2.0, 30.0, 1000.0);
-  linear_target_speed    = speed * (60.0 / (32.0 * M_PI));
-  linear_acceleration    = acceleration * ((60.0 * 0.005) / (32.0 * M_PI));
+  linear_start_speed     = CLAMP_RPM((speed_measured_left + speed_measured_right) / 2.0);
+  linear_target_speed    = SPEED_TO_RPM(speed);
+  linear_acceleration    = ACCEL_TO_RPM(acceleration);
 
   if (linear_start_speed > linear_target_speed) {
-    float brake_ticks      = (linear_start_speed - linear_target_speed) / linear_acceleration;
-    float brake_distance   = ((linear_start_speed * (32.0 * M_PI / 60.0) * 0.005) * brake_ticks);
-    brake_distance        -= (0.5 * (acceleration * (0.005 * .005)) * brake_ticks * brake_ticks);
+    float brake_time       = TICKS_TO_S((linear_start_speed - linear_target_speed) / linear_acceleration);
+    float brake_distance   = RPM_TO_SPEED(linear_start_speed) * brake_time;
+    brake_distance        -= 0.5 * acceleration * brake_time * brake_time;
     brake_distance        -= 3.0;  // fudge factor :p
     linear_brake_distance  = linear_target_distance - brake_distance;
   } else {
