@@ -22,6 +22,7 @@
 #define COMMAND_PLAN_POWER 1
 #define COMMAND_PLAN_SPEED 2
 #define COMMAND_PLAN_LINEAR 3
+#define COMMAND_PLAN_EXECUTE 4
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.

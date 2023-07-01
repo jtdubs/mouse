@@ -7,6 +7,15 @@
 #include "platform/pin.h"
 #include "serial/command.h"
 
+static plan_t  remote_plan_queue[16];
+static uint8_t remote_plan_queue_size = 0;
+
+static void remote_enqueue(plan_t *plan) {
+  if (remote_plan_queue_size < 16) {
+    remote_plan_queue[remote_plan_queue_size++] = *plan;
+  }
+}
+
 // remote is a mode that allows the robot to be controlled remotely.
 void remote() {
   pin_clear(LED_BUILTIN);
@@ -32,25 +41,31 @@ void remote() {
         pin_set2(IR_LEDS, command->data.leds.ir);
         break;
       case COMMAND_PLAN_POWER:
-        plan_submit_and_wait(  //
+        remote_enqueue(  //
             &(plan_t){.type       = PLAN_FIXED_POWER,
                       .state      = PLAN_STATE_SCHEDULED,
                       .data.power = {.left  = command->data.power.left,  //
                                      .right = command->data.power.right}});
         break;
       case COMMAND_PLAN_SPEED:
-        plan_submit_and_wait(  //
+        remote_enqueue(  //
             &(plan_t){.type       = PLAN_FIXED_SPEED,
                       .state      = PLAN_STATE_SCHEDULED,
                       .data.speed = {.left  = command->data.speed.left,  //
                                      .right = command->data.speed.right}});
         break;
       case COMMAND_PLAN_LINEAR:
-        plan_submit_and_wait(  //
+        remote_enqueue(  //
             &(plan_t){.type        = PLAN_LINEAR_MOTION,
                       .state       = PLAN_STATE_SCHEDULED,
-                      .data.linear = {.distance   = command->data.linear.distance,
+                      .data.linear = {.distance   = command->data.linear.distance,  //
                                       .exit_speed = command->data.linear.exit_speed}});
+        break;
+      case COMMAND_PLAN_EXECUTE:
+        for (uint8_t i = 0; i < remote_plan_queue_size; i++) {
+          plan_submit_and_wait(&remote_plan_queue[i]);
+        }
+        remote_plan_queue_size = 0;
         break;
       default:
         break;

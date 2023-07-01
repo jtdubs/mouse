@@ -1,10 +1,9 @@
 Firmware:
 - FIX: Linear motion planning, if it finishes braking to 0 early, is stuck "running" forever.
+  - Should the braking be adaptive?  Add a backup "crawl" mode to close the gap?
 - Rotational motion: turn to angle, completes once angle is reached.
 - Pull out lots of constants into some sort header file or something i dunno.
-
-UI:
-- Allow building and transmitting of a multi-step plan to the firmware for execution.
+- Once all the math is more generic (using contants), consider tightening up the tick to run every 1ms?
 
 Sim:
 - Use avr_cmd_register to register a breakpoint command, which we can call on plan state change.

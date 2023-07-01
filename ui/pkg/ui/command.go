@@ -80,7 +80,7 @@ func (w *commandWindow) draw() {
 			}
 		}
 		imgui.TableSetColumnIndex(2)
-		if w.toolbarButton("##PowerPlan", "play-black") {
+		if w.toolbarButton("##PowerPlan", "plus-thick") {
 			w.mouse.SendCommand(mouse.NewPowerPlanCommand(int16(w.powerLeft), int16(w.powerRight)))
 		}
 	}
@@ -105,7 +105,7 @@ func (w *commandWindow) draw() {
 			}
 		}
 		imgui.TableSetColumnIndex(2)
-		if w.toolbarButton("##SpeedPlan", "play-black") {
+		if w.toolbarButton("##SpeedPlan", "plus-thick") {
 			w.mouse.SendCommand(mouse.NewSpeedPlanCommand(w.speedLeft, w.speedRight))
 		}
 	}
@@ -116,8 +116,16 @@ func (w *commandWindow) draw() {
 		imgui.InputFloat("mm", &w.linearDistance)
 		imgui.InputFloat("mm/s", &w.linearSpeed)
 		imgui.TableSetColumnIndex(2)
-		if w.toolbarButton("##LinearPlan", "play-black") {
+		if w.toolbarButton("##LinearPlan", "plus-thick") {
 			w.mouse.SendCommand(mouse.NewLinearPlanCommand(w.linearDistance, w.linearSpeed))
+		}
+	}
+
+	// Execute
+	{
+		w.tableRow("")
+		if w.toolbarButton("##Execute", "play-black") {
+			w.mouse.SendCommand(mouse.NewExecutePlanCommand())
 		}
 	}
 

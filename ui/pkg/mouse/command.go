@@ -65,3 +65,15 @@ func NewLinearPlanCommand(distance, exitSpeed float32) LinearPlanCommand {
 }
 
 func (c LinearPlanCommand) isCommand() bool { return true }
+
+type ExecutePlanCommand struct {
+	Type uint8
+}
+
+func NewExecutePlanCommand() LinearPlanCommand {
+	return LinearPlanCommand{
+		Type: 4,
+	}
+}
+
+func (c ExecutePlanCommand) isCommand() bool { return true }
