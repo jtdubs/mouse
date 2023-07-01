@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    "avr-libc": true,
+    "avrdude": true,
+    "binutils-gdb": true,
+    "gcc": true,
+  }
+}

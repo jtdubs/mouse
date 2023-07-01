@@ -41,6 +41,7 @@ pushd binutils-gdb
       make -j $(nproc)
       sudo make install-strip
     popd
+    rm -Rf build
   fi
 popd
 
@@ -67,6 +68,7 @@ pushd gcc
       make -j $(nproc)
       sudo make install-strip
     popd
+    rm -Rf build
   fi
 popd
 
@@ -86,6 +88,7 @@ pushd avr-libc
       make -j $(nproc)
       sudo --preserve-env=PATH make install
     popd
+    rm -Rf build
   fi
 popd
 
@@ -100,5 +103,6 @@ pushd avrdude
       cmake --build .
       sudo cmake --build . --target install
     popd
+    rm -Rf build
   fi
 popd
