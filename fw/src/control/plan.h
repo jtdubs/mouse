@@ -39,7 +39,7 @@ typedef struct {
     // PLAN_LINEAR_MOTION
     struct {
       float distance;  // mm
-      bool  coast;     // end at coasting speed, or stopped?
+      bool  stop;
     } linear;
     // PLAN_ROTATIONAL_MOTION
     struct {

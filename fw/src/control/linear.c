@@ -11,44 +11,42 @@ float linear_start_distance;   // mm
 float linear_target_distance;  // mm
 float linear_start_speed;      // rpm
 float linear_target_speed;     // rpm
-float linear_acceleration;     // rpm/tick
-float linear_brake_distance;   // mm
-float linear_coast_distance;   // mm
+bool  linear_braking;
 
-void linear_start(float distance /* mm */, bool coast) {
-  linear_start_distance  = position_distance;
-  linear_target_distance = position_distance + distance;
-  linear_start_speed     = CLAMP_RPM((speed_measured_left + speed_measured_right) / 2.0);
-  linear_target_speed    = coast ? SPEED_TO_RPM(SPEED_COAST) : 0.0;
-  linear_acceleration    = ACCEL_TO_RPM(ACCEL_DEFAULT);
-
-  if (linear_start_speed > linear_target_speed) {
-    float brake_time       = TICKS_TO_S((linear_start_speed - linear_target_speed) / linear_acceleration);
-    float brake_distance   = RPM_TO_SPEED(linear_start_speed) * brake_time;
-    brake_distance        -= 0.5 * ACCEL_DEFAULT * brake_time * brake_time;
-    brake_distance        -= 3.0;  // fudge factor :p
-    linear_brake_distance  = linear_target_distance - brake_distance;
-  } else {
-    linear_brake_distance = linear_target_distance;
-  }
+void linear_start(float distance /* mm */, bool stop) {
+  linear_start_distance  = position_distance;                                              // mm
+  linear_target_distance = position_distance + distance;                                   // mm
+  linear_start_speed     = CLAMP_RPM((speed_measured_left + speed_measured_right) / 2.0);  // RPMs
+  linear_target_speed    = stop ? 0.0 : SPEED_TO_RPM(SPEED_CRUISE);                        // RPMs
+  linear_braking         = false;
 }
 
 bool linear_update() {
-  // if we are there, then we are done.
+  // If we are there, then we are done.
   if (position_distance >= linear_target_distance) {
     speed_set(linear_target_speed, linear_target_speed);
     return true;
   }
 
-  // if we are under target speed, accelerate
-  if (speed_setpoint_left < linear_target_speed) {
-    float new_speed = speed_setpoint_left + linear_acceleration;
-    speed_set(new_speed, new_speed);
+  // Compute the braking distance.
+  float current_speed = speed_setpoint_left;  // RPMs
+  float braking_point = +INFINITY;            // mm
+  if (current_speed > CLAMP_RPM(linear_target_speed)) {
+    float brake_time = TICKS_TO_S((current_speed - CLAMP_RPM(linear_target_speed)) / ACCEL_TO_RPM(ACCEL_DEFAULT));  // s
+    float brake_distance  = RPM_TO_SPEED(current_speed) * brake_time;       // mm
+    brake_distance       -= 0.5 * ACCEL_DEFAULT * brake_time * brake_time;  // mm
+    braking_point         = linear_target_distance - brake_distance;        // mm
   }
 
-  // if we are in the braking zone, decelerate
-  if (position_distance >= linear_brake_distance) {
-    float new_speed = speed_setpoint_left - linear_acceleration;
+  // If we are in the braking zone, decelerate.
+  if (position_distance >= braking_point) {
+    float new_speed = speed_setpoint_left - ACCEL_TO_RPM(ACCEL_DEFAULT);  // RPMs
+    speed_set(new_speed, new_speed);
+    linear_braking = true;
+  }
+  // If we are not in the braking zone, and are under cruise speed, accelerate.
+  else if (!linear_braking && current_speed < SPEED_TO_RPM(SPEED_CRUISE)) {
+    float new_speed = speed_setpoint_left + ACCEL_TO_RPM(ACCEL_DEFAULT);  // RPMs
     speed_set(new_speed, new_speed);
   }
 

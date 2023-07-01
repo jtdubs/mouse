@@ -49,7 +49,7 @@ void control_update() {
     case PLAN_TYPE_LINEAR_MOTION:
       switch (current_plan.state) {
         case PLAN_STATE_SCHEDULED:
-          linear_start(current_plan.data.linear.distance, current_plan.data.linear.coast);
+          linear_start(current_plan.data.linear.distance, current_plan.data.linear.stop);
           plan_set_state(PLAN_STATE_UNDERWAY);
           [[fallthrough]];
         case PLAN_STATE_UNDERWAY:

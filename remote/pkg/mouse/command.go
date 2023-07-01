@@ -54,14 +54,14 @@ func (c SpeedPlanCommand) isCommand() bool { return true }
 type LinearPlanCommand struct {
 	Type     uint8
 	Distance float32
-	Coast    bool
+	Stop     bool
 }
 
-func NewLinearPlanCommand(distance float32, coast bool) LinearPlanCommand {
+func NewLinearPlanCommand(distance float32, stop bool) LinearPlanCommand {
 	return LinearPlanCommand{
 		Type:     3,
 		Distance: distance,
-		Coast:    coast,
+		Stop:     stop,
 	}
 }
 

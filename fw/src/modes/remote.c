@@ -55,7 +55,7 @@ void remote() {
         remote_enqueue(  //
             &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,
                       .data.linear = {.distance = command->data.linear.distance,  //
-                                      .coast    = command->data.linear.coast}});
+                                      .stop     = command->data.linear.stop}});
         break;
       case COMMAND_PLAN_EXECUTE:
         for (uint8_t i = 0; i < remote_plan_queue_size; i++) {

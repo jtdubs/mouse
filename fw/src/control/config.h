@@ -32,7 +32,7 @@ constexpr float SPEED_KI             = 8 * CONTROL_PERIOD;  // dimensionless
 constexpr float SPEED_LOW_PASS_ALPHA = 0.1;                 // dimensionless
 constexpr float ACCEL_1G             = 9810.0;              // mm/s^2
 constexpr float ACCEL_DEFAULT        = 0.2 * ACCEL_1G;      // mm/s^2
-constexpr float SPEED_COAST          = 500;                 // mm/s
+constexpr float SPEED_CRUISE         = 500;                 // mm/s
 
 // Conversion functions
 inline static float SPEED_TO_RPM(float speed /* mm/s */) {
