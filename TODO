@@ -4,6 +4,9 @@ Firmware:
   b. Issue: Motors are not symmetric, one is stronger than the other, may need either fudge factors or a "steering correction"?
 2. Rotational motion: turn to angle, completes once angle is reached
 3. Tighten tick to run every 1-2ms instead of 5.
+  - This is problematic as the encoder pulses are relatively infrequent, so we'll end up with either 0 or 1 each tick...
+  - This may be "okay" if we just make the low-pass filter stronger?
+  - Maybe we just want to try re-tuning the PID and then adding a small hand-tuned steering bias?
 4. Anti-crash failsafe of asserting sensor readings are below some sane threshold?
 5. More assert to catch motors being set to "bad" values.
 
@@ -11,7 +14,3 @@ Remote:
 1. Include plan in remote's VCD log somehow
 2. Add a "pause" button that stops processing serial messages
 3. Add a "reset" button that re-opens the serial port (which reset the robot)
-
-PCB Improvements:
-- Prevent BT board from interfering with normal USB serial comms
-- Ideally the signal path is software selectable

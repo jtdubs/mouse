@@ -20,6 +20,7 @@
 
 typedef enum : uint8_t {
   COMMAND_SET_LEDS,
+  COMMAND_SET_SPEED_PID,
   COMMAND_PLAN_POWER,
   COMMAND_PLAN_SPEED,
   COMMAND_PLAN_LINEAR,
@@ -37,6 +38,10 @@ typedef struct {
       bool right;
       bool ir;
     } leds;
+    struct {
+      float kp;
+      float ki;
+    } pid;
     struct {
       int16_t left;
       int16_t right;

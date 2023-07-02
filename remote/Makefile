@@ -6,6 +6,9 @@ sim:
 board:
 	go run . --port /dev/ttyNano
 
+bt:
+	go run . --port /dev/rfcomm0
+
 wave: mouse.fst
 	gtkwave remote.gtkw
 

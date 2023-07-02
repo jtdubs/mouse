@@ -80,9 +80,11 @@ void speed_set(float left, float right) {
 }
 
 void speed_set_pi_coefficients(float kp, float ki) {
-  speed_pi_left.kp = kp;
-  speed_pi_left.ki = ki;
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    speed_pi_left.kp = kp;
+    speed_pi_left.ki = ki;
 
-  speed_pi_right.kp = kp;
-  speed_pi_right.ki = ki;
+    speed_pi_right.kp = kp;
+    speed_pi_right.ki = ki;
+  }
 }

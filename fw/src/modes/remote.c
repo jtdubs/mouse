@@ -4,6 +4,7 @@
 #include <util/delay.h>
 
 #include "control/plan.h"
+#include "control/speed.h"
 #include "platform/motor.h"
 #include "platform/pin.h"
 #include "serial/command.h"
@@ -41,6 +42,9 @@ void remote() {
         pin_set2(LED_LEFT, command->data.leds.left);
         pin_set2(LED_RIGHT, command->data.leds.right);
         pin_set2(IR_LEDS, command->data.leds.ir);
+        break;
+      case COMMAND_SET_SPEED_PID:
+        speed_set_pi_coefficients(command->data.pid.kp, command->data.pid.ki);
         break;
       case COMMAND_PLAN_POWER:
         remote_enqueue(  //
