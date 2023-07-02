@@ -13,4 +13,3 @@ Firmware:
 Remote:
 1. Include plan in remote's VCD log somehow
 2. Add a "pause" button that stops processing serial messages
-3. Add a "reset" button that re-opens the serial port (which reset the robot)
