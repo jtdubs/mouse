@@ -4,7 +4,6 @@
 
 extern float linear_start_distance;   // mm
 extern float linear_target_distance;  // mm
-extern float linear_start_speed;      // rpm
 extern float linear_target_speed;     // rpm
 extern bool  linear_braking;
 

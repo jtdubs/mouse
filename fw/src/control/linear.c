@@ -10,7 +10,6 @@
 
 float linear_start_distance;   // mm
 float linear_target_distance;  // mm
-float linear_start_speed;      // rpm
 float linear_target_speed;     // rpm
 bool  linear_braking;
 
@@ -28,10 +27,9 @@ void linear_init() {
 }
 
 void linear_start(float distance /* mm */, bool stop) {
-  linear_start_distance  = position_distance;                                              // mm
-  linear_target_distance = position_distance + distance;                                   // mm
-  linear_start_speed     = CLAMP_RPM((speed_measured_left + speed_measured_right) / 2.0);  // RPMs
-  linear_target_speed    = stop ? 0.0 : SPEED_TO_RPM(SPEED_CRUISE);                        // RPMs
+  linear_start_distance  = position_distance;                        // mm
+  linear_target_distance = position_distance + distance;             // mm
+  linear_target_speed    = stop ? 0.0 : SPEED_TO_RPM(SPEED_CRUISE);  // RPMs
   linear_braking         = false;
   linear_theta_setpoint  = position_theta;
   pi_reset(&linear_pi_theta);
