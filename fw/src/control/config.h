@@ -12,9 +12,16 @@ constexpr float WHEEL_BASE     = 90.50;  // mm
 constexpr float WHEEL_DIAMETER = 32.50;  // mm
 
 // Motor parameters
-constexpr float    MIN_MOTOR_RPM         = 33.3;  // RPM
-constexpr uint16_t MIN_MOTOR_POWER       = 26;    // dimensionless
-constexpr float    COUNTS_PER_REVOLUTION = 240;   // dimensionless
+constexpr float    MIN_MOTOR_RPM         = 35;   // RPM
+constexpr uint16_t MIN_MOTOR_POWER       = 26;   // dimensionless
+constexpr float    COUNTS_PER_REVOLUTION = 240;  // dimensionless
+
+// Motor performance (rpm = m * power + b)
+// Ref: https://www.desmos.com/calculator/dxhrixaxre
+constexpr float LEFT_MOTOR_M  = 2.760;
+constexpr float LEFT_MOTOR_B  = -67.2;
+constexpr float RIGHT_MOTOR_M = 2.695;
+constexpr float RIGHT_MOTOR_B = -57.7;
 
 // Software parameters
 constexpr float CONTROL_PERIOD = 0.005;  // s
@@ -60,4 +67,20 @@ inline static float CLAMP_RPM(float rpm) {
 
 inline static float COUNTS_TO_RPM(float counts /* per control period */) {
   return counts * (60.0 / (COUNTS_PER_REVOLUTION * CONTROL_PERIOD));
+}
+
+inline static float LEFT_POWER_TO_RPM(float power) {
+  return (power * LEFT_MOTOR_M) + LEFT_MOTOR_B;
+}
+
+inline static float LEFT_RPM_TO_POWER(float rpm) {
+  return (rpm - LEFT_MOTOR_B) * (1.0 / LEFT_MOTOR_M);
+}
+
+inline static float RIGHT_POWER_TO_RPM(float power) {
+  return (power * RIGHT_MOTOR_M) + RIGHT_MOTOR_B;
+}
+
+inline static float RIGHT_RPM_TO_POWER(float rpm) {
+  return (rpm - RIGHT_MOTOR_B) * (1.0 / RIGHT_MOTOR_M);
 }

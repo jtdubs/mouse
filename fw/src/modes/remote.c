@@ -12,7 +12,7 @@
 static plan_t  remote_plan_queue[16];
 static uint8_t remote_plan_queue_size = 0;
 
-static void remote_enqueue(plan_t *plan) {
+[[maybe_unused]] static void remote_enqueue(plan_t *plan) {
   if (remote_plan_queue_size < 16) {
     remote_plan_queue[remote_plan_queue_size++] = *plan;
   }
@@ -27,11 +27,11 @@ void remote() {
   pin_clear(LED_RIGHT);
   pin_clear(IR_LEDS);
 
-  plan_submit_and_wait(                               //
-      &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,  //
-                .data.power = {0, 0}});
-
   for (;;) {
+    plan_submit_and_wait(                               //
+        &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,  //
+                  .data.power = {0, 0}});
+
     while (!command_available) {
       sleep_mode();
     }
@@ -49,19 +49,21 @@ void remote() {
                                   command->data.pid.alpha);
         break;
       case COMMAND_PLAN_POWER:
-        remote_enqueue(  //
+        plan_submit_and_wait(  //
             &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,
                       .data.power = {.left  = command->data.power.left,  //
                                      .right = command->data.power.right}});
+        _delay_ms(1000.0);
         break;
       case COMMAND_PLAN_SPEED:
-        remote_enqueue(  //
+        plan_submit_and_wait(  //
             &(plan_t){.type       = PLAN_TYPE_FIXED_SPEED,
                       .data.speed = {.left  = command->data.speed.left,  //
                                      .right = command->data.speed.right}});
+        _delay_ms(1000.0);
         break;
       case COMMAND_PLAN_LINEAR:
-        remote_enqueue(  //
+        plan_submit_and_wait(  //
             &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,
                       .data.linear = {.distance = command->data.linear.distance,  //
                                       .stop     = command->data.linear.stop}});
@@ -70,7 +72,6 @@ void remote() {
         for (uint8_t i = 0; i < remote_plan_queue_size; i++) {
           plan_submit_and_wait(&remote_plan_queue[i]);
         }
-        remote_plan_queue_size = 0;
         break;
       default:
         break;
