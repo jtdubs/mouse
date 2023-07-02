@@ -8,15 +8,15 @@ import (
 )
 
 type commandWindow struct {
-	mouse                 *mouse.Mouse
-	linkedPowers          bool
-	linkedSpeeds          bool
-	linkedPositions       bool
-	powerLeft, powerRight int32
-	speedLeft, speedRight float32
-	linearDistance        float32
-	linearStop            bool
-	speedKp, speedKi      float32
+	mouse                        *mouse.Mouse
+	linkedPowers                 bool
+	linkedSpeeds                 bool
+	linkedPositions              bool
+	powerLeft, powerRight        int32
+	speedLeft, speedRight        float32
+	linearDistance               float32
+	linearStop                   bool
+	speedKp, speedKi, speedAlpha float32
 }
 
 func newCommandWindow(m *mouse.Mouse) *commandWindow {
@@ -25,8 +25,9 @@ func newCommandWindow(m *mouse.Mouse) *commandWindow {
 		linkedPowers:    true,
 		linkedSpeeds:    true,
 		linkedPositions: true,
-		speedKp:         0.3,
-		speedKi:         8.0 * 0.005,
+		speedKp:         1.1,
+		speedKi:         7.0 * 0.005,
+		speedAlpha:      0.1,
 	}
 }
 
@@ -71,13 +72,13 @@ func (w *commandWindow) draw() {
 	// Speed PID
 	{
 		w.tableRow("Speed PID:")
-		pid := [2]float32{w.speedKp, w.speedKi}
-		if imgui.InputFloat2V("##SpeedPID", &pid, "%.4f", 0) {
-			w.speedKp, w.speedKi = pid[0], pid[1]
+		pid := [3]float32{w.speedKp, w.speedKi, w.speedAlpha}
+		if imgui.InputFloat3V("##SpeedPID", &pid, "%.4f", 0) {
+			w.speedKp, w.speedKi, w.speedAlpha = pid[0], pid[1], pid[2]
 		}
 		imgui.TableSetColumnIndex(2)
 		if w.toolbarButton("##SpeedPIDSend", "play-black") {
-			w.mouse.SendCommand(mouse.NewSpeedPIDCommand(w.speedKp, w.speedKi))
+			w.mouse.SendCommand(mouse.NewSpeedPIDCommand(w.speedKp, w.speedKi, w.speedAlpha))
 		}
 	}
 

@@ -33,15 +33,16 @@ func NewLEDCommand(builtin, left, right, ir bool) LEDCommand {
 func (c LEDCommand) isCommand() bool { return true }
 
 type SpeedPIDCommand struct {
-	Type   CommandType
-	Kp, Ki float32
+	Type          CommandType
+	Kp, Ki, Alpha float32
 }
 
-func NewSpeedPIDCommand(kp, ki float32) SpeedPIDCommand {
+func NewSpeedPIDCommand(kp, ki, alpha float32) SpeedPIDCommand {
 	return SpeedPIDCommand{
-		Type: SpeedPIDCommandType,
-		Kp:   kp,
-		Ki:   ki,
+		Type:  SpeedPIDCommandType,
+		Kp:    kp,
+		Ki:    ki,
+		Alpha: alpha,
 	}
 }
 

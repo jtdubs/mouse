@@ -44,7 +44,9 @@ void remote() {
         pin_set2(IR_LEDS, command->data.leds.ir);
         break;
       case COMMAND_SET_SPEED_PID:
-        speed_set_pi_coefficients(command->data.pid.kp, command->data.pid.ki);
+        speed_set_pi_coefficients(command->data.pid.kp,  //
+                                  command->data.pid.ki,  //
+                                  command->data.pid.alpha);
         break;
       case COMMAND_PLAN_POWER:
         remote_enqueue(  //

@@ -41,6 +41,7 @@ typedef struct {
     struct {
       float kp;
       float ki;
+      float alpha;
     } pid;
     struct {
       int16_t left;

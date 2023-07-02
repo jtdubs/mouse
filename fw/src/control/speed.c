@@ -21,8 +21,9 @@ float speed_setpoint_left;
 float speed_setpoint_right;
 
 // PI controllers for the motors.
-pi_t speed_pi_left;
-pi_t speed_pi_right;
+pi_t  speed_pi_left;
+pi_t  speed_pi_right;
+float speed_alpha;
 
 void speed_init() {
   speed_pi_left.min = 0;
@@ -34,14 +35,16 @@ void speed_init() {
   speed_pi_right.max = MAX_MOTOR_POWER - MIN_MOTOR_POWER;
   speed_pi_right.kp  = SPEED_KP;
   speed_pi_right.ki  = SPEED_KI;
+
+  speed_alpha = SPEED_LOW_PASS_ALPHA;
 }
 
 void speed_read() {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    speed_measured_left = (SPEED_LOW_PASS_ALPHA * COUNTS_TO_RPM(encoders_left_delta))  //
-                        + ((1.0 - SPEED_LOW_PASS_ALPHA) * speed_measured_left);
-    speed_measured_right = (SPEED_LOW_PASS_ALPHA * COUNTS_TO_RPM(encoders_right_delta))  //
-                         + ((1.0 - SPEED_LOW_PASS_ALPHA) * speed_measured_right);
+    speed_measured_left = (speed_alpha * COUNTS_TO_RPM(encoders_left_delta))  //
+                        + ((1.0 - speed_alpha) * speed_measured_left);
+    speed_measured_right = (speed_alpha * COUNTS_TO_RPM(encoders_right_delta))  //
+                         + ((1.0 - speed_alpha) * speed_measured_right);
   }
 }
 
@@ -79,8 +82,10 @@ void speed_set(float left, float right) {
   speed_setpoint_right = right;
 }
 
-void speed_set_pi_coefficients(float kp, float ki) {
+void speed_set_pi_coefficients(float kp, float ki, float alpha) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    speed_alpha = alpha;
+
     speed_pi_left.kp = kp;
     speed_pi_left.ki = ki;
 
