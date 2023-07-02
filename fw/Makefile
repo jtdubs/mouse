@@ -49,9 +49,9 @@ clean:
 	rm -Rf build
 
 upload: build/release/$(TARGET).hex
-	-killall -HUP -e ui
+	-killall -HUP -e remote
 	avrdude -c arduino -P /dev/ttyNano -b 57600 -p m328p -D -U flash:w:build/release/$(TARGET).hex:i
-	-killall -CONT -e ui
+	-killall -CONT -e remote
 
 sim: build/debug/$(TARGET).elf
 	../sim/build/release/mousesim $^

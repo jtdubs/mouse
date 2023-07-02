@@ -1,10 +1,14 @@
 Firmware:
-- Rotational motion: turn to angle, completes once angle is reached.  Would never want risidual rotational velocity.
-- Test stuff w/ the actual robot... but like where though?
-- Once all the math is more generic (using contants), consider tightening up the tick to run every 1ms?
+1. Include plan in report
+2. Test linear motion w/ actual robot
+3. Rotational motion: turn to angle, completes once angle is reached
+4. Tighten tick to run every 1-2ms instead of 5.
+5. Anti-crash failsafe of asserting sensor readings are below some sane threshold?
+6. More assert to catch motors being set to "bad" values.
 
-Firmware:
-- Include plan in report
+Remote:
+1. Parse and show the current plan
 
-Monitor:
-- Show the current plan
+PCB Improvements:
+- Prevent BT board from interfering with normal USB serial comms
+- Ideally the signal path is software selectable
