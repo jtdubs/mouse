@@ -55,12 +55,10 @@ typedef struct {
 
 // command is the current command.
 extern volatile command_t *command;
+extern volatile bool       command_available;
 
 // command_init initializes the command module.
 void command_init();
-
-// command_available determines if a command is available to be processed.
-bool command_available();
 
 // command_processed indicates the command has been processed.
 void command_processed();

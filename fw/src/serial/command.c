@@ -8,12 +8,15 @@
 
 // The encoded and decoded command, and associated state.
 volatile command_t *command;
+volatile bool       command_available;
 
 // on_command_received is the USART0 callback for when a command is received.
 static void on_command_received(uint8_t *buffer, uint8_t size) {
   assert(ASSERT_COMMAND + 0, command == NULL);
+  assert(ASSERT_COMMAND + 1, !command_available);
   (void)size;
-  command = (command_t *)buffer;
+  command           = (command_t *)buffer;
+  command_available = true;
 }
 
 // command_init initializes the command module.
@@ -22,17 +25,9 @@ void command_init() {
   usart0_enable_receiver();
 }
 
-// command_available determines if a command is available to be processed.
-bool command_available() {
-  bool result;
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    result = command != NULL;
-  }
-  return result;
-}
-
 // command_processed indicates the command has been processed.
 void command_processed() {
-  command = NULL;
+  command           = NULL;
+  command_available = false;
   usart0_enable_receiver();
 }

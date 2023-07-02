@@ -31,7 +31,7 @@ void remote() {
                 .data.power = {0, 0}});
 
   for (;;) {
-    while (!command_available()) {
+    while (!command_available) {
       sleep_mode();
     }
 
