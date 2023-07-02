@@ -12,11 +12,6 @@ extern float speed_measured_right;  // rpms
 extern float speed_setpoint_left;   // rpms
 extern float speed_setpoint_right;  // rpms
 
-// PI controllers for the motors.
-extern pi_t  speed_pi_left;
-extern pi_t  speed_pi_right;
-extern float speed_alpha;
-
 void speed_init();
 void speed_read();
 void speed_update();

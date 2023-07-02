@@ -21,9 +21,9 @@ float speed_setpoint_left;
 float speed_setpoint_right;
 
 // PI controllers for the motors.
-pi_t  speed_pi_left;
-pi_t  speed_pi_right;
-float speed_alpha;
+static pi_t  speed_pi_left;
+static pi_t  speed_pi_right;
+static float speed_alpha;
 
 void speed_init() {
   speed_pi_left.min = -200;
