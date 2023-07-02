@@ -1,5 +1,6 @@
 #include "modes/remote.h"
 
+#include <avr/sleep.h>
 #include <util/delay.h>
 
 #include "control/plan.h"
@@ -18,6 +19,8 @@ static void remote_enqueue(plan_t *plan) {
 
 // remote is a mode that allows the robot to be controlled remotely.
 void remote() {
+  set_sleep_mode(SLEEP_MODE_IDLE);
+
   pin_clear(LED_BUILTIN);
   pin_clear(LED_LEFT);
   pin_clear(LED_RIGHT);
@@ -28,8 +31,8 @@ void remote() {
                 .data.power = {0, 0}});
 
   for (;;) {
-    if (!command_available()) {
-      continue;
+    while (!command_available()) {
+      sleep_mode();
     }
 
     switch (command->type) {
