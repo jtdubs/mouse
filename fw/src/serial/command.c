@@ -1,12 +1,13 @@
 #include "command.h"
 
 #include <stddef.h>
+#include <util/atomic.h>
 
 #include "platform/usart0.h"
 #include "utils/assert.h"
 
 // The encoded and decoded command, and associated state.
-command_t *command;
+volatile command_t *command;
 
 // on_command_received is the USART0 callback for when a command is received.
 static void on_command_received(uint8_t *buffer, uint8_t size) {
@@ -23,7 +24,11 @@ void command_init() {
 
 // command_available determines if a command is available to be processed.
 bool command_available() {
-  return command != NULL;
+  bool result;
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    result = command != NULL;
+  }
+  return result;
 }
 
 // command_processed indicates the command has been processed.

@@ -54,7 +54,7 @@ typedef struct {
 #pragma pack(pop)
 
 // command is the current command.
-extern command_t *command;
+extern volatile command_t *command;
 
 // command_init initializes the command module.
 void command_init();
