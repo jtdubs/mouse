@@ -63,14 +63,25 @@ func (m *Motor) Init() {
 	C.avr_cycle_timer_register(m.avr, m.avr.cycle+10000, on_cycle_cgo, pointer.Save(m))
 }
 
+const LEFT_MOTOR_M float32 = 2.760
+const LEFT_MOTOR_B float32 = -67.2
+const RIGHT_MOTOR_M float32 = 2.695
+const RIGHT_MOTOR_B float32 = -57.7
+
 func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 	if irq == m.pwmIRQ {
-		if value < 26 {
+		if value < 35 {
 			// Not enough power to start the motor turning.
 			m.DesiredPeriod = 0
 		} else {
-			// Encoder period formula of 90/(pwm-16) approximated from measurements, in milliseconds.
-			m.DesiredPeriod = uint32((90.0 / (float32(value) - 16.0)) * 16000.0)
+			var rpm float32
+			if m.left {
+				rpm = (float32(value) * LEFT_MOTOR_M) + LEFT_MOTOR_B
+			} else {
+				rpm = (float32(value) * RIGHT_MOTOR_M) + RIGHT_MOTOR_B
+			}
+			period := (16000000.0 * 60.0 / 240.0) / rpm
+			m.DesiredPeriod = uint32(period)
 		}
 	} else if irq == m.dirIRQ {
 		m.Clockwise = value != 0

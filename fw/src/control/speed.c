@@ -26,13 +26,13 @@ pi_t  speed_pi_right;
 float speed_alpha;
 
 void speed_init() {
-  speed_pi_left.min = 0;
-  speed_pi_left.max = MAX_MOTOR_POWER - MIN_MOTOR_POWER;
+  speed_pi_left.min = -200;
+  speed_pi_left.max = 200;
   speed_pi_left.kp  = SPEED_KP;
   speed_pi_left.ki  = SPEED_KI;
 
-  speed_pi_right.min = 0;
-  speed_pi_right.max = MAX_MOTOR_POWER - MIN_MOTOR_POWER;
+  speed_pi_right.min = -200;
+  speed_pi_right.max = 200;
   speed_pi_right.kp  = SPEED_KP;
   speed_pi_right.ki  = SPEED_KI;
 
@@ -49,32 +49,29 @@ void speed_read() {
 }
 
 void speed_update() {
-  uint8_t power_left;
-  if (fabsf(speed_setpoint_left) < MIN_MOTOR_RPM) {
+  float setpoint_left = fabsf(speed_setpoint_left);
+  float power_left    = LEFT_RPM_TO_POWER(setpoint_left);
+  if (setpoint_left < MIN_MOTOR_RPM) {
     pi_reset(&speed_pi_left);
     power_left = 0;
   } else {
-    power_left = (uint8_t)pi_update(&speed_pi_left, fabsf(speed_setpoint_left), fabsf(speed_measured_left));
-    if (power_left != 0) {
-      power_left += MIN_MOTOR_POWER;
-    }
+    power_left += pi_update(&speed_pi_left, setpoint_left, fabsf(speed_measured_left));
   }
 
-  uint8_t power_right;
-  if (fabsf(speed_setpoint_right) < MIN_MOTOR_RPM) {
+  float setpoint_right = fabsf(speed_setpoint_right);
+  float power_right    = RIGHT_RPM_TO_POWER(setpoint_right);
+  if (setpoint_right < MIN_MOTOR_RPM) {
     pi_reset(&speed_pi_right);
     power_right = 0;
   } else {
-    power_right = (uint8_t)pi_update(&speed_pi_right, fabsf(speed_setpoint_right), fabsf(speed_measured_right));
-    if (power_right != 0) {
-      power_right += MIN_MOTOR_POWER;
-    }
+    power_right += pi_update(&speed_pi_right, setpoint_right, fabsf(speed_measured_right));
   }
 
-  bool forward_left  = signbitf(speed_setpoint_left) == 0;
-  bool forward_right = signbitf(speed_setpoint_right) == 0;
-  motor_set(forward_left ? power_left : -power_left,  //
-            forward_right ? power_right : -power_right);
+  bool    forward_left  = signbitf(speed_setpoint_left) == 0;
+  bool    forward_right = signbitf(speed_setpoint_right) == 0;
+  int16_t left          = (int16_t)lrintf(forward_left ? power_left : -power_left);
+  int16_t right         = (int16_t)lrintf(forward_right ? power_right : -power_right);
+  motor_set(left, right);
 }
 
 void speed_set(float left, float right) {
