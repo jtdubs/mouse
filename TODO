@@ -1,15 +1,14 @@
 Firmware:
-1. Test linear motion w/ actual robot
-  a. Issue: Stopped early once, not enough power to "crawl" to target distance (29.5 vs 30?)
-2. Add a "steering adjustment" pi controller that looks at the thetas...
-2. Rotational motion: turn to angle, completes once angle is reached
-3. Tighten tick to run every 1-2ms instead of 5.
+- Linear motion seems to have two problems:
+  - It starts the accel ramp at 0, even though that's below the min motor speed.
+  - It ends the decel ramp at min motor speed, but we never get there because true speed lags the setpoint, and then we zero the motors and "slide" to a stop, counting about 16 ticks per motor after we set the speed to zero.
+- Rotational motion: turn to angle, completes once angle is reached
+- Tighten tick to run every 1-2ms instead of 5.
   - This is problematic as the encoder pulses are relatively infrequent, so we'll end up with either 0 or 1 each tick...
   - This may be "okay" if we just make the low-pass filter stronger?
-  - Maybe we just want to try re-tuning the PID and then adding a small hand-tuned steering bias?
-4. Anti-crash failsafe of asserting sensor readings are below some sane threshold?
-5. More assert to catch motors being set to "bad" values.
+- Anti-crash failsafe of asserting sensor readings are below some sane threshold?
+- More assert to catch motors being set to "bad" values.
 
 Remote:
-1. Include plan in remote's VCD log somehow
-2. Add a "pause" button that stops processing serial messages
+- Include plan in remote's VCD log somehow
+- Add a "pause" button that stops processing serial messages
