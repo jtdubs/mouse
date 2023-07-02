@@ -54,7 +54,7 @@ bool linear_update() {
     braking_point         = linear_target_distance - brake_distance;        // mm
   }
 
-  float new_speed = SPEED_TO_RPM(SPEED_CRUISE);
+  float new_speed;
 
   // If we are in the braking zone, decelerate.
   if (position_distance >= braking_point) {
@@ -64,6 +64,14 @@ bool linear_update() {
   // If we are not in the braking zone, and are under cruise speed, accelerate.
   else if (!linear_braking && current_speed < SPEED_TO_RPM(SPEED_CRUISE)) {
     new_speed = current_speed + ACCEL_TO_RPM(ACCEL_DEFAULT);  // RPMs
+  }
+  // If we were in the braking zone, that means we've slowed too quickly, so just hold speed.
+  else if (linear_braking) {
+    new_speed = current_speed;
+  }
+  // Otherwise, continue at cruise speed.
+  else {
+    new_speed = SPEED_TO_RPM(SPEED_CRUISE);
   }
 
   // Adjust steering to maintain angle.
