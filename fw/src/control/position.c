@@ -16,7 +16,7 @@ void position_read() {
   float rotation = (encoders_right_delta - encoders_left_delta);
 
   position_distance = fma(forward, COUNT_DISTANCE, position_distance);
-  position_theta    = clampthetaf(fma(rotation, COUNT_THETA, position_theta));
+  position_theta    = fma(rotation, COUNT_THETA, position_theta);
 }
 
 void position_clear() {
