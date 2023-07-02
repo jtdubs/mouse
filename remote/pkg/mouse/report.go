@@ -1,6 +1,8 @@
 package mouse
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 	"unsafe"
 
@@ -8,8 +10,8 @@ import (
 )
 
 type Report struct {
-	BatteryVolts       uint8
-	Sensors            uint32
+	// BatteryVolts       uint8
+	// Sensors            uint32
 	LEDs               uint8
 	EncoderLeft        int32
 	EncoderRight       int32
@@ -21,14 +23,114 @@ type Report struct {
 	SpeedSetpointRight float32
 	PositionDistance   float32
 	PositionTheta      float32
+	Plan               Plan
 	RTCMicros          uint32
 }
 
+type PlanType uint8
+
+const (
+	PlanTypeIdle PlanType = iota
+	PlanTypeFixedPower
+	PlanTypeFixedSpeed
+	PlanTypeLinearMotion
+	PlanTypeRotationalMotion
+)
+
+type PlanState uint8
+
+const (
+	PlanStateScheduled PlanState = iota
+	PlanStateUnderway
+	PlanStateImplemented
+)
+
+var PlanStateNames = map[PlanState]string{
+	PlanStateScheduled:   "Scheduled",
+	PlanStateUnderway:    "Underway",
+	PlanStateImplemented: "Implemented",
+}
+
+type Plan struct {
+	Type  PlanType
+	State PlanState
+	Data  [8]byte
+}
+
+type PlanData interface {
+	isPlanData() bool
+}
+
+func (p Plan) DecodePlan() PlanData {
+	switch p.Type {
+	case PlanTypeIdle:
+		return PlanIdle{}
+	case PlanTypeFixedPower:
+		var data PlanFixedPower
+		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
+			return nil
+		}
+		return data
+	case PlanTypeFixedSpeed:
+		var data PlanFixedSpeed
+		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
+			return nil
+		}
+		return data
+	case PlanTypeLinearMotion:
+		var data PlanLinearMotion
+		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
+			return nil
+		}
+		return data
+	case PlanTypeRotationalMotion:
+		var data PlanRotationalMotion
+		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
+			return nil
+		}
+		return data
+	default:
+		return nil
+	}
+}
+
+type PlanIdle struct{}
+
+func (PlanIdle) isPlanData() bool { return true }
+
+type PlanFixedPower struct {
+	Left  int16
+	Right int16
+}
+
+func (PlanFixedPower) isPlanData() bool { return true }
+
+type PlanFixedSpeed struct {
+	Left  float32
+	Right float32
+}
+
+func (PlanFixedSpeed) isPlanData() bool { return true }
+
+type PlanLinearMotion struct {
+	Distance float32
+	Stop     bool
+}
+
+func (PlanLinearMotion) isPlanData() bool { return true }
+
+type PlanRotationalMotion struct {
+	DTheta float32
+}
+
+func (PlanRotationalMotion) isPlanData() bool { return true }
+
 func (r *Report) DecodeSensors() (left, center, right uint16) {
-	left = uint16(r.Sensors & 0x3ff)
-	center = uint16((r.Sensors >> 10) & 0x3ff)
-	right = uint16((r.Sensors >> 20) & 0x3ff)
-	return
+	return 0, 0, 0
+	// left = uint16(r.Sensors & 0x3ff)
+	// center = uint16((r.Sensors >> 10) & 0x3ff)
+	// right = uint16((r.Sensors >> 20) & 0x3ff)
+	// return
 }
 
 func (r *Report) DecodeLEDs() (onboard, left, right, ir bool) {
@@ -41,10 +143,10 @@ func (r *Report) DecodeLEDs() (onboard, left, right, ir bool) {
 
 func (r *Report) Variables() []vcd.VcdDataType {
 	return []vcd.VcdDataType{
-		vcd.NewVariable("adc_battery_voltage", "wire", 10),
-		vcd.NewVariable("adc_sensor_center", "wire", 10),
-		vcd.NewVariable("adc_sensor_left", "wire", 10),
-		vcd.NewVariable("adc_sensor_right", "wire", 10),
+		// vcd.NewVariable("adc_battery_voltage", "wire", 10),
+		// vcd.NewVariable("adc_sensor_center", "wire", 10),
+		// vcd.NewVariable("adc_sensor_left", "wire", 10),
+		// vcd.NewVariable("adc_sensor_right", "wire", 10),
 		vcd.NewVariable("encoder_left", "wire", 32),
 		vcd.NewVariable("encoder_right", "wire", 32),
 		vcd.NewVariable("motor_power_left", "wire", 16),
@@ -60,13 +162,13 @@ func (r *Report) Variables() []vcd.VcdDataType {
 }
 
 func (r *Report) Symbols() map[string]string {
-	sl, sc, sr := r.DecodeSensors()
+	// sl, sc, sr := r.DecodeSensors()
 
 	return map[string]string{
-		"adc_battery_voltage":  fmt.Sprint(r.BatteryVolts * 2),
-		"adc_sensor_center":    fmt.Sprint(sc),
-		"adc_sensor_left":      fmt.Sprint(sl),
-		"adc_sensor_right":     fmt.Sprint(sr),
+		// "adc_battery_voltage":  fmt.Sprint(r.BatteryVolts * 2),
+		// "adc_sensor_center":    fmt.Sprint(sc),
+		// "adc_sensor_left":      fmt.Sprint(sl),
+		// "adc_sensor_right":     fmt.Sprint(sr),
 		"encoder_left":         fmt.Sprint(r.EncoderLeft),
 		"encoder_right":        fmt.Sprint(r.EncoderRight),
 		"motor_power_left":     fmt.Sprint(r.MotorPowerLeft),

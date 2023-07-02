@@ -24,10 +24,10 @@ void report_init() {}
 void report_send() {
   if (usart0_write_ready()) {
     ATOMIC_BLOCK(ATOMIC_FORCEON) {
-      report.battery_volts        = adc_values[ADC_BATTERY_VOLTAGE] >> 2;
-      report.sensors.left         = adc_values[ADC_SENSOR_LEFT];
-      report.sensors.center       = adc_values[ADC_SENSOR_CENTER];
-      report.sensors.right        = adc_values[ADC_SENSOR_RIGHT];
+      // report.battery_volts        = adc_values[ADC_BATTERY_VOLTAGE] >> 2;
+      // report.sensors.left         = adc_values[ADC_SENSOR_LEFT];
+      // report.sensors.center       = adc_values[ADC_SENSOR_CENTER];
+      // report.sensors.right        = adc_values[ADC_SENSOR_RIGHT];
       report.leds.onboard         = pin_is_set(LED_BUILTIN);
       report.leds.left            = pin_is_set(LED_LEFT);
       report.leds.right           = pin_is_set(LED_RIGHT);
@@ -42,6 +42,7 @@ void report_send() {
       report.speed.setpoint_right = speed_setpoint_right;
       report.position.distance    = position_distance;
       report.position.theta       = position_theta;
+      report.plan                 = current_plan;
       report.rtc.micros           = rtc_micros();
     }
     usart0_write((uint8_t*)&report, sizeof(report_t));

@@ -82,6 +82,11 @@ func (w *reportWindow) draw() {
 	}
 
 	{
+		w.tableRow("Plan:")
+		imgui.Text(fmt.Sprintf("%v - %#v", mouse.PlanStateNames[r.Plan.State], r.Plan.DecodePlan()))
+	}
+
+	{
 		w.tableRow("Position:")
 		measured := [2]float32{r.PositionDistance, r.PositionTheta * 180.0 / math.Pi}
 		imgui.BeginDisabled()

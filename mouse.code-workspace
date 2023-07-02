@@ -34,7 +34,8 @@
       "serial.h": "c",
       "delay_basic.h": "c",
       "stdbool.h": "c",
-      "timer.h": "c"
+      "timer.h": "c",
+      "command.h": "c"
     }
   },
 }

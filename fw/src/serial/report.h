@@ -15,16 +15,18 @@
 
 #include <stdint.h>
 
+#include "control/plan.h"
+
 #pragma pack(push, 1)
 // report_t represents a mouse status report.
 typedef struct {
-  uint8_t battery_volts;
-  struct {
-    uint16_t left    : 10;
-    uint16_t center  : 10;
-    uint16_t right   : 10;
-    uint8_t  padding : 2;
-  } sensors;
+  // uint8_t battery_volts;
+  // struct {
+  //   uint16_t left    : 10;
+  //   uint16_t center  : 10;
+  //   uint16_t right   : 10;
+  //   uint8_t  padding : 2;
+  // } sensors;
   struct {
     uint8_t onboard : 1;
     uint8_t left    : 1;
@@ -50,6 +52,7 @@ typedef struct {
     float distance;
     float theta;
   } position;
+  plan_t plan;
   struct {
     uint32_t micros;
   } rtc;
