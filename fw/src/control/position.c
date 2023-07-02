@@ -12,11 +12,14 @@ float position_theta;     // in radians
 void position_init() {}
 
 void position_read() {
-  float forward  = (encoders_left_delta + encoders_right_delta) / 2.0;
-  float rotation = (encoders_right_delta - encoders_left_delta);
+  float left_distance  = ((float)encoders_left_delta) * COUNT_DISTANCE_LEFT;    // mm
+  float right_distance = ((float)encoders_right_delta) * COUNT_DISTANCE_RIGHT;  // mm
 
-  position_distance = fma(forward, COUNT_DISTANCE, position_distance);
-  position_theta    = fma(rotation, COUNT_THETA, position_theta);
+  float forward  = (left_distance + right_distance) / 2.0;       // mm
+  float rotation = (right_distance - left_distance) * MM_THETA;  // radians
+
+  position_distance += forward;
+  position_theta    += rotation;
 }
 
 void position_clear() {

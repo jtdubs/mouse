@@ -12,35 +12,40 @@ constexpr float WHEEL_BASE     = 90.50;  // mm
 constexpr float WHEEL_DIAMETER = 32.50;  // mm
 
 // Motor parameters
-constexpr float    MIN_MOTOR_RPM         = 35;   // RPM
-constexpr uint16_t MIN_MOTOR_POWER       = 26;   // dimensionless
-constexpr float    COUNTS_PER_REVOLUTION = 240;  // dimensionless
+constexpr float COUNTS_PER_REVOLUTION = 240;  // dimensionless
 
 // Motor performance (rpm = m * power + b)
 // Ref: https://www.desmos.com/calculator/dxhrixaxre
-constexpr float LEFT_MOTOR_M  = 2.760;
-constexpr float LEFT_MOTOR_B  = -67.2;
-constexpr float RIGHT_MOTOR_M = 2.695;
-constexpr float RIGHT_MOTOR_B = -57.7;
+constexpr float MIN_MOTOR_RPM = 35;     // RPM
+constexpr float LEFT_MOTOR_M  = 2.760;  // RPM/power
+constexpr float LEFT_MOTOR_B  = -67.2;  // RPM
+constexpr float RIGHT_MOTOR_M = 2.695;  // RPM/power
+constexpr float RIGHT_MOTOR_B = -57.7;  // RPM
 
 // Software parameters
 constexpr float CONTROL_PERIOD = 0.005;  // s
 
+// Delicious fudge
+constexpr float WHEEL_BIAS = 0.01;  // dimensionless
+
 // Derived constants
-constexpr float WHEEL_CIRCUMFERENCE = M_PI * WHEEL_DIAMETER;                        // mm
-constexpr float COUNT_DISTANCE      = WHEEL_CIRCUMFERENCE / COUNTS_PER_REVOLUTION;  // mm
-constexpr float COUNT_THETA         = COUNT_DISTANCE / WHEEL_BASE;                  // radians
+constexpr float WHEEL_CIRCUMFERENCE  = M_PI * WHEEL_DIAMETER;                        // mm
+constexpr float COUNT_DISTANCE       = WHEEL_CIRCUMFERENCE / COUNTS_PER_REVOLUTION;  // mm
+constexpr float COUNT_DISTANCE_LEFT  = (1.0 + WHEEL_BIAS) * COUNT_DISTANCE;          // mm
+constexpr float COUNT_DISTANCE_RIGHT = (1.0 - WHEEL_BIAS) * COUNT_DISTANCE;          // mm
+constexpr float COUNT_THETA          = COUNT_DISTANCE / WHEEL_BASE;                  // radians
+constexpr float MM_THETA             = 1.0 / WHEEL_BASE;                             // radians
 
 // Performance characteristics
-constexpr float MAX_MOTOR_POWER       = 200.0;                  // dimensionless
-constexpr float MAX_SPEED             = 1000.0;                 // mm/s
+constexpr float MAX_MOTOR_POWER       = 200;                    // dimensionless
+constexpr float MAX_SPEED             = 1000;                   // mm/s
 constexpr float SPEED_KP              = 0.1;                    // dimensionless
 constexpr float SPEED_KI              = 0.02 * CONTROL_PERIOD;  // dimensionless
 constexpr float SPEED_LOW_PASS_ALPHA  = 0.5;                    // dimensionless
-constexpr float LINEAR_KP             = 0;                      // dimensionless
-constexpr float LINEAR_KI             = 0;                      // dimensionless
+constexpr float LINEAR_KP             = 60;                     // dimensionless
+constexpr float LINEAR_KI             = 20;                     // dimensionless
 constexpr float LINEAR_LOW_PASS_ALPHA = 0.1;                    // dimensionless
-constexpr float ACCEL_1G              = 9810.0;                 // mm/s^2
+constexpr float ACCEL_1G              = 9810;                   // mm/s^2
 constexpr float ACCEL_DEFAULT         = 0.15 * ACCEL_1G;        // mm/s^2
 constexpr float SPEED_CRUISE          = 500;                    // mm/s
 
