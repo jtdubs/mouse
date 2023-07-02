@@ -32,14 +32,17 @@ constexpr float COUNT_DISTANCE      = WHEEL_CIRCUMFERENCE / COUNTS_PER_REVOLUTIO
 constexpr float COUNT_THETA         = COUNT_DISTANCE / WHEEL_BASE;                  // radians
 
 // Performance characteristics
-constexpr float MAX_MOTOR_POWER      = 200.0;                  // dimensionless
-constexpr float MAX_SPEED            = 1000.0;                 // mm/s
-constexpr float SPEED_KP             = 0.1;                    // dimensionless
-constexpr float SPEED_KI             = 0.02 * CONTROL_PERIOD;  // dimensionless
-constexpr float SPEED_LOW_PASS_ALPHA = 0.5;                    // dimensionless
-constexpr float ACCEL_1G             = 9810.0;                 // mm/s^2
-constexpr float ACCEL_DEFAULT        = 0.15 * ACCEL_1G;        // mm/s^2
-constexpr float SPEED_CRUISE         = 500;                    // mm/s
+constexpr float MAX_MOTOR_POWER       = 200.0;                  // dimensionless
+constexpr float MAX_SPEED             = 1000.0;                 // mm/s
+constexpr float SPEED_KP              = 0.1;                    // dimensionless
+constexpr float SPEED_KI              = 0.02 * CONTROL_PERIOD;  // dimensionless
+constexpr float SPEED_LOW_PASS_ALPHA  = 0.5;                    // dimensionless
+constexpr float LINEAR_KP             = 0.1;                    // dimensionless
+constexpr float LINEAR_KI             = 0.02 * CONTROL_PERIOD;  // dimensionless
+constexpr float LINEAR_LOW_PASS_ALPHA = 0.5;                    // dimensionless
+constexpr float ACCEL_1G              = 9810.0;                 // mm/s^2
+constexpr float ACCEL_DEFAULT         = 0.15 * ACCEL_1G;        // mm/s^2
+constexpr float SPEED_CRUISE          = 500;                    // mm/s
 
 // Conversion functions
 inline static float SPEED_TO_RPM(float speed /* mm/s */) {

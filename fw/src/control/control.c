@@ -14,6 +14,7 @@ void control_init() {
   plan_init();
   speed_init();
   position_init();
+  linear_init();
   timer_set_callback(control_update);
 }
 

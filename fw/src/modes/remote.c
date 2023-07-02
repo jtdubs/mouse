@@ -3,6 +3,7 @@
 #include <avr/sleep.h>
 #include <util/delay.h>
 
+#include "control/linear.h"
 #include "control/plan.h"
 #include "control/speed.h"
 #include "platform/motor.h"
@@ -47,6 +48,11 @@ void remote() {
         speed_set_pi_coefficients(command->data.pid.kp,  //
                                   command->data.pid.ki,  //
                                   command->data.pid.alpha);
+        break;
+      case COMMAND_SET_LINEAR_PID:
+        linear_set_pi_coefficients(command->data.pid.kp,  //
+                                   command->data.pid.ki,  //
+                                   command->data.pid.alpha);
         break;
       case COMMAND_PLAN_POWER:
         plan_submit_and_wait(  //

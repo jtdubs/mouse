@@ -5,6 +5,7 @@ type CommandType uint8
 const (
 	LEDCommandType CommandType = iota
 	SpeedPIDCommandType
+	LinearPIDCommandType
 	PowerPlanCommandType
 	SpeedPlanCommandType
 	LinearPlanCommandType
@@ -47,6 +48,22 @@ func NewSpeedPIDCommand(kp, ki, alpha float32) SpeedPIDCommand {
 }
 
 func (SpeedPIDCommand) isCommand() bool { return true }
+
+type LinearPIDCommand struct {
+	Type          CommandType
+	Kp, Ki, Alpha float32
+}
+
+func NewLinearPIDCommand(kp, ki, alpha float32) LinearPIDCommand {
+	return LinearPIDCommand{
+		Type:  LinearPIDCommandType,
+		Kp:    kp,
+		Ki:    ki,
+		Alpha: alpha,
+	}
+}
+
+func (LinearPIDCommand) isCommand() bool { return true }
 
 type PowerPlanCommand struct {
 	Type        CommandType
