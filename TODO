@@ -1,6 +1,5 @@
 Firmware:
-- Linear motion seems to have two problems:
-  - It starts the accel ramp at 0, even though that's below the min motor speed.
+- Linear motion seems to have a problem:
   - It ends the decel ramp at min motor speed, but we never get there because true speed lags the setpoint, and then we zero the motors and "slide" to a stop, counting about 16 ticks per motor after we set the speed to zero.
 - Rotational motion: turn to angle, completes once angle is reached
 - Tighten tick to run every 1-2ms instead of 5.

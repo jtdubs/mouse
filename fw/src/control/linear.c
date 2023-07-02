@@ -42,9 +42,10 @@ bool linear_update() {
     return true;
   }
 
-  // Compute the braking distance.
   float current_speed = (speed_setpoint_left + speed_setpoint_right) / 2.0;  // RPMs
-  float braking_point = +INFINITY;                                           // mm
+
+  // Compute the braking distance.
+  float braking_point = +INFINITY;  // mm
   if (current_speed > CLAMP_RPM(linear_target_speed)) {
     float brake_time = TICKS_TO_S((current_speed - CLAMP_RPM(linear_target_speed)) / ACCEL_TO_RPM(ACCEL_DEFAULT));  // s
     float brake_distance  = RPM_TO_SPEED(current_speed) * brake_time;       // mm
@@ -61,7 +62,7 @@ bool linear_update() {
   }
   // If we are not in the braking zone, and are under cruise speed, accelerate.
   else if (!linear_braking && current_speed < SPEED_TO_RPM(SPEED_CRUISE)) {
-    new_speed = current_speed + ACCEL_TO_RPM(ACCEL_DEFAULT);  // RPMs
+    new_speed = CLAMP_RPM(current_speed + ACCEL_TO_RPM(ACCEL_DEFAULT));  // RPMs
   }
   // If we were in the braking zone, that means we've slowed too quickly, so just hold speed.
   else if (linear_braking) {
