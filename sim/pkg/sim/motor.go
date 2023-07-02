@@ -12,6 +12,7 @@ package sim
 import "C"
 
 import (
+	"math/rand"
 	"unsafe"
 
 	"github.com/mattn/go-pointer"
@@ -70,7 +71,7 @@ const RIGHT_MOTOR_B float32 = -57.7
 
 func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 	if irq == m.pwmIRQ {
-		if value < 35 {
+		if (m.left && value < 35) || (!m.left && value < 30) {
 			// Not enough power to start the motor turning.
 			m.DesiredPeriod = 0
 		} else {
@@ -106,5 +107,8 @@ func (m *Motor) OnCycle(avr *C.avr_t, when C.avr_cycle_count_t, param unsafe.Poi
 		return when + 10000
 	}
 
-	return when + C.avr_cycle_count_t(m.ActualPeriod)
+	var errorPercent float32 = 0.04
+	error := int32(float32(m.ActualPeriod) * errorPercent * (rand.Float32() - 0.5) * 2.0)
+
+	return when + C.avr_cycle_count_t(int32(m.ActualPeriod)+error)
 }
