@@ -10,8 +10,5 @@ Remote:
 - Add a "pause" button that stops processing serial messages
 - Add a "reest" button that resets the board, probably by triggering the watchdog??
 
-Sim:
-- Remove the "Adding IRQ" print statements
-
 Environment:
 - Not using built version of avrdude, try it then uninstall the package.

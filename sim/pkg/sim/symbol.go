@@ -132,7 +132,6 @@ func (s *SymbolManager) Init(sim *Sim, elfPath string) {
 		sym.irq = &irqs[i]
 		i += 1
 		if sym.Length <= 4 {
-			log.Printf("Adding IRQ %q at %d with size %d", sym.Name, sym.Address, sym.Length*8)
 			C.avr_vcd_add_signal(sim.avr.vcd, sym.irq, C.int(sym.Length*8), C.CString(sym.Name))
 		}
 	}
