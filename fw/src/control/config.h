@@ -26,7 +26,7 @@ constexpr float RIGHT_MOTOR_B = -57.7;  // RPM
 constexpr float CONTROL_PERIOD = 0.005;  // s
 
 // Delicious fudge
-constexpr float WHEEL_BIAS = 0.01;  // dimensionless
+constexpr float WHEEL_BIAS = 0.002;  // dimensionless
 
 // Derived constants
 constexpr float WHEEL_CIRCUMFERENCE  = M_PI * WHEEL_DIAMETER;                        // mm
@@ -37,17 +37,14 @@ constexpr float COUNT_THETA          = COUNT_DISTANCE / WHEEL_BASE;             
 constexpr float MM_THETA             = 1.0 / WHEEL_BASE;                             // radians
 
 // Performance characteristics
-constexpr float MAX_MOTOR_POWER       = 200;                    // dimensionless
-constexpr float MAX_SPEED             = 1000;                   // mm/s
-constexpr float SPEED_KP              = 0.1;                    // dimensionless
-constexpr float SPEED_KI              = 0.02 * CONTROL_PERIOD;  // dimensionless
-constexpr float SPEED_LOW_PASS_ALPHA  = 0.5;                    // dimensionless
-constexpr float LINEAR_KP             = 60;                     // dimensionless
-constexpr float LINEAR_KI             = 20.0 * CONTROL_PERIOD;  // dimensionless
-constexpr float LINEAR_LOW_PASS_ALPHA = 0.1;                    // dimensionless
-constexpr float ACCEL_1G              = 9810;                   // mm/s^2
-constexpr float ACCEL_DEFAULT         = 0.15 * ACCEL_1G;        // mm/s^2
-constexpr float SPEED_CRUISE          = 500;                    // mm/s
+constexpr float MAX_MOTOR_POWER      = 200;                    // dimensionless
+constexpr float MAX_SPEED            = 1000;                   // mm/s
+constexpr float SPEED_KP             = 0.1;                    // dimensionless
+constexpr float SPEED_KI             = 0.02 * CONTROL_PERIOD;  // dimensionless
+constexpr float SPEED_LOW_PASS_ALPHA = 0.5;                    // dimensionless
+constexpr float ACCEL_1G             = 9810;                   // mm/s^2
+constexpr float ACCEL_DEFAULT        = 0.15 * ACCEL_1G;        // mm/s^2
+constexpr float SPEED_CRUISE         = 500;                    // mm/s
 
 // Conversion functions
 inline static float SPEED_TO_RPM(float speed /* mm/s */) {

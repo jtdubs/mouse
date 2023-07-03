@@ -86,19 +86,6 @@ func (w *commandWindow) draw() {
 		}
 	}
 
-	// Linear PID
-	{
-		w.tableRow("Linear PID:")
-		pid := [3]float32{w.linearKp, w.linearKi, w.linearAlpha}
-		if imgui.InputFloat3V("##LinearPID", &pid, "%.4f", 0) {
-			w.linearKp, w.linearKi, w.linearAlpha = pid[0], pid[1], pid[2]
-		}
-		imgui.TableSetColumnIndex(2)
-		if w.toolbarButton("##LinearPIDSend", "play-black") {
-			w.mouse.SendCommand(mouse.NewLinearPIDCommand(w.linearKp, w.linearKi, w.linearAlpha))
-		}
-	}
-
 	// Power
 	{
 		w.tableRow("Power:")

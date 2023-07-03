@@ -118,14 +118,14 @@ func (m *Mouse) SetPosition(x, y, angle float64) {
 func (m *Mouse) EncoderTick(left, forward bool) {
 	var fudge float64
 	if left {
-		fudge = 1.0 + 0.001
+		fudge = 1.0 + 0.01
 	} else {
-		fudge = 1.0 - 0.001
+		fudge = 1.0 - 0.01
 	}
 	m.SetPosition(
 		m.X+(m.dx(left, forward)*fudge),
 		m.Y+(m.dy(left, forward)*fudge),
-		math.Mod(m.Angle+m.dt(left, forward), 2*math.Pi),
+		math.Mod(m.Angle+m.dt(left, forward)*fudge, 2*math.Pi),
 	)
 }
 

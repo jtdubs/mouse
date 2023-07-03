@@ -49,11 +49,6 @@ void remote() {
                                   command->data.pid.ki,  //
                                   command->data.pid.alpha);
         break;
-      case COMMAND_SET_LINEAR_PID:
-        linear_set_pi_coefficients(command->data.pid.kp,  //
-                                   command->data.pid.ki,  //
-                                   command->data.pid.alpha);
-        break;
       case COMMAND_PLAN_POWER:
         plan_submit_and_wait(  //
             &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,
