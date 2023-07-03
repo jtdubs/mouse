@@ -50,7 +50,7 @@ clean:
 
 upload: build/release/$(TARGET).hex
 	-killall -HUP -e remote
-	avrdude -c arduino -P /dev/ttyNano -b 57600 -p m328p -D -U flash:w:build/release/$(TARGET).hex:i
+	avrdude -v -c arduino -P /dev/ttyNano -b 115200 -p atmega328p -D -U flash:w:build/release/$(TARGET).hex:i
 	-killall -CONT -e remote
 
 sim: build/debug/$(TARGET).elf

@@ -7,8 +7,6 @@ Firmware:
 
 Remote:
 - Include plan in remote's VCD log somehow
-- Add a "pause" button that stops processing serial messages
-- Add a "reest" button that resets the board, probably by triggering the watchdog??
 
 Environment:
 - Not using built version of avrdude, try it then uninstall the package.
