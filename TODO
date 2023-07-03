@@ -1,6 +1,15 @@
+Next steps:
+- "Calibrate" plan that runs when mouse is in "home" position to read wall distances and learn sensor readings.
+- Update Linear plan to use calibrated sensor readings to stay in the middle of the hallway.
+
 Firmware:
 - Tighten tick to run every 1-2ms instead of 5.
   - This is problematic as the encoder pulses are relatively infrequent, so we'll end up with either 0 or 1 each tick...
   - This may be "okay" if we just make the low-pass filter stronger?
 - Anti-crash failsafe of asserting sensor readings are below some sane threshold?
-- Start using sensor readings for self-centering within hallways
+
+Board improvements:
+- Center of mass too far back due to battery, makes it prone to "bucking" under heavy acceleration.
+- Nose too big, makes turning towards a wall VERY tight.
+- Better connectors for motors and sensor board.
+- Velcro'd battery is wobbily standing up on edge.
