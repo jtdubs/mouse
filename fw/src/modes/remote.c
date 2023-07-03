@@ -69,6 +69,11 @@ void remote() {
                       .data.linear = {.distance = command->data.linear.distance,  //
                                       .stop     = command->data.linear.stop}});
         break;
+      case COMMAND_PLAN_ROTATIONAL:
+        plan_submit_and_wait(  //
+            &(plan_t){.type            = PLAN_TYPE_ROTATIONAL_MOTION,
+                      .data.rotational = {.d_theta = command->data.rotational.dtheta}});
+        break;
       case COMMAND_PLAN_EXECUTE:
         for (uint8_t i = 0; i < remote_plan_queue_size; i++) {
           plan_submit_and_wait(&remote_plan_queue[i]);

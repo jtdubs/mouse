@@ -1,5 +1,4 @@
 Firmware:
-- Rotational motion: turn to angle, completes once angle is reached
 - Tighten tick to run every 1-2ms instead of 5.
   - This is problematic as the encoder pulses are relatively infrequent, so we'll end up with either 0 or 1 each tick...
   - This may be "okay" if we just make the low-pass filter stronger?

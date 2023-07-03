@@ -3,6 +3,7 @@ package ui
 import (
 	"encoding/hex"
 	"fmt"
+	"math"
 	"sort"
 	"strings"
 
@@ -73,7 +74,9 @@ func (w *symbolsWindow) draw() {
 				imgui.Text(fmt.Sprintf("%d", sym.ReadU16()))
 			}
 		case 4:
-			if strings.HasPrefix(sym.Name, "speed_") || strings.HasPrefix(sym.Name, "position_") || strings.HasPrefix(sym.Name, "linear_") {
+			if strings.Contains(sym.Name, "theta") {
+				imgui.Text(fmt.Sprintf("%8.2f°", sym.ReadF32()*180.0/math.Pi))
+			} else if strings.HasPrefix(sym.Name, "speed_") || strings.HasPrefix(sym.Name, "position_") || strings.HasPrefix(sym.Name, "linear_") {
 				imgui.Text(fmt.Sprintf("%8.2f", sym.ReadF32()))
 			} else {
 				if w.hex {

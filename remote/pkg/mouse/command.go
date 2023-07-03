@@ -8,6 +8,7 @@ const (
 	PowerPlanCommandType
 	SpeedPlanCommandType
 	LinearPlanCommandType
+	RotationalPlanCommandType
 	ExecutePlanCommandType
 )
 
@@ -93,6 +94,20 @@ func NewLinearPlanCommand(distance float32, stop bool) LinearPlanCommand {
 }
 
 func (LinearPlanCommand) isCommand() bool { return true }
+
+type RotationalPlanCommand struct {
+	Type   CommandType
+	DTheta float32
+}
+
+func NewRotationalPlanCommand(dTheta float32) RotationalPlanCommand {
+	return RotationalPlanCommand{
+		Type:   RotationalPlanCommandType,
+		DTheta: dTheta,
+	}
+}
+
+func (RotationalPlanCommand) isCommand() bool { return true }
 
 type ExecutePlanCommand struct {
 	Type CommandType

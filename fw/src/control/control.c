@@ -4,6 +4,7 @@
 #include "control/linear.h"
 #include "control/plan.h"
 #include "control/position.h"
+#include "control/rotational.h"
 #include "control/speed.h"
 #include "platform/encoders.h"
 #include "platform/motor.h"
@@ -15,6 +16,7 @@ void control_init() {
   speed_init();
   position_init();
   linear_init();
+  rotational_init();
   timer_set_callback(control_update);
 }
 
@@ -64,9 +66,19 @@ void control_update() {
       }
       break;
     case PLAN_TYPE_ROTATIONAL_MOTION:
-      if (current_plan.state == PLAN_STATE_SCHEDULED) {
-        plan_set_state(PLAN_STATE_UNDERWAY);
-        plan_set_state(PLAN_STATE_IMPLEMENTED);
+      switch (current_plan.state) {
+        case PLAN_STATE_SCHEDULED:
+          rotational_start(current_plan.data.rotational.d_theta);
+          plan_set_state(PLAN_STATE_UNDERWAY);
+          [[fallthrough]];
+        case PLAN_STATE_UNDERWAY:
+          if (rotational_update()) {
+            plan_set_state(PLAN_STATE_IMPLEMENTED);
+          }
+          break;
+        default:
+          speed_update();
+          break;
       }
       break;
     default:
