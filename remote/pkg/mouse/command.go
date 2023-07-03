@@ -3,7 +3,8 @@ package mouse
 type CommandType uint8
 
 const (
-	LEDCommandType CommandType = iota
+	ResetCommandType CommandType = iota
+	LEDCommandType
 	SpeedPIDCommandType
 	PowerPlanCommandType
 	SpeedPlanCommandType
@@ -15,6 +16,18 @@ const (
 type Command interface {
 	isCommand() bool
 }
+
+type ResetCommand struct {
+	Type CommandType
+}
+
+func NewResetCommand() ResetCommand {
+	return ResetCommand{
+		Type: ResetCommandType,
+	}
+}
+
+func (ResetCommand) isCommand() bool { return true }
 
 type LEDCommand struct {
 	Type                     CommandType

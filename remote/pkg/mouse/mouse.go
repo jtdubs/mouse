@@ -25,6 +25,7 @@ var (
 
 type Mouse struct {
 	Recording              bool
+	Updating               bool
 	status                 string
 	portOpen               bool
 	serialBuffer           []byte
@@ -47,6 +48,7 @@ type Mouse struct {
 
 func New() *Mouse {
 	return &Mouse{
+		Updating:               true,
 		serialBuffer:           make([]byte, 256),
 		frameBuffer:            make([]byte, 256),
 		index:                  0,
@@ -81,6 +83,10 @@ func (m *Mouse) SetRecording(recording bool) {
 	}
 
 	m.Recording = recording
+}
+
+func (m *Mouse) SetUpdating(updating bool) {
+	m.Updating = updating
 }
 
 func (m *Mouse) Run(ctx context.Context) {
@@ -269,14 +275,19 @@ func (m *Mouse) receiveByte(value byte) {
 			if m.readLength != uint8(binary.Size(m.report)) {
 				m.messages.Add(fmt.Sprintf("Incorrect size for report: got %v, want %v", m.readLength, binary.Size(Report{})))
 			}
-			if err := binary.Read(bytes.NewReader(m.frameBuffer), binary.LittleEndian, &m.report); err != nil {
+
+			var r Report
+			if err := binary.Read(bytes.NewReader(m.frameBuffer), binary.LittleEndian, &r); err != nil {
 				m.messages.Add(fmt.Sprintf("Error reading report: %v", err))
 			}
 
-			m.LeftSpeedSetpoints.Add(m.report.SpeedSetpointLeft)
-			m.LeftSpeedMeasurements.Add(m.report.SpeedMeasuredLeft)
-			m.RightSpeedSetpoints.Add(m.report.SpeedSetpointRight)
-			m.RightSpeedMeasurements.Add(m.report.SpeedMeasuredRight)
+			if m.Updating {
+				m.report = r
+				m.LeftSpeedSetpoints.Add(m.report.SpeedSetpointLeft)
+				m.LeftSpeedMeasurements.Add(m.report.SpeedMeasuredLeft)
+				m.RightSpeedSetpoints.Add(m.report.SpeedSetpointRight)
+				m.RightSpeedMeasurements.Add(m.report.SpeedMeasuredRight)
+			}
 
 			if m.Recording {
 				for k, v := range m.report.Symbols() {

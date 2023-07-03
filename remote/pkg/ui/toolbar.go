@@ -23,6 +23,31 @@ func (w *toolbarWindow) toolbarButton(name string, icon string) bool {
 }
 
 func (w *toolbarWindow) drawToolbar() {
+	imgui.BeginDisabledV(!w.mouse.Open())
+	if w.toolbarButton("Reset", "restart") {
+		w.mouse.SendCommand(mouse.NewResetCommand())
+	}
+	if imgui.IsItemHovered() {
+		imgui.SetTooltip("Reset Mouse")
+	}
+	imgui.EndDisabled()
+	imgui.SameLineV(0, 20)
+	if w.mouse.Updating {
+		if w.toolbarButton("Freeze UI", "pause-black") {
+			w.mouse.SetUpdating(false)
+		}
+		if imgui.IsItemHovered() {
+			imgui.SetTooltip("Freeze UI")
+		}
+	} else {
+		if w.toolbarButton("Thaw UI", "play-black") {
+			w.mouse.SetUpdating(true)
+		}
+		if imgui.IsItemHovered() {
+			imgui.SetTooltip("Thaw UI")
+		}
+	}
+	imgui.SameLineV(0, 20)
 	imgui.BeginDisabledV(w.mouse.Recording)
 	if w.toolbarButton("VCDRecord", "video-outline-black") {
 		w.mouse.SetRecording(true)

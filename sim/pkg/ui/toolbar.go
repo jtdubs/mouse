@@ -64,7 +64,7 @@ func (w *toolbarWindow) drawToolbar() {
 		})
 	}
 	if imgui.IsItemHovered() {
-		imgui.SetTooltip("plan")
+		imgui.SetTooltip("Next plan change")
 	}
 	imgui.EndDisabled()
 	imgui.SameLineV(0, 20)

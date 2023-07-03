@@ -1,5 +1,6 @@
 #include "modes/remote.h"
 
+#include <avr/interrupt.h>
 #include <avr/sleep.h>
 #include <util/delay.h>
 
@@ -38,6 +39,11 @@ void remote() {
     }
 
     switch (command->type) {
+      case COMMAND_RESET:
+        // Just turn off interrupts and wait for the watchdog to reset us.
+        cli();
+        _delay_ms(60000.0);
+        break;
       case COMMAND_SET_LEDS:
         pin_set2(LED_BUILTIN, command->data.leds.builtin);
         pin_set2(LED_LEFT, command->data.leds.left);

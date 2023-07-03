@@ -19,6 +19,7 @@
 #include <stdint.h>
 
 typedef enum : uint8_t {
+  COMMAND_RESET,
   COMMAND_SET_LEDS,
   COMMAND_SET_SPEED_PID,
   COMMAND_PLAN_POWER,
