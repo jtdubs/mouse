@@ -13,7 +13,7 @@
 static plan_t  remote_plan_queue[16];
 static uint8_t remote_plan_queue_size = 0;
 
-[[maybe_unused]] static void remote_enqueue(plan_t *plan) {
+static void remote_enqueue(plan_t *plan) {
   if (remote_plan_queue_size < 16) {
     remote_plan_queue[remote_plan_queue_size++] = *plan;
   }
@@ -50,27 +50,27 @@ void remote() {
                                   command->data.pid.alpha);
         break;
       case COMMAND_PLAN_POWER:
-        plan_submit_and_wait(  //
+        remote_enqueue(  //
             &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,
                       .data.power = {.left  = command->data.power.left,  //
                                      .right = command->data.power.right}});
         _delay_ms(1000.0);
         break;
       case COMMAND_PLAN_SPEED:
-        plan_submit_and_wait(  //
+        remote_enqueue(  //
             &(plan_t){.type       = PLAN_TYPE_FIXED_SPEED,
                       .data.speed = {.left  = command->data.speed.left,  //
                                      .right = command->data.speed.right}});
         _delay_ms(1000.0);
         break;
       case COMMAND_PLAN_LINEAR:
-        plan_submit_and_wait(  //
+        remote_enqueue(  //
             &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,
                       .data.linear = {.distance = command->data.linear.distance,  //
                                       .stop     = command->data.linear.stop}});
         break;
       case COMMAND_PLAN_ROTATIONAL:
-        plan_submit_and_wait(  //
+        remote_enqueue(  //
             &(plan_t){.type            = PLAN_TYPE_ROTATIONAL_MOTION,
                       .data.rotational = {.d_theta = command->data.rotational.dtheta}});
         break;
@@ -78,6 +78,7 @@ void remote() {
         for (uint8_t i = 0; i < remote_plan_queue_size; i++) {
           plan_submit_and_wait(&remote_plan_queue[i]);
         }
+        remote_plan_queue_size = 0;
         break;
       default:
         break;
