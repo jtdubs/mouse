@@ -144,7 +144,7 @@ func (w *commandWindow) draw() {
 	// Rotational
 	{
 		w.tableRow("Rotational:")
-		imgui.InputFloat("dθ", &w.rotationalDTheta)
+		imgui.InputFloat("°", &w.rotationalDTheta)
 		imgui.SameLine()
 		imgui.TableSetColumnIndex(2)
 		if w.toolbarButton("##RotationalPlan", "plus-thick") {
