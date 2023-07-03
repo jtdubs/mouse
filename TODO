@@ -4,8 +4,6 @@ Firmware:
   - This is problematic as the encoder pulses are relatively infrequent, so we'll end up with either 0 or 1 each tick...
   - This may be "okay" if we just make the low-pass filter stronger?
 - Anti-crash failsafe of asserting sensor readings are below some sane threshold?
-- More assert to catch motors being set to "bad" values.
-- Is there a way to detect the presence of the USB port and refuse to activate the motors??
 
 Remote:
 - Include plan in remote's VCD log somehow
