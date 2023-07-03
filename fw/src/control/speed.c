@@ -42,9 +42,9 @@ void speed_init() {
 void speed_read() {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     speed_measured_left = (speed_alpha * COUNTS_TO_RPM(encoders_left_delta))  //
-                        + ((1.0 - speed_alpha) * speed_measured_left);
+                        + ((1.0f - speed_alpha) * speed_measured_left);
     speed_measured_right = (speed_alpha * COUNTS_TO_RPM(encoders_right_delta))  //
-                         + ((1.0 - speed_alpha) * speed_measured_right);
+                         + ((1.0f - speed_alpha) * speed_measured_right);
   }
 }
 

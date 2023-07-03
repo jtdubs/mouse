@@ -15,7 +15,7 @@ void position_read() {
   float left_distance  = ((float)encoders_left_delta) * COUNT_DISTANCE_LEFT;    // mm
   float right_distance = ((float)encoders_right_delta) * COUNT_DISTANCE_RIGHT;  // mm
 
-  float forward  = (left_distance + right_distance) / 2.0;       // mm
+  float forward  = (left_distance + right_distance) / 2.0f;      // mm
   float rotation = (right_distance - left_distance) * MM_THETA;  // radians
 
   position_distance += forward;

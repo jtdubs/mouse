@@ -28,15 +28,15 @@ bool linear_update() {
     return true;
   }
 
-  float current_speed    = RPM_TO_SPEED((speed_measured_left + speed_measured_right) / 2.0);  // mm/s
-  float current_setpoint = RPM_TO_SPEED((speed_setpoint_left + speed_setpoint_right) / 2.0);  // mm/s
+  float current_speed    = RPM_TO_SPEED((speed_measured_left + speed_measured_right) / 2.0f);  // mm/s
+  float current_setpoint = RPM_TO_SPEED((speed_setpoint_left + speed_setpoint_right) / 2.0f);  // mm/s
 
   // Compute the braking distance.
   static float braking_accel = 0;  // mm/s^2
   if (current_speed > linear_target_speed) {
-    float dV      = linear_target_speed - current_speed;                    // mm/s
-    float dX      = linear_target_distance - position_distance;             // mm
-    braking_accel = ((2.0 * current_speed * dV) + (dV * dV)) / (2.0 * dX);  // mm/s^2
+    float dV      = linear_target_speed - current_speed;                      // mm/s
+    float dX      = linear_target_distance - position_distance;               // mm
+    braking_accel = ((2.0f * current_speed * dV) + (dV * dV)) / (2.0f * dX);  // mm/s^2
   }
 
   float accel = 0;  // mm/s^2
