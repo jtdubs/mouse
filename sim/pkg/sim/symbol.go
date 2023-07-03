@@ -37,7 +37,7 @@ func (s *Symbol) Read() []byte {
 	return s.sim.RAM[s.Address : s.Address+s.Length]
 }
 
-func (s *Symbol) ReadByte() byte {
+func (s *Symbol) ReadU8() uint8 {
 	return s.sim.RAM[s.Address]
 }
 
@@ -57,7 +57,7 @@ func (s *Symbol) ReadF32() float32 {
 func (s *Symbol) ReadVCD() C.uint {
 	switch s.Length {
 	case 1:
-		return C.uint(s.ReadByte())
+		return C.uint(s.ReadU8())
 	case 2:
 		return C.uint(s.ReadU16())
 	case 4:

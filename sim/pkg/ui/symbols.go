@@ -63,9 +63,9 @@ func (w *symbolsWindow) draw() {
 		switch sym.Length {
 		case 1:
 			if w.hex {
-				imgui.Text(fmt.Sprintf("0x%02x", sym.ReadByte()))
+				imgui.Text(fmt.Sprintf("0x%02x", sym.ReadU8()))
 			} else {
-				imgui.Text(fmt.Sprintf("%d", sym.ReadByte()))
+				imgui.Text(fmt.Sprintf("%d", sym.ReadU8()))
 			}
 		case 2:
 			if w.hex {
