@@ -4,6 +4,3 @@ Firmware:
   - This may be "okay" if we just make the low-pass filter stronger?
 - Tick during linear plan takes 614us, anything I can do to optimize this down?
 - Anti-crash failsafe of asserting sensor readings are below some sane threshold?
-
-Remote:
-- Include plan in remote's VCD log somehow

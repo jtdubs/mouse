@@ -143,10 +143,6 @@ func (r *Report) DecodeLEDs() (onboard, left, right, ir bool) {
 
 func (r *Report) Variables() []vcd.VcdDataType {
 	return []vcd.VcdDataType{
-		// vcd.NewVariable("adc_battery_voltage", "wire", 10),
-		// vcd.NewVariable("adc_sensor_center", "wire", 10),
-		// vcd.NewVariable("adc_sensor_left", "wire", 10),
-		// vcd.NewVariable("adc_sensor_right", "wire", 10),
 		vcd.NewVariable("encoder_left", "wire", 32),
 		vcd.NewVariable("encoder_right", "wire", 32),
 		vcd.NewVariable("motor_power_left", "wire", 16),
@@ -158,17 +154,25 @@ func (r *Report) Variables() []vcd.VcdDataType {
 		vcd.NewVariable("position_distance", "wire", 32),
 		vcd.NewVariable("position_theta", "wire", 32),
 		vcd.NewVariable("rtc_now", "wire", 32),
+		vcd.NewVariable("plan_type", "wire", 8),
+		vcd.NewVariable("plan_state", "wire", 8),
+		vcd.NewVariable("plan_power_left", "wire", 16),
+		vcd.NewVariable("plan_power_right", "wire", 16),
+		vcd.NewVariable("plan_speed_left", "wire", 32),
+		vcd.NewVariable("plan_speed_right", "wire", 32),
+		vcd.NewVariable("plan_linear_distance", "wire", 32),
+		vcd.NewVariable("plan_linear_stop", "wire", 1),
+		vcd.NewVariable("plan_rotational_dtheta", "wire", 32),
 	}
 }
 
 func (r *Report) Symbols() map[string]string {
-	// sl, sc, sr := r.DecodeSensors()
+	boolMap := map[bool]string{
+		true:  "1",
+		false: "0",
+	}
 
-	return map[string]string{
-		// "adc_battery_voltage":  fmt.Sprint(r.BatteryVolts * 2),
-		// "adc_sensor_center":    fmt.Sprint(sc),
-		// "adc_sensor_left":      fmt.Sprint(sl),
-		// "adc_sensor_right":     fmt.Sprint(sr),
+	result := map[string]string{
 		"encoder_left":         fmt.Sprint(uint32(r.EncoderLeft)),
 		"encoder_right":        fmt.Sprint(uint32(r.EncoderRight)),
 		"motor_power_left":     fmt.Sprint(uint16(r.MotorPowerLeft)),
@@ -180,5 +184,27 @@ func (r *Report) Symbols() map[string]string {
 		"position_distance":    fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.PositionDistance))),
 		"position_theta":       fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.PositionTheta))),
 		"rtc_now":              fmt.Sprint(r.RTCMicros),
+		"plan_type":            fmt.Sprint(uint8(r.Plan.Type)),
+		"plan_state":           fmt.Sprint(uint8(r.Plan.State)),
 	}
+
+	switch (r.Plan.DecodePlan()).(type) {
+	case PlanFixedPower:
+		p := r.Plan.DecodePlan().(PlanFixedPower)
+		result["plan_power_left"] = fmt.Sprint(uint16(p.Left))
+		result["plan_power_right"] = fmt.Sprint(uint16(p.Right))
+	case PlanFixedSpeed:
+		p := r.Plan.DecodePlan().(PlanFixedSpeed)
+		result["plan_speed_left"] = fmt.Sprint(*(*uint32)(unsafe.Pointer(&p.Left)))
+		result["plan_speed_right"] = fmt.Sprint(*(*uint32)(unsafe.Pointer(&p.Right)))
+	case PlanLinearMotion:
+		p := r.Plan.DecodePlan().(PlanLinearMotion)
+		result["plan_linear_distance"] = fmt.Sprint(*(*uint32)(unsafe.Pointer(&p.Distance)))
+		result["plan_linear_stop"] = boolMap[p.Stop]
+	case PlanRotationalMotion:
+		p := r.Plan.DecodePlan().(PlanRotationalMotion)
+		result["plan_rotational_dtheta"] = fmt.Sprint(*(*uint32)(unsafe.Pointer(&p.DTheta)))
+	}
+
+	return result
 }
