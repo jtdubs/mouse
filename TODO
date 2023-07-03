@@ -7,6 +7,3 @@ Firmware:
 
 Remote:
 - Include plan in remote's VCD log somehow
-
-Environment:
-- Not using built version of avrdude, try it then uninstall the package.
