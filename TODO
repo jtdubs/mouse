@@ -1,6 +1,7 @@
 Firmware:
 - Linear motion seems to have a problem:
-  - It ends the decel ramp at min motor speed, but we never get there because true speed lags the setpoint, and then we zero the motors and "slide" to a stop, counting about 16 ticks per motor after we set the speed to zero.
+  - Should make motor consistently use RPM and linear consistently use mm/s, right now it's a confusing mess of conversions.
+  - Should probably just apply the steering bias directly to the speeds, rather than doing the PI controller
 - Rotational motion: turn to angle, completes once angle is reached
 - Tighten tick to run every 1-2ms instead of 5.
   - This is problematic as the encoder pulses are relatively infrequent, so we'll end up with either 0 or 1 each tick...
