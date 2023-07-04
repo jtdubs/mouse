@@ -35,7 +35,9 @@
       "delay_basic.h": "c",
       "stdbool.h": "c",
       "timer.h": "c",
-      "command.h": "c"
+      "command.h": "c",
+      "stdfix.h": "c",
+      "stdfix-avrlibc.h": "c"
     }
   },
 }
