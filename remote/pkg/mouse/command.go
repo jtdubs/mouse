@@ -10,6 +10,7 @@ const (
 	SpeedPlanCommandType
 	LinearPlanCommandType
 	RotationalPlanCommandType
+	SensorCalPlanCommandType
 	ExecutePlanCommandType
 )
 
@@ -121,6 +122,18 @@ func NewRotationalPlanCommand(dTheta float32) RotationalPlanCommand {
 }
 
 func (RotationalPlanCommand) isCommand() bool { return true }
+
+type SensorCalPlanCommand struct {
+	Type CommandType
+}
+
+func NewSensorCalPlanCommand() SensorCalPlanCommand {
+	return SensorCalPlanCommand{
+		Type: SensorCalPlanCommandType,
+	}
+}
+
+func (SensorCalPlanCommand) isCommand() bool { return true }
 
 type ExecutePlanCommand struct {
 	Type CommandType

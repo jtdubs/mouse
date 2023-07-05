@@ -5,6 +5,7 @@
 #include "control/plan.h"
 #include "control/position.h"
 #include "control/rotational.h"
+#include "control/sensor_cal.h"
 #include "control/speed.h"
 #include "platform/encoders.h"
 #include "platform/motor.h"
@@ -17,6 +18,7 @@ void control_init() {
   position_init();
   linear_init();
   rotational_init();
+  sensor_cal_init();
   timer_set_callback(control_update);
 }
 
@@ -81,6 +83,22 @@ void control_update() {
           break;
       }
       break;
+    case PLAN_TYPE_SENSOR_CAL:
+      switch (current_plan.state) {
+        case PLAN_STATE_SCHEDULED:
+          sensor_cal_start();
+          plan_set_state(PLAN_STATE_UNDERWAY);
+          break;
+        case PLAN_STATE_UNDERWAY:
+          if (sensor_cal_update()) {
+            plan_set_state(PLAN_STATE_IMPLEMENTED);
+          }
+          break;
+        default:
+          break;
+      }
+      break;
+
     default:
       break;
   }

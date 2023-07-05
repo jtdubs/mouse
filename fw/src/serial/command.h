@@ -26,6 +26,7 @@ typedef enum : uint8_t {
   COMMAND_PLAN_SPEED,
   COMMAND_PLAN_LINEAR,
   COMMAND_PLAN_ROTATIONAL,
+  COMMAND_PLAN_SENSOR_CAL,
   COMMAND_PLAN_EXECUTE,
 } command_type_t;
 
@@ -60,6 +61,8 @@ typedef struct {
     struct {
       float dtheta;
     } rotational;
+    struct {
+    } sensor_cal;
   } data;
 } command_t;
 #pragma pack(pop)

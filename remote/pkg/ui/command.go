@@ -152,6 +152,15 @@ func (w *commandWindow) draw() {
 		}
 	}
 
+	// Sensor Cal
+	{
+		w.tableRow("Sensor Cal:")
+		imgui.TableSetColumnIndex(2)
+		if w.toolbarButton("##SensorCalPlan", "plus-thick") {
+			w.mouse.SendCommand(mouse.NewSensorCalPlanCommand())
+		}
+	}
+
 	// Execute
 	{
 		w.tableRow("")

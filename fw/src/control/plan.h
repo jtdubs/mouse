@@ -20,6 +20,8 @@ typedef enum : uint8_t {
   PLAN_TYPE_LINEAR_MOTION,
   // Plan is "implemented" once the rotational motion has been completed.
   PLAN_TYPE_ROTATIONAL_MOTION,
+  // Plan is "implemented" once the calibration is complete.
+  PLAN_TYPE_SENSOR_CAL,
 } plan_type_t;
 
 typedef struct {
@@ -45,6 +47,9 @@ typedef struct {
     struct {
       float d_theta;  // radians
     } rotational;
+    // PLAN_SENSOR_CAL
+    struct {
+    } sensor_cal;
   } data;
 } plan_t;
 
