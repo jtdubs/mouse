@@ -28,6 +28,7 @@ pushd binutils-gdb
   if [ "$(git describe --tags)" != "$BINUTILS_TAG" ]; then
     git reset --hard
     git clean -dfx
+    git fetch --tags
     git checkout $BINUTILS_TAG
     mkdir build
     pushd build
@@ -51,18 +52,23 @@ pushd gcc
   if [ "$(git describe --tags)" != "$GCC_TAG" ]; then
     git reset --hard
     git clean -dfx
+    git fetch --tags
     git checkout $GCC_TAG
     sh ./contrib/download_prerequisites
     mkdir build
     pushd build
       ../configure \
         --prefix=/opt/avr-toolchain \
+        --libdir=/opt/avr-toolchain/lib \
         --target=avr \
         --enable-languages=c,c++ \
+        --enable-fixed-point \
         --disable-nls \
+        --disable-shared \
         --disable-libssp \
         --disable-libada \
         --with-dwarf2 \
+        --with-avrlibc=yes \
         --enable-plugin \
         --build=`../config.guess`
       make -j $(nproc)
@@ -76,6 +82,7 @@ pushd avr-libc
   if [ "$(git describe --tags)" != "$AVRLIBC_TAG" ]; then
     git reset --hard
     git clean -dfx
+    git fetch --tags
     git checkout $AVRLIBC_TAG
     ./bootstrap
     mkdir build
@@ -96,6 +103,7 @@ pushd avrdude
   if [ "$(git describe --tags)" != "$AVRDUDE_TAG" ]; then
     git reset --hard
     git clean -dfx
+    git fetch --tags
     git checkout $AVRDUDE_TAG
     mkdir build
     pushd build
