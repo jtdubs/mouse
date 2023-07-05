@@ -1,4 +1,4 @@
-.PHONY: sim board wave
+.PHONY: sim board wave bt btbind
 
 sim:
 	go run . --port /tmp/simavr-uart0
@@ -14,3 +14,6 @@ wave: mouse.fst
 
 mouse.fst: mouse.vcd
 	vcd2fst $< $@
+
+btbind:
+	sudo rfcomm bind 0 98:D3:02:96:A7:BF
