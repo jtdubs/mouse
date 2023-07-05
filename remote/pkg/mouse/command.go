@@ -4,7 +4,6 @@ type CommandType uint8
 
 const (
 	ResetCommandType CommandType = iota
-	LEDCommandType
 	SpeedPIDCommandType
 	EnqueuePlanCommandType
 	ExecutePlanCommandType
@@ -25,23 +24,6 @@ func NewResetCommand() ResetCommand {
 }
 
 func (ResetCommand) isCommand() bool { return true }
-
-type LEDCommand struct {
-	Type                     CommandType
-	Builtin, Left, Right, IR bool
-}
-
-func NewLEDCommand(builtin, left, right, ir bool) LEDCommand {
-	return LEDCommand{
-		Type:    LEDCommandType,
-		Builtin: builtin,
-		Left:    left,
-		Right:   right,
-		IR:      ir,
-	}
-}
-
-func (c LEDCommand) isCommand() bool { return true }
 
 type SpeedPIDCommand struct {
 	Type          CommandType

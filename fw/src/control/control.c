@@ -31,22 +31,39 @@ void control_update() {
   switch (current_plan.type) {
     case PLAN_TYPE_IDLE:
       if (current_plan.state == PLAN_STATE_SCHEDULED) {
-        motor_set(0, 0);
         plan_set_state(PLAN_STATE_UNDERWAY);
+        motor_set(0, 0);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
+    case PLAN_TYPE_LEDS:
+      if (current_plan.state == PLAN_STATE_SCHEDULED) {
+        plan_set_state(PLAN_STATE_UNDERWAY);
+        pin_set2(LED_LEFT, current_plan.data.leds.left);
+        pin_set2(LED_RIGHT, current_plan.data.leds.right);
+        pin_set2(LED_BUILTIN, current_plan.data.leds.builtin);
+        plan_set_state(PLAN_STATE_IMPLEMENTED);
+      }
+      break;
+    case PLAN_TYPE_IR:
+      if (current_plan.state == PLAN_STATE_SCHEDULED) {
+        plan_set_state(PLAN_STATE_UNDERWAY);
+        pin_set2(IR_LEDS, current_plan.data.ir.on);
+        plan_set_state(PLAN_STATE_IMPLEMENTED);
+      }
+      break;
+
     case PLAN_TYPE_FIXED_POWER:
       if (current_plan.state == PLAN_STATE_SCHEDULED) {
-        motor_set(current_plan.data.power.left, current_plan.data.power.right);
         plan_set_state(PLAN_STATE_UNDERWAY);
+        motor_set(current_plan.data.power.left, current_plan.data.power.right);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
     case PLAN_TYPE_FIXED_SPEED:
       if (current_plan.state == PLAN_STATE_SCHEDULED) {
-        speed_set(current_plan.data.speed.left, current_plan.data.speed.right);
         plan_set_state(PLAN_STATE_UNDERWAY);
+        speed_set(current_plan.data.speed.left, current_plan.data.speed.right);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       speed_update();

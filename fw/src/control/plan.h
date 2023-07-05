@@ -12,6 +12,10 @@ typedef enum : uint8_t {
 typedef enum : uint8_t {
   // Plan is "implemented" as soon as the board is put into an idle state.
   PLAN_TYPE_IDLE,
+  // Plan is "implemented" once the led states are set.
+  PLAN_TYPE_LEDS,
+  // Plan is "implemented" once the IR led states are set.
+  PLAN_TYPE_IR,
   // Plan is "implemented" as soon as the fixed power mode is set.
   PLAN_TYPE_FIXED_POWER,
   // Plan is "implemented" as soon as the fixed speed mode is set.
@@ -28,6 +32,16 @@ typedef struct {
   plan_type_t  type;
   plan_state_t state;
   union {
+    // PLAN_LEDS
+    struct {
+      bool left;
+      bool right;
+      bool builtin;
+    } leds;
+    // PLAN_IR
+    struct {
+      bool on;
+    } ir;
     // PLAN_FIXED_POWER
     struct {
       int16_t left;   // dimensionless, range [-511, 511]

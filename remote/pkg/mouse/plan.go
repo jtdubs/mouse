@@ -9,6 +9,8 @@ type PlanType uint8
 
 const (
 	PlanTypeIdle PlanType = iota
+	PlanTypeLEDs
+	PlanTypeIR
 	PlanTypeFixedPower
 	PlanTypeFixedSpeed
 	PlanTypeLinearMotion
@@ -52,6 +54,18 @@ func (p EncodedPlan) Decode() DecodedPlan {
 	switch p.Type {
 	case PlanTypeIdle:
 		return PlanIdle{}
+	case PlanTypeLEDs:
+		var data PlanLEDs
+		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
+			return nil
+		}
+		return data
+	case PlanTypeIR:
+		var data PlanIR
+		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
+			return nil
+		}
+		return data
 	case PlanTypeFixedPower:
 		var data PlanFixedPower
 		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
@@ -94,6 +108,18 @@ type DecodedPlan interface {
 type PlanIdle struct{}
 
 func (PlanIdle) planType() PlanType { return PlanTypeIdle }
+
+type PlanLEDs struct {
+	Left, Right, Builtin bool
+}
+
+func (PlanLEDs) planType() PlanType { return PlanTypeLEDs }
+
+type PlanIR struct {
+	On bool
+}
+
+func (PlanIR) planType() PlanType { return PlanTypeIR }
 
 type PlanFixedPower struct {
 	Left  int16

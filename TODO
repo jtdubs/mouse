@@ -1,5 +1,5 @@
 Next steps:
-- Change remote "commands" to just be plans, and move LED control into a plan.
+- Move LED control into a plan.
 - Update Linear plan to use calibrated sensor readings to stay in the middle of the hallway.
 
 Firmware:

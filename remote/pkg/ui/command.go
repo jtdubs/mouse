@@ -8,16 +8,17 @@ import (
 )
 
 type commandWindow struct {
-	mouse                        *mouse.Mouse
-	linkedPowers                 bool
-	linkedSpeeds                 bool
-	linkedPositions              bool
-	powerLeft, powerRight        int32
-	speedLeft, speedRight        float32
-	linearDistance               float32
-	linearStop                   bool
-	rotationalDTheta             float32
-	speedKp, speedKi, speedAlpha float32
+	mouse                                *mouse.Mouse
+	linkedPowers                         bool
+	linkedSpeeds                         bool
+	linkedPositions                      bool
+	powerLeft, powerRight                int32
+	speedLeft, speedRight                float32
+	linearDistance                       float32
+	linearStop                           bool
+	rotationalDTheta                     float32
+	speedKp, speedKi, speedAlpha         float32
+	ledLeft, ledBuiltin, ledRight, ledIR bool
 }
 
 func newCommandWindow(m *mouse.Mouse) *commandWindow {
@@ -38,8 +39,6 @@ func (w *commandWindow) init() {
 func (w *commandWindow) draw() {
 	imgui.Begin("Command")
 
-	r := w.mouse.Report()
-
 	if !w.mouse.Open() {
 		imgui.BeginDisabled()
 	}
@@ -51,22 +50,33 @@ func (w *commandWindow) draw() {
 
 	// LEDs
 	{
-		changed := false
-		onboard, left, right, ir := r.DecodeLEDs()
 		w.tableRow("Status LEDs:")
-		changed = w.drawIconToggleButton("##LeftLED", "led-off-white", "led-on-lightblue", &left) || changed
+		w.drawIconToggleButton("##LeftLED", "led-off-white", "led-on-lightblue", &w.ledLeft)
 		imgui.SameLineV(0, 20)
-		changed = w.drawIconToggleButton("##OnboardLED", "led-off-white", "led-on-orange", &onboard) || changed
+		w.drawIconToggleButton("##OnboardLED", "led-off-white", "led-on-orange", &w.ledBuiltin)
 		imgui.SameLineV(0, 20)
-		changed = w.drawIconToggleButton("##RightLED", "led-off-white", "led-on-lightblue", &right) || changed
+		w.drawIconToggleButton("##RightLED", "led-off-white", "led-on-lightblue", &w.ledRight)
+		imgui.TableSetColumnIndex(2)
+		if w.toolbarButton("##LEDPlan", "plus-thick") {
+			w.mouse.SendCommand(mouse.NewEnqueuePlanCommand(
+				mouse.PlanLEDs{Left: w.ledLeft, Builtin: w.ledBuiltin, Right: w.ledRight},
+			))
+		}
+	}
+
+	// IR
+	{
 		w.tableRow("IR LEDs:")
-		changed = w.drawIconToggleButton("##IR1", "led-off-white", "led-on-red", &ir) || changed
+		w.drawIconToggleButton("##IR1", "led-off-white", "led-on-red", &w.ledIR)
 		imgui.SameLineV(0, 20)
-		changed = w.drawIconToggleButton("##IR2", "led-off-white", "led-on-red", &ir) || changed
+		w.drawIconToggleButton("##IR2", "led-off-white", "led-on-red", &w.ledIR)
 		imgui.SameLineV(0, 20)
-		changed = w.drawIconToggleButton("##IR3", "led-off-white", "led-on-red", &ir) || changed
-		if changed {
-			w.mouse.SendCommand(mouse.NewLEDCommand(onboard, left, right, ir))
+		w.drawIconToggleButton("##IR3", "led-off-white", "led-on-red", &w.ledIR)
+		imgui.TableSetColumnIndex(2)
+		if w.toolbarButton("##IRPlan", "plus-thick") {
+			w.mouse.SendCommand(mouse.NewEnqueuePlanCommand(
+				mouse.PlanIR{On: w.ledIR},
+			))
 		}
 	}
 
