@@ -1,5 +1,4 @@
 Next steps:
-- Move LED control into a plan.
 - Update Linear plan to use calibrated sensor readings to stay in the middle of the hallway.
 
 Firmware:
