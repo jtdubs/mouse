@@ -83,7 +83,7 @@ func (w *reportWindow) draw() {
 
 	{
 		w.tableRow("Plan:")
-		imgui.Text(fmt.Sprintf("%v - %#v", mouse.PlanStateNames[r.Plan.State], r.Plan.DecodePlan()))
+		imgui.Text(fmt.Sprintf("%v - %#v", mouse.PlanStateNames[r.Plan.State], r.Plan.Decode()))
 	}
 
 	{

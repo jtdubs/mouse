@@ -18,15 +18,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "control/plan.h"
+
 typedef enum : uint8_t {
   COMMAND_RESET,
   COMMAND_SET_LEDS,
   COMMAND_SET_SPEED_PID,
-  COMMAND_PLAN_POWER,
-  COMMAND_PLAN_SPEED,
-  COMMAND_PLAN_LINEAR,
-  COMMAND_PLAN_ROTATIONAL,
-  COMMAND_PLAN_SENSOR_CAL,
+  COMMAND_PLAN_ENQUEUE,
   COMMAND_PLAN_EXECUTE,
 } command_type_t;
 
@@ -46,23 +44,7 @@ typedef struct {
       float ki;
       float alpha;
     } pid;
-    struct {
-      int16_t left;
-      int16_t right;
-    } power;
-    struct {
-      float left;
-      float right;
-    } speed;
-    struct {
-      float distance;
-      bool  stop;
-    } linear;
-    struct {
-      float dtheta;
-    } rotational;
-    struct {
-    } sensor_cal;
+    plan_t plan;
   } data;
 } command_t;
 #pragma pack(pop)

@@ -6,11 +6,7 @@ const (
 	ResetCommandType CommandType = iota
 	LEDCommandType
 	SpeedPIDCommandType
-	PowerPlanCommandType
-	SpeedPlanCommandType
-	LinearPlanCommandType
-	RotationalPlanCommandType
-	SensorCalPlanCommandType
+	EnqueuePlanCommandType
 	ExecutePlanCommandType
 )
 
@@ -63,84 +59,26 @@ func NewSpeedPIDCommand(kp, ki, alpha float32) SpeedPIDCommand {
 
 func (SpeedPIDCommand) isCommand() bool { return true }
 
-type PowerPlanCommand struct {
-	Type        CommandType
-	Left, Right int16
-}
-
-func NewPowerPlanCommand(left, right int16) PowerPlanCommand {
-	return PowerPlanCommand{
-		Type:  PowerPlanCommandType,
-		Left:  left,
-		Right: right,
-	}
-}
-
-func (PowerPlanCommand) isCommand() bool { return true }
-
-type SpeedPlanCommand struct {
-	Type                  CommandType
-	LeftSpeed, RightSpeed float32
-}
-
-func NewSpeedPlanCommand(leftSpeed, rightSpeed float32) SpeedPlanCommand {
-	return SpeedPlanCommand{
-		Type:       SpeedPlanCommandType,
-		LeftSpeed:  leftSpeed,
-		RightSpeed: rightSpeed,
-	}
-}
-
-func (SpeedPlanCommand) isCommand() bool { return true }
-
-type LinearPlanCommand struct {
-	Type     CommandType
-	Distance float32
-	Stop     bool
-}
-
-func NewLinearPlanCommand(distance float32, stop bool) LinearPlanCommand {
-	return LinearPlanCommand{
-		Type:     LinearPlanCommandType,
-		Distance: distance,
-		Stop:     stop,
-	}
-}
-
-func (LinearPlanCommand) isCommand() bool { return true }
-
-type RotationalPlanCommand struct {
-	Type   CommandType
-	DTheta float32
-}
-
-func NewRotationalPlanCommand(dTheta float32) RotationalPlanCommand {
-	return RotationalPlanCommand{
-		Type:   RotationalPlanCommandType,
-		DTheta: dTheta,
-	}
-}
-
-func (RotationalPlanCommand) isCommand() bool { return true }
-
-type SensorCalPlanCommand struct {
+type EnqueuePlanCommand struct {
 	Type CommandType
+	Plan EncodedPlan
 }
 
-func NewSensorCalPlanCommand() SensorCalPlanCommand {
-	return SensorCalPlanCommand{
-		Type: SensorCalPlanCommandType,
+func NewEnqueuePlanCommand(plan DecodedPlan) EnqueuePlanCommand {
+	return EnqueuePlanCommand{
+		Type: EnqueuePlanCommandType,
+		Plan: NewEncodedPlan(plan),
 	}
 }
 
-func (SensorCalPlanCommand) isCommand() bool { return true }
+func (EnqueuePlanCommand) isCommand() bool { return true }
 
 type ExecutePlanCommand struct {
 	Type CommandType
 }
 
-func NewExecutePlanCommand() LinearPlanCommand {
-	return LinearPlanCommand{
+func NewExecutePlanCommand() ExecutePlanCommand {
+	return ExecutePlanCommand{
 		Type: ExecutePlanCommandType,
 	}
 }

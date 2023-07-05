@@ -100,7 +100,9 @@ func (w *commandWindow) draw() {
 		}
 		imgui.TableSetColumnIndex(2)
 		if w.toolbarButton("##PowerPlan", "plus-thick") {
-			w.mouse.SendCommand(mouse.NewPowerPlanCommand(int16(w.powerLeft), int16(w.powerRight)))
+			w.mouse.SendCommand(mouse.NewEnqueuePlanCommand(
+				mouse.PlanFixedPower{Left: int16(w.powerLeft), Right: int16(w.powerRight)},
+			))
 		}
 	}
 
@@ -125,7 +127,9 @@ func (w *commandWindow) draw() {
 		}
 		imgui.TableSetColumnIndex(2)
 		if w.toolbarButton("##SpeedPlan", "plus-thick") {
-			w.mouse.SendCommand(mouse.NewSpeedPlanCommand(w.speedLeft, w.speedRight))
+			w.mouse.SendCommand(mouse.NewEnqueuePlanCommand(
+				mouse.PlanFixedSpeed{Left: w.speedLeft, Right: w.speedRight},
+			))
 		}
 	}
 
@@ -137,7 +141,9 @@ func (w *commandWindow) draw() {
 		imgui.Checkbox("stop", &w.linearStop)
 		imgui.TableSetColumnIndex(2)
 		if w.toolbarButton("##LinearPlan", "plus-thick") {
-			w.mouse.SendCommand(mouse.NewLinearPlanCommand(w.linearDistance, w.linearStop))
+			w.mouse.SendCommand(mouse.NewEnqueuePlanCommand(
+				mouse.PlanLinearMotion{Distance: w.linearDistance, Stop: w.linearStop},
+			))
 		}
 	}
 
@@ -148,7 +154,9 @@ func (w *commandWindow) draw() {
 		imgui.SameLine()
 		imgui.TableSetColumnIndex(2)
 		if w.toolbarButton("##RotationalPlan", "plus-thick") {
-			w.mouse.SendCommand(mouse.NewRotationalPlanCommand(w.rotationalDTheta * math.Pi / 180))
+			w.mouse.SendCommand(mouse.NewEnqueuePlanCommand(
+				mouse.PlanRotationalMotion{DTheta: w.rotationalDTheta * math.Pi / 180},
+			))
 		}
 	}
 
@@ -157,7 +165,9 @@ func (w *commandWindow) draw() {
 		w.tableRow("Sensor Cal:")
 		imgui.TableSetColumnIndex(2)
 		if w.toolbarButton("##SensorCalPlan", "plus-thick") {
-			w.mouse.SendCommand(mouse.NewSensorCalPlanCommand())
+			w.mouse.SendCommand(mouse.NewEnqueuePlanCommand(
+				mouse.PlanSensorCal{},
+			))
 		}
 	}
 

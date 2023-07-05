@@ -14,9 +14,9 @@
 static plan_t  remote_plan_queue[16];
 static uint8_t remote_plan_queue_size = 0;
 
-static void remote_enqueue(plan_t *plan) {
+static void remote_enqueue(plan_t plan) {
   if (remote_plan_queue_size < 16) {
-    remote_plan_queue[remote_plan_queue_size++] = *plan;
+    remote_plan_queue[remote_plan_queue_size++] = plan;
   }
 }
 
@@ -55,34 +55,8 @@ void remote() {
                                   command->data.pid.ki,  //
                                   command->data.pid.alpha);
         break;
-      case COMMAND_PLAN_POWER:
-        remote_enqueue(  //
-            &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,
-                      .data.power = {.left  = command->data.power.left,  //
-                                     .right = command->data.power.right}});
-        _delay_ms(1000.0);
-        break;
-      case COMMAND_PLAN_SPEED:
-        remote_enqueue(  //
-            &(plan_t){.type       = PLAN_TYPE_FIXED_SPEED,
-                      .data.speed = {.left  = command->data.speed.left,  //
-                                     .right = command->data.speed.right}});
-        _delay_ms(1000.0);
-        break;
-      case COMMAND_PLAN_LINEAR:
-        remote_enqueue(  //
-            &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,
-                      .data.linear = {.distance = command->data.linear.distance,  //
-                                      .stop     = command->data.linear.stop}});
-        break;
-      case COMMAND_PLAN_ROTATIONAL:
-        remote_enqueue(  //
-            &(plan_t){.type            = PLAN_TYPE_ROTATIONAL_MOTION,
-                      .data.rotational = {.d_theta = command->data.rotational.dtheta}});
-        break;
-      case COMMAND_PLAN_SENSOR_CAL:
-        remote_enqueue(  //
-            &(plan_t){.type = PLAN_TYPE_SENSOR_CAL});
+      case COMMAND_PLAN_ENQUEUE:
+        remote_enqueue(command->data.plan);
         break;
       case COMMAND_PLAN_EXECUTE:
         for (uint8_t i = 0; i < remote_plan_queue_size; i++) {

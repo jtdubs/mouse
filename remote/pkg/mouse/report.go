@@ -1,8 +1,6 @@
 package mouse
 
 import (
-	"bytes"
-	"encoding/binary"
 	"fmt"
 	"unsafe"
 
@@ -23,107 +21,9 @@ type Report struct {
 	SpeedSetpointRight float32
 	PositionDistance   float32
 	PositionTheta      float32
-	Plan               Plan
+	Plan               EncodedPlan
 	RTCMicros          uint32
 }
-
-type PlanType uint8
-
-const (
-	PlanTypeIdle PlanType = iota
-	PlanTypeFixedPower
-	PlanTypeFixedSpeed
-	PlanTypeLinearMotion
-	PlanTypeRotationalMotion
-)
-
-type PlanState uint8
-
-const (
-	PlanStateScheduled PlanState = iota
-	PlanStateUnderway
-	PlanStateImplemented
-)
-
-var PlanStateNames = map[PlanState]string{
-	PlanStateScheduled:   "Scheduled",
-	PlanStateUnderway:    "Underway",
-	PlanStateImplemented: "Implemented",
-}
-
-type Plan struct {
-	Type  PlanType
-	State PlanState
-	Data  [8]byte
-}
-
-type PlanData interface {
-	isPlanData() bool
-}
-
-func (p Plan) DecodePlan() PlanData {
-	switch p.Type {
-	case PlanTypeIdle:
-		return PlanIdle{}
-	case PlanTypeFixedPower:
-		var data PlanFixedPower
-		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
-			return nil
-		}
-		return data
-	case PlanTypeFixedSpeed:
-		var data PlanFixedSpeed
-		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
-			return nil
-		}
-		return data
-	case PlanTypeLinearMotion:
-		var data PlanLinearMotion
-		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
-			return nil
-		}
-		return data
-	case PlanTypeRotationalMotion:
-		var data PlanRotationalMotion
-		if err := binary.Read(bytes.NewReader(p.Data[:]), binary.LittleEndian, &data); err != nil {
-			return nil
-		}
-		return data
-	default:
-		return nil
-	}
-}
-
-type PlanIdle struct{}
-
-func (PlanIdle) isPlanData() bool { return true }
-
-type PlanFixedPower struct {
-	Left  int16
-	Right int16
-}
-
-func (PlanFixedPower) isPlanData() bool { return true }
-
-type PlanFixedSpeed struct {
-	Left  float32
-	Right float32
-}
-
-func (PlanFixedSpeed) isPlanData() bool { return true }
-
-type PlanLinearMotion struct {
-	Distance float32
-	Stop     bool
-}
-
-func (PlanLinearMotion) isPlanData() bool { return true }
-
-type PlanRotationalMotion struct {
-	DTheta float32
-}
-
-func (PlanRotationalMotion) isPlanData() bool { return true }
 
 func (r *Report) DecodeSensors() (left, center, right uint16) {
 	return 0, 0, 0
@@ -188,21 +88,18 @@ func (r *Report) Symbols() map[string]string {
 		"plan_state":           fmt.Sprint(uint8(r.Plan.State)),
 	}
 
-	switch (r.Plan.DecodePlan()).(type) {
+	decodedPlan := r.Plan.Decode()
+	switch p := decodedPlan.(type) {
 	case PlanFixedPower:
-		p := r.Plan.DecodePlan().(PlanFixedPower)
 		result["plan_power_left"] = fmt.Sprint(uint16(p.Left))
 		result["plan_power_right"] = fmt.Sprint(uint16(p.Right))
 	case PlanFixedSpeed:
-		p := r.Plan.DecodePlan().(PlanFixedSpeed)
 		result["plan_speed_left"] = fmt.Sprint(*(*uint32)(unsafe.Pointer(&p.Left)))
 		result["plan_speed_right"] = fmt.Sprint(*(*uint32)(unsafe.Pointer(&p.Right)))
 	case PlanLinearMotion:
-		p := r.Plan.DecodePlan().(PlanLinearMotion)
 		result["plan_linear_distance"] = fmt.Sprint(*(*uint32)(unsafe.Pointer(&p.Distance)))
 		result["plan_linear_stop"] = boolMap[p.Stop]
 	case PlanRotationalMotion:
-		p := r.Plan.DecodePlan().(PlanRotationalMotion)
 		result["plan_rotational_dtheta"] = fmt.Sprint(*(*uint32)(unsafe.Pointer(&p.DTheta)))
 	}
 
