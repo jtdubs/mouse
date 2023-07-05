@@ -22,7 +22,7 @@ import (
 // Fundamental constants
 const (
 	GridSize                float64 = 180.0 // in mm
-	WheelBase               float64 = 90.5  // in mm
+	WheelBase               float64 = 73.0  // in mm
 	WheelDiameter           float64 = 32.5  // in mm
 	EncoderTicksPerRotation int     = 240
 )
@@ -118,9 +118,9 @@ func (m *Mouse) SetPosition(x, y, angle float64) {
 func (m *Mouse) EncoderTick(left, forward bool) {
 	var fudge float64
 	if left {
-		fudge = 1.0 + 0.002
+		fudge = 1.0 + 0.00
 	} else {
-		fudge = 1.0 - 0.002
+		fudge = 1.0 - 0.00
 	}
 	m.SetPosition(
 		m.X+(m.dx(left, forward)*fudge),

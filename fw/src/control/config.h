@@ -8,7 +8,7 @@
 // Robot dimensions
 constexpr float BOARD_WIDTH    = 81.25;  // mm
 constexpr float BOARD_LENGTH   = 99.00;  // mm
-constexpr float WHEEL_BASE     = 90.50;  // mm
+constexpr float WHEEL_BASE     = 73.00;  // mm
 constexpr float WHEEL_DIAMETER = 32.50;  // mm
 
 // Motor parameters
@@ -26,7 +26,7 @@ constexpr float RIGHT_MOTOR_B = -57.7;  // RPM
 constexpr float CONTROL_PERIOD = 0.005;  // s
 
 // Delicious fudge
-constexpr float WHEEL_BIAS = 0.002;  // dimensionless
+constexpr float WHEEL_BIAS = 0.000;  // dimensionless
 
 // Derived constants
 constexpr float WHEEL_CIRCUMFERENCE  = M_PI * WHEEL_DIAMETER;                        // mm
