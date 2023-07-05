@@ -20,8 +20,8 @@ void adc_init() {
 
 // adc_sample samples the ADC channels.
 void adc_sample() {
-  // Start reading from channel 0.
-  ADMUX   = (ADMUX & 0xF0);
+  // Start reading from channel the right sensor.
+  ADMUX   = (ADMUX & 0xF0) | ADC_SENSOR_RIGHT;
   ADCSRA |= _BV(ADSC);
 }
 
@@ -42,7 +42,7 @@ ISR(ADC_vect, ISR_BLOCK) {
   // Select the next ADC channel
   ADMUX = (ADMUX & 0xF0) | next_channel[adc_index];
 
-  if (adc_index != ADC_SENSOR_RIGHT) {
+  if (adc_index != ADC_BATTERY_VOLTAGE) {
     // Start the next conversion
     ADCSRA |= _BV(ADSC);
   }
