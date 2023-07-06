@@ -1,5 +1,6 @@
 Next steps:
 - Update Linear plan to use calibrated sensor readings to stay in the middle of the hallway.
+- Main timer interrupt should probably be ISR_NONBLOCK.
 
 Firmware:
 - Tighten tick to run every 1-2ms instead of 5.
@@ -12,3 +13,10 @@ Board improvements:
 - Nose too big, makes turning towards a wall VERY tight.
 - Better connectors for motors and sensor board.
 - Velcro'd battery is wobbily standing up on edge.
+
+High-level phases of development:
+[x] Learn to operate the hardware.
+[x] Learn to drive specific distances / turn specific angles.
+[ ] Learn not to hit walls.
+[ ] Learn to map out a maze.
+[ ] Learn to drive the solution to a maze.
