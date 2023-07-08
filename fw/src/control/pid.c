@@ -57,3 +57,25 @@ float pi_update(pi_t *pi, float sp /* setpoint */, float pv /* process variable 
 void pi_reset(pi_t *pi) {
   pi->i = 0;
 }
+
+// pd_update determines the manipulated value, given a setpoint and process variable.
+float pd_update(pd_t *pd, float sp /* setpoint */, float pv /* process variable */) {
+  float p = sp - pv;           // proportional term is the error
+  float d = pv - pd->last_pv;  // derivative term is the change in the process variable
+
+  // NOTE: The derivative term is classicaly the change in the error, but this is
+  // sensitive to changes in the setpoint.  The change in the process variable, however,
+  // is always continuous.  This is known as "setpoint weighting".
+
+  pd->last_pv = pv;
+
+  // out = kp * p + ki * i + kd * d
+  float out = fmaf(pd->kp, p, pd->kd * d);
+
+  return clampf(out, pd->min, pd->max);
+}
+
+// pd_reset resets the pd controller.
+void pd_reset(pd_t *pd) {
+  pd->last_pv = 0;
+}

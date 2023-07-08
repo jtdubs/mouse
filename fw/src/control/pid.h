@@ -18,7 +18,7 @@ void pid_reset(pid_t *pid);
 
 // PI controller for a process variable.
 typedef struct {
-  float min, max;  // bounds for pid output
+  float min, max;  // bounds for pi output
   float kp, ki;    // pi constants
   float i;         // integral
 } pi_t;
@@ -28,3 +28,16 @@ float pi_update(pi_t *pi, float sp, float pv);
 
 // pi_reset resets the pi controller.
 void pi_reset(pi_t *pi);
+
+// PD controller for a process variable.
+typedef struct {
+  float min, max;  // bounds for pd output
+  float kp, kd;    // pd constants
+  float last_pv;   // last process variable
+} pd_t;
+
+// pd_update determines the manipulated value, given a setpoint and process variable.
+float pd_update(pd_t *pd, float sp, float pv);
+
+// pd_reset resets the pd controller.
+void pd_reset(pd_t *pd);
