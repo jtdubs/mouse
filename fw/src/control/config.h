@@ -8,7 +8,7 @@
 // Robot dimensions
 constexpr float BOARD_WIDTH    = 81.25;  // mm
 constexpr float BOARD_LENGTH   = 99.00;  // mm
-constexpr float WHEEL_BASE     = 73.00;  // mm
+constexpr float WHEEL_BASE     = 72.48;  // mm
 constexpr float WHEEL_DIAMETER = 32.50;  // mm
 
 // Motor parameters
