@@ -18,4 +18,4 @@ void speed_update();
 
 void speed_set(float left, float right);
 
-void speed_set_pi_coefficients(float kp, float ki, float alpha);
+void speed_tune(float kp, float ki, float kd, float alpha);

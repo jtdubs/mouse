@@ -4,9 +4,17 @@ type CommandType uint8
 
 const (
 	ResetCommandType CommandType = iota
-	SpeedPIDCommandType
+	TunePIDCommandType
 	EnqueuePlanCommandType
 	ExecutePlanCommandType
+)
+
+type PidID uint8
+
+const (
+	SpeedPid PidID = iota
+	WallPid
+	AnglePid
 )
 
 type Command interface {
@@ -25,21 +33,24 @@ func NewResetCommand() ResetCommand {
 
 func (ResetCommand) isCommand() bool { return true }
 
-type SpeedPIDCommand struct {
-	Type          CommandType
-	Kp, Ki, Alpha float32
+type TunePIDCommand struct {
+	Type              CommandType
+	Id                PidID
+	Kp, Ki, Kd, Alpha float32
 }
 
-func NewSpeedPIDCommand(kp, ki, alpha float32) SpeedPIDCommand {
-	return SpeedPIDCommand{
-		Type:  SpeedPIDCommandType,
+func NewTunePIDCommand(id PidID, kp, ki, kd, alpha float32) TunePIDCommand {
+	return TunePIDCommand{
+		Type:  TunePIDCommandType,
+		Id:    id,
 		Kp:    kp,
 		Ki:    ki,
+		Kd:    kd,
 		Alpha: alpha,
 	}
 }
 
-func (SpeedPIDCommand) isCommand() bool { return true }
+func (TunePIDCommand) isCommand() bool { return true }
 
 type EnqueuePlanCommand struct {
 	Type CommandType

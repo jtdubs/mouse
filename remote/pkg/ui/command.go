@@ -8,17 +8,19 @@ import (
 )
 
 type commandWindow struct {
-	mouse                                *mouse.Mouse
-	linkedPowers                         bool
-	linkedSpeeds                         bool
-	linkedPositions                      bool
-	powerLeft, powerRight                int32
-	speedLeft, speedRight                float32
-	linearDistance                       float32
-	linearStop                           bool
-	rotationalDTheta                     float32
-	speedKp, speedKi, speedAlpha         float32
-	ledLeft, ledBuiltin, ledRight, ledIR bool
+	mouse                                 *mouse.Mouse
+	linkedPowers                          bool
+	linkedSpeeds                          bool
+	linkedPositions                       bool
+	powerLeft, powerRight                 int32
+	speedLeft, speedRight                 float32
+	linearDistance                        float32
+	linearStop                            bool
+	rotationalDTheta                      float32
+	speedKp, speedKi, speedKd, speedAlpha float32
+	wallKp, wallKi, wallKd, wallAlpha     float32
+	angleKp, angleKi, angleKd, angleAlpha float32
+	ledLeft, ledBuiltin, ledRight, ledIR  bool
 }
 
 func newCommandWindow(m *mouse.Mouse) *commandWindow {
@@ -29,7 +31,16 @@ func newCommandWindow(m *mouse.Mouse) *commandWindow {
 		linkedPositions: true,
 		speedKp:         0.1,
 		speedKi:         0.2 * 0.005,
+		speedKd:         0.0,
 		speedAlpha:      0.5,
+		wallKp:          0.1,
+		wallKi:          0.0,
+		wallKd:          0.0,
+		wallAlpha:       0.5,
+		angleKp:         0.1,
+		angleKi:         0.0,
+		angleKd:         0.0,
+		angleAlpha:      0.5,
 	}
 }
 
@@ -47,6 +58,56 @@ func (w *commandWindow) draw() {
 	imgui.TableSetupColumnV("##ControlsLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
 	imgui.TableSetupColumnV("##ControlsControl", imgui.TableColumnFlagsWidthStretch, 0, 0)
 	imgui.TableSetupColumnV("##ControlsButton", imgui.TableColumnFlagsWidthFixed, 48, 0)
+
+	// Speed PID
+	{
+		w.tableRow("Speed PID:")
+		pid := [4]float32{w.speedKp, w.speedKi, w.speedKd, w.speedAlpha}
+		imgui.SetNextItemWidth(imgui.ContentRegionAvail().X - 48)
+		if imgui.InputFloat4V("##SpeedPID", &pid, "%.4f", 0) {
+			w.speedKp, w.speedKi, w.speedKd, w.speedAlpha = pid[0], pid[1], pid[2], pid[3]
+		}
+		imgui.TableSetColumnIndex(2)
+		if w.toolbarButton("##SpeedPIDSend", "play-black") {
+			w.mouse.SendCommand(mouse.NewTunePIDCommand(mouse.SpeedPid, w.speedKp, w.speedKi, w.speedKd, w.speedAlpha))
+		}
+	}
+
+	// Wall PID
+	{
+		w.tableRow("Wall PID:")
+		pid := [4]float32{w.wallKp, w.wallKi, w.wallKd, w.wallAlpha}
+		imgui.SetNextItemWidth(imgui.ContentRegionAvail().X - 48)
+		if imgui.InputFloat4V("##WallPID", &pid, "%.4f", 0) {
+			w.wallKp, w.wallKi, w.wallKd, w.wallAlpha = pid[0], pid[1], pid[2], pid[3]
+		}
+		imgui.TableSetColumnIndex(2)
+		if w.toolbarButton("##WallPIDSend", "play-black") {
+			w.mouse.SendCommand(mouse.NewTunePIDCommand(mouse.WallPid, w.wallKp, w.wallKi, w.wallKd, w.wallAlpha))
+		}
+	}
+
+	// Angle PID
+	{
+		w.tableRow("Angle PID:")
+		pid := [4]float32{w.angleKp, w.angleKi, w.angleKd, w.angleAlpha}
+		imgui.SetNextItemWidth(imgui.ContentRegionAvail().X - 48)
+		if imgui.InputFloat4V("##AnglePID", &pid, "%.4f", 0) {
+			w.angleKp, w.angleKi, w.angleKd, w.angleAlpha = pid[0], pid[1], pid[2], pid[3]
+		}
+		imgui.TableSetColumnIndex(2)
+		if w.toolbarButton("##AnglePIDSend", "play-black") {
+			w.mouse.SendCommand(mouse.NewTunePIDCommand(mouse.AnglePid, w.angleKp, w.angleKi, w.angleKd, w.angleAlpha))
+		}
+	}
+
+	imgui.TableNextRow()
+	imgui.TableSetColumnIndex(0)
+	imgui.Separator()
+	imgui.TableSetColumnIndex(1)
+	imgui.Separator()
+	imgui.TableSetColumnIndex(2)
+	imgui.Separator()
 
 	// LEDs
 	{
@@ -77,19 +138,6 @@ func (w *commandWindow) draw() {
 			w.mouse.SendCommand(mouse.NewEnqueuePlanCommand(
 				mouse.PlanIR{On: w.ledIR},
 			))
-		}
-	}
-
-	// Speed PID
-	{
-		w.tableRow("Speed PID:")
-		pid := [3]float32{w.speedKp, w.speedKi, w.speedAlpha}
-		if imgui.InputFloat3V("##SpeedPID", &pid, "%.4f", 0) {
-			w.speedKp, w.speedKi, w.speedAlpha = pid[0], pid[1], pid[2]
-		}
-		imgui.TableSetColumnIndex(2)
-		if w.toolbarButton("##SpeedPIDSend", "play-black") {
-			w.mouse.SendCommand(mouse.NewSpeedPIDCommand(w.speedKp, w.speedKi, w.speedAlpha))
 		}
 	}
 
@@ -184,6 +232,7 @@ func (w *commandWindow) draw() {
 	// Execute
 	{
 		w.tableRow("")
+		imgui.TableSetColumnIndex(2)
 		if w.toolbarButton("##Execute", "play-black") {
 			w.mouse.SendCommand(mouse.NewExecutePlanCommand())
 		}

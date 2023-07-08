@@ -79,7 +79,7 @@ void speed_set(float left, float right) {
   speed_setpoint_right = right;
 }
 
-void speed_set_pi_coefficients(float kp, float ki, float alpha) {
+void speed_tune(float kp, float ki, [[maybe_unused]] float kd, float alpha) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     speed_alpha = alpha;
 

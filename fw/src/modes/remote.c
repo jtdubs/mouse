@@ -45,10 +45,27 @@ void remote() {
         cli();
         _delay_ms(60000.0);
         break;
-      case COMMAND_SET_SPEED_PID:
-        speed_set_pi_coefficients(command->data.pid.kp,  //
-                                  command->data.pid.ki,  //
-                                  command->data.pid.alpha);
+      case COMMAND_TUNE_PID:
+        switch (command->data.pid.id) {
+          case PID_SPEED:
+            speed_tune(command->data.pid.kp,  //
+                       command->data.pid.ki,  //
+                       command->data.pid.kd,  //
+                       command->data.pid.alpha);
+            break;
+          case PID_WALL:
+            linear_wall_tune(command->data.pid.kp,  //
+                             command->data.pid.ki,  //
+                             command->data.pid.kd,  //
+                             command->data.pid.alpha);
+            break;
+          case PID_ANGLE:
+            linear_angle_tune(command->data.pid.kp,  //
+                              command->data.pid.ki,  //
+                              command->data.pid.kd,  //
+                              command->data.pid.alpha);
+            break;
+        }
         break;
       case COMMAND_PLAN_ENQUEUE:
         remote_enqueue(command->data.plan);

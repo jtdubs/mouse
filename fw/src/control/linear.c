@@ -11,34 +11,29 @@
 #include "platform/pin.h"
 #include "utils/math.h"
 
+float linear_start_theta;      // radians
 float linear_start_distance;   // mm
 float linear_target_distance;  // mm
 float linear_target_speed;     // mm/s
 
-void linear_init() {}
+static float linear_wall_alpha;
+static float linear_angle_alpha;
 
-void linear_start(float distance /* mm */, bool stop) {
-  linear_start_distance  = position_distance;             // mm
-  linear_target_distance = position_distance + distance;  // mm
-  linear_target_speed    = stop ? 0.0 : SPEED_CRUISE;     // mm/s
+static float linear_wall_error;
+static float linear_angle_error;
 
-  pin_set(IR_LEDS);
-}
+static pid_t linear_wall_error_pid;
+static pid_t linear_angle_error_pid;
 
-int16_t wall_error_left;
-int16_t wall_error_right;
-bool    left_wall_present;
-bool    right_wall_present;
-
-float calculate_wall_error() {
+static float calculate_wall_error() {
   uint16_t left  = adc_values[ADC_SENSOR_LEFT];
   uint16_t right = adc_values[ADC_SENSOR_RIGHT];
 
-  wall_error_left  = left - sensor_threshold_left;
-  wall_error_right = sensor_threshold_right - right;
+  int16_t wall_error_left  = left - sensor_threshold_left;
+  int16_t wall_error_right = sensor_threshold_right - right;
 
-  left_wall_present  = (left >= (sensor_threshold_left >> 1));
-  right_wall_present = (right >= (sensor_threshold_right >> 1));
+  bool left_wall_present  = (left >= (sensor_threshold_left >> 1));
+  bool right_wall_present = (right >= (sensor_threshold_right >> 1));
 
   pin_set2(LED_LEFT, left_wall_present);
   pin_set2(LED_RIGHT, right_wall_present);
@@ -52,6 +47,34 @@ float calculate_wall_error() {
   } else {
     return (float)(wall_error_left + wall_error_right);
   }
+}
+
+void linear_init() {
+  linear_wall_error_pid.kp  = 0.1;
+  linear_wall_error_pid.ki  = 0.0;
+  linear_wall_error_pid.kd  = 0.0;
+  linear_wall_error_pid.min = -100;
+  linear_wall_error_pid.max = 100;
+
+  linear_angle_error_pid.kp  = 0.1;
+  linear_angle_error_pid.ki  = 0.0;
+  linear_angle_error_pid.kd  = 0.0;
+  linear_angle_error_pid.min = -100;
+  linear_angle_error_pid.max = 100;
+
+  linear_wall_alpha  = 0.5;
+  linear_angle_alpha = 0.5;
+}
+
+void linear_start(float distance /* mm */, bool stop) {
+  linear_start_theta     = position_theta;                // radians
+  linear_start_distance  = position_distance;             // mm
+  linear_target_distance = position_distance + distance;  // mm
+  linear_target_speed    = stop ? 0.0 : SPEED_CRUISE;     // mm/s
+  linear_wall_error      = calculate_wall_error();
+  linear_angle_error     = 0.0;
+
+  pin_set(IR_LEDS);
 }
 
 bool linear_update() {
@@ -99,9 +122,17 @@ bool linear_update() {
   left_speed  += (accel * CONTROL_PERIOD);  // mm/s
   right_speed += (accel * CONTROL_PERIOD);  // mm/s
   // Adjust for the wall error.
-  float wall_error  = calculate_wall_error();
-  left_speed       += (wall_error * 0.1);
-  right_speed      -= (wall_error * 0.1);
+  linear_wall_error = (linear_wall_alpha * calculate_wall_error())  //
+                    + ((1.0f - linear_wall_alpha) * linear_wall_error);
+  float wall_adjustment  = pid_update(&linear_wall_error_pid, 0.0, calculate_wall_error());
+  left_speed            -= wall_adjustment;
+  right_speed           += wall_adjustment;
+  // Adjust for the angular error.
+  linear_angle_error = (linear_angle_alpha * (linear_start_theta - position_theta))  //
+                     + ((1.0f - linear_angle_alpha) * linear_angle_error);
+  float angle_adjustment  = pid_update(&linear_angle_error_pid, linear_start_theta, position_theta);
+  left_speed             -= angle_adjustment;
+  right_speed            += angle_adjustment;
   // Adjust for the wheel bias.
   left_speed  *= (1.0 - WHEEL_BIAS);
   right_speed *= (1.0 + WHEEL_BIAS);
@@ -112,4 +143,22 @@ bool linear_update() {
   speed_set(left_speed, right_speed);
   speed_update();
   return false;
+}
+
+void linear_wall_tune(float kp, float ki, float kd, float alpha) {
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    linear_wall_error_pid.kp = kp;
+    linear_wall_error_pid.ki = ki;
+    linear_wall_error_pid.kd = kd;
+    linear_wall_alpha        = alpha;
+  }
+}
+
+void linear_angle_tune(float kp, float ki, float kd, float alpha) {
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    linear_angle_error_pid.kp = kp;
+    linear_angle_error_pid.ki = ki;
+    linear_angle_error_pid.kd = kd;
+    linear_angle_alpha        = alpha;
+  }
 }

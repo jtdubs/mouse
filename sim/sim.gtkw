@@ -1,19 +1,19 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sun Jul  2 23:58:11 2023
+[*] Sat Jul  8 23:56:00 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/sim/gtkwave_trace.fst"
-[dumpfile_mtime] "Sun Jul  2 23:53:42 2023"
-[dumpfile_size] 352193
+[dumpfile_mtime] "Sat Jul  8 23:53:16 2023"
+[dumpfile_size] 487426
 [savefile] "/home/jtdubs/dev/mouse/sim/sim.gtkw"
-[timestart] 5807000000
-[size] 3576 2032
+[timestart] 3423490000
+[size] 3371 1913
 [pos] 70 0
-*-27.643951 7572000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-21.643951 3437989940 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 273
 [signals_width] 513
 [sst_expanded] 1
-[sst_vpaned_height] 635
+[sst_vpaned_height] 573
 @200
 -Interrupts
 @28
@@ -73,8 +73,6 @@ logic.motor_power_right[15:0]
 -Speed
 @c8020
 logic.speed_measured_left[31:0]
-logic.speed_setpoint_left[31:0]
-logic.speed_measured_right[31:0]
 logic.speed_setpoint_right[31:0]
 @200
 -Position
@@ -83,14 +81,16 @@ logic.position_distance[31:0]
 logic.position_theta[31:0]
 @200
 -Linear
-@22
-logic.linear_braking[7:0]
+@c8021
+logic.linear_start_theta[31:0]
 @48020
 logic.linear_start_distance[31:0]
 logic.linear_target_distance[31:0]
 logic.linear_target_speed[31:0]
-logic.linear_theta_alpha[31:0]
-logic.linear_theta_measured[31:0]
-logic.linear_theta_setpoint[31:0]
+@c8020
+logic.linear_angle_alpha[31:0]
+logic.linear_angle_error[31:0]
+logic.linear_wall_alpha[31:0]
+logic.linear_wall_error[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

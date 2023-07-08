@@ -22,10 +22,16 @@
 
 typedef enum : uint8_t {
   COMMAND_RESET,
-  COMMAND_SET_SPEED_PID,
+  COMMAND_TUNE_PID,
   COMMAND_PLAN_ENQUEUE,
   COMMAND_PLAN_EXECUTE,
 } command_type_t;
+
+typedef enum : uint8_t {
+  PID_SPEED,
+  PID_WALL,
+  PID_ANGLE,
+} pid_id_t;
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.
@@ -39,9 +45,11 @@ typedef struct {
       bool ir;
     } leds;
     struct {
-      float kp;
-      float ki;
-      float alpha;
+      pid_id_t id;
+      float    kp;
+      float    ki;
+      float    kd;
+      float    alpha;
     } pid;
     plan_t plan;
   } data;
