@@ -24,7 +24,7 @@ void rotational_start(float dtheta /* radians */) {
 
 bool rotational_update() {
   // If we are there, then we are done.
-  if (fabsf(position_theta - rotational_target_theta) < MM_THETA) {
+  if (fabsf(position_theta - rotational_target_theta) < (MM_THETA * 5.0f)) {
     speed_set(0, 0);
     return true;
   }
