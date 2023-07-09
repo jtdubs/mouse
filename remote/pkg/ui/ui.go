@@ -35,6 +35,7 @@ func New(mouse *mouse.Mouse) *UI {
 			newReportWindow(mouse),
 			newStatusWindow(mouse),
 			newToolbarWindow(mouse),
+			newMazeWindow(mouse),
 		},
 	}
 
@@ -102,9 +103,11 @@ func (ui *UI) Run(ctx context.Context) {
 			imgui.InternalDockBuilderDockWindow("Serial", dockID)
 			imgui.InternalDockBuilderFinish(dockID)
 			right := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.40, nil, &dockID)
-			bottomRight := imgui.InternalDockBuilderSplitNode(right, imgui.DirDown, 0.50, nil, &right)
-			imgui.InternalDockBuilderDockWindow("Report", dockID)
+			bottomRight := imgui.InternalDockBuilderSplitNode(right, imgui.DirDown, 0.40, nil, &right)
+			bottomLeft := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirDown, 0.40, nil, &dockID)
+			imgui.InternalDockBuilderDockWindow("Maze", dockID)
 			imgui.InternalDockBuilderDockWindow("Command", right)
+			imgui.InternalDockBuilderDockWindow("Report", bottomLeft)
 			imgui.InternalDockBuilderDockWindow("Log", bottomRight)
 		}
 
