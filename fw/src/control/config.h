@@ -11,6 +11,10 @@ constexpr float BOARD_LENGTH   = 99.00;  // mm
 constexpr float WHEEL_BASE     = 72.48;  // mm
 constexpr float WHEEL_DIAMETER = 32.50;  // mm
 
+// Maze dimensions
+constexpr uint8_t MAZE_WIDTH  = 16;  // dimensionless
+constexpr uint8_t MAZE_HEIGHT = 16;  // dimensionless
+
 // Motor parameters
 constexpr float COUNTS_PER_REVOLUTION = 240;  // dimensionless
 
