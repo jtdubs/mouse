@@ -17,6 +17,16 @@ typedef struct {
   cell_t cells[MAZE_WIDTH][MAZE_HEIGHT];
 } maze_t;
 
+#pragma pack(push, 1)
+typedef struct {
+  uint8_t x : 4;
+  uint8_t y : 4;
+  cell_t  cell;
+} maze_update_t;
+#pragma pack(pop)
+
 extern maze_t maze;
 
 void maze_init();
+
+uint8_t maze_report(uint8_t *buffer, uint8_t len);

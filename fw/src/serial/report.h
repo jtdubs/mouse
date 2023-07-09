@@ -21,10 +21,10 @@ typedef enum : uint8_t {
   // Individual report types.
   REPORT_PLATFORM = 1,
   REPORT_CONTROL  = 2,
-  // REPORT_MAZE     = 3,
+  REPORT_MAZE     = 3,
 
   REPORT_FIRST = REPORT_PLATFORM,
-  REPORT_LAST  = REPORT_CONTROL,
+  REPORT_LAST  = REPORT_MAZE,
 } report_type_t;
 
 #pragma pack(push, 1)

@@ -5,6 +5,7 @@
 #include <util/atomic.h>
 
 #include "control/control.h"
+#include "maze/maze.h"
 #include "platform/platform.h"
 #include "platform/rtc.h"
 #include "platform/usart0.h"
@@ -24,7 +25,9 @@ void report_send() {
 
   uint8_t len = 0;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    if ((len = control_report(report.data, sizeof(report.data))) > 0) {
+    if ((len = maze_report(report.data, sizeof(report.data))) > 0) {
+      report.header.type = REPORT_MAZE;
+    } else if ((len = control_report(report.data, sizeof(report.data))) > 0) {
       report.header.type = REPORT_CONTROL;
     } else if ((len = platform_report(report.data, sizeof(report.data))) > 0) {
       report.header.type = REPORT_PLATFORM;
