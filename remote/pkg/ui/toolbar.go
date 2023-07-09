@@ -75,8 +75,11 @@ func (w *toolbarWindow) draw() {
 	imgui.SetNextWindowSize(imgui.NewVec2(vp.Size().X, 48))
 	imgui.SetNextWindowViewport(vp.ID())
 	imgui.PushStyleVarFloat(imgui.StyleVarWindowBorderSize, 0)
-	imgui.BeginV("Toolbar", nil, toolbarFlags)
-	imgui.PopStyleVar()
-	w.drawToolbar()
-	imgui.End()
+	if imgui.BeginV("Toolbar", nil, toolbarFlags) {
+		imgui.PopStyleVar()
+		w.drawToolbar()
+		imgui.End()
+	} else {
+		imgui.PopStyleVar()
+	}
 }

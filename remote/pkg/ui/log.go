@@ -24,7 +24,9 @@ func (w *logWindow) init() {
 }
 
 func (w *logWindow) draw() {
-	imgui.Begin("Log")
+	if !imgui.Begin("Log") {
+		return
+	}
 
 	// Toolbar
 	imgui.Text("Filter: ")

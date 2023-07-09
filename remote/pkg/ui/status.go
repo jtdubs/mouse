@@ -21,7 +21,9 @@ func (w *statusWindow) init() {
 }
 
 func (w *statusWindow) drawStatus() {
-	imgui.Begin("Status")
+	if !imgui.Begin("Status") {
+		return
+	}
 	imgui.Text(fmt.Sprintf("Status: %s", w.mouse.Status()))
 	imgui.End()
 }

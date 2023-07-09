@@ -48,7 +48,9 @@ func (w *commandWindow) init() {
 }
 
 func (w *commandWindow) draw() {
-	imgui.Begin("Command")
+	if !imgui.Begin("Command") {
+		return
+	}
 
 	if !w.mouse.Open() {
 		imgui.BeginDisabled()

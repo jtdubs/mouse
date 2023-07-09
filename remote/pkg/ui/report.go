@@ -189,7 +189,9 @@ func (w *reportWindow) drawControl() {
 }
 
 func (w *reportWindow) draw() {
-	imgui.Begin("Report")
+	if !imgui.Begin("Report") {
+		return
+	}
 
 	imgui.BeginTable("##Status", 2)
 	imgui.TableSetupColumnV("##StatusLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
