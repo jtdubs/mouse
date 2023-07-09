@@ -1,10 +1,10 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sat Jul  8 23:56:00 2023
+[*] Sun Jul  9 18:15:40 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/sim/gtkwave_trace.fst"
-[dumpfile_mtime] "Sat Jul  8 23:53:16 2023"
-[dumpfile_size] 487426
+[dumpfile_mtime] "Sun Jul  9 18:12:48 2023"
+[dumpfile_size] 173700
 [savefile] "/home/jtdubs/dev/mouse/sim/sim.gtkw"
 [timestart] 3423490000
 [size] 3371 1913
@@ -42,6 +42,10 @@ logic.RIGHT_CLK_A
 logic.RIGHT_B
 @200
 -ADC
+-Report
+@22
+logic.report_type[7:0]
+@200
 -Probes
 @28
 logic.PROBE_TICK
@@ -71,8 +75,10 @@ logic.motor_power_left[15:0]
 logic.motor_power_right[15:0]
 @200
 -Speed
-@c8020
+@48021
 logic.speed_measured_left[31:0]
+logic.speed_measured_right[31:0]
+logic.speed_setpoint_left[31:0]
 logic.speed_setpoint_right[31:0]
 @200
 -Position
@@ -81,16 +87,26 @@ logic.position_distance[31:0]
 logic.position_theta[31:0]
 @200
 -Linear
-@c8021
-logic.linear_start_theta[31:0]
 @48020
 logic.linear_start_distance[31:0]
 logic.linear_target_distance[31:0]
-logic.linear_target_speed[31:0]
 @c8020
-logic.linear_angle_alpha[31:0]
-logic.linear_angle_error[31:0]
-logic.linear_wall_alpha[31:0]
 logic.linear_wall_error[31:0]
+@200
+-Rotational
+@22
+logic.rotational_direction[7:0]
+@48020
+logic.rotational_start_theta[31:0]
+logic.rotational_target_theta[31:0]
+@200
+-Sensor Cal
+@22
+logic.sensor_sample_count[15:0]
+logic.sensor_sum_center[31:0]
+logic.sensor_sum_left[31:0]
+logic.sensor_sum_right[31:0]
+logic.sensor_threshold_left[15:0]
+logic.sensor_threshold_right[15:0]
 [pattern_trace] 1
 [pattern_trace] 0

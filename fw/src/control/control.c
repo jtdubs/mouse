@@ -123,3 +123,53 @@ void control_update() {
   report_send();
   pin_clear(PROBE_TICK);
 }
+
+bool control_report(control_report_t* report) {
+  static plan_state_t previous_plan_state = PLAN_STATE_SCHEDULED;
+  static plan_type_t  previous_plan_type  = PLAN_TYPE_IDLE;
+  static uint8_t      counter             = 0;
+
+  // count how many ticks since the last plan change.
+  if (current_plan.state == previous_plan_state && current_plan.type == previous_plan_type) {
+    counter++;
+  } else {
+    counter             = 0;
+    previous_plan_state = current_plan.state;
+    previous_plan_type  = current_plan.type;
+  }
+
+  // if the report hasn't changed, only report every 8th tick.
+  if (counter & 0x7) {
+    return false;
+  }
+
+  report->plan                 = current_plan;
+  report->speed.measured_left  = speed_measured_left;
+  report->speed.measured_right = speed_measured_right;
+  report->speed.setpoint_left  = speed_setpoint_left;
+  report->speed.setpoint_right = speed_setpoint_right;
+  report->position.distance    = position_distance;
+  report->position.theta       = position_theta;
+  switch (current_plan.type) {
+    case PLAN_TYPE_SENSOR_CAL:
+      report->plan_data.sensor_cal.left   = sensor_threshold_left;
+      report->plan_data.sensor_cal.right  = sensor_threshold_right;
+      report->plan_data.sensor_cal.center = sensor_threshold_center;
+      break;
+    case PLAN_TYPE_ROTATIONAL_MOTION:
+      report->plan_data.rotation.start_theta  = rotational_start_theta;
+      report->plan_data.rotation.target_theta = rotational_target_theta;
+      report->plan_data.rotation.target_speed = rotational_target_speed;
+      report->plan_data.rotation.direction    = rotational_direction;
+      break;
+    case PLAN_TYPE_LINEAR_MOTION:
+      report->plan_data.linear.start_distance  = linear_start_distance;
+      report->plan_data.linear.target_distance = linear_target_distance;
+      report->plan_data.linear.target_speed    = linear_target_speed;
+      break;
+    default:
+      break;
+  }
+
+  return true;
+}

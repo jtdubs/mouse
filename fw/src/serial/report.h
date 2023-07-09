@@ -15,55 +15,38 @@
 
 #include <stdint.h>
 
-#include "control/plan.h"
+#include "control/control.h"
+#include "platform/platform.h"
+
+typedef enum : uint8_t {
+  REPORT_NONE = 0,
+
+  // Individual report types.
+  REPORT_PLATFORM = 1,
+  REPORT_CONTROL  = 2,
+  // REPORT_MAZE     = 3,
+
+  REPORT_FIRST = REPORT_PLATFORM,
+  REPORT_LAST  = REPORT_CONTROL,
+} report_type_t;
 
 #pragma pack(push, 1)
 // report_t represents a mouse status report.
 typedef struct {
-  // uint8_t battery_volts;
-  // struct {
-  //   uint16_t left    : 10;
-  //   uint16_t center  : 10;
-  //   uint16_t right   : 10;
-  //   uint8_t  padding : 2;
-  // } sensors;
-  struct {
-    uint8_t onboard : 1;
-    uint8_t left    : 1;
-    uint8_t right   : 1;
-    uint8_t ir      : 1;
-    uint8_t padding : 4;
-  } leds;
-  struct {
-    int32_t left;
-    int32_t right;
-  } encoders;
-  struct {
-    int16_t left;
-    int16_t right;
-  } motors;
-  struct {
-    float measured_left;
-    float measured_right;
-    float setpoint_left;
-    float setpoint_right;
-  } speed;
-  struct {
-    float distance;
-    float theta;
-  } position;
-  plan_t plan;
+  report_type_t type;
   struct {
     uint32_t micros;
   } rtc;
+  union {
+    platform_report_t platform;
+    control_report_t  control;
+    // maze_report_t     maze;
+  } data;
 } report_t;
 #pragma pack(pop)
-
-// report is the current report.
-extern report_t report;
 
 // report_init initializes the report module.
 void report_init();
 
-// report_send sends the report.
+// report_send sends the next report.
 void report_send();

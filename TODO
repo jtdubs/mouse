@@ -12,10 +12,16 @@ Next steps:
   - "Advancing" a cell should move to this point, determine the wall status, then continue to the center of the cell.
 
 Firmware:
+- New alternating report structure.
+
+Timer:
 - Main timer interrupt should probably be ISR_NONBLOCK.
 - Tighten tick to run every 1-2ms instead of 5.
   - This is problematic as the encoder pulses are relatively infrequent, so we'll end up with either 0 or 1 each tick...
   - This may be "okay" if we just make the low-pass filter stronger?
+
+Reports:
+- Alternate between module-specific report (platform, control, maze)
 
 Board improvements:
 - Center of mass too far back due to battery, makes it prone to "bucking" under heavy acceleration.
