@@ -15,6 +15,7 @@ const (
 	ReportKeyLatest ReportKey = iota
 	ReportKeyPlatform
 	ReportKeyControl
+	ReportKeyMaze
 	ReportKeyUnknown
 )
 
@@ -23,7 +24,7 @@ type ReportType uint8
 const (
 	ReportTypePlatform ReportType = 1
 	ReportTypeControl  ReportType = 2
-	// ReportTypeMaze
+	ReportTypeMaze     ReportType = 3
 )
 
 type Report struct {
@@ -118,6 +119,39 @@ type LinearReport struct {
 
 func (LinearReport) isControlReport() {}
 
+type MazeReport struct {
+	Updates []MazeUpdate
+}
+
+func (r MazeReport) Symbols() map[string]string {
+	return nil
+}
+
+func (r MazeReport) Key() ReportKey {
+	return ReportKeyMaze
+}
+
+type MazeUpdate struct {
+	XY   uint8
+	Cell uint8
+}
+
+func (u MazeUpdate) X() int {
+	return int(u.XY & 0x0f)
+}
+
+func (u MazeUpdate) Y() int {
+	return int((u.XY >> 4) & 0x0f)
+}
+
+func (u MazeUpdate) Walls() (north, east, south, west bool) {
+	north = (u.Cell & 0x01) == 1
+	east = ((u.Cell >> 1) & 0x01) == 1
+	south = ((u.Cell >> 2) & 0x01) == 1
+	west = ((u.Cell >> 3) & 0x01) == 1
+	return
+}
+
 func ReadReport(r *bytes.Reader) (Report, error) {
 	var header ReportHeader
 	if err := binary.Read(r, binary.LittleEndian, &header); err != nil {
@@ -135,6 +169,10 @@ func ReadReport(r *bytes.Reader) (Report, error) {
 		}
 	case ReportTypeControl:
 		if body, err = ReadControlReport(r); err != nil {
+			return Report{}, err
+		}
+	case ReportTypeMaze:
+		if body, err = ReadMazeReport(r); err != nil {
 			return Report{}, err
 		}
 	default:
@@ -187,6 +225,19 @@ func ReadControlReport(r *bytes.Reader) (ControlReport, error) {
 		Header: header,
 		Body:   body,
 	}, nil
+}
+
+func ReadMazeReport(r *bytes.Reader) (MazeReport, error) {
+	var report MazeReport
+	for {
+		var update MazeUpdate
+		err := binary.Read(r, binary.LittleEndian, &report)
+		if err != nil {
+			break
+		}
+		report.Updates = append(report.Updates, update)
+	}
+	return report, nil
 }
 
 func (Report) Variables() []vcd.VcdDataType {

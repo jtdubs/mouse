@@ -27,6 +27,7 @@ var (
 type Mouse struct {
 	Recording    bool
 	Updating     bool
+	Maze         *Maze
 	status       string
 	portOpen     bool
 	serialBuffer []byte
@@ -46,16 +47,23 @@ type Mouse struct {
 
 func New() *Mouse {
 	return &Mouse{
+		Recording:    false,
 		Updating:     true,
-		serialBuffer: make([]byte, 256),
-		frameBuffer:  make([]byte, 256),
-		index:        0,
+		Maze:         &Maze{},
 		status:       "Closed",
 		portOpen:     false,
+		serialBuffer: make([]byte, 256),
+		frameBuffer:  make([]byte, 256),
+		readState:    Idle,
+		readLength:   0,
+		readIndex:    0,
+		index:        0,
 		messages:     NewRing[string](*scrollback),
 		reports:      make(map[ReportKey]Report),
 		reportMutex:  sync.Mutex{},
 		sendChan:     make(chan Command, 1),
+		vcd:          vcd.VcdWriter{},
+		vcdTime:      0,
 	}
 }
 
@@ -278,7 +286,13 @@ func (m *Mouse) receiveByte(value byte) {
 			if m.Updating {
 				m.reportMutex.Lock()
 				m.reports[ReportKeyLatest] = r
-				m.reports[r.Key()] = r
+				if r.Key() == ReportKeyMaze {
+					for _, u := range r.Body.(MazeReport).Updates {
+						m.Maze.Update(u)
+					}
+				} else {
+					m.reports[r.Key()] = r
+				}
 				m.reportMutex.Unlock()
 			}
 
