@@ -41,3 +41,15 @@ float pd_update(pd_t *pd, float sp, float pv);
 
 // pd_reset resets the pd controller.
 void pd_reset(pd_t *pd);
+
+// P controller for a process variable.
+typedef struct {
+  float min, max;  // bounds for pid output
+  float kp;        // pid constants
+} p_t;
+
+// pid_update determines the manipulated value, given a setpoint and process variable.
+float p_update(p_t *p, float sp, float pv);
+
+// pid_reset resets the pid controller.
+void p_reset(p_t *p);

@@ -69,7 +69,7 @@ float pd_update(pd_t *pd, float sp /* setpoint */, float pv /* process variable 
 
   pd->last_pv = pv;
 
-  // out = kp * p + ki * i + kd * d
+  // out = kp * p + kd * d
   float out = fmaf(pd->kp, p, pd->kd * d);
 
   return clampf(out, pd->min, pd->max);
@@ -79,3 +79,14 @@ float pd_update(pd_t *pd, float sp /* setpoint */, float pv /* process variable 
 void pd_reset(pd_t *pd) {
   pd->last_pv = 0;
 }
+
+// p_update determines the manipulated value, given a setpoint and process variable.
+float p_update(p_t *p, float sp /* setpoint */, float pv /* process variable */) {
+  // out = kp * p
+  float out = p->kp * (sp - pv);
+
+  return clampf(out, p->min, p->max);
+}
+
+// p_reset resets the p controller.
+void p_reset([[maybe_unused]] p_t *p) {}

@@ -21,30 +21,46 @@ float speed_setpoint_left;
 float speed_setpoint_right;
 
 // PI controllers for the motors.
-static pi_t  speed_pi_left;
-static pi_t  speed_pi_right;
+#if defined(ALLOW_SPEED_PID_TUNING)
+static pid_t speed_pid_left;
+static pid_t speed_pid_right;
 static float speed_alpha;
+#else
+static pi_t speed_pid_left;
+static pi_t speed_pid_right;
+#endif
 
 void speed_init() {
-  speed_pi_left.min = -200;
-  speed_pi_left.max = 200;
-  speed_pi_left.kp  = SPEED_KP;
-  speed_pi_left.ki  = SPEED_KI;
+  speed_pid_left.min = -200;
+  speed_pid_left.max = 200;
+  speed_pid_left.kp  = SPEED_KP;
+  speed_pid_left.ki  = SPEED_KI;
 
-  speed_pi_right.min = -200;
-  speed_pi_right.max = 200;
-  speed_pi_right.kp  = SPEED_KP;
-  speed_pi_right.ki  = SPEED_KI;
+  speed_pid_right.min = -200;
+  speed_pid_right.max = 200;
+  speed_pid_right.kp  = SPEED_KP;
+  speed_pid_right.ki  = SPEED_KI;
 
-  speed_alpha = SPEED_LOW_PASS_ALPHA;
+#if defined(ALLOW_SPEED_PID_TUNING)
+  speed_alpha        = SPEED_ALPHA;
+  speed_pid_left.ki  = SPEED_KD;
+  speed_pid_right.ki = SPEED_KD;
+#endif
 }
 
 void speed_read() {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
+#if defined(ALLOW_SPEED_PID_TUNING)
     speed_measured_left = (speed_alpha * COUNTS_TO_RPM(encoders_left_delta))  //
                         + ((1.0f - speed_alpha) * speed_measured_left);
     speed_measured_right = (speed_alpha * COUNTS_TO_RPM(encoders_right_delta))  //
                          + ((1.0f - speed_alpha) * speed_measured_right);
+#else
+    speed_measured_left = (SPEED_ALPHA * COUNTS_TO_RPM(encoders_left_delta))  //
+                        + ((1.0f - SPEED_ALPHA) * speed_measured_left);
+    speed_measured_right = (SPEED_ALPHA * COUNTS_TO_RPM(encoders_right_delta))  //
+                         + ((1.0f - SPEED_ALPHA) * speed_measured_right);
+#endif
   }
 }
 
@@ -52,19 +68,35 @@ void speed_update() {
   float setpoint_left = fabsf(speed_setpoint_left);
   float power_left    = LEFT_RPM_TO_POWER(setpoint_left);
   if (setpoint_left < MIN_MOTOR_RPM) {
-    pi_reset(&speed_pi_left);
+#if defined(ALLOW_SPEED_PID_TUNING)
+    pid_reset(&speed_pid_left);
+#else
+    pi_reset(&speed_pid_left);
+#endif
     power_left = 0;
   } else {
-    power_left += pi_update(&speed_pi_left, setpoint_left, fabsf(speed_measured_left));
+#if defined(ALLOW_SPEED_PID_TUNING)
+    power_left += pid_update(&speed_pid_left, setpoint_left, fabsf(speed_measured_left));
+#else
+    power_left += pi_update(&speed_pid_left, setpoint_left, fabsf(speed_measured_left));
+#endif
   }
 
   float setpoint_right = fabsf(speed_setpoint_right);
   float power_right    = RIGHT_RPM_TO_POWER(setpoint_right);
   if (setpoint_right < MIN_MOTOR_RPM) {
-    pi_reset(&speed_pi_right);
+#if defined(ALLOW_SPEED_PID_TUNING)
+    pid_reset(&speed_pid_right);
+#else
+    pi_reset(&speed_pid_right);
+#endif
     power_right = 0;
   } else {
-    power_right += pi_update(&speed_pi_right, setpoint_right, fabsf(speed_measured_right));
+#if defined(ALLOW_SPEED_PID_TUNING)
+    power_right += pid_update(&speed_pid_right, setpoint_right, fabsf(speed_measured_right));
+#else
+    power_right += pi_update(&speed_pid_right, setpoint_right, fabsf(speed_measured_right));
+#endif
   }
 
   bool    forward_left  = signbitf(speed_setpoint_left) == 0;
@@ -79,14 +111,17 @@ void speed_set(float left, float right) {
   speed_setpoint_right = right;
 }
 
-void speed_tune(float kp, float ki, [[maybe_unused]] float kd, float alpha) {
+void speed_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
+                [[maybe_unused]] float alpha) {
+#if defined(ALLOW_SPEED_PID_TUNING)
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     speed_alpha = alpha;
 
-    speed_pi_left.kp = kp;
-    speed_pi_left.ki = ki;
+    speed_pid_left.kp = kp;
+    speed_pid_left.ki = ki;
 
-    speed_pi_right.kp = kp;
-    speed_pi_right.ki = ki;
+    speed_pid_right.kp = kp;
+    speed_pid_right.ki = ki;
   }
+#endif
 }
