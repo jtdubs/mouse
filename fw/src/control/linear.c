@@ -50,13 +50,13 @@ static float calculate_wall_error() {
 }
 
 void linear_init() {
-  linear_wall_error_pid.kp  = 0.1;
+  linear_wall_error_pid.kp  = 1.0;
   linear_wall_error_pid.ki  = 0.0;
   linear_wall_error_pid.kd  = 0.0;
   linear_wall_error_pid.min = -100;
   linear_wall_error_pid.max = 100;
 
-  linear_angle_error_pid.kp  = 0.1;
+  linear_angle_error_pid.kp  = 0.0;
   linear_angle_error_pid.ki  = 0.0;
   linear_angle_error_pid.kd  = 0.0;
   linear_angle_error_pid.min = -100;

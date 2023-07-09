@@ -1,5 +1,4 @@
 Next steps:
-- Update Linear plan to use calibrated sensor readings to stay in the middle of the hallway.
 - Main timer interrupt should probably be ISR_NONBLOCK.
 
 Firmware:
@@ -17,6 +16,6 @@ Board improvements:
 High-level phases of development:
 [x] Learn to operate the hardware.
 [x] Learn to drive specific distances / turn specific angles.
-[ ] Learn not to hit walls.
+[x] Learn not to hit walls.
 [ ] Learn to map out a maze.
 [ ] Learn to drive the solution to a maze.
