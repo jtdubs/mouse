@@ -16,16 +16,16 @@ func (m *Maze) Update(u MazeUpdate) {
 	}
 
 	x, y := u.X(), u.Y()
-	if x > w {
-		m.Cells = append(m.Cells, make([][]Cell, x-w)...)
+	if x >= w {
+		m.Cells = append(m.Cells, make([][]Cell, (x-w)+1)...)
 		for i := range m.Cells[w:] {
-			m.Cells[i] = make([]Cell, h)
+			m.Cells[w+i] = make([]Cell, h)
 		}
 	}
 
-	if y > h {
+	if y >= h {
 		for i := range m.Cells {
-			m.Cells[i] = append(m.Cells[i], make([]Cell, y-h)...)
+			m.Cells[i] = append(m.Cells[i], make([]Cell, (y-h)+1)...)
 		}
 	}
 

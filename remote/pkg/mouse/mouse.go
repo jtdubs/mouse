@@ -278,7 +278,7 @@ func (m *Mouse) receiveByte(value byte) {
 		m.readState = Idle
 		m.checksum += value
 		if m.checksum == 0 {
-			r, err := ReadReport(bytes.NewReader(m.frameBuffer))
+			r, err := ReadReport(bytes.NewReader(m.frameBuffer[0:m.readLength]))
 			if err != nil {
 				m.messages.Add(fmt.Sprintf("Error reading report: %v", err))
 			}

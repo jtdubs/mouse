@@ -231,7 +231,7 @@ func ReadMazeReport(r *bytes.Reader) (MazeReport, error) {
 	var report MazeReport
 	for {
 		var update MazeUpdate
-		err := binary.Read(r, binary.LittleEndian, &report)
+		err := binary.Read(r, binary.LittleEndian, &update)
 		if err != nil {
 			break
 		}
