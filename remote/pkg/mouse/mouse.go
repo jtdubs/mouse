@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
@@ -24,44 +25,45 @@ var (
 )
 
 type Mouse struct {
-	Recording              bool
-	Updating               bool
-	status                 string
-	portOpen               bool
-	serialBuffer           []byte
-	frameBuffer            []byte
-	readState              readState
-	readLength             uint8
-	readIndex              uint8
-	checksum               uint8
-	index                  int
-	messages               *Ring[string]
-	LeftSpeedSetpoints     *Ring[float32]
-	LeftSpeedMeasurements  *Ring[float32]
-	RightSpeedSetpoints    *Ring[float32]
-	RightSpeedMeasurements *Ring[float32]
-	report                 Report
-	sendChan               chan Command
-	vcd                    vcd.VcdWriter
-	vcdTime                uint64
+	Recording    bool
+	Updating     bool
+	status       string
+	portOpen     bool
+	serialBuffer []byte
+	frameBuffer  []byte
+	readState    readState
+	readLength   uint8
+	readIndex    uint8
+	checksum     uint8
+	index        int
+	messages     *Ring[string]
+	reports      map[ReportKey]Report
+	reportMutex  sync.Mutex
+	sendChan     chan Command
+	vcd          vcd.VcdWriter
+	vcdTime      uint64
 }
 
 func New() *Mouse {
 	return &Mouse{
-		Updating:               true,
-		serialBuffer:           make([]byte, 256),
-		frameBuffer:            make([]byte, 256),
-		index:                  0,
-		status:                 "Closed",
-		portOpen:               false,
-		messages:               NewRing[string](*scrollback),
-		LeftSpeedSetpoints:     NewRing[float32](2000),
-		LeftSpeedMeasurements:  NewRing[float32](2000),
-		RightSpeedSetpoints:    NewRing[float32](2000),
-		RightSpeedMeasurements: NewRing[float32](2000),
-		report:                 Report{},
-		sendChan:               make(chan Command, 1),
+		Updating:     true,
+		serialBuffer: make([]byte, 256),
+		frameBuffer:  make([]byte, 256),
+		index:        0,
+		status:       "Closed",
+		portOpen:     false,
+		messages:     NewRing[string](*scrollback),
+		reports:      make(map[ReportKey]Report),
+		reportMutex:  sync.Mutex{},
+		sendChan:     make(chan Command, 1),
 	}
+}
+
+func (m *Mouse) Report(key ReportKey) (r Report, ok bool) {
+	m.reportMutex.Lock()
+	defer m.reportMutex.Unlock()
+	r, ok = m.reports[key]
+	return
 }
 
 func (m *Mouse) SetRecording(recording bool) {
@@ -76,7 +78,7 @@ func (m *Mouse) SetRecording(recording bool) {
 			log.Printf("Failed to enable recording: %v", err)
 			return
 		}
-		m.vcd.RegisterVariableList("mouse", m.report.Variables())
+		m.vcd.RegisterVariableList("mouse", Report{}.Variables())
 		m.vcdTime = 0
 	} else {
 		m.vcd.Close()
@@ -127,10 +129,6 @@ func (m *Mouse) ForEachMessage(f func(string)) {
 
 func (m *Mouse) Clear() {
 	m.messages.Clear()
-}
-
-func (m *Mouse) Report() *Report {
-	return &m.report
 }
 
 func (m *Mouse) SendCommand(c Command) {
@@ -272,26 +270,22 @@ func (m *Mouse) receiveByte(value byte) {
 		m.readState = Idle
 		m.checksum += value
 		if m.checksum == 0 {
-			if m.readLength != uint8(binary.Size(m.report)) {
-				m.messages.Add(fmt.Sprintf("Incorrect size for report: got %v, want %v", m.readLength, binary.Size(Report{})))
-			}
-
-			var r Report
-			if err := binary.Read(bytes.NewReader(m.frameBuffer), binary.LittleEndian, &r); err != nil {
+			r, err := ReadReport(bytes.NewReader(m.frameBuffer))
+			if err != nil {
 				m.messages.Add(fmt.Sprintf("Error reading report: %v", err))
 			}
 
 			if m.Updating {
-				m.report = r
-				m.LeftSpeedSetpoints.Add(m.report.SpeedSetpointLeft)
-				m.LeftSpeedMeasurements.Add(m.report.SpeedMeasuredLeft)
-				m.RightSpeedSetpoints.Add(m.report.SpeedSetpointRight)
-				m.RightSpeedMeasurements.Add(m.report.SpeedMeasuredRight)
+				m.reportMutex.Lock()
+				m.reports[ReportKeyLatest] = r
+				m.reports[r.Key()] = r
+				m.reportMutex.Unlock()
 			}
 
 			if m.Recording {
-				for k, v := range m.report.Symbols() {
-					m.vcd.SetValue(uint64(m.report.RTCMicros), v, k)
+				now := uint64(r.Header.RTCMicros)
+				for k, v := range r.Symbols() {
+					m.vcd.SetValue(now, v, k)
 				}
 				m.vcdTime += 10
 			}
