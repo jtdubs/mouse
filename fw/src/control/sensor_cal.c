@@ -21,12 +21,16 @@ static uint32_t sensor_sum_right;
 static uint32_t sensor_sum_center;
 static uint16_t sensor_sample_count;
 
-void sensor_cal_init() {}
+void sensor_cal_init() {
+  sensor_threshold_left   = 30;
+  sensor_threshold_right  = 30;
+  sensor_threshold_center = 80;
+}
 
 void sensor_cal_start() {
-  sensor_sum_left     = 30;
-  sensor_sum_right    = 30;
-  sensor_sum_center   = 80;
+  sensor_sum_left     = 0;
+  sensor_sum_right    = 0;
+  sensor_sum_center   = 0;
   sensor_sample_count = 0;
 
   pin_set(IR_LEDS);
