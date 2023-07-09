@@ -24,7 +24,6 @@ typedef struct {
     struct {
       float start_theta;   // radians
       float target_theta;  // radians
-      float target_speed;  // radians/s
       bool  direction;     // true = positive, false = negative
     } rotation;
     struct {

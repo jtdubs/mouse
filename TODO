@@ -11,9 +11,6 @@ Next steps:
 - Figure out at what point within a cell we can detect the presence/absence of walls from the next cell
   - "Advancing" a cell should move to this point, determine the wall status, then continue to the center of the cell.
 
-Firmware:
-- New alternating report structure.
-
 Timer:
 - Main timer interrupt should probably be ISR_NONBLOCK.
 - Tighten tick to run every 1-2ms instead of 5.

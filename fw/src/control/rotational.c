@@ -10,15 +10,13 @@
 
 float rotational_start_theta;   // radians
 float rotational_target_theta;  // radians
-float rotational_target_speed;  // radians/s
 bool  rotational_direction;     // true = positive, false = negative
 
 void rotational_init() {}
 
 void rotational_start(float dtheta /* radians */) {
-  rotational_start_theta  = position_theta;             // radians
-  rotational_target_theta = position_theta + dtheta;    // radians
-  rotational_target_speed = SPEED_CRUISE / WHEEL_BASE;  // radians/s
+  rotational_start_theta  = position_theta;           // radians
+  rotational_target_theta = position_theta + dtheta;  // radians
   rotational_direction    = dtheta > 0;
 }
 

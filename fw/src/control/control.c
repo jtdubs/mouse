@@ -161,7 +161,6 @@ uint8_t control_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
     case PLAN_TYPE_ROTATIONAL_MOTION:
       report->plan_data.rotation.start_theta  = rotational_start_theta;
       report->plan_data.rotation.target_theta = rotational_target_theta;
-      report->plan_data.rotation.target_speed = rotational_target_speed;
       report->plan_data.rotation.direction    = rotational_direction;
       break;
     case PLAN_TYPE_LINEAR_MOTION:
