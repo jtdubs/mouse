@@ -8,7 +8,7 @@
 #include "platform/adc.h"
 #include "platform/pin.h"
 
-timer_callback_t timer_callback;
+static timer_callback_t timer_callback;
 
 void timer_set_callback(timer_callback_t callback) {
   timer_callback = callback;
