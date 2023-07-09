@@ -16,12 +16,12 @@ typedef enum : uint8_t {
 } read_state_t;
 
 // The read buffer and associated state.
-static uint8_t                    usart0_read_buffer[MAX_READ_SIZE];
-static uint8_t                    usart0_read_index;
-static uint8_t                    usart0_read_length;
-static buffer_received_callback_t usart0_read_callback;
-static read_state_t               usart0_read_state;
-static uint8_t                    usart0_read_checksum;
+static uint8_t         usart0_read_buffer[MAX_READ_SIZE];
+static uint8_t         usart0_read_index;
+static uint8_t         usart0_read_length;
+static read_callback_t usart0_read_callback;
+static read_state_t    usart0_read_state;
+static uint8_t         usart0_read_checksum;
 
 // usart0_disable_receiver disables the USART0 receiver.
 void usart0_disable_receiver() {
@@ -35,7 +35,7 @@ void usart0_enable_receiver() {
 }
 
 // usart0_set_read_callback sets the read callback for USART0.
-void usart0_set_read_callback(buffer_received_callback_t callback) {
+void usart0_set_read_callback(read_callback_t callback) {
   assert(ASSERT_USART0_READ + 1, callback != NULL);
   usart0_read_callback = callback;
 }
