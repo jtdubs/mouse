@@ -40,4 +40,4 @@ typedef struct {
 
 void platform_init();
 
-bool platform_report(platform_report_t *report);
+uint8_t platform_report(uint8_t *buffer, uint8_t len);

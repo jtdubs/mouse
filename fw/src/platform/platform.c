@@ -25,17 +25,18 @@ void platform_init() {
   rtc_init();
 }
 
-bool platform_report(platform_report_t *report) {
-  report->encoders.left  = encoders_left;
-  report->encoders.right = encoders_right;
-  report->leds.ir        = pin_is_set(IR_LEDS);
-  report->leds.left      = pin_is_set(LED_LEFT);
-  report->leds.right     = pin_is_set(LED_RIGHT);
-  report->leds.onboard   = pin_is_set(LED_BUILTIN);
-  report->motors.left    = motor_power_left;
-  report->motors.right   = motor_power_right;
-  report->sensors.left   = adc_values[ADC_SENSOR_LEFT];
-  report->sensors.center = adc_values[ADC_SENSOR_CENTER];
-  report->sensors.right  = adc_values[ADC_SENSOR_RIGHT];
-  return true;
+uint8_t platform_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
+  platform_report_t *report = (platform_report_t *)buffer;
+  report->encoders.left     = encoders_left;
+  report->encoders.right    = encoders_right;
+  report->leds.ir           = pin_is_set(IR_LEDS);
+  report->leds.left         = pin_is_set(LED_LEFT);
+  report->leds.right        = pin_is_set(LED_RIGHT);
+  report->leds.onboard      = pin_is_set(LED_BUILTIN);
+  report->motors.left       = motor_power_left;
+  report->motors.right      = motor_power_right;
+  report->sensors.left      = adc_values[ADC_SENSOR_LEFT];
+  report->sensors.center    = adc_values[ADC_SENSOR_CENTER];
+  report->sensors.right     = adc_values[ADC_SENSOR_RIGHT];
+  return sizeof(platform_report_t);
 }

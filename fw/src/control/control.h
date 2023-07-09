@@ -36,6 +36,6 @@ typedef struct {
 } control_report_t;
 #pragma pack(pop)
 
-void control_init();
-void control_update();
-bool control_report(control_report_t* report);
+void    control_init();
+void    control_update();
+uint8_t control_report(uint8_t *buffer, uint8_t len);

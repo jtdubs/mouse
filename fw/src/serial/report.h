@@ -15,9 +15,6 @@
 
 #include <stdint.h>
 
-#include "control/control.h"
-#include "platform/platform.h"
-
 typedef enum : uint8_t {
   REPORT_NONE = 0,
 
@@ -31,17 +28,16 @@ typedef enum : uint8_t {
 } report_type_t;
 
 #pragma pack(push, 1)
-// report_t represents a mouse status report.
+// report_header_t represents a mouse report header.
 typedef struct {
   report_type_t type;
-  struct {
-    uint32_t micros;
-  } rtc;
-  union {
-    platform_report_t platform;
-    control_report_t  control;
-    // maze_report_t     maze;
-  } data;
+  uint32_t      rtc_micros;
+} report_header_t;
+
+// report_t represents a mouse report.
+typedef struct {
+  report_header_t header;
+  uint8_t         data[59];
 } report_t;
 #pragma pack(pop)
 

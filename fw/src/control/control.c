@@ -124,7 +124,7 @@ void control_update() {
   pin_clear(PROBE_TICK);
 }
 
-bool control_report(control_report_t* report) {
+uint8_t control_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   static plan_state_t previous_plan_state = PLAN_STATE_SCHEDULED;
   static plan_type_t  previous_plan_type  = PLAN_TYPE_IDLE;
   static uint8_t      counter             = 0;
@@ -140,8 +140,10 @@ bool control_report(control_report_t* report) {
 
   // if the report hasn't changed, only report every 8th tick.
   if (counter & 0x7) {
-    return false;
+    return 0;
   }
+
+  control_report_t *report = (control_report_t *)buffer;
 
   report->plan                 = current_plan;
   report->speed.measured_left  = speed_measured_left;
@@ -171,5 +173,5 @@ bool control_report(control_report_t* report) {
       break;
   }
 
-  return true;
+  return sizeof(control_report_t);
 }

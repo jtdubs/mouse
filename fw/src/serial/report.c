@@ -4,12 +4,8 @@
 #include <stdint.h>
 #include <util/atomic.h>
 
-#include "control/position.h"
-#include "control/speed.h"
-#include "platform/adc.h"
-#include "platform/encoders.h"
-#include "platform/motor.h"
-#include "platform/pin.h"
+#include "control/control.h"
+#include "platform/platform.h"
 #include "platform/rtc.h"
 #include "platform/usart0.h"
 #include "utils/assert.h"
@@ -26,20 +22,19 @@ void report_send() {
     return;
   }
 
+  uint8_t len = 0;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    if (control_report(&report.data.control)) {
-      report.type = REPORT_CONTROL;
-    } else if (platform_report(&report.data.platform)) {
-      report.type = REPORT_PLATFORM;
-    } else {
-      report.type = REPORT_NONE;
+    if ((len = control_report(report.data, sizeof(report.data))) > 0) {
+      report.header.type = REPORT_CONTROL;
+    } else if ((len = platform_report(report.data, sizeof(report.data))) > 0) {
+      report.header.type = REPORT_PLATFORM;
     }
   }
 
-  if (report.type == REPORT_NONE) {
+  if (len == 0) {
     return;
   }
 
-  report.rtc.micros = rtc_micros();
-  usart0_write((uint8_t*)&report, sizeof(report_t));
+  report.header.rtc_micros = rtc_micros();
+  usart0_write((uint8_t*)&report, sizeof(report_header_t) + len);
 }
