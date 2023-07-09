@@ -23,7 +23,7 @@ uint8_t maze_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   maze_update_t *updates = (maze_update_t *)buffer;
 
   for (int i = 0; i < MAZE_WIDTH; i++) {
-    updates[i] = (maze_update_t){.x = i, .y = 0, .cell = maze.cells[i][initial_report_row]};
+    updates[i] = (maze_update_t){.x = i, .y = initial_report_row, .cell = maze.cells[i][initial_report_row]};
   }
   initial_report_row++;
   return MAZE_WIDTH * sizeof(maze_update_t);
