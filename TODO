@@ -1,7 +1,18 @@
 Next steps:
-- Main timer interrupt should probably be ISR_NONBLOCK.
+- Add higher level primitives for moving by multiples of grid cells, and turning by multiples of 90 degrees.
+  - UI can get basic arrow buttons for moving forward and turning left/right.
+- Add a basic "maze" representation as a 2D array of wall types (4 bits per cell holding which sides have walls).
+  - Update the sim to somehow render the robot's internal maze representation, ideally overlaid on the true maze.
+    - We may not need this if we get the remote rendering the maze via the report...
+  - Update the reports to include changes to the maze representation.
+    - The reports probably need to be tightened up.  Maybe we need a way to only trasmit changes...
+    - Or rotate through various reports at different frequences.
+  - Update the UI to progressively render the maze based on the updates from the reports.
+- Figure out at what point within a cell we can detect the presence/absence of walls from the next cell
+  - "Advancing" a cell should move to this point, determine the wall status, then continue to the center of the cell.
 
 Firmware:
+- Main timer interrupt should probably be ISR_NONBLOCK.
 - Tighten tick to run every 1-2ms instead of 5.
   - This is problematic as the encoder pulses are relatively infrequent, so we'll end up with either 0 or 1 each tick...
   - This may be "okay" if we just make the low-pass filter stronger?
