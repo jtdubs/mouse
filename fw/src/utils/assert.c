@@ -1,6 +1,7 @@
 #include "assert.h"
 
 #include <avr/interrupt.h>
+#include <avr/wdt.h>
 #include <util/delay.h>
 
 #include "platform/motor.h"
@@ -8,8 +9,9 @@
 
 // _assert_failed is called when an assertion fails.
 void _assert_failed(uint8_t error_code) {
-  // disable interrupts (we are here forever!)
+  // disable interrupts and the watchdog (we are here forever!)
   cli();
+  wdt_disable();
 
   // disable all peripherals
   motor_set(0, 0);

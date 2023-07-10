@@ -16,6 +16,7 @@ enum assert_range_t : uint8_t {
   ASSERT_USART0_READ  = 0x30,
   ASSERT_COMMAND      = 0x40,
   ASSERT_PLAN         = 0x50,
+  ASSERT_MAZE         = 0x60,
 };
 
 #if !defined(NOASSERT)

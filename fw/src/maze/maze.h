@@ -30,3 +30,4 @@ extern maze_t maze;
 void maze_init();
 
 uint8_t maze_report(uint8_t *buffer, uint8_t len);
+void    maze_update(uint8_t x, uint8_t y, cell_t cell);
