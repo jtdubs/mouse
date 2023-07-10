@@ -1,5 +1,6 @@
 #include "plan.h"
 
+#include <avr/sleep.h>
 #include <util/atomic.h>
 
 #include "utils/assert.h"
@@ -25,7 +26,7 @@ void plan_submit(plan_t *plan) {
 // plan_wait waits for the current plan to be implemented.
 void plan_wait() {
   while (current_plan.state != PLAN_STATE_IMPLEMENTED) {
-    // wait
+    sleep_mode();
   }
 }
 
