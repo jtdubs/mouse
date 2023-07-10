@@ -7,6 +7,7 @@
 #include "control/rotational.h"
 #include "control/sensor_cal.h"
 #include "control/speed.h"
+#include "control/walls.h"
 #include "platform/encoders.h"
 #include "platform/motor.h"
 #include "platform/timer.h"
@@ -19,6 +20,7 @@ void control_init() {
   linear_init();
   rotational_init();
   sensor_cal_init();
+  walls_init();
   timer_set_callback(control_update);
 }
 
@@ -27,6 +29,7 @@ void control_update() {
   speed_read();
   position_read();
   encoders_update();
+  walls_update();
 
   switch (current_plan.type) {
     case PLAN_TYPE_IDLE:

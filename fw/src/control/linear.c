@@ -7,6 +7,7 @@
 #include "control/position.h"
 #include "control/sensor_cal.h"
 #include "control/speed.h"
+#include "control/walls.h"
 #include "platform/adc.h"
 #include "platform/pin.h"
 #include "utils/math.h"
@@ -14,6 +15,7 @@
 float linear_start_distance;   // mm
 float linear_target_distance;  // mm
 float linear_target_speed;     // mm/s
+bool  linear_leds_prev_state;
 
 #if defined(ALLOW_WALL_PID_TUNING)
 static float linear_wall_alpha;
@@ -38,17 +40,11 @@ static float calculate_wall_error() {
   int16_t wall_error_left  = left - sensor_threshold_left;
   int16_t wall_error_right = sensor_threshold_right - right;
 
-  bool left_wall_present  = (left >= (sensor_threshold_left >> 1));
-  bool right_wall_present = (right >= (sensor_threshold_right >> 1));
-
-  pin_set2(LED_LEFT, left_wall_present);
-  pin_set2(LED_RIGHT, right_wall_present);
-
-  if (!left_wall_present && !right_wall_present) {
+  if (!wall_left_present && !wall_right_present) {
     return 0;
-  } else if (left_wall_present && !right_wall_present) {
+  } else if (wall_left_present && !wall_right_present) {
     return wall_error_left * 2.0f;
-  } else if (!left_wall_present && right_wall_present) {
+  } else if (wall_left_present && wall_right_present) {
     return wall_error_right * 2.0f;
   } else {
     return (float)(wall_error_left + wall_error_right);
@@ -86,6 +82,7 @@ void linear_start(float distance /* mm */, bool stop) {
   linear_angle_error = 0.0;
 #endif
 
+  linear_leds_prev_state = pin_is_set(IR_LEDS);
   pin_set(IR_LEDS);
 }
 
@@ -94,7 +91,7 @@ bool linear_update() {
 
   // Emergency stop if too close to a wall.
   if (center > 380) {
-    pin_clear(IR_LEDS);
+    pin_set2(IR_LEDS, linear_leds_prev_state);
     speed_set(0, 0);
     return true;
   }
@@ -102,7 +99,7 @@ bool linear_update() {
   // If we are there, then we are done.
   if (position_distance >= linear_target_distance) {
     float rpm = SPEED_TO_RPM(linear_target_speed);
-    pin_clear(IR_LEDS);
+    pin_set2(IR_LEDS, linear_leds_prev_state);
     speed_set(rpm, rpm);
     return true;
   }
