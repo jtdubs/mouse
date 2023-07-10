@@ -22,6 +22,7 @@ import (
 // Fundamental constants
 const (
 	GridSize                float64 = 180.0 // in mm
+	AxleOffset              float64 = 36.00 // in mm
 	WheelBase               float64 = 73.0  // in mm
 	WheelDiameter           float64 = 32.5  // in mm
 	EncoderTicksPerRotation int     = 240
@@ -74,11 +75,11 @@ func NewMouse(avr *C.avr_t, maze *Maze) *Mouse {
 		FunctionSelector: NewFunctionSelect(avr, C.ADC_IRQ_ADC6),
 		LeftMotor:        NewMotor(avr, true, encoderChan),
 		RightMotor:       NewMotor(avr, false, encoderChan),
-		LeftSensor:       NewSensor(avr, "SENSOR_LEFT", C.ADC_IRQ_ADC2, Pos{X: 50, Y: 35}, math.Pi/6),
+		LeftSensor:       NewSensor(avr, "SENSOR_LEFT", C.ADC_IRQ_ADC2, Pos{X: 50, Y: 40}, math.Pi/3),
 		CenterSensor:     NewSensor(avr, "SENSOR_CENTER", C.ADC_IRQ_ADC1, Pos{X: 65, Y: 0}, 0),
-		RightSensor:      NewSensor(avr, "SENSOR_RIGHT", C.ADC_IRQ_ADC0, Pos{X: 50, Y: -35}, -math.Pi/6),
+		RightSensor:      NewSensor(avr, "SENSOR_RIGHT", C.ADC_IRQ_ADC0, Pos{X: 50, Y: -40}, -math.Pi/3),
 		X:                GridSize / 2,
-		Y:                GridSize / 2,
+		Y:                AxleOffset,
 		Angle:            math.Pi / 2,
 		irHits:           make(map[*Sensor]IRHit, 3),
 		irMutex:          sync.Mutex{},
