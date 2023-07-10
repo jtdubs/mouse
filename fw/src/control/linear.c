@@ -34,17 +34,11 @@ static pid_t linear_angle_error_pid;
 static float linear_wall_error;
 
 static float calculate_wall_error() {
-  uint16_t left  = adc_values[ADC_SENSOR_LEFT];
-  uint16_t right = adc_values[ADC_SENSOR_RIGHT];
-
-  int16_t wall_error_left  = left - sensor_threshold_left;
-  int16_t wall_error_right = sensor_threshold_right - right;
-
   if (!wall_left_present && !wall_right_present) {
     return 0;
   } else if (wall_left_present && !wall_right_present) {
     return wall_error_left * 2.0f;
-  } else if (wall_left_present && wall_right_present) {
+  } else if (!wall_left_present && wall_right_present) {
     return wall_error_right * 2.0f;
   } else {
     return (float)(wall_error_left + wall_error_right);

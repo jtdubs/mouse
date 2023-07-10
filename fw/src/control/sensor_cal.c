@@ -25,7 +25,7 @@ static bool     sensor_leds_prev_state;
 void sensor_cal_init() {
   sensor_threshold_left   = 160;
   sensor_threshold_right  = 160;
-  sensor_threshold_center = 60;
+  sensor_threshold_center = 80;
 }
 
 void sensor_cal_start() {
