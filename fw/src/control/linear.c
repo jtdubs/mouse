@@ -166,7 +166,7 @@ bool linear_update() {
 void linear_wall_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
                       [[maybe_unused]] float alpha) {
 #if defined(ALLOW_WALL_PID_TUNING)
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     linear_wall_error_pid.kp = kp;
     linear_wall_error_pid.ki = ki;
     linear_wall_error_pid.kd = kd;
@@ -178,7 +178,7 @@ void linear_wall_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[ma
 void linear_angle_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
                        [[maybe_unused]] float alpha) {
 #if defined(ALLOW_ANGLE_PID_TUNING)
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     linear_angle_error_pid.kp = kp;
     linear_angle_error_pid.ki = ki;
     linear_angle_error_pid.kd = kd;

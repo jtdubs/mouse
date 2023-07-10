@@ -39,7 +39,7 @@ void explore() {
 
   // Start by advancing to where our sensors are pointed at the walls of the next square.
   float temp;
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     temp = position_distance;
   }
 
@@ -50,7 +50,7 @@ void explore() {
                     .stop     = true  //
                 }});
 
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     explore_cell_offset += position_distance - temp;
     while (explore_cell_offset > 180.0) {
       explore_cell_offset -= 180.0;

@@ -49,7 +49,7 @@ void speed_init() {
 }
 
 void speed_read() {
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
 #if defined(ALLOW_SPEED_PID_TUNING)
     speed_measured_left = (speed_alpha * COUNTS_TO_RPM(encoders_left_delta))  //
                         + ((1.0f - speed_alpha) * speed_measured_left);
@@ -114,7 +114,7 @@ void speed_set(float left, float right) {
 void speed_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
                 [[maybe_unused]] float alpha) {
 #if defined(ALLOW_SPEED_PID_TUNING)
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     speed_alpha = alpha;
 
     speed_pid_left.kp = kp;

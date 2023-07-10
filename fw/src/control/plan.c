@@ -17,7 +17,7 @@ void plan_init() {
 
 // plan_submit submits a new plan to be implemented.
 void plan_submit(plan_t *plan) {
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     current_plan = *plan;
     plan_set_state(PLAN_STATE_SCHEDULED);
   }

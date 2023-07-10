@@ -24,7 +24,7 @@ void report_send() {
   }
 
   uint8_t len = 0;
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     if ((len = maze_report(report.data, sizeof(report.data))) > 0) {
       report.header.type = REPORT_MAZE;
     } else if ((len = control_report(report.data, sizeof(report.data))) > 0) {
