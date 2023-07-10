@@ -93,6 +93,7 @@ bool linear_update() {
   if (center > 380) {
     pin_set2(IR_LEDS, linear_leds_prev_state);
     speed_set(0, 0);
+    speed_update();
     return true;
   }
 
@@ -101,6 +102,7 @@ bool linear_update() {
     float rpm = SPEED_TO_RPM(linear_target_speed);
     pin_set2(IR_LEDS, linear_leds_prev_state);
     speed_set(rpm, rpm);
+    speed_update();
     return true;
   }
 
