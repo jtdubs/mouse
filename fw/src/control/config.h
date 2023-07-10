@@ -10,6 +10,7 @@ constexpr float BOARD_WIDTH    = 81.25;  // mm
 constexpr float BOARD_LENGTH   = 99.00;  // mm
 constexpr float WHEEL_BASE     = 72.48;  // mm
 constexpr float WHEEL_DIAMETER = 32.50;  // mm
+constexpr float AXLE_OFFSET    = 36.00;  // mm, from back of board
 
 // Maze dimensions
 constexpr uint8_t MAZE_WIDTH  = 16;  // dimensionless

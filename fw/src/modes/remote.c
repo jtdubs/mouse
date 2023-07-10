@@ -7,6 +7,7 @@
 #include "control/linear.h"
 #include "control/plan.h"
 #include "control/speed.h"
+#include "modes/explore.h"
 #include "platform/motor.h"
 #include "platform/pin.h"
 #include "serial/command.h"
@@ -22,8 +23,6 @@ static void remote_enqueue(plan_t plan) {
 
 // remote is a mode that allows the robot to be controlled remotely.
 void remote() {
-  set_sleep_mode(SLEEP_MODE_IDLE);
-
   plan_submit_and_wait(                       //
       &(plan_t){.type      = PLAN_TYPE_LEDS,  //
                 .data.leds = {false, false, false}});
@@ -45,6 +44,10 @@ void remote() {
         cli();
         _delay_ms(60000.0);
         break;
+      case COMMAND_EXPLORE:
+        command_processed();
+        explore();
+        continue;
       case COMMAND_TUNE_PID:
         switch (command->data.pid.id) {
           case PID_SPEED:

@@ -4,6 +4,7 @@ type CommandType uint8
 
 const (
 	ResetCommandType CommandType = iota
+	ExploreCommandType
 	TunePIDCommandType
 	EnqueuePlanCommandType
 	ExecutePlanCommandType
@@ -32,6 +33,18 @@ func NewResetCommand() ResetCommand {
 }
 
 func (ResetCommand) isCommand() bool { return true }
+
+type ExploreCommand struct {
+	Type CommandType
+}
+
+func NewExploreCommand() ExploreCommand {
+	return ExploreCommand{
+		Type: ExploreCommandType,
+	}
+}
+
+func (ExploreCommand) isCommand() bool { return true }
 
 type TunePIDCommand struct {
 	Type              CommandType

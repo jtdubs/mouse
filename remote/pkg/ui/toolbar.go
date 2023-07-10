@@ -30,6 +30,13 @@ func (w *toolbarWindow) drawToolbar() {
 	if imgui.IsItemHovered() {
 		imgui.SetTooltip("Reset Mouse")
 	}
+	imgui.SameLine()
+	if w.toolbarButton("Explore", "navigation") {
+		w.mouse.SendCommand(mouse.NewExploreCommand())
+	}
+	if imgui.IsItemHovered() {
+		imgui.SetTooltip("Explore")
+	}
 	imgui.EndDisabled()
 	imgui.SameLineV(0, 20)
 	if w.mouse.Updating {
