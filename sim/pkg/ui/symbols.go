@@ -33,7 +33,9 @@ func (w *symbolsWindow) init() {
 }
 
 func (w *symbolsWindow) draw() {
-	imgui.Begin("Symbols")
+	if !imgui.Begin("Symbols") {
+		return
+	}
 
 	imgui.Text("Filter: ")
 	imgui.SameLine()

@@ -21,7 +21,9 @@ func newControlsWindow(sim *sim.Sim) *controlsWindow {
 func (w *controlsWindow) init() {}
 
 func (w *controlsWindow) draw() {
-	imgui.Begin("Controls")
+	if !imgui.Begin("Controls") {
+		return
+	}
 
 	imgui.BeginTable("##Controls", 2)
 	imgui.TableSetupColumnV("##ControlsLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)

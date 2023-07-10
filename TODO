@@ -1,5 +1,4 @@
 Next steps:
-- Update the UI to progressively render the maze based on the updates from the reports.
 - Figure out at what point within a cell we can detect the presence/absence of walls from the next cell
   - "Advancing" a cell should move to this point, determine the wall status, then continue to the center of the cell.
 - Add higher level primitives for moving by multiples of grid cells, and turning by multiples of 90 degrees.

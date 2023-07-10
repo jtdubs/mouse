@@ -31,7 +31,9 @@ func (w *mazeWindow) draw() {
 	postDim := imgui.NewVec2(float32(len(w.sim.Maze.Posts[0])), float32(len(w.sim.Maze.Posts)))
 	gridDim := postDim.Sub(imgui.NewVec2(1, 1))
 
-	imgui.Begin("Maze")
+	if !imgui.Begin("Maze") {
+		return
+	}
 
 	imgui.Text("Maze:")
 	imgui.SameLine()

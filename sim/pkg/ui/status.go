@@ -23,7 +23,9 @@ func newStatusWindow(sim *sim.Sim) *statusWindow {
 func (w *statusWindow) init() {}
 
 func (w *statusWindow) draw() {
-	imgui.Begin("Status")
+	if !imgui.Begin("Status") {
+		return
+	}
 
 	imgui.BeginTable("##Status", 2)
 	imgui.TableSetupColumnV("##StatusLabel", imgui.TableColumnFlagsWidthFixed, 160, 0)
