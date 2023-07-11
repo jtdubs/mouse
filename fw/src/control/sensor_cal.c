@@ -23,9 +23,9 @@ static uint16_t sensor_sample_count;
 static bool     sensor_leds_prev_state;
 
 void sensor_cal_init() {
-  sensor_threshold_left   = 160;
-  sensor_threshold_right  = 160;
-  sensor_threshold_center = 80;
+  sensor_threshold_left   = 200;
+  sensor_threshold_right  = 200;
+  sensor_threshold_center = 100;
 }
 
 void sensor_cal_start() {
