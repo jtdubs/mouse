@@ -32,7 +32,9 @@ void explore() {
   explore_cell_x      = 0;
   explore_cell_y      = 0;
 
+  // Until we hit the end of the corridor...
   while (!wall_forward_present) {
+    // Make note of our current position.
     float temp;
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       temp = position_distance;
@@ -47,6 +49,8 @@ void explore() {
                   }});
 
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+      // Update our cell index and offset.
+      // TODO: switch(explore_orientation)
       explore_cell_offset += position_distance - temp;
       while (explore_cell_offset > 180.0) {
         explore_cell_offset -= 180.0;
@@ -54,6 +58,7 @@ void explore() {
       }
 
       // Classify the square based on sensor readings.
+      // TODO: switch(explore_orientation)
       cell_t cell;
       cell.wall_north = wall_forward_present;
       cell.wall_east  = wall_right_present;
@@ -64,7 +69,7 @@ void explore() {
     }
   }
 
-  // Stop in the middle of the cell.
+  // Stop in the middle of the last cell of the corridor.
   plan_submit_and_wait(                                  //
       &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,  //
                 .data.linear = {
