@@ -3,6 +3,11 @@
 #include <math.h>
 #include <stdint.h>
 
+// min8 returns minimum of x and y.
+inline uint8_t min8(uint8_t x, uint8_t y) {
+  return (x <= y) ? x : y;
+}
+
 // abs8 returns the absolute value of x.
 inline uint8_t abs8(int16_t x) {
   return x < 0 ? -x : x;

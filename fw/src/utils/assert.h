@@ -21,6 +21,7 @@ enum assert_range_t : uint8_t {
   ASSERT_MOTOR        = 0x70,
   ASSERT_PLATFORM     = 0x80,
   ASSERT_CONTROL      = 0x90,
+  ASSERT_EXPLORE      = 0xA0,
 };
 
 #if !defined(NOASSERT)
