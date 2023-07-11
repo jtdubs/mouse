@@ -23,15 +23,7 @@ static void remote_enqueue(plan_t plan) {
 
 // remote is a mode that allows the robot to be controlled remotely.
 void remote() {
-  plan_submit_and_wait(                       //
-      &(plan_t){.type      = PLAN_TYPE_LEDS,  //
-                .data.leds = {false, false, false}});
-  plan_submit_and_wait(                   //
-      &(plan_t){.type    = PLAN_TYPE_IR,  //
-                .data.ir = {false}});
-  plan_submit_and_wait(                               //
-      &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,  //
-                .data.power = {0, 0}});
+  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
 
   for (;;) {
     while (!command_available) {}

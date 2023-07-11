@@ -17,24 +17,20 @@ typedef enum : uint8_t { NORTH, EAST, SOUTH, WEST } orientation_t;
 
 static float         explore_cell_offset;
 static orientation_t explore_orientation;
-static uint8_t       explore_x, explore_y;
+static uint8_t       explore_cell_x, explore_cell_y;
 
 void explore() {
-  plan_submit_and_wait(                       //
-      &(plan_t){.type      = PLAN_TYPE_LEDS,  //
-                .data.leds = {false, false, false}});
-  plan_submit_and_wait(                   //
-      &(plan_t){.type    = PLAN_TYPE_IR,  //
-                .data.ir = {true}});
-  plan_submit_and_wait(                               //
-      &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,  //
-                .data.power = {0, 0}});
+  // Idle the mouse and turn on the IR LEDs.
+  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
+  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IR, .data.ir = {true}});
 
   // Assumption:
   // We start centered along the back wall of the starting square, with our back touching the wall.
-  // Therefore our "position", measured by the center of the axle is AXLE_OFFSET from the wall.
+  // Therefore our "position", measured by the center of the axle is AXLE_OFFSET from the wall, in cell (0, 0).
   explore_orientation = NORTH;
   explore_cell_offset = AXLE_OFFSET;
+  explore_cell_x      = 0;
+  explore_cell_y      = 0;
 
   while (!wall_forward_present) {
     float temp;
@@ -54,7 +50,7 @@ void explore() {
       explore_cell_offset += position_distance - temp;
       while (explore_cell_offset > 180.0) {
         explore_cell_offset -= 180.0;
-        explore_y++;
+        explore_cell_y++;
       }
 
       // Classify the square based on sensor readings.
@@ -64,7 +60,7 @@ void explore() {
       cell.wall_south = false;
       cell.wall_west  = wall_left_present;
       cell.distance   = 0;
-      maze_update(explore_x, explore_y, cell);
+      maze_update(explore_cell_x, explore_cell_y, cell);
     }
   }
 
@@ -76,8 +72,6 @@ void explore() {
                     .stop     = true  //
                 }});
 
-  // And that's all we got for now.
-  plan_submit_and_wait(                   //
-      &(plan_t){.type    = PLAN_TYPE_IR,  //
-                .data.ir = {false}});
+  // Return to idling.
+  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
 }
