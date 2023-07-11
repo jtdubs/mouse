@@ -20,6 +20,7 @@
 
 #include "control/plan.h"
 
+// command_type_t identifies the type of a given command.
 typedef enum : uint8_t {
   COMMAND_RESET,
   COMMAND_EXPLORE,
@@ -29,6 +30,7 @@ typedef enum : uint8_t {
   COMMAND_PLAN_EXECUTE,
 } command_type_t;
 
+// pid_id_t identifies the PID to tune.
 typedef enum : uint8_t {
   PID_SPEED,
   PID_WALL,

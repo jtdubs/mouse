@@ -80,14 +80,13 @@ void linear_start(float distance /* mm */, bool stop) {
   pin_set(IR_LEDS);
 }
 
-bool linear_update() {
+bool linear_tick() {
   uint16_t center = adc_values[ADC_SENSOR_CENTER];
 
   // Emergency stop if too close to a wall.
   if (center > 380) {
     pin_set2(IR_LEDS, linear_leds_prev_state);
     speed_set(0, 0);
-    speed_update();
     return true;
   }
 
@@ -96,7 +95,6 @@ bool linear_update() {
     float rpm = SPEED_TO_RPM(linear_target_speed);
     pin_set2(IR_LEDS, linear_leds_prev_state);
     speed_set(rpm, rpm);
-    speed_update();
     return true;
   }
 
@@ -128,7 +126,7 @@ bool linear_update() {
   left_speed  += (accel * CONTROL_PERIOD);  // mm/s
   right_speed += (accel * CONTROL_PERIOD);  // mm/s
 
-// Adjust for the wall error.
+  // Adjust for the wall (centering) error.
 #if defined(ALLOW_WALL_PID_TUNING)
   linear_wall_error = (linear_wall_alpha * calculate_wall_error())  //
                     + ((1.0f - linear_wall_alpha) * linear_wall_error);
@@ -159,7 +157,6 @@ bool linear_update() {
   right_speed = CLAMP_RPM(SPEED_TO_RPM(right_speed));
 
   speed_set(left_speed, right_speed);
-  speed_update();
   return false;
 }
 

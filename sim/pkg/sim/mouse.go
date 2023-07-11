@@ -243,7 +243,7 @@ func (m *Mouse) updateIRHits() {
 			sensor.Voltage = 0
 		} else {
 			angleScale := math.Abs(math.Sin(bestHit.WallAngle - angle))
-			sensor.Voltage = int32(angleScale * math.Min(5000, 954207.0/math.Pow(bestHit.Distance, 1000.0/583.0)))
+			sensor.Voltage = int32(angleScale * math.Min(5000, 1200000.0/math.Pow(bestHit.Distance, 1000.0/583.0)))
 		}
 	}
 }

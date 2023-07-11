@@ -16,7 +16,6 @@ void timer_set_callback(timer_callback_t callback) {
 
 // timer_init initializes timer.
 void timer_init() {
-  // Setup a 10ms timer interrupt on Timer0.
   TCCR0A = _BV(WGM01);                      // Clear timer on OCRA match
   TCCR0B = _BV(CS02) | _BV(CS00);           // Use clk/1024 prescaler (15.625kHz)
   OCR0A  = (F_CPU / 1024 / (200 + 1)) + 1;  // 200Hz = 5ms

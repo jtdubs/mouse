@@ -11,10 +11,10 @@ volatile command_t *command;
 volatile bool       command_available;
 
 // on_command_received is the USART0 callback for when a command is received.
-static void on_command_received(uint8_t *buffer, uint8_t size) {
+static void on_command_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
   assert(ASSERT_COMMAND + 0, command == NULL);
   assert(ASSERT_COMMAND + 1, !command_available);
-  (void)size;
+
   command           = (command_t *)buffer;
   command_available = true;
 }

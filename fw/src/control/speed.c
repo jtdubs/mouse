@@ -48,7 +48,7 @@ void speed_init() {
 #endif
 }
 
-void speed_read() {
+void speed_update() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
 #if defined(ALLOW_SPEED_PID_TUNING)
     speed_measured_left = (speed_alpha * COUNTS_TO_RPM(encoders_left_delta))  //
@@ -64,7 +64,7 @@ void speed_read() {
   }
 }
 
-void speed_update() {
+void speed_tick() {
   float setpoint_left = fabsf(speed_setpoint_left);
   float power_left    = LEFT_RPM_TO_POWER(setpoint_left);
   if (setpoint_left < MIN_MOTOR_RPM) {

@@ -5,6 +5,8 @@
 // Purpose:
 // - Creates data in the "mmcu" region of the debug binary which is
 //   interpreted by simavr to define the simulation parameters.
+// - Define registers that can be used in debug mode to communicate
+//   with simavr.
 //
 #pragma once
 

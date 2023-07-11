@@ -1,3 +1,10 @@
+//
+// System: control
+// Module: config
+//
+// Purpose:
+// - Provide tunable configuration values, and related conversion functions.
+//
 #pragma once
 
 #include <math.h>

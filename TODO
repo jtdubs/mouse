@@ -1,7 +1,5 @@
 Exploration:
-- Add a "distance from start" field to map cells and include in change reports.
-- Render the "distance field" in the remote as a color gradient?  Or just a number?
-- Initial square starts as 0, each visited cell gets min(neighbors) + 1.
+- Each visited cell gets min(neighbors) + 1.
 - Also keep a queue of "visitable" squares that starts as [(0, 1)] and is updated as we visit cells w/ open walls.
 - New loops becomes:
   - Choose a visitable cell.

@@ -1,5 +1,7 @@
 #include "control.h"
 
+#include <stddef.h>
+
 #include "control/config.h"
 #include "control/linear.h"
 #include "control/plan.h"
@@ -12,6 +14,7 @@
 #include "platform/motor.h"
 #include "platform/timer.h"
 #include "serial/report.h"
+#include "utils/assert.h"
 
 void control_init() {
   plan_init();
@@ -21,13 +24,13 @@ void control_init() {
   rotational_init();
   sensor_cal_init();
   walls_init();
-  timer_set_callback(control_update);
+  timer_set_callback(control_tick);
 }
 
-void control_update() {
+void control_tick() {
   pin_set(PROBE_TICK);
-  speed_read();
-  position_read();
+  speed_update();
+  position_update();
   encoders_update();
   walls_update();
 
@@ -36,6 +39,10 @@ void control_update() {
       if (current_plan.state == PLAN_STATE_SCHEDULED) {
         plan_set_state(PLAN_STATE_UNDERWAY);
         motor_set(0, 0);
+        pin_clear(LED_LEFT);
+        pin_clear(LED_RIGHT);
+        pin_clear(LED_BUILTIN);
+        pin_clear(IR_LEDS);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
@@ -55,7 +62,6 @@ void control_update() {
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
-
     case PLAN_TYPE_FIXED_POWER:
       if (current_plan.state == PLAN_STATE_SCHEDULED) {
         plan_set_state(PLAN_STATE_UNDERWAY);
@@ -69,7 +75,6 @@ void control_update() {
         speed_set(current_plan.data.speed.left, current_plan.data.speed.right);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
-      speed_update();
       break;
     case PLAN_TYPE_LINEAR_MOTION:
       switch (current_plan.state) {
@@ -78,12 +83,11 @@ void control_update() {
           plan_set_state(PLAN_STATE_UNDERWAY);
           [[fallthrough]];
         case PLAN_STATE_UNDERWAY:
-          if (linear_update()) {
+          if (linear_tick()) {
             plan_set_state(PLAN_STATE_IMPLEMENTED);
           }
           break;
         default:
-          speed_update();
           break;
       }
       break;
@@ -94,12 +98,11 @@ void control_update() {
           plan_set_state(PLAN_STATE_UNDERWAY);
           [[fallthrough]];
         case PLAN_STATE_UNDERWAY:
-          if (rotational_update()) {
+          if (rotational_tick()) {
             plan_set_state(PLAN_STATE_IMPLEMENTED);
           }
           break;
         default:
-          speed_update();
           break;
       }
       break;
@@ -110,7 +113,7 @@ void control_update() {
           plan_set_state(PLAN_STATE_UNDERWAY);
           break;
         case PLAN_STATE_UNDERWAY:
-          if (sensor_cal_update()) {
+          if (sensor_cal_tick()) {
             plan_set_state(PLAN_STATE_IMPLEMENTED);
           }
           break;
@@ -118,16 +121,21 @@ void control_update() {
           break;
       }
       break;
-
     default:
+      // This should never happen.
+      assert(ASSERT_CONTROL + 0, false);
       break;
   }
 
+  speed_tick();
   report_send();
   pin_clear(PROBE_TICK);
 }
 
-uint8_t control_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
+uint8_t control_report(uint8_t *buffer, uint8_t len) {
+  assert(ASSERT_CONTROL + 1, buffer != NULL);
+  assert(ASSERT_CONTROL + 2, len >= sizeof(control_report_t));
+
   static plan_state_t previous_plan_state = PLAN_STATE_SCHEDULED;
   static plan_type_t  previous_plan_type  = PLAN_TYPE_IDLE;
   static uint8_t      counter             = 0;

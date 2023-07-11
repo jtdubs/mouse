@@ -23,6 +23,7 @@ static uint16_t sensor_sample_count;
 static bool     sensor_leds_prev_state;
 
 void sensor_cal_init() {
+  // These are reasonable guesses in case calibration is not performed.
   sensor_threshold_left   = 200;
   sensor_threshold_right  = 200;
   sensor_threshold_center = 100;
@@ -37,11 +38,16 @@ void sensor_cal_start() {
   pin_set(IR_LEDS);
 }
 
-bool sensor_cal_update() {
+bool sensor_cal_tick() {
   if (sensor_sample_count == SensorCalSampleLimit) {
     pin_set2(IR_LEDS, sensor_leds_prev_state);
-    sensor_threshold_left   = sensor_sum_left >> SensorCalSamplePower;
-    sensor_threshold_right  = sensor_sum_right >> SensorCalSamplePower;
+
+    // The left and right thresholds are averaged to compensate for the mouse not being positioned
+    // perfectly in the center of the corridor during calibration.
+    uint16_t average = ((sensor_sum_left + sensor_sum_right) >> (SensorCalSamplePower + 1));
+
+    sensor_threshold_left   = average;
+    sensor_threshold_right  = average;
     sensor_threshold_center = sensor_sum_center >> SensorCalSamplePower;
     return true;
   }

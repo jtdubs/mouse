@@ -3,6 +3,7 @@
 #include <avr/io.h>
 
 #include "platform/pin.h"
+#include "utils/assert.h"
 #include "utils/math.h"
 
 int16_t motor_power_left;
@@ -26,6 +27,9 @@ void motor_init() {
 
 // motor_set sets the direction of the motors.
 void motor_set(int16_t left, int16_t right) {
+  assert(ASSERT_MOTOR + 0, left > -512 && left < 512);
+  assert(ASSERT_MOTOR + 1, right > -512 && right < 512);
+
   motor_power_left  = left;
   motor_power_right = right;
 

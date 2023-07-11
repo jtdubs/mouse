@@ -1,3 +1,17 @@
+//
+// System: control
+// Module: linear
+//
+// Purpose:
+// - Handles linear motion plans.
+//
+// Design:
+// - Drives a specified distance, and optionally stops at the end of the motion.
+// - The mouse's velocity-over-time is a trapezoid with three phases:
+//   - A constant acceleration phase to a cruising speed.
+//   - A constant velocity phase.
+//   - A constant decelleration phase to a stop (if requested).
+//
 #pragma once
 
 #include <stdbool.h>
@@ -8,9 +22,16 @@ extern float linear_start_distance;   // mm
 extern float linear_target_distance;  // mm
 extern float linear_target_speed;     // mm/s
 
+// linear_init initializes the linear motion module.
 void linear_init();
-void linear_start(float distance /* mm */, bool stop);
-bool linear_update();
 
+// linear_start starts a linear motion plan.
+void linear_start(float distance /* mm */, bool stop);
+
+// linear_tick updates the platform to implement the plan.
+// Returns true if the plan is complete.
+bool linear_tick();
+
+// PID tuning functions.
 void linear_wall_tune(float kp, float ki, float kd, float alpha);
 void linear_angle_tune(float kp, float ki, float kd, float alpha);

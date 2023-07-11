@@ -1,6 +1,7 @@
 #include "platform.h"
 
 #include <avr/power.h>
+#include <stddef.h>
 
 #include "platform/adc.h"
 #include "platform/encoders.h"
@@ -9,6 +10,7 @@
 #include "platform/rtc.h"
 #include "platform/timer.h"
 #include "platform/usart0.h"
+#include "utils/assert.h"
 
 void platform_init() {
   // Turn off unused hardware to save a few mA.
@@ -26,6 +28,9 @@ void platform_init() {
 }
 
 uint8_t platform_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
+  assert(ASSERT_PLATFORM + 0, buffer != NULL);
+  assert(ASSERT_PLATFORM + 1, len >= sizeof(platform_report_t));
+
   platform_report_t *report = (platform_report_t *)buffer;
   report->encoders.left     = encoders_left;
   report->encoders.right    = encoders_right;

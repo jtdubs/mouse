@@ -22,9 +22,9 @@ const (
 type ReportType uint8
 
 const (
-	ReportTypePlatform ReportType = 1
-	ReportTypeControl  ReportType = 2
-	ReportTypeMaze     ReportType = 3
+	ReportTypePlatform ReportType = iota
+	ReportTypeControl
+	ReportTypeMaze
 )
 
 type Report struct {

@@ -50,8 +50,11 @@ func (w *mazeWindow) draw() {
 
 	imgui.Dummy(canvasSizePx)
 	if imgui.BeginPopupContextItem() {
-		if imgui.SelectableBool("Reset Position") {
+		if imgui.SelectableBool("Start Position") {
 			w.mouse.SetPosition(sim.GridSize/2, sim.AxleOffset, math.Pi/2)
+		}
+		if imgui.SelectableBool("Calibration Position") {
+			w.mouse.SetPosition(sim.GridSize/2, sim.GridSize-16, -math.Pi/2)
 		}
 		if imgui.SelectableBool("Center in Cell") {
 			w.mouse.SetPosition(

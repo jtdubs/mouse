@@ -16,6 +16,7 @@
 
 typedef void (*timer_callback_t)();
 
+// timer_set_callback sets the callback function to be called on each timer expiration.
 void timer_set_callback(timer_callback_t callback);
 
 // timer_init initializes timer.

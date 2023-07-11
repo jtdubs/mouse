@@ -1,7 +1,6 @@
 #include <avr/interrupt.h>
 
 #include "control/control.h"
-#include "control/plan.h"
 #include "maze/maze.h"
 #include "modes/remote.h"
 #include "platform/platform.h"

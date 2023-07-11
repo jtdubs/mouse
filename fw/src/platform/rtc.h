@@ -15,6 +15,8 @@
 
 #include <stdint.h>
 
+// rtc_init initializes the RTC.
 void rtc_init();
 
+// rtc_micros returns the number of microseconds since the RTC was initialized.
 uint32_t rtc_micros();

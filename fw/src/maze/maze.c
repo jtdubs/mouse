@@ -39,7 +39,10 @@ void maze_send() {
   report_row = 0;
 }
 
-uint8_t maze_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
+uint8_t maze_report(uint8_t *buffer, uint8_t len) {
+  assert(ASSERT_MAZE + 0, buffer != NULL);
+  assert(ASSERT_MAZE + 0, len >= (sizeof(maze_update_t) * MAZE_WIDTH));
+
   if (report_row < MAZE_HEIGHT) {
     maze_update_t *updates = (maze_update_t *)buffer;
 
@@ -54,6 +57,8 @@ uint8_t maze_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
     return MAZE_WIDTH * sizeof(maze_update_t);
   }
 
+  // TODO: only send updates that fit in the buffer, then either copy
+  // remaining updates to the front, or use a ring buffer instead.
   if (maze_update_buffer_length > 0) {
     size_t len = maze_update_buffer_length * sizeof(maze_update_t);
     memcpy(buffer, maze_update_buffer, len);
@@ -69,6 +74,7 @@ void maze_update(uint8_t x, uint8_t y, cell_t cell) {
   assert(ASSERT_MAZE + 1, y < MAZE_HEIGHT);
   assert(ASSERT_MAZE + 2, maze_update_buffer_length < 8);
 
-  maze.cells[x][y]                                = cell;
+  maze.cells[x][y] = cell;
+
   maze_update_buffer[maze_update_buffer_length++] = (maze_update_t){.x = x, .y = y, .cell = cell};
 }

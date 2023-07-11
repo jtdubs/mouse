@@ -11,11 +11,14 @@ float position_theta;     // in radians
 
 void position_init() {}
 
-void position_read() {
+void position_update() {
   float left_distance  = ((float)encoders_left_delta) * COUNT_DISTANCE_LEFT;    // mm
   float right_distance = ((float)encoders_right_delta) * COUNT_DISTANCE_RIGHT;  // mm
 
-  float forward  = (left_distance + right_distance) / 2.0f;      // mm
+  // Encoder updates in the same direction add to produce forward motion.
+  float forward = (left_distance + right_distance) / 2.0f;  // mm
+
+  // Encoder updates in opposite directions subtract to produce rotational motion.
   float rotation = (right_distance - left_distance) * MM_THETA;  // radians
 
   position_distance += forward;

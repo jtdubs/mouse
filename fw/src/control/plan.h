@@ -1,8 +1,22 @@
+//
+// System: control
+// Module: plan
+//
+// Purpose:
+// - Define the plan data structures and related methods.
+//
+// Design:
+// - There is a single active plan.
+// - The plan can be set with plan_submit().
+// - The plan can be waited on with plan_wait(), which is a busy-loop.
+// - The plan state is updated by the control loop.
+//
 #pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
 
+// plan_state_t is the state of the current plan.
 typedef enum : uint8_t {
   PLAN_STATE_SCHEDULED,
   PLAN_STATE_UNDERWAY,

@@ -1,3 +1,10 @@
+//
+// System: control
+// Module: pid
+//
+// Purpose:
+// - Provide PID controllers and variants to the rest of the control system.
+//
 #pragma once
 
 #include <math.h>

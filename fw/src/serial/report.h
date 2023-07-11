@@ -9,22 +9,27 @@
 //
 // Dependencies:
 // - Uses the usart0 module to transmit reports.
-// - Reads from most platform modules to populate the report.
+// - Requests reports from the platform, control, and maze modules.
+//
+// Design:
+// - Reports are of variable size, and only transmitted if needed.
+// - The modules (maze, control, plaform) are consulted in order to
+//   determine if a report should be sent.
+// - The first module to say "yes" wins, and the report is sent.
+// - The goal is to send the most "important" report, prioritizing
+//   updates to the maze state, then the control state, and sending
+//   a generic platform report if nothing else is happening.
 //
 #pragma once
 
 #include <stdint.h>
 
+// report_type_t identifies the type of a given report.
 typedef enum : uint8_t {
-  REPORT_NONE = 0,
-
   // Individual report types.
-  REPORT_PLATFORM = 1,
-  REPORT_CONTROL  = 2,
-  REPORT_MAZE     = 3,
-
-  REPORT_FIRST = REPORT_PLATFORM,
-  REPORT_LAST  = REPORT_MAZE,
+  REPORT_PLATFORM,
+  REPORT_CONTROL,
+  REPORT_MAZE,
 } report_type_t;
 
 #pragma pack(push, 1)
@@ -37,7 +42,7 @@ typedef struct {
 // report_t represents a mouse report.
 typedef struct {
   report_header_t header;
-  uint8_t         data[59];
+  uint8_t         data[64];  // the format of the data is defined by the report type
 } report_t;
 #pragma pack(pop)
 

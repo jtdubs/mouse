@@ -20,14 +20,14 @@ void rotational_start(float dtheta /* radians */) {
   rotational_direction    = dtheta > 0;
 }
 
-bool rotational_update() {
+bool rotational_tick() {
   // If we are there, then we are done.
   if (fabsf(position_theta - rotational_target_theta) < (MM_THETA * 5.0f)) {
     speed_set(0, 0);
     return true;
   }
 
-  // Otherwies, calculate fixed speeds including the wheel bias.
+  // Otherwise, calculate fixed speeds including the wheel bias.
   float rpm         = MIN_MOTOR_RPM * 2.0;
   float left_speed  = rpm;
   float right_speed = rpm * ((1.0 + WHEEL_BIAS) / (1.0 - WHEEL_BIAS));
@@ -38,6 +38,5 @@ bool rotational_update() {
     speed_set(left_speed, -right_speed);
   }
 
-  speed_update();
   return false;
 }
