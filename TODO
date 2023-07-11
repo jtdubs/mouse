@@ -1,13 +1,17 @@
+Bugs:
+- Cell distance calculations are not working (probably not respecting walls + orientation correctly).
+- Wall following works terribly immediately after a rotation.  No idea why.  Maybe sensor calculations in the sim are angle dependent?
+
+Required troubleshooting features:
+- Add some parse-out of the plan directly in the simulator so we aren't waiting for bluetooth messages.
+- Update the "step forward" feature to step from plan start to plan start, skipping scheduled & implemented.
+
 Exploration:
-- Each visited cell gets min(neighbors) + 1.
-- Also keep a queue of "visitable" squares that starts as [(0, 1)] and is updated as we visit cells w/ open walls.
+- Keep a queue of "visitable" squares that starts as [(0, 1)] and is updated as we visit cells w/ open walls.
 - New loops becomes:
   - Choose a visitable cell.
-  - Plan a route to it by walking the distance field by-directionally from current + visitable until they meet.
+  - Plan a route to it by walking the distance field bi-directionally from current + visitable until they meet.
   - Drive the route.
-
-Tuning:
-- Corridor centering seems wobbily, set up a corridor and re-tune that motion.
 
 Timer:
 - Main timer interrupt should probably be ISR_NONBLOCK.
