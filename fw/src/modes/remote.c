@@ -6,6 +6,7 @@
 #include "control/linear.h"
 #include "control/plan.h"
 #include "control/speed.h"
+#include "maze/maze.h"
 #include "modes/explore.h"
 #include "platform/motor.h"
 #include "platform/pin.h"
@@ -45,6 +46,9 @@ void remote() {
         command_processed();
         explore();
         continue;
+      case COMMAND_SEND_MAZE:
+        maze_send();
+        break;
       case COMMAND_TUNE_PID:
         switch (command->data.pid.id) {
           case PID_SPEED:

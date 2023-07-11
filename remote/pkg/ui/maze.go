@@ -40,6 +40,12 @@ func (w *mazeWindow) draw() {
 	mazeOriginPx := imgui.CursorScreenPos().Add(imgui.NewVec2(0, canvasSizePx.Y)).Add(imgui.NewVec2(marginPx.X, -marginPx.Y))
 
 	imgui.Dummy(canvasSizePx)
+	if imgui.BeginPopupContextItem() {
+		if imgui.SelectableBool("Refresh") {
+			w.mouse.SendCommand(mouse.NewSendMazeCommand())
+		}
+		imgui.EndPopup()
+	}
 
 	drawList := imgui.WindowDrawList()
 	for j, col := range w.mouse.Maze.Cells {

@@ -5,12 +5,14 @@
 #include "utils/assert.h"
 
 maze_t  maze;
-uint8_t initial_report_row = 0;
+uint8_t report_row;
 
 static maze_update_t maze_update_buffer[8];
 static uint8_t       maze_update_buffer_length;
 
 void maze_init() {
+  report_row = MAZE_HEIGHT;
+
   for (int i = 0; i < MAZE_WIDTH; i++) {
     maze.cells[i][0].wall_south               = true;
     maze.cells[i][MAZE_HEIGHT - 1].wall_north = true;
@@ -22,14 +24,18 @@ void maze_init() {
   maze.cells[0][0].wall_east = true;
 }
 
+void maze_send() {
+  report_row = 0;
+}
+
 uint8_t maze_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
-  if (initial_report_row != MAZE_HEIGHT) {
+  if (report_row < MAZE_HEIGHT) {
     maze_update_t *updates = (maze_update_t *)buffer;
 
     for (int i = 0; i < MAZE_WIDTH; i++) {
-      updates[i] = (maze_update_t){.x = i, .y = initial_report_row, .cell = maze.cells[i][initial_report_row]};
+      updates[i] = (maze_update_t){.x = i, .y = report_row, .cell = maze.cells[i][report_row]};
     }
-    initial_report_row++;
+    report_row++;
     return MAZE_WIDTH * sizeof(maze_update_t);
   }
 
