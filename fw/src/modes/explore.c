@@ -215,6 +215,23 @@ void update_cell() {
   }
 }
 
+void drive_straight1() {
+  switch (explore_orientation) {
+    case NORTH:
+      drive_straight_to(explore_cell_x, explore_cell_y + 1);
+      break;
+    case EAST:
+      drive_straight_to(explore_cell_x + 1, explore_cell_y);
+      break;
+    case SOUTH:
+      drive_straight_to(explore_cell_x, explore_cell_y - 1);
+      break;
+    case WEST:
+      drive_straight_to(explore_cell_x - 1, explore_cell_y);
+      break;
+  }
+}
+
 void explore() {
   // Idle the mouse and turn on the IR LEDs.
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
@@ -229,10 +246,20 @@ void explore() {
   explore_cell_y      = 0;
   explore_stopped     = true;
 
-  // Until we hit the end of the corridor...
-  while (!wall_forward_present) {
-    drive_straight_to(explore_cell_x, explore_cell_y + 1);
-    update_cell();
+  while (true) {
+    // Until we hit the end of the corridor...
+    while (!wall_forward_present) {
+      drive_straight1();
+      update_cell();
+    }
+
+    if (!wall_left_present) {
+      turn_to((explore_orientation - 1) & 0x03);
+    } else if (!wall_right_present) {
+      turn_to((explore_orientation + 1) & 0x03);
+    } else {
+      break;
+    }
   }
 
   stop();

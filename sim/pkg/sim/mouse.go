@@ -23,7 +23,7 @@ import (
 const (
 	GridSize                float64 = 180.0 // in mm
 	AxleOffset              float64 = 36.00 // in mm
-	WheelBase               float64 = 73.0  // in mm
+	WheelBase               float64 = 72.48 // in mm
 	WheelDiameter           float64 = 32.5  // in mm
 	EncoderTicksPerRotation int     = 240
 )
