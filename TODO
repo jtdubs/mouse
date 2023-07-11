@@ -1,8 +1,15 @@
-Next steps:
-- Figure out at what point within a cell we can detect the presence/absence of walls from the next cell
-  - "Advancing" a cell should move to this point, determine the wall status, then continue to the center of the cell.
-- Add higher level primitives for moving by multiples of grid cells, and turning by multiples of 90 degrees.
-  - UI can get basic arrow buttons for moving forward and turning left/right.
+Exploration:
+- Add a "distance from start" field to map cells and include in change reports.
+- Render the "distance field" in the remote as a color gradient?  Or just a number?
+- Initial square starts as 0, each visited cell gets min(neighbors) + 1.
+- Also keep a queue of "visitable" squares that starts as [(0, 1)] and is updated as we visit cells w/ open walls.
+- New loops becomes:
+  - Choose a visitable cell.
+  - Plan a route to it by walking the distance field by-directionally from current + visitable until they meet.
+  - Drive the route.
+
+Tuning:
+- Corridor centering seems wobbily, set up a corridor and re-tune that motion.
 
 Timer:
 - Main timer interrupt should probably be ISR_NONBLOCK.
