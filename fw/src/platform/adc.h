@@ -22,15 +22,15 @@
 #include <stdint.h>
 
 typedef enum : uint8_t {
-  ADC_SENSOR_RIGHT,
-  ADC_SENSOR_CENTER,
-  ADC_SENSOR_LEFT,
-  ADC_UNUSED_3,
-  ADC_UNUSED_4,
-  ADC_UNUSED_5,
-  ADC_SELECTOR,
-  ADC_BATTERY_VOLTAGE,
-  ADC_CHANNEL_COUNT,
+  ADC_SENSOR_RIGHT    = 0,
+  ADC_SENSOR_CENTER   = 1,
+  ADC_SENSOR_LEFT     = 2,
+  ADC_UNUSED_3        = 3,
+  ADC_UNUSED_4        = 4,
+  ADC_UNUSED_5        = 5,
+  ADC_SELECTOR        = 6,
+  ADC_BATTERY_VOLTAGE = 7,
+  ADC_CHANNEL_COUNT   = 8,
 } adc_channel_t;
 
 // Raw 10-bit readings from ADC channels.
