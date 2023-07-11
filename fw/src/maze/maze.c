@@ -13,10 +13,10 @@ static uint8_t       maze_update_buffer_length;
 void maze_init() {
   report_row = MAZE_HEIGHT;
 
-  // Distances default to 0xFF, which is the maximum possible distance.
+  // Distances default to 0xFE, which is the maximum possible distance.
   for (int i = 0; i < MAZE_WIDTH; i++) {
     for (int j = 0; j < MAZE_HEIGHT; j++) {
-      maze.cells[i][j].distance = 0xFF;
+      maze.cells[i][j].distance = 0xFE;
     }
   }
   // Bottom and top rows always have outer walls.

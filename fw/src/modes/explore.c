@@ -198,7 +198,7 @@ void update_cell() {
         cell.wall_west  = wall_forward_present;
         break;
     }
-    cell.distance = 0xFF;
+    cell.distance = 0xFE;
     if (!cell.wall_north) {
       cell.distance = min8(cell.distance, maze.cells[explore_cell_x][explore_cell_y + 1].distance + 1);
     }
