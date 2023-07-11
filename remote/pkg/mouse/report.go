@@ -133,7 +133,7 @@ func (r MazeReport) Key() ReportKey {
 
 type MazeUpdate struct {
 	XY   uint8
-	Cell uint8
+	Cell uint16
 }
 
 func (u MazeUpdate) X() int {
@@ -150,6 +150,10 @@ func (u MazeUpdate) Walls() (north, east, south, west bool) {
 	south = ((u.Cell >> 2) & 0x01) == 1
 	west = ((u.Cell >> 3) & 0x01) == 1
 	return
+}
+
+func (u MazeUpdate) Distance() uint8 {
+	return uint8(u.Cell >> 8)
 }
 
 func ReadReport(r *bytes.Reader) (Report, error) {

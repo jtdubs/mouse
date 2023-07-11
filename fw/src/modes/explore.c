@@ -63,6 +63,7 @@ void explore() {
       cell.wall_east  = wall_right_present;
       cell.wall_south = false;
       cell.wall_west  = wall_left_present;
+      cell.distance   = 0;
       maze_update(explore_x, explore_y, cell);
     }
   }

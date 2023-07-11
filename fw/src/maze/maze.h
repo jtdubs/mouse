@@ -6,10 +6,12 @@
 
 #pragma pack(push, 1)
 typedef struct {
-  bool wall_north : 1;
-  bool wall_east  : 1;
-  bool wall_south : 1;
-  bool wall_west  : 1;
+  bool    wall_north : 1;
+  bool    wall_east  : 1;
+  bool    wall_south : 1;
+  bool    wall_west  : 1;
+  uint8_t padding    : 4;
+  uint8_t distance   : 8;
 } cell_t;
 #pragma pack(pop)
 
