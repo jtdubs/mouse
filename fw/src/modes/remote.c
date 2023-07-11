@@ -1,7 +1,6 @@
 #include "modes/remote.h"
 
 #include <avr/interrupt.h>
-#include <avr/sleep.h>
 #include <util/delay.h>
 
 #include "control/linear.h"
@@ -34,9 +33,7 @@ void remote() {
                 .data.power = {0, 0}});
 
   for (;;) {
-    while (!command_available) {
-      sleep_mode();
-    }
+    while (!command_available) {}
 
     switch (command->type) {
       case COMMAND_RESET:

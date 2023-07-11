@@ -20,7 +20,7 @@ void timer_init() {
   TCCR0A = _BV(WGM01);                      // Clear timer on OCRA match
   TCCR0B = _BV(CS02) | _BV(CS00);           // Use clk/1024 prescaler (15.625kHz)
   OCR0A  = (F_CPU / 1024 / (200 + 1)) + 1;  // 200Hz = 5ms
-  OCR0B  = OCR0A - 4;                       // 256us before OCR0A
+  OCR0B  = OCR0A - 15;                      // 256us before OCR0A
   TIMSK0 = _BV(OCIE0B)                      // Enable OCR0B match interrupt
          | _BV(OCIE0A);                     // Enable OCR0A match interrupt
   TCNT0 = 0;                                // Reset the timer

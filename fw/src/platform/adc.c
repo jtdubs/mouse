@@ -34,6 +34,8 @@ constexpr adc_channel_t next_channel[ADC_CHANNEL_COUNT] = {
 };
 
 ISR(ADC_vect, ISR_BLOCK) {
+  pin_toggle(PROBE_1);
+
   adc_channel_t adc_index = ADMUX & 0x0F;
 
   // Store the ADC result.
@@ -43,6 +45,7 @@ ISR(ADC_vect, ISR_BLOCK) {
   ADMUX = (ADMUX & 0xF0) | next_channel[adc_index];
 
   if (adc_index != ADC_BATTERY_VOLTAGE) {
+    pin_toggle(PROBE_2);
     // Start the next conversion
     ADCSRA |= _BV(ADSC);
   }
