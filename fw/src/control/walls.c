@@ -26,9 +26,9 @@ void walls_update() {
   uint16_t right = adc_values[ADC_SENSOR_RIGHT];
   uint16_t front = adc_values[ADC_SENSOR_CENTER];
 
-  wall_left_present    = (left >= (sensor_threshold_left >> 1));
-  wall_right_present   = (right >= (sensor_threshold_right >> 1));
-  wall_forward_present = (front >= (sensor_threshold_center >> 1));
+  wall_left_present    = (left >= (sensor_threshold_left - 40));
+  wall_right_present   = (right >= (sensor_threshold_right - 40));
+  wall_forward_present = (front >= (sensor_threshold_center - 40));
   wall_error_left      = left - sensor_threshold_left;
   wall_error_right     = sensor_threshold_right - right;
 
