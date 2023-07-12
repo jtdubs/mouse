@@ -78,7 +78,7 @@ func (w *symbolsWindow) draw() {
 		case 4:
 			if strings.Contains(sym.Name, "theta") {
 				imgui.Text(fmt.Sprintf("%8.2f°", sym.ReadF32()*180.0/math.Pi))
-			} else if strings.HasPrefix(sym.Name, "speed_") || strings.HasPrefix(sym.Name, "position_") || strings.HasPrefix(sym.Name, "linear_") {
+			} else if strings.HasPrefix(sym.Name, "speed_") || strings.HasPrefix(sym.Name, "position_") || strings.HasPrefix(sym.Name, "linear_") || strings.HasPrefix(sym.Name, "explore_cell_offset") {
 				imgui.Text(fmt.Sprintf("%8.2f", sym.ReadF32()))
 			} else {
 				if w.hex {
