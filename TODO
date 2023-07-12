@@ -1,6 +1,6 @@
 Bugs:
-- Cell distance calculations are not working (probably not respecting walls + orientation correctly).
-- After a rotation, we do a poor job with re-centering in the corridor.
+- Cell distance calculations need to recursively update when a faster path is found.
+- After a rotation, we do a poor job with re-centering in the corridor.  May need a "blind" mode to get around corners.
 - It would probably be easier if linear motion took a target position rather than a distance.
 
 Required troubleshooting features:

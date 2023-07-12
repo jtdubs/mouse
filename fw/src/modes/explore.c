@@ -73,7 +73,7 @@ void stop() {
 
 // turn_to positions the mouse in the middle of the current cell, facing the given orientation.
 void turn_to(orientation_t orientation) {
-  assert(ASSERT_EXPLORE + 0, orientation < 4);
+  assert(ASSERT_EXPLORE + 1, orientation < 4);
 
   if (orientation == explore_orientation) {
     return;
@@ -124,9 +124,9 @@ void turn_to(orientation_t orientation) {
 // drive_straight_to drives straight to the given cell, leaving the mouse
 // in a position where the sensors are pointed at the centers of the side walls.
 void drive_straight_to(uint8_t x, uint8_t y) {
-  assert(ASSERT_EXPLORE + 0, x < MAZE_WIDTH);
-  assert(ASSERT_EXPLORE + 1, y < MAZE_HEIGHT);
-  assert(ASSERT_EXPLORE + 2, explore_cell_x == x || explore_cell_y == y);
+  assert(ASSERT_EXPLORE + 2, x < MAZE_WIDTH);
+  assert(ASSERT_EXPLORE + 3, y < MAZE_HEIGHT);
+  assert(ASSERT_EXPLORE + 4, explore_cell_x == x || explore_cell_y == y);
 
   uint8_t cells = 0;
   if (x > explore_cell_x) {
@@ -198,7 +198,7 @@ void update_cell() {
     if (!cell.wall_south) {
       cell.distance = min8(cell.distance, maze.cells[explore_cell_x][explore_cell_y - 1].distance + 1);
     }
-    if (!cell.wall_east) {
+    if (!cell.wall_west) {
       cell.distance = min8(cell.distance, maze.cells[explore_cell_x - 1][explore_cell_y].distance + 1);
     }
     maze_update(explore_cell_x, explore_cell_y, cell);
