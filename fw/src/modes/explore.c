@@ -16,7 +16,9 @@
 
 typedef enum : uint8_t { NORTH, EAST, SOUTH, WEST } orientation_t;
 
-const float ENTRY_OFFSET = 16.0;
+const float ENTRY_OFFSET = 16.0;               // mm
+const float CELL_SIZE    = 180.0;              // mm
+const float CELL_SIZE_2  = (CELL_SIZE / 2.0);  // mm
 
 static float         explore_cell_offset;
 static orientation_t explore_orientation;
@@ -30,8 +32,8 @@ void update_location() {
     position_clear();
   }
 
-  while (explore_cell_offset > 180.0) {
-    explore_cell_offset -= 180.0;
+  while (explore_cell_offset > CELL_SIZE) {
+    explore_cell_offset -= CELL_SIZE;
     switch (explore_orientation) {
       case NORTH:
         explore_cell_y++;
@@ -55,7 +57,7 @@ void stop() {
     return;
   }
 
-  assert(ASSERT_EXPLORE + 0, explore_cell_offset <= 80.0);
+  assert(ASSERT_EXPLORE + 0, explore_cell_offset <= CELL_SIZE_2);
 
   update_location();
 
@@ -63,7 +65,7 @@ void stop() {
   plan_submit_and_wait(                                  //
       &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,  //
                 .data.linear = {
-                    .distance = 80.0 - explore_cell_offset,
+                    .distance = CELL_SIZE_2 - explore_cell_offset,
                     .stop     = true  //
                 }});
 
@@ -117,7 +119,7 @@ void turn_to(orientation_t orientation) {
 
   // assuming we were centered horizontally in the previous direction of travel
   // then we are now in the middle of the cell along the new direction of travel.
-  explore_cell_offset = 80.0;
+  explore_cell_offset = CELL_SIZE_2;
   explore_orientation = orientation;
 }
 
@@ -148,7 +150,7 @@ void drive_straight_to(uint8_t x, uint8_t y) {
   plan_submit_and_wait(  //
       &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,
                 .data.linear = {
-                    .distance = (cells * 180.0) - (explore_cell_offset - ENTRY_OFFSET),
+                    .distance = (cells * CELL_SIZE) - (explore_cell_offset - ENTRY_OFFSET),
                     .stop     = false,
                 }});
 

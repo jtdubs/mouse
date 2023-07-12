@@ -23,6 +23,11 @@ constexpr float AXLE_OFFSET    = 36.00;  // mm, from back of board
 constexpr uint8_t MAZE_WIDTH  = 16;  // dimensionless
 constexpr uint8_t MAZE_HEIGHT = 16;  // dimensionless
 
+// Sensor performance
+constexpr uint16_t SENSOR_EMERGENCY_STOP    = 800;
+constexpr uint16_t SENSOR_SIDE_DEFAULT_CAL  = 200;
+constexpr uint16_t SENSOR_FRONT_DEFAULT_CAL = 100;
+
 // Motor parameters
 constexpr float COUNTS_PER_REVOLUTION = 240;  // dimensionless
 

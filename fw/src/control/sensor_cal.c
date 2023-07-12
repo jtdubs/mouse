@@ -24,9 +24,9 @@ static bool     sensor_leds_prev_state;
 
 void sensor_cal_init() {
   // These are reasonable guesses in case calibration is not performed.
-  sensor_threshold_left   = 200;
-  sensor_threshold_right  = 200;
-  sensor_threshold_center = 100;
+  sensor_threshold_left   = SENSOR_SIDE_DEFAULT_CAL;
+  sensor_threshold_right  = SENSOR_SIDE_DEFAULT_CAL;
+  sensor_threshold_center = SENSOR_FRONT_DEFAULT_CAL;
 }
 
 void sensor_cal_start() {

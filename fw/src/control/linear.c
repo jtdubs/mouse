@@ -84,7 +84,7 @@ bool linear_tick() {
   uint16_t center = adc_values[ADC_SENSOR_CENTER];
 
   // Emergency stop if too close to a wall.
-  if (center > 380) {
+  if (center >= SENSOR_EMERGENCY_STOP) {
     pin_set2(IR_LEDS, linear_leds_prev_state);
     speed_set(0, 0);
     return true;
