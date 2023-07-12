@@ -201,7 +201,7 @@ func (m *Mouse) updateIRHits() {
 					continue
 				}
 				x := origin.X + dx
-				if x < 0 || x > float64(len(m.maze.Posts[y]))*GridSize {
+				if x < 0 || x > (float64(len(m.maze.Posts[y]))*GridSize-1) {
 					continue
 				}
 				if m.maze.Posts[y][int(x/GridSize)].East {
@@ -223,7 +223,7 @@ func (m *Mouse) updateIRHits() {
 					continue
 				}
 				y := origin.Y + dy
-				if y < 0 || y > float64(len(m.maze.Posts[0]))*GridSize {
+				if y < 0 || y > (float64(len(m.maze.Posts[0]))*GridSize-1) {
 					continue
 				}
 				if m.maze.Posts[int(y/GridSize)][x].North {
