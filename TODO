@@ -1,10 +1,6 @@
 Bugs:
-- Cell distance calculations need to recursively update when a faster path is found.
 - After a rotation, we do a poor job with re-centering in the corridor.  May need a "blind" mode to get around corners.
 - It would probably be easier if linear motion took a target position rather than a distance.
-
-Required troubleshooting features:
-- Add some parse-out of the plan directly in the simulator so we aren't waiting for bluetooth messages.
 
 Exploration:
 - Keep a queue of "visitable" squares that starts as [(0, 1)] and is updated as we visit cells w/ open walls.
