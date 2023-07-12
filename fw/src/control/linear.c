@@ -69,7 +69,7 @@ void linear_start(float distance /* mm */, bool stop) {
   linear_start_distance  = position_distance;             // mm
   linear_target_distance = position_distance + distance;  // mm
   linear_target_speed    = stop ? 0.0 : SPEED_CRUISE;     // mm/s
-  linear_wall_error      = calculate_wall_error();
+  linear_wall_error      = 0;
 
 #if defined(ALLOW_ANGLE_PID_TUNING)
   linear_start_theta = position_theta;  // radians

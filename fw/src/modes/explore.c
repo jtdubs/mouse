@@ -23,9 +23,13 @@ static orientation_t explore_orientation;
 static uint8_t       explore_cell_x, explore_cell_y;
 static bool          explore_stopped;
 
-// update_location updates the cell index and offset based on the given distance.
-void update_location(float distance) {
-  explore_cell_offset += distance;
+// update_location updates the cell index and offset based on the traveled distance.
+void update_location() {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    explore_cell_offset += position_distance;
+    position_clear();
+  }
+
   while (explore_cell_offset > 180.0) {
     explore_cell_offset -= 180.0;
     switch (explore_orientation) {
@@ -51,31 +55,19 @@ void stop() {
     return;
   }
 
-  float start, end;
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    start = position_distance;
-  }
+  assert(ASSERT_EXPLORE + 0, explore_cell_offset <= 80.0);
 
-  if (explore_cell_offset >= 80.0) {
-    // if we are already past the middle of the cell then just stop here.
-    plan_submit_and_wait(                               //
-        &(plan_t){.type       = PLAN_TYPE_FIXED_POWER,  //
-                  .data.power = {0, 0}});
-  } else {
-    // otherwise drive there and stop.
-    plan_submit_and_wait(                                  //
-        &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,  //
-                  .data.linear = {
-                      .distance = 80.0 - explore_cell_offset,
-                      .stop     = true  //
-                  }});
-  }
+  update_location();
 
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    end = position_distance;
-  }
+  // stop at the center of the cell
+  plan_submit_and_wait(                                  //
+      &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,  //
+                .data.linear = {
+                    .distance = 80.0 - explore_cell_offset,
+                    .stop     = true  //
+                }});
 
-  update_location(end - start);
+  update_location();
   explore_stopped = true;
 }
 
@@ -121,6 +113,11 @@ void turn_to(orientation_t orientation) {
       break;
   }
 
+  update_location();
+
+  // assuming we were centered horizontally in the previous direction of travel
+  // then we are now in the middle of the cell along the new direction of travel.
+  explore_cell_offset = 80.0;
   explore_orientation = orientation;
 }
 
@@ -146,10 +143,7 @@ void drive_straight_to(uint8_t x, uint8_t y) {
     cells = explore_cell_y - y;
   }
 
-  float start, end;
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    start = position_distance;
-  }
+  update_location();
 
   plan_submit_and_wait(  //
       &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,
@@ -158,11 +152,7 @@ void drive_straight_to(uint8_t x, uint8_t y) {
                     .stop     = false,
                 }});
 
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    end = position_distance;
-  }
-
-  update_location(end - start);
+  update_location();
   explore_stopped = false;
 }
 
