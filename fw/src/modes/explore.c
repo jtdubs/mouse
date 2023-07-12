@@ -159,50 +159,43 @@ void drive_straight_to(uint8_t x, uint8_t y) {
 // update_cell updates the state of a cell.
 // assumption: we are at ENTRY_OFFSET into the cell.
 void update_cell() {
+  bool wall_forward, wall_left, wall_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    // Classify the square based on sensor readings.
-    cell_t cell;
-    switch (explore_orientation) {
-      case NORTH:
-        cell.wall_north = wall_forward_present;
-        cell.wall_east  = wall_right_present;
-        cell.wall_south = false;
-        cell.wall_west  = wall_left_present;
-        break;
-      case EAST:
-        cell.wall_north = wall_left_present;
-        cell.wall_east  = wall_forward_present;
-        cell.wall_south = wall_right_present;
-        cell.wall_west  = false;
-        break;
-      case SOUTH:
-        cell.wall_north = false;
-        cell.wall_east  = wall_left_present;
-        cell.wall_south = wall_forward_present;
-        cell.wall_west  = wall_right_present;
-        break;
-      case WEST:
-        cell.wall_north = wall_right_present;
-        cell.wall_east  = false;
-        cell.wall_south = wall_left_present;
-        cell.wall_west  = wall_forward_present;
-        break;
-    }
-    cell.distance = 0xFE;
-    if (!cell.wall_north) {
-      cell.distance = min8(cell.distance, maze.cells[explore_cell_x][explore_cell_y + 1].distance + 1);
-    }
-    if (!cell.wall_east) {
-      cell.distance = min8(cell.distance, maze.cells[explore_cell_x + 1][explore_cell_y].distance + 1);
-    }
-    if (!cell.wall_south) {
-      cell.distance = min8(cell.distance, maze.cells[explore_cell_x][explore_cell_y - 1].distance + 1);
-    }
-    if (!cell.wall_west) {
-      cell.distance = min8(cell.distance, maze.cells[explore_cell_x - 1][explore_cell_y].distance + 1);
-    }
-    maze_update(explore_cell_x, explore_cell_y, cell);
+    wall_forward = wall_forward_present;
+    wall_left    = wall_left_present;
+    wall_right   = wall_right_present;
   }
+
+  // Classify the square based on sensor readings.
+  cell_t cell;
+  switch (explore_orientation) {
+    case NORTH:
+      cell.wall_north = wall_forward;
+      cell.wall_east  = wall_right;
+      cell.wall_south = false;
+      cell.wall_west  = wall_left;
+      break;
+    case EAST:
+      cell.wall_north = wall_left;
+      cell.wall_east  = wall_forward;
+      cell.wall_south = wall_right;
+      cell.wall_west  = false;
+      break;
+    case SOUTH:
+      cell.wall_north = false;
+      cell.wall_east  = wall_left;
+      cell.wall_south = wall_forward;
+      cell.wall_west  = wall_right;
+      break;
+    case WEST:
+      cell.wall_north = wall_right;
+      cell.wall_east  = false;
+      cell.wall_south = wall_left;
+      cell.wall_west  = wall_forward;
+      break;
+  }
+
+  maze_update(explore_cell_x, explore_cell_y, cell);
 }
 
 void drive_straight1() {

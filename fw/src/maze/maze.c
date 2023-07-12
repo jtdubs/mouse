@@ -13,10 +13,10 @@ static uint8_t       maze_update_buffer_length;
 void maze_init() {
   report_row = MAZE_HEIGHT;
 
-  // Distances default to 0xFE, which is the maximum possible distance.
+  // Distances default to 0xFF, which is the maximum possible distance.
   for (int i = 0; i < MAZE_WIDTH; i++) {
     for (int j = 0; j < MAZE_HEIGHT; j++) {
-      maze.cells[i][j].distance = 0xFE;
+      maze.cells[i][j].distance = 0xFF;
     }
   }
   // Bottom and top rows always have outer walls.
@@ -69,6 +69,43 @@ uint8_t maze_report(uint8_t *buffer, uint8_t len) {
   return 0;
 }
 
+void maze_update_distance(uint8_t x, uint8_t y, uint8_t distance) {
+  maze.cells[x][y].distance = distance;
+
+  cell_t cell = maze.cells[x][y];
+  if (!cell.wall_north) {
+    uint8_t d = maze.cells[x][y + 1].distance;
+    if (d != 0xFF && d > (distance + 1)) {
+      maze_update_distance(x, y + 1, distance + 1);
+    }
+  }
+  if (!cell.wall_east) {
+    uint8_t d = maze.cells[x + 1][y].distance;
+    if (d != 0xFF && d > (distance + 1)) {
+      maze_update_distance(x + 1, y, distance + 1);
+    }
+  }
+  if (!cell.wall_south) {
+    uint8_t d = maze.cells[x][y - 1].distance;
+    if (d != 0xFF && d > (distance + 1)) {
+      maze_update_distance(x, y - 1, distance + 1);
+    }
+  }
+  if (!cell.wall_west) {
+    uint8_t d = maze.cells[x - 1][y].distance;
+    if (d != 0xFF && d > (distance + 1)) {
+      maze_update_distance(x - 1, y, distance + 1);
+    }
+  }
+
+  if (maze_update_buffer_length < 8) {
+    maze_update_buffer[maze_update_buffer_length++] = (maze_update_t){.x = x, .y = y, .cell = maze.cells[x][y]};
+  } else {
+    maze_update_buffer_length = 0;
+    report_row                = 0;
+  }
+}
+
 void maze_update(uint8_t x, uint8_t y, cell_t cell) {
   assert(ASSERT_MAZE + 0, x < MAZE_WIDTH);
   assert(ASSERT_MAZE + 1, y < MAZE_HEIGHT);
@@ -76,5 +113,20 @@ void maze_update(uint8_t x, uint8_t y, cell_t cell) {
 
   maze.cells[x][y] = cell;
 
-  maze_update_buffer[maze_update_buffer_length++] = (maze_update_t){.x = x, .y = y, .cell = cell};
+  uint8_t distance = 0xFF;
+  if (!cell.wall_north) {
+    distance = min8(distance, maze.cells[x][y + 1].distance);
+  }
+  if (!cell.wall_east) {
+    distance = min8(distance, maze.cells[x + 1][y].distance);
+  }
+  if (!cell.wall_south) {
+    distance = min8(distance, maze.cells[x][y - 1].distance);
+  }
+  if (!cell.wall_west) {
+    distance = min8(distance, maze.cells[x - 1][y].distance);
+  }
+  distance++;
+
+  maze_update_distance(x, y, distance);
 }
