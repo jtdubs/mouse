@@ -59,23 +59,27 @@ func (w *symbolsWindow) draw() {
 		}
 		imgui.TableNextRow()
 		imgui.TableSetColumnIndex(0)
-		imgui.Text(name)
-		imgui.TableSetColumnIndex(1)
 		sym := w.sim.Symbols.Symbols[name]
 		switch sym.Length {
 		case 1:
+			imgui.Text(name)
+			imgui.TableSetColumnIndex(1)
 			if w.hex {
 				imgui.Text(fmt.Sprintf("0x%02x", sym.ReadU8()))
 			} else {
 				imgui.Text(fmt.Sprintf("%d", sym.ReadU8()))
 			}
 		case 2:
+			imgui.Text(name)
+			imgui.TableSetColumnIndex(1)
 			if w.hex {
 				imgui.Text(fmt.Sprintf("0x%04x", sym.ReadU16()))
 			} else {
 				imgui.Text(fmt.Sprintf("%d", sym.ReadU16()))
 			}
 		case 4:
+			imgui.Text(name)
+			imgui.TableSetColumnIndex(1)
 			if strings.Contains(sym.Name, "theta") {
 				imgui.Text(fmt.Sprintf("%8.2f°", sym.ReadF32()*180.0/math.Pi))
 			} else if strings.HasPrefix(sym.Name, "speed_") || strings.HasPrefix(sym.Name, "position_") || strings.HasPrefix(sym.Name, "linear_") || strings.HasPrefix(sym.Name, "explore_cell_offset") {
@@ -88,7 +92,9 @@ func (w *symbolsWindow) draw() {
 				}
 			}
 		default:
-			imgui.Text(hex.EncodeToString(sym.Read()))
+			imgui.Text(fmt.Sprintf("%v[]", name))
+			imgui.TableSetColumnIndex(1)
+			imgui.Text(hex.Dump(sym.Read()))
 		}
 	}
 
