@@ -41,7 +41,7 @@ func New(mouse *mouse.Mouse) *UI {
 
 	backend.SetBgColor(imgui.NewVec4(0.45, 0.55, 0.6, 1.0))
 	backend.SetAfterCreateContextHook(ui.init)
-	backend.CreateWindow("Mouse Remote", 1600, 900, imgui.GLFWWindowFlags(0))
+	backend.CreateWindow("Mouse Remote", 1240, 700, imgui.GLFWWindowFlags(0))
 	backend.SetTargetFPS(60)
 
 	imgui.CurrentIO().Fonts().AddFontFromFileTTF("../fonts/DroidSansMono.ttf", 24)
@@ -102,12 +102,11 @@ func (ui *UI) Run(ctx context.Context) {
 			imgui.InternalDockBuilderSetNodeSize(dockID, vp.Size().Sub(imgui.NewVec2(0, 48)))
 			imgui.InternalDockBuilderDockWindow("Serial", dockID)
 			imgui.InternalDockBuilderFinish(dockID)
-			right := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.40, nil, &dockID)
-			bottomRight := imgui.InternalDockBuilderSplitNode(right, imgui.DirDown, 0.40, nil, &right)
-			bottomLeft := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirDown, 0.40, nil, &dockID)
+			right := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.55, nil, &dockID)
+			bottomRight := imgui.InternalDockBuilderSplitNode(right, imgui.DirDown, 0.25, nil, &right)
 			imgui.InternalDockBuilderDockWindow("Maze", dockID)
+			imgui.InternalDockBuilderDockWindow("Report", right)
 			imgui.InternalDockBuilderDockWindow("Command", right)
-			imgui.InternalDockBuilderDockWindow("Report", bottomLeft)
 			imgui.InternalDockBuilderDockWindow("Log", bottomRight)
 		}
 
