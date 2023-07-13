@@ -5,128 +5,75 @@
 #include "utils/assert.h"
 
 maze_t  maze;
-uint8_t report_row;
+uint8_t maze_report_row;
 
-static maze_update_t maze_update_buffer[8];
-static uint8_t       maze_update_buffer_length;
+static maze_location_t maze_update_queue[16];
+static uint8_t         maze_update_queue_length;
 
 void maze_init() {
-  report_row = MAZE_HEIGHT;
+  maze_report_row = MAZE_HEIGHT;
 
   // Distances default to 0xFF, which is the maximum possible distance.
-  for (int i = 0; i < MAZE_WIDTH; i++) {
-    for (int j = 0; j < MAZE_HEIGHT; j++) {
-      maze.cells[i][j].distance = 0xFF;
-    }
+  for (uint16_t xy = 0; xy < (MAZE_WIDTH * MAZE_HEIGHT); xy++) {
+    maze.cells[xy].distance = 0xFF;
   }
   // Bottom and top rows always have outer walls.
-  for (int i = 0; i < MAZE_WIDTH; i++) {
-    maze.cells[i][0].wall_south               = true;
-    maze.cells[i][MAZE_HEIGHT - 1].wall_north = true;
+  for (uint8_t x = 0; x < MAZE_WIDTH; x++) {
+    maze.cells[maze_location(x, 0)].wall_south               = true;
+    maze.cells[maze_location(x, MAZE_HEIGHT - 1)].wall_north = true;
   }
   // Left and right columns always have outer walls.
-  for (int i = 0; i < MAZE_HEIGHT; i++) {
-    maze.cells[0][i].wall_west              = true;
-    maze.cells[MAZE_WIDTH - 1][i].wall_east = true;
+  for (int y = 0; y < MAZE_HEIGHT; y++) {
+    maze.cells[maze_location(0, y)].wall_west              = true;
+    maze.cells[maze_location(MAZE_WIDTH - 1, y)].wall_east = true;
   }
   // The starting cell always has a wall to the east.
-  maze.cells[0][0].wall_east = true;
+  maze.cells[maze_location(0, 0)].wall_east = true;
   // The starting cell has a distance of 0.
-  maze.cells[0][0].distance = 0;
+  maze.cells[maze_location(0, 0)].distance = 0;
 }
 
 void maze_send() {
-  report_row = 0;
+  maze_update_queue_length = 0;
+  maze_report_row          = 0;
 }
 
 uint8_t maze_report(uint8_t *buffer, uint8_t len) {
   assert(ASSERT_MAZE + 0, buffer != NULL);
   assert(ASSERT_MAZE + 0, len >= (sizeof(maze_update_t) * MAZE_WIDTH));
 
-  if (report_row < MAZE_HEIGHT) {
-    maze_update_t *updates = (maze_update_t *)buffer;
+  maze_update_t *updates = (maze_update_t *)buffer;
 
+  if (maze_report_row < MAZE_HEIGHT) {
     for (int i = 0; i < MAZE_WIDTH; i++) {
       updates[i] = (maze_update_t){
-          .x    = i,
-          .y    = report_row,
-          .cell = maze.cells[i][report_row],
+          .location = maze_location(i, maze_report_row),
+          .cell     = maze.cells[maze_location(i, maze_report_row)],
       };
     }
-    report_row++;
+    maze_report_row++;
     return MAZE_WIDTH * sizeof(maze_update_t);
   }
 
-  // TODO: only send updates that fit in the buffer, then either copy
-  // remaining updates to the front, or use a ring buffer instead.
-  if (maze_update_buffer_length > 0) {
-    size_t len = maze_update_buffer_length * sizeof(maze_update_t);
-    memcpy(buffer, maze_update_buffer, len);
-    maze_update_buffer_length = 0;
-    return len;
+  uint8_t report_len = maze_update_queue_length * sizeof(maze_update_t);
+  for (int i = 0; i < maze_update_queue_length; i++) {
+    maze_location_t loc = maze_update_queue[i];
+    updates[i]          = (maze_update_t){.location = loc, .cell = maze.cells[loc]};
   }
+  maze_update_queue_length = 0;
 
-  return 0;
+  return report_len;
 }
 
-void maze_update_distance(uint8_t x, uint8_t y, uint8_t distance) {
-  maze.cells[x][y].distance = distance;
+void maze_update(maze_location_t loc, cell_t cell) {
+  assert(ASSERT_MAZE + 0, maze_x(loc) < MAZE_WIDTH);
+  assert(ASSERT_MAZE + 1, maze_y(loc) < MAZE_HEIGHT);
 
-  cell_t cell = maze.cells[x][y];
-  if (!cell.wall_north) {
-    uint8_t d = maze.cells[x][y + 1].distance;
-    if (d != 0xFF && d > (distance + 1)) {
-      maze_update_distance(x, y + 1, distance + 1);
-    }
-  }
-  if (!cell.wall_east) {
-    uint8_t d = maze.cells[x + 1][y].distance;
-    if (d != 0xFF && d > (distance + 1)) {
-      maze_update_distance(x + 1, y, distance + 1);
-    }
-  }
-  if (!cell.wall_south) {
-    uint8_t d = maze.cells[x][y - 1].distance;
-    if (d != 0xFF && d > (distance + 1)) {
-      maze_update_distance(x, y - 1, distance + 1);
-    }
-  }
-  if (!cell.wall_west) {
-    uint8_t d = maze.cells[x - 1][y].distance;
-    if (d != 0xFF && d > (distance + 1)) {
-      maze_update_distance(x - 1, y, distance + 1);
-    }
-  }
+  maze.cells[loc] = cell;
 
-  if (maze_update_buffer_length < 8) {
-    maze_update_buffer[maze_update_buffer_length++] = (maze_update_t){.x = x, .y = y, .cell = maze.cells[x][y]};
+  if (maze_update_queue_length < 16) {
+    maze_update_queue[maze_update_queue_length++] = loc;
   } else {
-    maze_update_buffer_length = 0;
-    report_row                = 0;
+    maze_send();
   }
-}
-
-void maze_update(uint8_t x, uint8_t y, cell_t cell) {
-  assert(ASSERT_MAZE + 0, x < MAZE_WIDTH);
-  assert(ASSERT_MAZE + 1, y < MAZE_HEIGHT);
-  assert(ASSERT_MAZE + 2, maze_update_buffer_length < 8);
-
-  maze.cells[x][y] = cell;
-
-  uint8_t distance = 0xFF;
-  if (!cell.wall_north) {
-    distance = min8(distance, maze.cells[x][y + 1].distance);
-  }
-  if (!cell.wall_east) {
-    distance = min8(distance, maze.cells[x + 1][y].distance);
-  }
-  if (!cell.wall_south) {
-    distance = min8(distance, maze.cells[x][y - 1].distance);
-  }
-  if (!cell.wall_west) {
-    distance = min8(distance, maze.cells[x - 1][y].distance);
-  }
-  distance++;
-
-  maze_update_distance(x, y, distance);
 }

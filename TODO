@@ -1,13 +1,6 @@
 Bugs:
-- After a rotation, we do a poor job with re-centering in the corridor.  May need a "blind" mode to get around corners.
 - It would probably be easier if linear motion took a target position rather than a distance.
-
-Exploration:
-- Keep a queue of "visitable" squares that starts as [(0, 1)] and is updated as we visit cells w/ open walls.
-- New loops becomes:
-  - Choose a visitable cell.
-  - Plan a route to it by walking the distance field bi-directionally from current + visitable until they meet.
-  - Drive the route.
+- Then we just do a "tare" when we change directions, setting the position to what we believe it is.
 
 Timer:
 - Main timer interrupt should probably be ISR_NONBLOCK.

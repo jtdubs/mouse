@@ -137,11 +137,11 @@ type MazeUpdate struct {
 }
 
 func (u MazeUpdate) X() int {
-	return int(u.XY & 0x0f)
+	return int((u.XY >> 4) & 0x0f)
 }
 
 func (u MazeUpdate) Y() int {
-	return int((u.XY >> 4) & 0x0f)
+	return int(u.XY & 0x0f)
 }
 
 func (u MazeUpdate) Walls() (north, east, south, west bool) {

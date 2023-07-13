@@ -14,68 +14,106 @@
 #include "serial/command.h"
 #include "utils/assert.h"
 
-typedef enum : uint8_t { NORTH, EAST, SOUTH, WEST } orientation_t;
+typedef enum : uint8_t { NORTH, EAST, SOUTH, WEST, INVALID } orientation_t;
 
-const float ENTRY_OFFSET = 16.0;               // mm
-const float CELL_SIZE    = 180.0;              // mm
-const float CELL_SIZE_2  = (CELL_SIZE / 2.0);  // mm
+constexpr float ENTRY_OFFSET = 16.0;               // mm
+constexpr float CELL_SIZE    = 180.0;              // mm
+constexpr float CELL_SIZE_2  = (CELL_SIZE / 2.0);  // mm
 
-static float         explore_cell_offset;
 static orientation_t explore_orientation;
-static uint8_t       explore_cell_x, explore_cell_y;
+static float         explore_cell_offset;
 static bool          explore_stopped;
 
-// update_location updates the cell index and offset based on the traveled distance.
-void update_location() {
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    explore_cell_offset += position_distance;
-    position_clear();
-  }
+static maze_location_t explorer_path_stack[256];
+static maze_location_t explorer_next_stack[256];
+static uint8_t         explorer_path_top;
+static uint8_t         explorer_next_top;
 
-  while (explore_cell_offset > CELL_SIZE) {
-    explore_cell_offset -= CELL_SIZE;
-    switch (explore_orientation) {
-      case NORTH:
-        explore_cell_y++;
-        break;
-      case EAST:
-        explore_cell_x++;
-        break;
-      case SOUTH:
-        explore_cell_y--;
-        break;
-      case WEST:
-        explore_cell_x--;
-        break;
+void          stop();
+void          face(orientation_t orientation);
+void          advance(maze_location_t loc);
+orientation_t adjacent(maze_location_t a, maze_location_t b);
+void          classify(maze_location_t loc);
+void          update_location();
+
+void explore() {
+  // Idle the mouse and turn on the IR LEDs.
+  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
+  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IR, .data.ir = {true}});
+
+  // Assumption:
+  // We start centered along the back wall of the starting square, with our back touching the wall.
+  // Therefore our "position", measured by the center of the axle is AXLE_OFFSET from the wall, in cell (0, 0).
+  explore_orientation = NORTH;
+  explore_cell_offset = AXLE_OFFSET;
+  explore_stopped     = true;
+
+  // Our path so far is just the starting square, and we want to visit the square to our north.
+  explorer_path_stack[explorer_path_top] = maze_location(0, 0);
+  explorer_next_stack[explorer_next_top] = maze_location(0, 1);
+
+  // While we have squares to visit...
+  while (explorer_next_top != 0xFF) {
+    maze_location_t next = explorer_next_stack[explorer_next_top];
+    maze_location_t curr = explorer_path_stack[explorer_path_top];
+
+    orientation_t next_orientation = adjacent(curr, next);
+
+    // If we are adjacent to the next square...
+    if (next_orientation != INVALID) {
+      // Then move to it and update our map.
+      explorer_next_stack[explorer_next_top--] = 0;
+      face(next_orientation);
+      advance(next);
+      classify(next);
+    } else {
+      // Otherwise, backtrack a square.
+      explorer_path_stack[explorer_path_top--] = 0;
+      maze_location_t prev                     = explorer_path_stack[explorer_path_top];
+      orientation_t   prev_orientation         = adjacent(curr, prev);
+      explorer_path_stack[explorer_path_top--] = 0;
+      face(prev_orientation);
+      advance(prev);
     }
   }
+
+  // Stop in the middle of the last square.
+  stop();
+
+  // Return to idling.
+  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
 }
 
-// stop stops the mouse in the middle of the current cell.
-void stop() {
-  if (explore_stopped) {
-    return;
+orientation_t adjacent(maze_location_t a, maze_location_t b) {
+  uint8_t ax = maze_x(a);
+  uint8_t ay = maze_y(a);
+  uint8_t bx = maze_x(b);
+  uint8_t by = maze_y(b);
+
+  if (ax == bx) {
+    if (ay + 1 == by) {
+      return NORTH;
+    } else if (ay - 1 == by) {
+      return SOUTH;
+    } else {
+      return INVALID;
+    }
+  } else if (ay == by) {
+    if (ax + 1 == bx) {
+      return EAST;
+    } else if (ax - 1 == bx) {
+      return WEST;
+    } else {
+      return INVALID;
+    }
+  } else {
+    return INVALID;
   }
-
-  assert(ASSERT_EXPLORE + 0, explore_cell_offset <= CELL_SIZE_2);
-
-  update_location();
-
-  // stop at the center of the cell
-  plan_submit_and_wait(                                  //
-      &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,  //
-                .data.linear = {
-                    .distance = CELL_SIZE_2 - explore_cell_offset,
-                    .stop     = true  //
-                }});
-
-  update_location();
-  explore_stopped = true;
 }
 
-// turn_to positions the mouse in the middle of the current cell, facing the given orientation.
-void turn_to(orientation_t orientation) {
-  assert(ASSERT_EXPLORE + 1, orientation < 4);
+// face positions the mouse in the middle of the current cell, facing the given orientation.
+void face(orientation_t orientation) {
+  assert(ASSERT_EXPLORE + 1, orientation != INVALID);
 
   if (orientation == explore_orientation) {
     return;
@@ -123,44 +161,68 @@ void turn_to(orientation_t orientation) {
   explore_orientation = orientation;
 }
 
-// drive_straight_to drives straight to the given cell, leaving the mouse
+// advance moves 1 square in the current direction, leaving the mouse
 // in a position where the sensors are pointed at the centers of the side walls.
-void drive_straight_to(uint8_t x, uint8_t y) {
-  assert(ASSERT_EXPLORE + 2, x < MAZE_WIDTH);
-  assert(ASSERT_EXPLORE + 3, y < MAZE_HEIGHT);
-  assert(ASSERT_EXPLORE + 4, explore_cell_x == x || explore_cell_y == y);
-
-  uint8_t cells = 0;
-  if (x > explore_cell_x) {
-    turn_to(EAST);
-    cells = x - explore_cell_x;
-  } else if (x < explore_cell_x) {
-    turn_to(WEST);
-    cells = explore_cell_x - x;
-  } else if (y > explore_cell_y) {
-    turn_to(NORTH);
-    cells = y - explore_cell_y;
-  } else if (y < explore_cell_y) {
-    turn_to(SOUTH);
-    cells = explore_cell_y - y;
-  }
-
+void advance(maze_location_t loc) {
   update_location();
 
   plan_submit_and_wait(  //
       &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,
                 .data.linear = {
-                    .distance = (cells * CELL_SIZE) - (explore_cell_offset - ENTRY_OFFSET),
+                    .distance = CELL_SIZE - (explore_cell_offset - ENTRY_OFFSET),
                     .stop     = false,
                 }});
 
   update_location();
-  explore_stopped = false;
+  explorer_path_stack[++explorer_path_top] = loc;
+  explore_stopped                          = false;
 }
 
-// update_cell updates the state of a cell.
+// stop stops the mouse in the middle of the current cell.
+void stop() {
+  if (explore_stopped) {
+    return;
+  }
+
+  update_location();
+
+  assert(ASSERT_EXPLORE + 0, explore_cell_offset <= CELL_SIZE_2);
+
+  // stop at the center of the cell
+  plan_submit_and_wait(                                  //
+      &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,  //
+                .data.linear = {
+                    .distance = CELL_SIZE_2 - explore_cell_offset,
+                    .stop     = true  //
+                }});
+
+  update_location();
+  explore_stopped = true;
+}
+
+// update_location updates the cell index and offset based on the traveled distance.
+void update_location() {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    explore_cell_offset += position_distance;
+    position_clear();
+  }
+
+  while (explore_cell_offset > CELL_SIZE) {
+    explore_cell_offset -= CELL_SIZE;
+  }
+}
+
+void queue(maze_location_t loc) {
+  if (!maze.cells[loc].visited) {
+    explorer_next_stack[++explorer_next_top] = loc;
+  }
+}
+
+// classify updates the state of a cell.
 // assumption: we are at ENTRY_OFFSET into the cell.
-void update_cell() {
+void classify(maze_location_t loc) {
+  assert(ASSERT_EXPLORE + 2, explore_orientation != INVALID);
+
   bool wall_forward, wall_left, wall_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     wall_forward = wall_forward_present;
@@ -170,85 +232,80 @@ void update_cell() {
 
   // Classify the square based on sensor readings.
   cell_t cell;
+  cell.visited  = true;
+  cell.distance = 0;
   switch (explore_orientation) {
     case NORTH:
-      cell.wall_north = wall_forward;
-      cell.wall_east  = wall_right;
-      cell.wall_south = false;
-      cell.wall_west  = wall_left;
+      if (wall_right) {
+        cell.wall_east = wall_right;
+      } else {
+        queue(loc + maze_location(1, 0));
+      }
+      if (wall_left) {
+        cell.wall_west = wall_left;
+      } else {
+        queue(loc - maze_location(1, 0));
+      }
+      if (wall_forward) {
+        cell.wall_north = wall_forward;
+      } else {
+        queue(loc + maze_location(0, 1));
+      }
       break;
     case EAST:
-      cell.wall_north = wall_left;
-      cell.wall_east  = wall_forward;
-      cell.wall_south = wall_right;
-      cell.wall_west  = false;
+      if (wall_right) {
+        cell.wall_south = wall_right;
+      } else {
+        queue(loc - maze_location(0, 1));
+      }
+      if (wall_left) {
+        cell.wall_north = wall_left;
+      } else {
+        queue(loc + maze_location(0, 1));
+      }
+      if (wall_forward) {
+        cell.wall_east = wall_forward;
+      } else {
+        queue(loc + maze_location(1, 0));
+      }
       break;
     case SOUTH:
-      cell.wall_north = false;
-      cell.wall_east  = wall_left;
-      cell.wall_south = wall_forward;
-      cell.wall_west  = wall_right;
+      if (wall_right) {
+        cell.wall_west = wall_right;
+      } else {
+        queue(loc - maze_location(1, 0));
+      }
+      if (wall_left) {
+        cell.wall_east = wall_left;
+      } else {
+        queue(loc + maze_location(1, 0));
+      }
+      if (wall_forward) {
+        cell.wall_south = wall_forward;
+      } else {
+        queue(loc - maze_location(0, 1));
+      }
       break;
     case WEST:
-      cell.wall_north = wall_right;
-      cell.wall_east  = false;
-      cell.wall_south = wall_left;
-      cell.wall_west  = wall_forward;
+      if (wall_right) {
+        cell.wall_north = wall_right;
+      } else {
+        queue(loc + maze_location(0, 1));
+      }
+      if (wall_left) {
+        cell.wall_south = wall_left;
+      } else {
+        queue(loc - maze_location(0, 1));
+      }
+      if (wall_forward) {
+        cell.wall_west = wall_forward;
+      } else {
+        queue(loc - maze_location(1, 0));
+      }
+      break;
+    case INVALID:
       break;
   }
 
-  maze_update(explore_cell_x, explore_cell_y, cell);
-}
-
-void drive_straight1() {
-  switch (explore_orientation) {
-    case NORTH:
-      drive_straight_to(explore_cell_x, explore_cell_y + 1);
-      break;
-    case EAST:
-      drive_straight_to(explore_cell_x + 1, explore_cell_y);
-      break;
-    case SOUTH:
-      drive_straight_to(explore_cell_x, explore_cell_y - 1);
-      break;
-    case WEST:
-      drive_straight_to(explore_cell_x - 1, explore_cell_y);
-      break;
-  }
-}
-
-void explore() {
-  // Idle the mouse and turn on the IR LEDs.
-  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
-  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IR, .data.ir = {true}});
-
-  // Assumption:
-  // We start centered along the back wall of the starting square, with our back touching the wall.
-  // Therefore our "position", measured by the center of the axle is AXLE_OFFSET from the wall, in cell (0, 0).
-  explore_orientation = NORTH;
-  explore_cell_offset = AXLE_OFFSET;
-  explore_cell_x      = 0;
-  explore_cell_y      = 0;
-  explore_stopped     = true;
-
-  while (true) {
-    // Until we hit the end of the corridor...
-    while (!wall_forward_present) {
-      drive_straight1();
-      update_cell();
-    }
-
-    if (!wall_left_present) {
-      turn_to((explore_orientation - 1) & 0x03);
-    } else if (!wall_right_present) {
-      turn_to((explore_orientation + 1) & 0x03);
-    } else {
-      break;
-    }
-  }
-
-  stop();
-
-  // Return to idling.
-  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
+  maze_update(loc, cell);
 }
