@@ -52,6 +52,9 @@ func (w *mazeWindow) draw() {
 	for j, col := range w.mouse.Maze.Cells {
 		for i, cell := range col {
 			cellOriginPx := mazeOriginPx.Add(imgui.NewVec2(float32(j)*cellSizePx, -float32(i)*cellSizePx))
+			if cell.Visited {
+				drawList.AddRectFilled(cellOriginPx, cellOriginPx.Add(imgui.NewVec2(cellSizePx, -cellSizePx)), imgui.ColorConvertFloat4ToU32(imgui.NewVec4(0.05, 0.1, 0.3, 1)))
+			}
 			if cell.North {
 				drawList.AddLineV(cellOriginPx.Add(imgui.NewVec2(0, -cellSizePx)), cellOriginPx.Add(imgui.NewVec2(cellSizePx, -cellSizePx)), imgui.ColorConvertFloat4ToU32(imgui.NewVec4(1, 1, 1, 1)), 2.0)
 			}

@@ -6,6 +6,7 @@ type Maze struct {
 
 type Cell struct {
 	North, East, South, West bool
+	Visited                  bool
 	Distance                 uint8
 }
 
@@ -36,6 +37,7 @@ func (m *Maze) Update(u MazeUpdate) {
 		East:     e,
 		South:    s,
 		West:     we,
+		Visited:  u.Visited(),
 		Distance: u.Distance(),
 	}
 }

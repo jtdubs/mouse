@@ -1,5 +1,4 @@
 Exploration mode:
-- Add remote rendering of visited status
 - Change remote rendering of maze from numbers to gradient?
 - Remote needs to log the history of "plans".
 - Communicate changes in the stacks back to the remote

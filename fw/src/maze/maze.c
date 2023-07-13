@@ -31,6 +31,8 @@ void maze_init() {
   maze.cells[maze_location(0, 0)].wall_east = true;
   // The starting cell has a distance of 0.
   maze.cells[maze_location(0, 0)].distance = 0;
+  // The starting cell has been visited (we are there now).
+  maze.cells[maze_location(0, 0)].visited = true;
 }
 
 void maze_send() {

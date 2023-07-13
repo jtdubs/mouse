@@ -152,6 +152,10 @@ func (u MazeUpdate) Walls() (north, east, south, west bool) {
 	return
 }
 
+func (u MazeUpdate) Visited() bool {
+	return ((u.Cell >> 4) & 0x01) == 1
+}
+
 func (u MazeUpdate) Distance() uint8 {
 	return uint8(u.Cell >> 8)
 }
