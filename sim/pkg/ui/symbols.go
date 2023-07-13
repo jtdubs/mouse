@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"encoding/hex"
+	"bytes"
 	"fmt"
 	"math"
 	"sort"
@@ -94,7 +94,19 @@ func (w *symbolsWindow) draw() {
 		default:
 			imgui.Text(fmt.Sprintf("%v[]", name))
 			imgui.TableSetColumnIndex(1)
-			imgui.Text(hex.Dump(sym.Read()))
+			data := sym.Read()
+			var buffer bytes.Buffer
+			for i := 0; i < len(data); i++ {
+				if i%8 == 0 && i != 0 {
+					fmt.Fprintf(&buffer, "\n")
+				}
+				if i%8 == 0 {
+					fmt.Fprintf(&buffer, "%04x:", i)
+				}
+				fmt.Fprintf(&buffer, " %02x", data[i])
+			}
+			fmt.Fprintf(&buffer, "\n")
+			imgui.Text(buffer.String())
 		}
 	}
 

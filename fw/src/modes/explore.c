@@ -92,17 +92,33 @@ orientation_t adjacent(maze_location_t a, maze_location_t b) {
 
   if (ax == bx) {
     if (ay + 1 == by) {
-      return NORTH;
+      if (maze.cells[a].wall_north) {
+        return INVALID;
+      } else {
+        return NORTH;
+      }
     } else if (ay - 1 == by) {
-      return SOUTH;
+      if (maze.cells[a].wall_south) {
+        return INVALID;
+      } else {
+        return SOUTH;
+      }
     } else {
       return INVALID;
     }
   } else if (ay == by) {
     if (ax + 1 == bx) {
-      return EAST;
+      if (maze.cells[a].wall_east) {
+        return INVALID;
+      } else {
+        return EAST;
+      }
     } else if (ax - 1 == bx) {
-      return WEST;
+      if (maze.cells[a].wall_west) {
+        return INVALID;
+      } else {
+        return WEST;
+      }
     } else {
       return INVALID;
     }
