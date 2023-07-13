@@ -11,17 +11,17 @@
 #include <stdint.h>
 
 // assert_range_t defines the ranges of assert codes available to each module.
-enum assert_range_t : uint8_t {
-  ASSERT_MAIN         = 0x10,
-  ASSERT_USART0_WRITE = 0x20,
-  ASSERT_USART0_READ  = 0x30,
-  ASSERT_COMMAND      = 0x40,
-  ASSERT_PLAN         = 0x50,
-  ASSERT_MAZE         = 0x60,
-  ASSERT_MOTOR        = 0x70,
-  ASSERT_PLATFORM     = 0x80,
-  ASSERT_CONTROL      = 0x90,
-  ASSERT_EXPLORE      = 0xA0,
+enum assert_range_t : uint32_t {
+  ASSERT_MAIN         = 0x10000000,
+  ASSERT_USART0_WRITE = 0x20000000,
+  ASSERT_USART0_READ  = 0x30000000,
+  ASSERT_COMMAND      = 0x40000000,
+  ASSERT_PLAN         = 0x50000000,
+  ASSERT_MAZE         = 0x60000000,
+  ASSERT_MOTOR        = 0x70000000,
+  ASSERT_PLATFORM     = 0x80000000,
+  ASSERT_CONTROL      = 0x90000000,
+  ASSERT_EXPLORE      = 0xA0000000,
 };
 
 #if !defined(NOASSERT)
@@ -37,4 +37,4 @@ enum assert_range_t : uint8_t {
 #endif
 
 // _assert_failed is a permanent error state.
-void _assert_failed(uint8_t error);
+void _assert_failed(uint32_t error);
