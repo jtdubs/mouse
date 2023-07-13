@@ -57,6 +57,11 @@ void explore() {
     maze_location_t next = explorer_next_stack[explorer_next_top];
     maze_location_t curr = explorer_path_stack[explorer_path_top];
 
+    while (maze.cells[next].visited) {
+      explorer_next_stack[explorer_next_top--] = 0;
+      next                                     = explorer_next_stack[explorer_next_top];
+    }
+
     orientation_t next_orientation = adjacent(curr, next);
 
     // If we are adjacent to the next square...
@@ -77,8 +82,18 @@ void explore() {
     }
   }
 
+  // Go back to the starting cell
+  while (explorer_path_top != 0x00) {
+    maze_location_t curr        = explorer_path_stack[explorer_path_top--];
+    maze_location_t prev        = explorer_path_stack[explorer_path_top--];
+    orientation_t   orientation = adjacent(curr, prev);
+    face(orientation);
+    advance(prev);
+  }
+
   // Stop in the middle of the last square.
   stop();
+  face(NORTH);
 
   // Return to idling.
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
