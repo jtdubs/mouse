@@ -1,3 +1,15 @@
+Exploration:
+- Calculate distances at the end, floodfilling outward from the center.
+- Add helper functions for push/pop stack to make it cleaner.
+- Change remote rendering of maze from numbers to gradient?
+- Add remote rendering of visited status
+- Communicate changes in the stacks back to the remote
+- Add rendering of the stacks to the remote (ideally within the maze UI)
+- There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.
+
+Solve mode:
+- Just walks the distance gradient calculated by exploration mode and stops in the center.
+
 Bugs:
 - It would probably be easier if linear motion took a target position rather than a distance.
 - Then we just do a "tare" when we change directions, setting the position to what we believe it is.
