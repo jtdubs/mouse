@@ -262,9 +262,8 @@ void classify(maze_location_t loc) {
   }
 
   // Classify the square based on sensor readings.
-  cell_t cell;
-  cell.visited  = true;
-  cell.distance = 0;
+  cell_t cell  = {0};
+  cell.visited = true;
   switch (explore_orientation) {
     case NORTH:
       if (wall_right) {
