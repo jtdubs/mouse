@@ -22,7 +22,7 @@ void rotational_start(float dtheta /* radians */) {
 
 bool rotational_tick() {
   // If we are there, then we are done.
-  if (fabsf(position_theta - rotational_target_theta) < (MM_THETA * 5.0f)) {
+  if (fabsf(position_theta - rotational_target_theta) < (MM_THETA * 3.0f)) {
     speed_set(0, 0);
     return true;
   }

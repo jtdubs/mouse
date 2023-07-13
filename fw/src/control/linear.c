@@ -21,7 +21,7 @@ bool  linear_leds_prev_state;
 static float linear_wall_alpha;
 static pid_t linear_wall_error_pid;
 #else
-static p_t linear_wall_error_pid;
+static pi_t linear_wall_error_pid;
 #endif
 
 #if defined(ALLOW_ANGLE_PID_TUNING)
@@ -47,10 +47,10 @@ static float calculate_wall_error() {
 
 void linear_init() {
   linear_wall_error_pid.kp  = WALL_KP;
+  linear_wall_error_pid.ki  = WALL_KI;
   linear_wall_error_pid.min = -100;
   linear_wall_error_pid.max = 100;
 #if defined(ALLOW_WALL_PID_TUNING)
-  linear_wall_error_pid.ki = WALL_KI;
   linear_wall_error_pid.kd = WALL_KD;
   linear_wall_alpha        = WALL_ALPHA;
 #endif
@@ -134,7 +134,7 @@ bool linear_tick() {
 #else
   linear_wall_error = (WALL_ALPHA * calculate_wall_error())  //
                     + ((1.0f - WALL_ALPHA) * linear_wall_error);
-  float wall_adjustment = p_update(&linear_wall_error_pid, 0.0, linear_wall_error);
+  float wall_adjustment = pi_update(&linear_wall_error_pid, 0.0, linear_wall_error);
 #endif
   left_speed  -= wall_adjustment;
   right_speed += wall_adjustment;
