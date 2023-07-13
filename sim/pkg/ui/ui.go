@@ -40,10 +40,10 @@ func New(sim *sim.Sim) *UI {
 
 	backend.SetBgColor(imgui.NewVec4(0.45, 0.55, 0.6, 1.0))
 	backend.SetAfterCreateContextHook(ui.init)
-	backend.CreateWindow("Mouse Simulator", 1600, 1200, imgui.GLFWWindowFlags(0))
+	backend.CreateWindow("Mouse Simulator", 1300, 800, imgui.GLFWWindowFlags(0))
 	backend.SetTargetFPS(60)
 
-	imgui.CurrentIO().Fonts().AddFontFromFileTTF("../fonts/DroidSans.ttf", 24)
+	imgui.CurrentIO().Fonts().AddFontFromFileTTF("../fonts/DroidSansMono.ttf", 24)
 	imgui.CurrentIO().SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 	imgui.StyleColorsClassic()
 
@@ -97,9 +97,9 @@ func (ui *UI) Run(ctx context.Context) {
 			imgui.InternalDockBuilderRemoveNode(dockID)
 			imgui.InternalDockBuilderAddNodeV(dockID, imgui.DockNodeFlagsDockSpace)
 			imgui.InternalDockBuilderSetNodeSize(dockID, vp.Size().Sub(imgui.NewVec2(0, 48)))
-			symbols := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.3, nil, &dockID)
-			status := imgui.InternalDockBuilderSplitNode(symbols, imgui.DirDown, 0.15, nil, &symbols)
-			controls := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirDown, 0.15, nil, &dockID)
+			symbols := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirRight, 0.55, nil, &dockID)
+			status := imgui.InternalDockBuilderSplitNode(symbols, imgui.DirDown, 0.20, nil, &symbols)
+			controls := imgui.InternalDockBuilderSplitNode(dockID, imgui.DirDown, 0.20, nil, &dockID)
 			imgui.InternalDockBuilderDockWindow("Symbols", symbols)
 			imgui.InternalDockBuilderDockWindow("Status", status)
 			imgui.InternalDockBuilderDockWindow("Controls", controls)

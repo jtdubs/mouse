@@ -44,7 +44,7 @@ func New(mouse *mouse.Mouse) *UI {
 	backend.CreateWindow("Mouse Remote", 1600, 900, imgui.GLFWWindowFlags(0))
 	backend.SetTargetFPS(60)
 
-	imgui.CurrentIO().Fonts().AddFontFromFileTTF("../fonts/DroidSans.ttf", 24)
+	imgui.CurrentIO().Fonts().AddFontFromFileTTF("../fonts/DroidSansMono.ttf", 24)
 	imgui.CurrentIO().SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 	imgui.StyleColorsClassic()
 
