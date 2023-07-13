@@ -29,6 +29,34 @@ static maze_location_t explorer_next_stack[256];
 static uint8_t         explorer_path_top;
 static uint8_t         explorer_next_top;
 
+static inline maze_location_t path_peek() {
+  return explorer_path_stack[explorer_path_top];
+}
+
+static inline maze_location_t path_pop() {
+  maze_location_t result                   = path_peek();
+  explorer_path_stack[explorer_path_top--] = 0;
+  return result;
+}
+
+static inline void path_push(maze_location_t loc) {
+  explorer_path_stack[++explorer_path_top] = loc;
+}
+
+static inline maze_location_t next_peek() {
+  return explorer_next_stack[explorer_next_top];
+}
+
+static inline maze_location_t next_pop() {
+  maze_location_t result                   = next_peek();
+  explorer_next_stack[explorer_next_top--] = 0;
+  return result;
+}
+
+static inline void next_push(maze_location_t loc) {
+  explorer_next_stack[++explorer_next_top] = loc;
+}
+
 void          stop();
 void          face(orientation_t orientation);
 void          advance(maze_location_t loc);
@@ -54,12 +82,12 @@ void explore() {
 
   // While we have squares to visit...
   while (explorer_next_top != 0xFF) {
-    maze_location_t next = explorer_next_stack[explorer_next_top];
-    maze_location_t curr = explorer_path_stack[explorer_path_top];
+    maze_location_t next = next_peek();
+    maze_location_t curr = path_peek();
 
     while (maze.cells[next].visited) {
-      explorer_next_stack[explorer_next_top--] = 0;
-      next                                     = explorer_next_stack[explorer_next_top];
+      next_pop();
+      next = next_peek();
     }
 
     orientation_t next_orientation = adjacent(curr, next);
@@ -67,16 +95,15 @@ void explore() {
     // If we are adjacent to the next square...
     if (next_orientation != INVALID) {
       // Then move to it and update our map.
-      explorer_next_stack[explorer_next_top--] = 0;
+      next_pop();
       face(next_orientation);
       advance(next);
       classify(next);
     } else {
       // Otherwise, backtrack a square.
-      explorer_path_stack[explorer_path_top--] = 0;
-      maze_location_t prev                     = explorer_path_stack[explorer_path_top];
-      orientation_t   prev_orientation         = adjacent(curr, prev);
-      explorer_path_stack[explorer_path_top--] = 0;
+      path_pop();
+      maze_location_t prev             = path_pop();
+      orientation_t   prev_orientation = adjacent(curr, prev);
       face(prev_orientation);
       advance(prev);
     }
@@ -84,8 +111,8 @@ void explore() {
 
   // Go back to the starting cell
   while (explorer_path_top != 0x00) {
-    maze_location_t curr        = explorer_path_stack[explorer_path_top--];
-    maze_location_t prev        = explorer_path_stack[explorer_path_top--];
+    maze_location_t curr        = path_pop();
+    maze_location_t prev        = path_pop();
     orientation_t   orientation = adjacent(curr, prev);
     face(orientation);
     advance(prev);
@@ -205,8 +232,8 @@ void advance(maze_location_t loc) {
                 }});
 
   update_location();
-  explorer_path_stack[++explorer_path_top] = loc;
-  explore_stopped                          = false;
+  path_push(loc);
+  explore_stopped = false;
 }
 
 // stop stops the mouse in the middle of the current cell.
@@ -245,7 +272,7 @@ void update_location() {
 
 void queue(maze_location_t loc) {
   if (!maze.cells[loc].visited) {
-    explorer_next_stack[++explorer_next_top] = loc;
+    next_push(loc);
   }
 }
 

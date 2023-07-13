@@ -1,12 +1,12 @@
 Exploration mode:
-- Calculate distances at the end, floodfilling outward from the center.
-- Add helper functions for push/pop stack to make it cleaner.
-- Change remote rendering of maze from numbers to gradient?
 - Add remote rendering of visited status
+- Change remote rendering of maze from numbers to gradient?
+- Remote needs to log the history of "plans".
 - Communicate changes in the stacks back to the remote
 - Add rendering of the stacks to the remote (ideally within the maze UI)
+- Calculate distances at the end, floodfilling outward from the center.
 - There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.
-- Remote needs to log the history of "plans".
+- Can also skip visiting cells if we've learned about all it's walls from other vantage points.
 
 Solve mode:
 - Just walks the distance gradient calculated by exploration mode and stops in the center.
