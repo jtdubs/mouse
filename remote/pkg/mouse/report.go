@@ -295,7 +295,7 @@ func (LinearReport) Variables() []vcd.VcdDataType {
 	return []vcd.VcdDataType{
 		vcd.NewVariable("linear_plan_distance", "wire", 32),
 		vcd.NewVariable("linear_plan_stop", "wire", 1),
-		vcd.NewVariable("linear_start_distnace", "wire", 32),
+		vcd.NewVariable("linear_start_distance", "wire", 32),
 		vcd.NewVariable("linear_target_distance", "wire", 32),
 		vcd.NewVariable("linear_target_speed", "wire", 32),
 	}
@@ -343,10 +343,10 @@ func (r PlatformReport) Symbols() map[string]string {
 		"platform_led_right":     boolMap[rightLED],
 		"platform_led_onboard":   boolMap[onboard],
 		"platform_led_ir":        boolMap[irLED],
-		"platform_encoder_left":  fmt.Sprint(r.LeftEncoder),
-		"platform_encoder_right": fmt.Sprint(r.RightEncoder),
-		"platform_motor_left":    fmt.Sprint(r.LeftMotor),
-		"platform_motor_right":   fmt.Sprint(r.RightMotor),
+		"platform_encoder_left":  fmt.Sprint(uint32(r.LeftEncoder)),
+		"platform_encoder_right": fmt.Sprint(uint32(r.RightEncoder)),
+		"platform_motor_left":    fmt.Sprint(uint16(r.LeftMotor)),
+		"platform_motor_right":   fmt.Sprint(uint16(r.RightMotor)),
 	}
 }
 
@@ -361,8 +361,10 @@ func (r ControlReport) Symbols() map[string]string {
 		"control_position_distance":    fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.Header.PositionDistance))),
 		"control_position_theta":       fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.Header.PositionTheta))),
 	}
-	for k, v := range r.Body.Symbols(r.Header.Plan.Decode()) {
-		result[k] = v
+	if r.Body != nil {
+		for k, v := range r.Body.Symbols(r.Header.Plan.Decode()) {
+			result[k] = v
+		}
 	}
 	return result
 }

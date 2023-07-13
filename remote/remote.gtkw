@@ -1,93 +1,73 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Mon Jul  3 16:30:12 2023
+[*] Thu Jul 13 22:38:04 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/remote/mouse.vcd"
-[dumpfile_mtime] "Mon Jul  3 16:28:12 2023"
-[dumpfile_size] 256234
+[dumpfile_mtime] "Thu Jul 13 22:32:54 2023"
+[dumpfile_size] 537201
 [savefile] "/home/jtdubs/dev/mouse/remote/remote.gtkw"
-[timestart] 5071000
+[timestart] 3185442
 [size] 1885 2096
 [pos] 952 0
-*-19.000000 6316000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-22.000000 5701252 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 265
 [signals_width] 540
 [sst_expanded] 1
 [sst_vpaned_height] 658
+@88022
+mouse.rtc_now[31:0]
 @200
 -Sensors
+@88022
+mouse.platform_sensor_center[9:0]
+mouse.platform_sensor_left[9:0]
+mouse.platform_sensor_right[9:0]
+mouse.sensor_cal_center[9:0]
+mouse.sensor_cal_left[9:0]
+mouse.sensor_cal_right[9:0]
+@200
+-LEDs
+@28
+mouse.platform_led_ir
+mouse.platform_led_left
+mouse.platform_led_onboard
+mouse.platform_led_right
+@200
 -Encoders
 @88420
-mouse.encoder_left[31:0]
-mouse.encoder_right[31:0]
-@600
+mouse.platform_encoder_left[31:0]
+mouse.platform_encoder_right[31:0]
+@200
 -Motor
 @88420
-mouse.motor_power_left[15:0]
-mouse.motor_power_right[15:0]
+mouse.platform_motor_left[15:0]
+mouse.platform_motor_right[15:0]
 @200
 -Speed
 @c8020
-mouse.speed_measured_left[31:0]
-mouse.speed_setpoint_left[31:0]
-mouse.speed_measured_right[31:0]
-mouse.speed_setpoint_right[31:0]
+mouse.control_speed_measured_left[31:0]
+mouse.control_speed_measured_right[31:0]
+mouse.control_speed_setpoint_left[31:0]
+mouse.control_speed_setpoint_right[31:0]
 @200
 -Position
-@48020
-mouse.position_distance[31:0]
-mouse.position_theta[31:0]
+@c8020
+mouse.control_position_distance[31:0]
+mouse.control_position_theta[31:0]
 @200
 -Plan
 @22
-mouse.plan_state[7:0]
-mouse.plan_type[7:0]
-@8420
-mouse.plan_power_left[15:0]
-mouse.plan_power_right[15:0]
-@48020
-mouse.plan_speed_left[31:0]
-mouse.plan_speed_right[31:0]
-@c48020
-mouse.plan_linear_distance[31:0]
+mouse.control_plan_state[7:0]
+mouse.control_plan_type[7:0]
+@200
+-Linear
+@c8020
+mouse.linear_plan_distance[31:0]
 @28
-(0)mouse.plan_linear_distance[31:0]
-(1)mouse.plan_linear_distance[31:0]
-(2)mouse.plan_linear_distance[31:0]
-(3)mouse.plan_linear_distance[31:0]
-(4)mouse.plan_linear_distance[31:0]
-(5)mouse.plan_linear_distance[31:0]
-(6)mouse.plan_linear_distance[31:0]
-(7)mouse.plan_linear_distance[31:0]
-(8)mouse.plan_linear_distance[31:0]
-(9)mouse.plan_linear_distance[31:0]
-(10)mouse.plan_linear_distance[31:0]
-(11)mouse.plan_linear_distance[31:0]
-(12)mouse.plan_linear_distance[31:0]
-(13)mouse.plan_linear_distance[31:0]
-(14)mouse.plan_linear_distance[31:0]
-(15)mouse.plan_linear_distance[31:0]
-(16)mouse.plan_linear_distance[31:0]
-(17)mouse.plan_linear_distance[31:0]
-(18)mouse.plan_linear_distance[31:0]
-(19)mouse.plan_linear_distance[31:0]
-(20)mouse.plan_linear_distance[31:0]
-(21)mouse.plan_linear_distance[31:0]
-(22)mouse.plan_linear_distance[31:0]
-(23)mouse.plan_linear_distance[31:0]
-(24)mouse.plan_linear_distance[31:0]
-(25)mouse.plan_linear_distance[31:0]
-(26)mouse.plan_linear_distance[31:0]
-(27)mouse.plan_linear_distance[31:0]
-(28)mouse.plan_linear_distance[31:0]
-(29)mouse.plan_linear_distance[31:0]
-(30)mouse.plan_linear_distance[31:0]
-(31)mouse.plan_linear_distance[31:0]
-@1449200
--group_end
-@28
-mouse.plan_linear_stop
-@48021
-mouse.plan_rotational_dtheta[31:0]
+mouse.linear_plan_stop
+@c8020
+mouse.linear_start_distance[31:0]
+mouse.linear_target_distance[31:0]
+mouse.linear_target_speed[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

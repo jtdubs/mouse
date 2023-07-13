@@ -1,6 +1,5 @@
 Exploration mode:
 - Change remote rendering of maze from numbers to gradient?
-- Remote needs to log the history of "plans".
 - Communicate changes in the stacks back to the remote
 - Add rendering of the stacks to the remote (ideally within the maze UI)
 - Calculate distances at the end, floodfilling outward from the center.
