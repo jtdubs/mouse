@@ -19,17 +19,22 @@ typedef struct {
   uint8_t           mask;
 } pin_t;
 
+// motors pins
 extern const pin_t RIGHT_DIR;
+extern const pin_t LEFT_DIR;
 extern const pin_t LEFT_PWM;
 extern const pin_t RIGHT_PWM;
+
+// led pins
 extern const pin_t LED_LEFT;
-extern const pin_t IR_LEDS;
 extern const pin_t LED_BUILTIN;
+extern const pin_t LED_RIGHT;
+extern const pin_t IR_LEDS;
+
+// probe pins
 extern const pin_t PROBE_TICK;
 extern const pin_t PROBE_PLAN;
 extern const pin_t PROBE_2;
-extern const pin_t LED_RIGHT;
-extern const pin_t LEFT_DIR;
 
 // pin_init initializes all pins.
 void pin_init();
