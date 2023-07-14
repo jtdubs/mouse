@@ -41,3 +41,6 @@ void adc_sample();
 
 // adc_read reads the value of an ADC channel.
 void adc_read(adc_channel_t channel, uint16_t* value);
+
+// adc_read_sensors reads the value of an ADC channel.
+void adc_read_sensors(uint16_t* left, uint16_t* center, uint16_t* right);

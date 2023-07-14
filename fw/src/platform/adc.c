@@ -48,6 +48,18 @@ void adc_read(adc_channel_t channel, uint16_t* value) {
   }
 }
 
+void adc_read_sensors(uint16_t* left, uint16_t* center, uint16_t* right) {
+  assert(ASSERT_ADC + 2, left != NULL);
+  assert(ASSERT_ADC + 3, center != NULL);
+  assert(ASSERT_ADC + 4, right != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *left   = adc_values[ADC_SENSOR_LEFT];
+    *center = adc_values[ADC_SENSOR_CENTER];
+    *right  = adc_values[ADC_SENSOR_RIGHT];
+  }
+}
+
 ISR(ADC_vect, ISR_BLOCK) {
   // Check which channel was just read, and which channel should be read next.
   adc_channel_t adc_index = ADMUX & 0x0F;

@@ -70,9 +70,7 @@ uint8_t platform_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
     motor_read(&report->motors.left, &report->motors.right);
 
     uint16_t left, right, center;
-    adc_read(ADC_SENSOR_LEFT, &left);
-    adc_read(ADC_SENSOR_CENTER, &center);
-    adc_read(ADC_SENSOR_RIGHT, &right);
+    adc_read_sensors(&left, &center, &right);
     report->sensors.left   = left;
     report->sensors.center = center;
     report->sensors.right  = right;
