@@ -5,6 +5,7 @@ Exploration mode:
 - Maze and Explore queue updates need to be in an atomic block...
 
 Solve mode:
+- Would be helpful to factor out the "face", "advance", etc. stuff from explorer first.
 - Just walks the distance gradient calculated by exploration mode and stops in the center.
 
 Linear:
