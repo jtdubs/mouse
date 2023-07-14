@@ -142,7 +142,7 @@ void explore() {
   }
 
   // Go back to the starting cell
-  while (explorer_path_top != 0x01) {
+  while (explorer_path_top != 0) {
     maze_location_t curr = path_pop();
     maze_location_t prev = path_peek();
     face(adjacent(curr, prev));
@@ -218,7 +218,7 @@ orientation_t adjacent(maze_location_t a, maze_location_t b) {
 
 // face positions the mouse in the middle of the current cell, facing the given orientation.
 void face(orientation_t orientation) {
-  assert(ASSERT_EXPLORE + 1, orientation != INVALID);
+  assert(ASSERT_EXPLORE + 2, orientation != INVALID);
 
   if (orientation == explore_orientation) {
     return;
@@ -293,7 +293,7 @@ void stop() {
 
   update_location();
 
-  assert(ASSERT_EXPLORE + 0, explore_cell_offset <= CELL_SIZE_2);
+  assert(ASSERT_EXPLORE + 3, explore_cell_offset <= CELL_SIZE_2);
 
   // stop at the center of the cell
   plan_submit_and_wait(                                  //
@@ -328,7 +328,7 @@ void queue(maze_location_t loc) {
 // classify updates the state of a cell.
 // assumption: we are at ENTRY_OFFSET into the cell.
 void classify(maze_location_t loc) {
-  assert(ASSERT_EXPLORE + 2, explore_orientation != INVALID);
+  assert(ASSERT_EXPLORE + 4, explore_orientation != INVALID);
 
   bool wall_forward, wall_left, wall_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
