@@ -10,8 +10,8 @@
 
 // adc_next_channel defines the sequence in which channels are read.
 constexpr adc_channel_t ADC_NEXT_CHANNEL[ADC_CHANNEL_COUNT] = {
-    [ADC_SENSOR_RIGHT]    = ADC_SENSOR_CENTER,    //
-    [ADC_SENSOR_CENTER]   = ADC_SENSOR_LEFT,      //
+    [ADC_SENSOR_RIGHT]    = ADC_SENSOR_FORWARD,   //
+    [ADC_SENSOR_FORWARD]  = ADC_SENSOR_LEFT,      //
     [ADC_SENSOR_LEFT]     = ADC_SELECTOR,         //
     [ADC_SELECTOR]        = ADC_BATTERY_VOLTAGE,  //
     [ADC_BATTERY_VOLTAGE] = ADC_SENSOR_RIGHT,
@@ -48,15 +48,15 @@ void adc_read(adc_channel_t channel, uint16_t* value) {
   }
 }
 
-void adc_read_sensors(uint16_t* left, uint16_t* center, uint16_t* right) {
+void adc_read_sensors(uint16_t* left, uint16_t* right, uint16_t* forward) {
   assert(ASSERT_ADC + 2, left != NULL);
-  assert(ASSERT_ADC + 3, center != NULL);
-  assert(ASSERT_ADC + 4, right != NULL);
+  assert(ASSERT_ADC + 3, right != NULL);
+  assert(ASSERT_ADC + 4, forward != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left   = adc_values[ADC_SENSOR_LEFT];
-    *center = adc_values[ADC_SENSOR_CENTER];
-    *right  = adc_values[ADC_SENSOR_RIGHT];
+    *left    = adc_values[ADC_SENSOR_LEFT];
+    *right   = adc_values[ADC_SENSOR_RIGHT];
+    *forward = adc_values[ADC_SENSOR_FORWARD];
   }
 }
 

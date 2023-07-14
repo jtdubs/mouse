@@ -32,9 +32,9 @@ typedef struct {
   } position;
   union {
     struct {
-      uint16_t left;    // ADC reading
-      uint16_t right;   // ADC reading
-      uint16_t center;  // ADC reading
+      uint16_t left;     // ADC reading
+      uint16_t right;    // ADC reading
+      uint16_t forward;  // ADC reading
     } sensor_cal;
     rotational_state_t rotation;
     linear_state_t     linear;
@@ -70,7 +70,7 @@ void control_tick() {
         motor_set(0, 0);
         pin_clear(LED_LEFT);
         pin_clear(LED_RIGHT);
-        pin_clear(LED_BUILTIN);
+        pin_clear(LED_ONBOARD);
         pin_clear(IR_LEDS);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
@@ -80,7 +80,7 @@ void control_tick() {
         plan_set_state(PLAN_STATE_UNDERWAY);
         pin_set2(LED_LEFT, plan.data.leds.left);
         pin_set2(LED_RIGHT, plan.data.leds.right);
-        pin_set2(LED_BUILTIN, plan.data.leds.builtin);
+        pin_set2(LED_ONBOARD, plan.data.leds.onboard);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
@@ -196,7 +196,7 @@ uint8_t control_report(uint8_t *buffer, uint8_t len) {
     case PLAN_TYPE_SENSOR_CAL:
       sensor_cal_read(&report->plan_data.sensor_cal.left,   //
                       &report->plan_data.sensor_cal.right,  //
-                      &report->plan_data.sensor_cal.center);
+                      &report->plan_data.sensor_cal.forward);
       break;
     case PLAN_TYPE_ROTATIONAL_MOTION:
       rotational_state(&report->plan_data.rotation);

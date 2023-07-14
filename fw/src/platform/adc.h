@@ -23,7 +23,7 @@
 
 typedef enum : uint8_t {
   ADC_SENSOR_RIGHT,
-  ADC_SENSOR_CENTER,
+  ADC_SENSOR_FORWARD,
   ADC_SENSOR_LEFT,
   ADC_UNUSED_3,
   ADC_UNUSED_4,
@@ -43,4 +43,4 @@ void adc_sample();
 void adc_read(adc_channel_t channel, uint16_t* value);
 
 // adc_read_sensors reads the value of an ADC channel.
-void adc_read_sensors(uint16_t* left, uint16_t* center, uint16_t* right);
+void adc_read_sensors(uint16_t* left, uint16_t* right, uint16_t* forward);

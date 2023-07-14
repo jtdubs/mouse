@@ -27,8 +27,8 @@ extern const pin_t RIGHT_PWM;
 
 // led pins
 extern const pin_t LED_LEFT;
-extern const pin_t LED_BUILTIN;
 extern const pin_t LED_RIGHT;
+extern const pin_t LED_ONBOARD;
 extern const pin_t IR_LEDS;
 
 // probe pins

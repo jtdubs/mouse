@@ -27,9 +27,9 @@ void _assert_failed(uint32_t error_code) {
 
   // disable all peripherals
   motor_set(0, 0);
-  pin_clear(LED_BUILTIN);
   pin_clear(LED_LEFT);
   pin_clear(LED_RIGHT);
+  pin_clear(LED_ONBOARD);
   pin_clear(IR_LEDS);
 
   for (;;) {

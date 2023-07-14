@@ -39,11 +39,11 @@ func (w *controlsWindow) draw() {
 	imgui.Checkbox("Button", &w.mouse.FunctionSelector.ButtonPressed)
 
 	w.tableRow("IR Sensors:")
-	voltages := [3]int32{w.mouse.LeftSensor.Voltage, w.mouse.CenterSensor.Voltage, w.mouse.RightSensor.Voltage}
+	voltages := [3]int32{w.mouse.LeftSensor.Voltage, w.mouse.RightSensor.Voltage, w.mouse.ForwardSensor.Voltage}
 	imgui.SliderInt3("(mV)##SENSORS", &voltages, 0, 5000)
 	w.mouse.LeftSensor.Voltage = voltages[0]
-	w.mouse.CenterSensor.Voltage = voltages[1]
-	w.mouse.RightSensor.Voltage = voltages[2]
+	w.mouse.RightSensor.Voltage = voltages[1]
+	w.mouse.ForwardSensor.Voltage = voltages[2]
 
 	imgui.EndTable()
 

@@ -1,8 +1,3 @@
-Cleanup:
-- Move more loose variables into state structs for modules.
-- Consistency: Onboard vs Built-in
-- Consistency: Left/Right/Center vs. Left/Center/Right vs. Left/Right/Forward?
-
 Exploration mode:
 - Pull out queue and stack helper libraries in utils/
 - There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.

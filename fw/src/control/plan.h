@@ -50,7 +50,7 @@ typedef struct {
     struct {
       bool left;
       bool right;
-      bool builtin;
+      bool onboard;
     } leds;
     // PLAN_IR
     struct {

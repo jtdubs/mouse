@@ -55,7 +55,7 @@ logic.PROBE_2
 -LEDs
 @28
 logic.LED_LEFT
-logic.LED_BUILTIN
+logic.LED_ONBOARD
 logic.LED_RIGHT
 logic.IR_LEDS
 @200
@@ -103,7 +103,7 @@ logic.rotational_target_theta[31:0]
 -Sensor Cal
 @22
 logic.sensor_sample_count[15:0]
-logic.sensor_sum_center[31:0]
+logic.sensor_sum_forward[31:0]
 logic.sensor_sum_left[31:0]
 logic.sensor_sum_right[31:0]
 logic.sensor_threshold_left[15:0]

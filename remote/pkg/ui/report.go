@@ -58,7 +58,7 @@ func (w *reportWindow) drawPlatform() {
 
 	w.tableRow("Status LEDs:")
 	{
-		onboard, left, right, ir := r.DecodeLEDs()
+		left, right, onboard, ir := r.DecodeLEDs()
 		if left {
 			w.drawIcon("led-on-lightblue")
 		} else {
@@ -149,7 +149,7 @@ func (w *reportWindow) drawControl() {
 	switch b := r.Body.(type) {
 	case mouse.SensorCalReport:
 		w.tableRow("Sensor Calibration:")
-		values := [3]int32{int32(b.Left), int32(b.Center), int32(b.Right)}
+		values := [3]int32{int32(b.Left), int32(b.Right), int32(b.Forward)}
 		imgui.InputInt3("##Sensors", &values)
 
 	case mouse.RotationReport:

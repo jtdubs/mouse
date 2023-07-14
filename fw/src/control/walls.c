@@ -28,16 +28,16 @@ void walls_led_control(bool enabled) {
 }
 
 void walls_update() {
-  uint16_t left, front, right;
-  adc_read_sensors(&left, &front, &right);
+  uint16_t left, right, forward;
+  adc_read_sensors(&left, &right, &forward);
 
-  uint16_t left_cal, right_cal, front_cal;
-  sensor_cal_read(&left_cal, &right_cal, &front_cal);
+  uint16_t left_cal, right_cal, forward_cal;
+  sensor_cal_read(&left_cal, &right_cal, &forward_cal);
 
   walls_state_t s;
   s.left_present    = (left >= (left_cal - 80));
   s.right_present   = (right >= (right_cal - 80));
-  s.forward_present = (front >= (front_cal - 60));
+  s.forward_present = (forward >= (forward_cal - 60));
   s.error_left      = left - left_cal;
   s.error_right     = right_cal - right;
 
@@ -48,7 +48,7 @@ void walls_update() {
   if (led_control) {
     pin_set2(LED_LEFT, s.left_present);
     pin_set2(LED_RIGHT, s.right_present);
-    pin_set2(LED_BUILTIN, s.forward_present);
+    pin_set2(LED_ONBOARD, s.forward_present);
   }
 }
 

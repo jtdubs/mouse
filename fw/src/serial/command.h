@@ -43,9 +43,9 @@ typedef struct {
   command_type_t type;
   union {
     struct {
-      bool builtin;
       bool left;
       bool right;
+      bool onboard;
       bool ir;
     } leds;
     struct {

@@ -46,19 +46,19 @@ type IRHit struct {
 }
 
 type Mouse struct {
-	avr                                   *C.avr_t
-	maze                                  *Maze
-	encoderChan                           <-chan EncoderTickEvent
-	ledChan                               <-chan struct{}
-	LEDs                                  *LEDs
-	Battery                               *Battery
-	FunctionSelector                      *FunctionSelector
-	LeftSensor, CenterSensor, RightSensor *Sensor
-	LeftMotor, RightMotor                 *Motor
-	X, Y                                  float64 // center of the axle, in mm from the maze center
-	Angle                                 float64 // in radians, 0 is the positive x-axis (east)
-	irHits                                map[*Sensor]IRHit
-	irMutex                               sync.Mutex
+	avr                                    *C.avr_t
+	maze                                   *Maze
+	encoderChan                            <-chan EncoderTickEvent
+	ledChan                                <-chan struct{}
+	LEDs                                   *LEDs
+	Battery                                *Battery
+	FunctionSelector                       *FunctionSelector
+	LeftSensor, RightSensor, ForwardSensor *Sensor
+	LeftMotor, RightMotor                  *Motor
+	X, Y                                   float64 // center of the axle, in mm from the maze center
+	Angle                                  float64 // in radians, 0 is the positive x-axis (east)
+	irHits                                 map[*Sensor]IRHit
+	irMutex                                sync.Mutex
 }
 
 func NewMouse(avr *C.avr_t, maze *Maze) *Mouse {
@@ -76,8 +76,8 @@ func NewMouse(avr *C.avr_t, maze *Maze) *Mouse {
 		LeftMotor:        NewMotor(avr, true, encoderChan),
 		RightMotor:       NewMotor(avr, false, encoderChan),
 		LeftSensor:       NewSensor(avr, "SENSOR_LEFT", C.ADC_IRQ_ADC2, Pos{X: 50, Y: 40}, math.Pi/3),
-		CenterSensor:     NewSensor(avr, "SENSOR_CENTER", C.ADC_IRQ_ADC1, Pos{X: 65, Y: 0}, 0),
 		RightSensor:      NewSensor(avr, "SENSOR_RIGHT", C.ADC_IRQ_ADC0, Pos{X: 50, Y: -40}, -math.Pi/3),
+		ForwardSensor:    NewSensor(avr, "SENSOR_FORWARD", C.ADC_IRQ_ADC1, Pos{X: 65, Y: 0}, 0),
 		X:                GridSize / 2,
 		Y:                AxleOffset,
 		Angle:            math.Pi / 2,
@@ -93,8 +93,8 @@ func (m *Mouse) Init() {
 	m.LeftMotor.Init()
 	m.RightMotor.Init()
 	m.LeftSensor.Init()
-	m.CenterSensor.Init()
 	m.RightSensor.Init()
+	m.ForwardSensor.Init()
 
 	go func() {
 		for {
@@ -177,7 +177,7 @@ func (m *Mouse) updateIRHits() {
 	m.irMutex.Lock()
 	defer m.irMutex.Unlock()
 
-	for _, sensor := range []*Sensor{m.LeftSensor, m.CenterSensor, m.RightSensor} {
+	for _, sensor := range []*Sensor{m.LeftSensor, m.RightSensor, m.ForwardSensor} {
 		bestHit := IRHit{Pos: Pos{}, Distance: math.Inf(1), WallAngle: 0}
 
 		origin := m.mouse2Maze(sensor.Pos)

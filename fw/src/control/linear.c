@@ -75,8 +75,8 @@ void linear_start(float distance /* mm */, bool stop) {
 }
 
 bool linear_tick() {
-  uint16_t center;
-  adc_read(ADC_SENSOR_CENTER, &center);
+  uint16_t forward;
+  adc_read(ADC_SENSOR_FORWARD, &forward);
 
   float speed_measured_left, speed_measured_right;
   speed_read(&speed_measured_left, &speed_measured_right);
@@ -93,7 +93,7 @@ bool linear_tick() {
   }
 
   // Emergency stop if too close to a wall.
-  if (center >= SENSOR_EMERGENCY_STOP) {
+  if (forward >= SENSOR_EMERGENCY_STOP) {
     pin_set2(IR_LEDS, s.leds_prev_state);
     speed_set(0, 0);
     return true;

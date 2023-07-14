@@ -63,17 +63,17 @@ func (r PlatformReport) Key() ReportKey {
 	return ReportKeyPlatform
 }
 
-func (r PlatformReport) DecodeSensors() (left, center, right uint16) {
+func (r PlatformReport) DecodeSensors() (left, right, forward uint16) {
 	left = uint16(r.Sensors & 0x3ff)
-	center = uint16((r.Sensors >> 10) & 0x3ff)
-	right = uint16((r.Sensors >> 20) & 0x3ff)
+	right = uint16((r.Sensors >> 10) & 0x3ff)
+	forward = uint16((r.Sensors >> 20) & 0x3ff)
 	return
 }
 
-func (r PlatformReport) DecodeLEDs() (onboard, left, right, ir bool) {
-	onboard = (r.LEDs & 0x01) == 1
-	left = ((r.LEDs >> 1) & 0x01) == 1
-	right = ((r.LEDs >> 2) & 0x01) == 1
+func (r PlatformReport) DecodeLEDs() (left, right, onboard, ir bool) {
+	left = ((r.LEDs >> 0) & 0x01) == 1
+	right = ((r.LEDs >> 1) & 0x01) == 1
+	onboard = ((r.LEDs >> 2) & 0x01) == 1
 	ir = ((r.LEDs >> 3) & 0x01) == 1
 	return
 }
@@ -103,7 +103,7 @@ type ControlReportBody interface {
 }
 
 type SensorCalReport struct {
-	Left, Right, Center uint16
+	Left, Right, Forward uint16
 }
 
 func (SensorCalReport) isControlReport() {}
@@ -319,7 +319,7 @@ func (PlatformReport) Variables() []vcd.VcdDataType {
 	return []vcd.VcdDataType{
 		vcd.NewVariable("platform_battery_volts", "wire", 8),
 		vcd.NewVariable("platform_sensor_left", "wire", 10),
-		vcd.NewVariable("platform_sensor_center", "wire", 10),
+		vcd.NewVariable("platform_sensor_forward", "wire", 10),
 		vcd.NewVariable("platform_sensor_right", "wire", 10),
 		vcd.NewVariable("platform_led_left", "wire", 1),
 		vcd.NewVariable("platform_led_right", "wire", 1),
@@ -371,8 +371,8 @@ func (RotationReport) Variables() []vcd.VcdDataType {
 func (SensorCalReport) Variables() []vcd.VcdDataType {
 	return []vcd.VcdDataType{
 		vcd.NewVariable("sensor_cal_left", "wire", 10),
-		vcd.NewVariable("sensor_cal_center", "wire", 10),
 		vcd.NewVariable("sensor_cal_right", "wire", 10),
+		vcd.NewVariable("sensor_cal_forward", "wire", 10),
 	}
 }
 
@@ -389,22 +389,22 @@ func (r Report) Symbols() map[string]string {
 }
 
 func (r PlatformReport) Symbols() map[string]string {
-	left, center, right := r.DecodeSensors()
-	onboard, leftLED, rightLED, irLED := r.DecodeLEDs()
+	left, right, forward := r.DecodeSensors()
+	leftLED, rightLED, onboardLED, irLED := r.DecodeLEDs()
 
 	return map[string]string{
-		"platform_battery_volts": fmt.Sprint(r.BatteryVolts),
-		"platform_sensor_left":   fmt.Sprint(left),
-		"platform_sensor_center": fmt.Sprint(center),
-		"platform_sensor_right":  fmt.Sprint(right),
-		"platform_led_left":      boolMap[leftLED],
-		"platform_led_right":     boolMap[rightLED],
-		"platform_led_onboard":   boolMap[onboard],
-		"platform_led_ir":        boolMap[irLED],
-		"platform_encoder_left":  fmt.Sprint(uint32(r.LeftEncoder)),
-		"platform_encoder_right": fmt.Sprint(uint32(r.RightEncoder)),
-		"platform_motor_left":    fmt.Sprint(uint16(r.LeftMotor)),
-		"platform_motor_right":   fmt.Sprint(uint16(r.RightMotor)),
+		"platform_battery_volts":  fmt.Sprint(r.BatteryVolts),
+		"platform_sensor_left":    fmt.Sprint(left),
+		"platform_sensor_right":   fmt.Sprint(right),
+		"platform_sensor_forward": fmt.Sprint(forward),
+		"platform_led_left":       boolMap[leftLED],
+		"platform_led_right":      boolMap[rightLED],
+		"platform_led_onboard":    boolMap[onboardLED],
+		"platform_led_ir":         boolMap[irLED],
+		"platform_encoder_left":   fmt.Sprint(uint32(r.LeftEncoder)),
+		"platform_encoder_right":  fmt.Sprint(uint32(r.RightEncoder)),
+		"platform_motor_left":     fmt.Sprint(uint16(r.LeftMotor)),
+		"platform_motor_right":    fmt.Sprint(uint16(r.RightMotor)),
 	}
 }
 
@@ -450,9 +450,9 @@ func (r RotationReport) Symbols(p DecodedPlan) map[string]string {
 
 func (r SensorCalReport) Symbols(_ DecodedPlan) map[string]string {
 	return map[string]string{
-		"sensor_cal_left":   fmt.Sprint(r.Left),
-		"sensor_cal_center": fmt.Sprint(r.Center),
-		"sensor_cal_right":  fmt.Sprint(r.Right),
+		"sensor_cal_left":    fmt.Sprint(r.Left),
+		"sensor_cal_right":   fmt.Sprint(r.Right),
+		"sensor_cal_forward": fmt.Sprint(r.Forward),
 	}
 }
 
