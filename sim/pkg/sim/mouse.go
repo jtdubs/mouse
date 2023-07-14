@@ -184,7 +184,6 @@ func (m *Mouse) updateIRHits() {
 		angle := sensor.Angle + m.Angle
 
 		if m.LEDs.IR {
-
 			tanTheta := math.Tan(angle)
 			sinSign := math.Signbit(math.Sin(angle))
 			cosSign := math.Signbit(math.Cos(angle))
@@ -223,7 +222,7 @@ func (m *Mouse) updateIRHits() {
 					continue
 				}
 				y := origin.Y + dy
-				if y < 0 || y > (float64(len(m.maze.Posts[0]))*GridSize-1) {
+				if y < 0 || y > (float64(len(m.maze.Posts))*GridSize-1) {
 					continue
 				}
 				if m.maze.Posts[int(y/GridSize)][x].North {
