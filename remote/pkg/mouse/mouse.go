@@ -305,7 +305,6 @@ func (m *Mouse) receiveByte(value byte) {
 			if m.Recording {
 				now := uint64(r.Header.RTCMicros)
 				for k, v := range r.Symbols() {
-					fmt.Printf("%v %v %v\n", m.vcdTime, k, v)
 					m.vcd.SetValue(now, v, k)
 				}
 				m.vcdTime += 10
