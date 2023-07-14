@@ -38,7 +38,9 @@ void timer_init() {
 ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
   wdt_reset();
   if (timer_callback) {
-    timer_callback();
+    NONATOMIC_BLOCK(NONATOMIC_RESTORESTATE) {
+      timer_callback();
+    }
   }
 }
 
