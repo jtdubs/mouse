@@ -1,10 +1,9 @@
 Exploration mode:
-- Change remote rendering of maze from numbers to gradient?
-- Communicate changes in the stacks back to the remote
-- Add rendering of the stacks to the remote (ideally within the maze UI)
 - Calculate distances at the end, floodfilling outward from the center.
+- Change remote rendering of maze from numbers to gradient?
 - There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.
 - Can also skip visiting cells if we've learned about all it's walls from other vantage points.
+- Maze and Explore queue updates need to be in an atomic block...
 
 Solve mode:
 - Just walks the distance gradient calculated by exploration mode and stops in the center.

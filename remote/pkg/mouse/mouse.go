@@ -28,6 +28,7 @@ type Mouse struct {
 	Recording    bool
 	Updating     bool
 	Maze         *Maze
+	Explore      *Explore
 	status       string
 	portOpen     bool
 	serialBuffer []byte
@@ -50,6 +51,7 @@ func New() *Mouse {
 		Recording:    false,
 		Updating:     true,
 		Maze:         &Maze{},
+		Explore:      &Explore{},
 		status:       "Closed",
 		portOpen:     false,
 		serialBuffer: make([]byte, 256),
@@ -289,6 +291,10 @@ func (m *Mouse) receiveByte(value byte) {
 				if r.Key() == ReportKeyMaze {
 					for _, u := range r.Body.(MazeReport).Updates {
 						m.Maze.Update(u)
+					}
+				} else if r.Key() == ReportKeyExplore {
+					for _, u := range r.Body.(ExploreReport).Updates {
+						m.Explore.Update(u)
 					}
 				} else {
 					m.reports[r.Key()] = r

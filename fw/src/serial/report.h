@@ -30,6 +30,7 @@ typedef enum : uint8_t {
   REPORT_PLATFORM,
   REPORT_CONTROL,
   REPORT_MAZE,
+  REPORT_EXPLORE,
 } report_type_t;
 
 #pragma pack(push, 1)

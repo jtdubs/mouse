@@ -1,4 +1,7 @@
+#include "modes/explore.h"
+
 #include <avr/interrupt.h>
+#include <stddef.h>
 #include <util/atomic.h>
 #include <util/delay.h>
 
@@ -29,18 +32,40 @@ static maze_location_t explorer_next_stack[256];
 static uint8_t         explorer_path_top;
 static uint8_t         explorer_next_top;
 
+typedef enum : uint8_t {
+  STACK_PATH,
+  STACK_NEXT,
+} stack_id_t;
+
+#pragma pack(push, 1)
+typedef struct {
+  stack_id_t      stack_id : 7;
+  bool            push     : 1;
+  maze_location_t value;
+} queue_update_t;
+#pragma pack(pop)
+
+queue_update_t queue_updates[16];
+uint8_t        queue_updates_length;
+
 static inline maze_location_t path_peek() {
   return explorer_path_stack[explorer_path_top];
 }
 
 static inline maze_location_t path_pop() {
-  maze_location_t result                   = path_peek();
+  maze_location_t result = path_peek();
+  if (queue_updates_length < 16) {
+    queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_PATH, .push = false, .value = result};
+  }
   explorer_path_stack[explorer_path_top--] = 0;
   return result;
 }
 
 static inline void path_push(maze_location_t loc) {
   explorer_path_stack[++explorer_path_top] = loc;
+  if (queue_updates_length < 16) {
+    queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_PATH, .push = true, .value = loc};
+  }
 }
 
 static inline maze_location_t next_peek() {
@@ -48,18 +73,24 @@ static inline maze_location_t next_peek() {
 }
 
 static inline maze_location_t next_pop() {
-  maze_location_t result                   = next_peek();
+  maze_location_t result = next_peek();
+  if (queue_updates_length < 16) {
+    queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_NEXT, .push = false, .value = result};
+  }
   explorer_next_stack[explorer_next_top--] = 0;
   return result;
 }
 
 static inline void next_push(maze_location_t loc) {
   explorer_next_stack[++explorer_next_top] = loc;
+  if (queue_updates_length < 16) {
+    queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_NEXT, .push = true, .value = loc};
+  }
 }
 
 void          stop();
 void          face(orientation_t orientation);
-void          advance(maze_location_t loc);
+void          advance(maze_location_t loc, bool update_path);
 orientation_t adjacent(maze_location_t a, maze_location_t b);
 void          classify(maze_location_t loc);
 void          update_location();
@@ -77,8 +108,10 @@ void explore() {
   explore_stopped     = true;
 
   // Our path so far is just the starting square, and we want to visit the square to our north.
-  explorer_path_stack[explorer_path_top] = maze_location(0, 0);
-  explorer_next_stack[explorer_next_top] = maze_location(0, 1);
+  explorer_path_top = 0xFF;
+  explorer_next_top = 0xFF;
+  path_push(maze_location(0, 0));
+  next_push(maze_location(0, 1));
 
   // While we have squares to visit...
   while (explorer_next_top != 0xFF) {
@@ -97,25 +130,23 @@ void explore() {
       // Then move to it and update our map.
       next_pop();
       face(next_orientation);
-      advance(next);
+      advance(next, true);
       classify(next);
     } else {
       // Otherwise, backtrack a square.
       path_pop();
-      maze_location_t prev             = path_pop();
-      orientation_t   prev_orientation = adjacent(curr, prev);
-      face(prev_orientation);
-      advance(prev);
+      maze_location_t prev = path_peek();
+      face(adjacent(curr, prev));
+      advance(prev, false);
     }
   }
 
   // Go back to the starting cell
   while (explorer_path_top != 0x00) {
-    maze_location_t curr        = path_pop();
-    maze_location_t prev        = path_pop();
-    orientation_t   orientation = adjacent(curr, prev);
-    face(orientation);
-    advance(prev);
+    maze_location_t curr = path_pop();
+    maze_location_t prev = path_peek();
+    face(adjacent(curr, prev));
+    advance(prev, false);
   }
 
   // Stop in the middle of the last square.
@@ -124,6 +155,22 @@ void explore() {
 
   // Return to idling.
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
+}
+
+// explore_report() is the report handler for the explore mode.
+uint8_t explore_report(uint8_t *buffer, uint8_t len) {
+  assert(ASSERT_EXPLORE + 0, buffer != NULL);
+  assert(ASSERT_EXPLORE + 1, len >= (sizeof(queue_update_t) * 16));
+
+  queue_update_t *updates = (queue_update_t *)buffer;
+
+  uint8_t report_len = queue_updates_length * sizeof(queue_update_t);
+  for (int i = 0; i < queue_updates_length; i++) {
+    updates[i] = queue_updates[i];
+  }
+  queue_updates_length = 0;
+
+  return report_len;
 }
 
 orientation_t adjacent(maze_location_t a, maze_location_t b) {
@@ -221,7 +268,7 @@ void face(orientation_t orientation) {
 
 // advance moves 1 square in the current direction, leaving the mouse
 // in a position where the sensors are pointed at the centers of the side walls.
-void advance(maze_location_t loc) {
+void advance(maze_location_t loc, bool update_path) {
   update_location();
 
   plan_submit_and_wait(  //
@@ -232,7 +279,9 @@ void advance(maze_location_t loc) {
                 }});
 
   update_location();
-  path_push(loc);
+  if (update_path) {
+    path_push(loc);
+  }
   explore_stopped = false;
 }
 

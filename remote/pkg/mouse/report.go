@@ -16,6 +16,7 @@ const (
 	ReportKeyPlatform
 	ReportKeyControl
 	ReportKeyMaze
+	ReportKeyExplore
 	ReportKeyUnknown
 )
 
@@ -25,6 +26,7 @@ const (
 	ReportTypePlatform ReportType = iota
 	ReportTypeControl
 	ReportTypeMaze
+	ReportTypeExplore
 )
 
 type Report struct {
@@ -160,6 +162,44 @@ func (u MazeUpdate) Distance() uint8 {
 	return uint8(u.Cell >> 8)
 }
 
+type ExploreReport struct {
+	Updates []QueueUpdate
+}
+
+func (r ExploreReport) Symbols() map[string]string {
+	return nil
+}
+
+func (r ExploreReport) Key() ReportKey {
+	return ReportKeyExplore
+}
+
+type StackID uint8
+
+const (
+	StackIDPath StackID = iota
+	StackIDNext
+)
+
+type QueueUpdate struct {
+	Op uint8
+	XY uint8
+}
+
+func (q QueueUpdate) StackID() StackID {
+	return StackID(q.Op & 0x7F)
+}
+
+func (q QueueUpdate) Push() bool {
+	return (q.Op & 0x80) == 0x80
+}
+
+func (q QueueUpdate) Location() (X, Y int) {
+	X = int((q.XY >> 4) & 0x0f)
+	Y = int(q.XY & 0x0f)
+	return
+}
+
 func ReadReport(r *bytes.Reader) (Report, error) {
 	var header ReportHeader
 	if err := binary.Read(r, binary.LittleEndian, &header); err != nil {
@@ -181,6 +221,10 @@ func ReadReport(r *bytes.Reader) (Report, error) {
 		}
 	case ReportTypeMaze:
 		if body, err = ReadMazeReport(r); err != nil {
+			return Report{}, err
+		}
+	case ReportTypeExplore:
+		if body, err = ReadExploreReport(r); err != nil {
 			return Report{}, err
 		}
 	default:
@@ -239,6 +283,19 @@ func ReadMazeReport(r *bytes.Reader) (MazeReport, error) {
 	var report MazeReport
 	for {
 		var update MazeUpdate
+		err := binary.Read(r, binary.LittleEndian, &update)
+		if err != nil {
+			break
+		}
+		report.Updates = append(report.Updates, update)
+	}
+	return report, nil
+}
+
+func ReadExploreReport(r *bytes.Reader) (ExploreReport, error) {
+	var report ExploreReport
+	for {
+		var update QueueUpdate
 		err := binary.Read(r, binary.LittleEndian, &update)
 		if err != nil {
 			break
