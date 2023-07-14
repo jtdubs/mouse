@@ -15,14 +15,6 @@
 
 #include "control/pid.h"
 
-// Measured motor speeds.
-extern float speed_measured_left;   // rpms
-extern float speed_measured_right;  // rpms
-
-// Speed setpoints.
-extern float speed_setpoint_left;   // rpms
-extern float speed_setpoint_right;  // rpms
-
 // speed_init initializes the speed module.
 void speed_init();
 
@@ -37,3 +29,9 @@ void speed_set(float left, float right);
 
 // speed_tune tunes the PID controllers.
 void speed_tune(float kp, float ki, float kd, float alpha);
+
+// speed_read reads the motor speeds.
+void speed_read(float* left, float* right);
+
+// speed_read_setpoints reads the motor speed setpoints.
+void speed_read_setpoints(float* left, float* right);

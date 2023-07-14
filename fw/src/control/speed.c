@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <util/atomic.h>
 
@@ -11,14 +12,15 @@
 #include "platform/motor.h"
 #include "platform/pin.h"
 #include "platform/rtc.h"
+#include "utils/assert.h"
 
 // Motor speeds in RPMs.
-float speed_measured_left;
-float speed_measured_right;
+static float speed_measured_left;
+static float speed_measured_right;
 
 // Motor speed setpointss in RPMs.
-float speed_setpoint_left;
-float speed_setpoint_right;
+static float speed_setpoint_left;
+static float speed_setpoint_right;
 
 // PI controllers for the motors.
 #if defined(ALLOW_SPEED_PID_TUNING)
@@ -52,25 +54,44 @@ void speed_update() {
   int32_t left_delta, right_delta;
   encoders_read_deltas(&left_delta, &right_delta);
 
+  float measured_left, measured_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    measured_left  = speed_measured_left;
+    measured_right = speed_measured_right;
+  }
+
 #if defined(ALLOW_SPEED_PID_TUNING)
-    speed_measured_left = (speed_alpha * COUNTS_TO_RPM(left_delta))  //
-                        + ((1.0f - speed_alpha) * speed_measured_left);
-    speed_measured_right = (speed_alpha * COUNTS_TO_RPM(right_delta))  //
-                         + ((1.0f - speed_alpha) * speed_measured_right);
+  measured_left = (speed_alpha * COUNTS_TO_RPM(left_delta))  //
+                + ((1.0f - speed_alpha) * measured_left);
+  measured_right = (speed_alpha * COUNTS_TO_RPM(right_delta))  //
+                 + ((1.0f - speed_alpha) * measured_right);
 #else
-    speed_measured_left = (SPEED_ALPHA * COUNTS_TO_RPM(left_delta))  //
-                        + ((1.0f - SPEED_ALPHA) * speed_measured_left);
-    speed_measured_right = (SPEED_ALPHA * COUNTS_TO_RPM(right_delta))  //
-                         + ((1.0f - SPEED_ALPHA) * speed_measured_right);
+  measured_left = (SPEED_ALPHA * COUNTS_TO_RPM(left_delta))  //
+                + ((1.0f - SPEED_ALPHA) * measured_left);
+  measured_right = (SPEED_ALPHA * COUNTS_TO_RPM(right_delta))  //
+                 + ((1.0f - SPEED_ALPHA) * measured_right);
 #endif
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    speed_measured_left  = measured_left;
+    speed_measured_right = measured_right;
   }
 }
 
 void speed_tick() {
-  float setpoint_left = fabsf(speed_setpoint_left);
-  float power_left    = LEFT_RPM_TO_POWER(setpoint_left);
-  if (setpoint_left < MIN_MOTOR_RPM) {
+  float measured_left, measured_right;
+  float setpoint_left, setpoint_right;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    measured_left  = speed_measured_left;
+    measured_right = speed_measured_right;
+    setpoint_left  = speed_setpoint_left;
+    setpoint_right = speed_setpoint_right;
+  }
+
+  float setpoint_left_mag = fabsf(setpoint_left);
+  float power_left        = LEFT_RPM_TO_POWER(setpoint_left_mag);
+
+  if (setpoint_left_mag < MIN_MOTOR_RPM) {
 #if defined(ALLOW_SPEED_PID_TUNING)
     pid_reset(&speed_pid_left);
 #else
@@ -79,15 +100,16 @@ void speed_tick() {
     power_left = 0;
   } else {
 #if defined(ALLOW_SPEED_PID_TUNING)
-    power_left += pid_update(&speed_pid_left, setpoint_left, fabsf(speed_measured_left));
+    power_left += pid_update(&speed_pid_left, setpoint_left_mag, fabsf(measured_left));
 #else
-    power_left += pi_update(&speed_pid_left, setpoint_left, fabsf(speed_measured_left));
+    power_left += pi_update(&speed_pid_left, setpoint_left_mag, fabsf(measured_left));
 #endif
   }
 
-  float setpoint_right = fabsf(speed_setpoint_right);
-  float power_right    = RIGHT_RPM_TO_POWER(setpoint_right);
-  if (setpoint_right < MIN_MOTOR_RPM) {
+  float setpoint_right_mag = fabsf(setpoint_right);
+  float power_right        = RIGHT_RPM_TO_POWER(setpoint_right_mag);
+
+  if (setpoint_right_mag < MIN_MOTOR_RPM) {
 #if defined(ALLOW_SPEED_PID_TUNING)
     pid_reset(&speed_pid_right);
 #else
@@ -96,22 +118,24 @@ void speed_tick() {
     power_right = 0;
   } else {
 #if defined(ALLOW_SPEED_PID_TUNING)
-    power_right += pid_update(&speed_pid_right, setpoint_right, fabsf(speed_measured_right));
+    power_right += pid_update(&speed_pid_right, setpoint_right_mag, fabsf(measured_right));
 #else
-    power_right += pi_update(&speed_pid_right, setpoint_right, fabsf(speed_measured_right));
+    power_right += pi_update(&speed_pid_right, setpoint_right_mag, fabsf(measured_right));
 #endif
   }
 
-  bool    forward_left  = signbitf(speed_setpoint_left) == 0;
-  bool    forward_right = signbitf(speed_setpoint_right) == 0;
+  bool    forward_left  = signbitf(setpoint_left) == 0;
+  bool    forward_right = signbitf(setpoint_right) == 0;
   int16_t left          = (int16_t)lrintf(forward_left ? power_left : -power_left);
   int16_t right         = (int16_t)lrintf(forward_right ? power_right : -power_right);
   motor_set(left, right);
 }
 
 void speed_set(float left, float right) {
-  speed_setpoint_left  = left;
-  speed_setpoint_right = right;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    speed_setpoint_left  = left;
+    speed_setpoint_right = right;
+  }
 }
 
 void speed_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
@@ -127,4 +151,26 @@ void speed_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_un
     speed_pid_right.ki = ki;
   }
 #endif
+}
+
+// speed_read reads the motor speeds.
+void speed_read(float* left, float* right) {
+  assert(ASSERT_SPEED + 0, left != NULL);
+  assert(ASSERT_SPEED + 1, right != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *left  = speed_measured_left;
+    *right = speed_measured_right;
+  }
+}
+
+// speed_read_setpoints reads the motor speed setpoints.
+void speed_read_setpoints(float* left, float* right) {
+  assert(ASSERT_SPEED + 2, left != NULL);
+  assert(ASSERT_SPEED + 3, right != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *left  = speed_setpoint_left;
+    *right = speed_setpoint_right;
+  }
 }

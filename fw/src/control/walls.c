@@ -1,15 +1,19 @@
 #include "walls.h"
 
+#include <stddef.h>
+#include <util/atomic.h>
+
 #include "control/sensor_cal.h"
 #include "platform/adc.h"
 #include "platform/pin.h"
+#include "utils/assert.h"
 
-bool wall_left_present;
-bool wall_right_present;
-bool wall_forward_present;
+static bool wall_left_present;
+static bool wall_right_present;
+static bool wall_forward_present;
 
-int16_t wall_error_left;
-int16_t wall_error_right;
+static int16_t wall_error_left;
+static int16_t wall_error_right;
 
 static bool wall_led_control;
 
@@ -25,15 +29,47 @@ void walls_update() {
   uint16_t left, front, right;
   adc_read_sensors(&left, &front, &right);
 
-  wall_left_present    = (left >= (sensor_threshold_left - 80));
-  wall_right_present   = (right >= (sensor_threshold_right - 80));
-  wall_forward_present = (front >= (sensor_threshold_center - 60));
-  wall_error_left      = left - sensor_threshold_left;
-  wall_error_right     = sensor_threshold_right - right;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    wall_left_present    = (left >= (sensor_threshold_left - 80));
+    wall_right_present   = (right >= (sensor_threshold_right - 80));
+    wall_forward_present = (front >= (sensor_threshold_center - 60));
+    wall_error_left      = left - sensor_threshold_left;
+    wall_error_right     = sensor_threshold_right - right;
+  }
 
   if (wall_led_control) {
     pin_set2(LED_LEFT, wall_left_present);
     pin_set2(LED_RIGHT, wall_right_present);
     pin_set2(LED_BUILTIN, wall_forward_present);
+  }
+}
+
+// walls_error returns the "centering error" of the mouse, based on wall distances.
+float walls_error() {
+  float error = 0.0f;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    if (!wall_left_present && !wall_right_present) {
+      error = 0;
+    } else if (wall_left_present && !wall_right_present) {
+      error = wall_error_left * 2.0f;
+    } else if (!wall_left_present && wall_right_present) {
+      error = wall_error_right * 2.0f;
+    } else {
+      error = (float)(wall_error_left + wall_error_right);
+    }
+  }
+  return error;
+}
+
+// walls_present returns the presence of walls on each side of the mouse.
+void walls_present(bool* left, bool* right, bool* forward) {
+  assert(ASSERT_WALLS + 0, left != NULL);
+  assert(ASSERT_WALLS + 1, right != NULL);
+  assert(ASSERT_WALLS + 2, forward != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *left    = wall_left_present;
+    *right   = wall_right_present;
+    *forward = wall_forward_present;
   }
 }

@@ -33,18 +33,6 @@ static pid_t linear_angle_error_pid;
 
 static float linear_wall_error;
 
-static float calculate_wall_error() {
-  if (!wall_left_present && !wall_right_present) {
-    return 0;
-  } else if (wall_left_present && !wall_right_present) {
-    return wall_error_left * 2.0f;
-  } else if (!wall_left_present && wall_right_present) {
-    return wall_error_right * 2.0f;
-  } else {
-    return (float)(wall_error_left + wall_error_right);
-  }
-}
-
 void linear_init() {
   linear_wall_error_pid.kp  = WALL_KP;
   linear_wall_error_pid.ki  = WALL_KI;
@@ -83,6 +71,12 @@ void linear_start(float distance /* mm */, bool stop) {
 bool linear_tick() {
   uint16_t center;
   adc_read(ADC_SENSOR_CENTER, &center);
+
+  float speed_measured_left, speed_measured_right;
+  speed_read(&speed_measured_left, &speed_measured_right);
+
+  float speed_setpoint_left, speed_setpoint_right;
+  speed_read_setpoints(&speed_setpoint_left, &speed_setpoint_right);
 
   // Emergency stop if too close to a wall.
   if (center >= SENSOR_EMERGENCY_STOP) {
@@ -129,11 +123,11 @@ bool linear_tick() {
 
   // Adjust for the wall (centering) error.
 #if defined(ALLOW_WALL_PID_TUNING)
-  linear_wall_error = (linear_wall_alpha * calculate_wall_error())  //
+  linear_wall_error = (linear_wall_alpha * walls_error())  //
                     + ((1.0f - linear_wall_alpha) * linear_wall_error);
   float wall_adjustment = pid_update(&linear_wall_error_pid, 0.0, linear_wall_error);
 #else
-  linear_wall_error = (WALL_ALPHA * calculate_wall_error())  //
+  linear_wall_error = (WALL_ALPHA * walls_error())  //
                     + ((1.0f - WALL_ALPHA) * linear_wall_error);
   float wall_adjustment = pi_update(&linear_wall_error_pid, 0.0, linear_wall_error);
 #endif

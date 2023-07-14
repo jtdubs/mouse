@@ -190,13 +190,11 @@ uint8_t control_report(uint8_t *buffer, uint8_t len) {
 
   control_report_t *report = (control_report_t *)buffer;
 
-  report->plan                 = current_plan;
-  report->speed.measured_left  = speed_measured_left;
-  report->speed.measured_right = speed_measured_right;
-  report->speed.setpoint_left  = speed_setpoint_left;
-  report->speed.setpoint_right = speed_setpoint_right;
-  report->position.distance    = position_distance;
-  report->position.theta       = position_theta;
+  report->plan = current_plan;
+  speed_read(&report->speed.measured_left, &report->speed.measured_right);
+  speed_read_setpoints(&report->speed.setpoint_left, &report->speed.setpoint_right);
+  report->position.distance = position_distance;
+  report->position.theta    = position_theta;
   switch (current_plan.type) {
     case PLAN_TYPE_SENSOR_CAL:
       report->plan_data.sensor_cal.left   = sensor_threshold_left;

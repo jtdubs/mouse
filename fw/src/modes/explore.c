@@ -339,11 +339,7 @@ void classify(maze_location_t loc) {
   assert(ASSERT_EXPLORE + 4, explore_orientation != INVALID);
 
   bool wall_forward, wall_left, wall_right;
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    wall_forward = wall_forward_present;
-    wall_left    = wall_left_present;
-    wall_right   = wall_right_present;
-  }
+  walls_present(&wall_left, &wall_right, &wall_forward);
 
   // Classify the square based on sensor readings.
   cell_t cell = {

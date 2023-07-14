@@ -14,15 +14,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// Whether or not each wall is present.
-extern bool wall_left_present;
-extern bool wall_right_present;
-extern bool wall_forward_present;
-
-// The left/right error vs. the calibrated values.
-extern int16_t wall_error_left;
-extern int16_t wall_error_right;
-
 // walls_init initializes the walls module.
 void walls_init();
 
@@ -32,3 +23,9 @@ void walls_led_control(bool enabled);
 
 // walls_update reads the current sensor values and updates the wall state.
 void walls_update();
+
+// walls_error returns the "centering error" of the mouse, based on wall distances.
+float walls_error();
+
+// walls_present returns the presence of walls on each side of the mouse.
+void walls_present(bool* left, bool* right, bool* forward);
