@@ -4,14 +4,21 @@
 #include <avr/io.h>
 #include <avr/wdt.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <util/atomic.h>
 
 #include "platform/adc.h"
 #include "platform/pin.h"
+#include "utils/assert.h"
 
 static timer_callback_t timer_callback;
 
 void timer_set_callback(timer_callback_t callback) {
-  timer_callback = callback;
+  assert(ASSERT_TIMER + 0, callback != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    timer_callback = callback;
+  }
 }
 
 // timer_init initializes timer.

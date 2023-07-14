@@ -8,15 +8,12 @@
 
 // The encoded and decoded command, and associated state.
 static command_t *command;
-static bool       command_available;
 
 // on_command_received is the USART0 callback for when a command is received.
 static void on_command_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
   assert(ASSERT_COMMAND + 0, command == NULL);
-  assert(ASSERT_COMMAND + 1, !command_available);
 
-  command           = (command_t *)buffer;
-  command_available = true;
+  command = (command_t *)buffer;
 }
 
 // command_init initializes the command module.
@@ -27,17 +24,18 @@ void command_init() {
 
 // command_processed indicates the command has been processed.
 void command_processed() {
-  command           = NULL;
-  command_available = false;
+  command = NULL;
   usart0_enable_receiver();
 }
 
 // command_next gets the next command, if one is available.
 bool command_next(command_t *c) {
+  assert(ASSERT_COMMAND + 2, c != NULL);
+
   bool result = false;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    if (command_available) {
+    if (command != NULL) {
       *c     = *command;
       result = true;
     }

@@ -1,6 +1,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stddef.h>
+#include <util/atomic.h>
 
 #include "platform/usart0_int.h"
 #include "utils/assert.h"
@@ -32,12 +33,14 @@ void usart0_write(uint8_t *buffer, uint8_t length) {
   assert(ASSERT_USART0_WRITE + 1, length > 0);
   assert(ASSERT_USART0_WRITE + 2, usart0_write_ready());
 
-  // Setup the initial write state.
-  usart0_write_buffer   = buffer;
-  usart0_write_length   = length;
-  usart0_write_index    = 0;
-  usart0_write_state    = WRITE_START;
-  usart0_write_checksum = 0;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    // Setup the initial write state.
+    usart0_write_buffer   = buffer;
+    usart0_write_length   = length;
+    usart0_write_index    = 0;
+    usart0_write_state    = WRITE_START;
+    usart0_write_checksum = 0;
+  }
 
   // Initiate the write by enabling the Data Register Empty Interrupt.
   UCSR0B |= 1 << UDRIE0;

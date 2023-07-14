@@ -2,6 +2,7 @@
 
 #include <util/atomic.h>
 
+#include "platform/pin.h"
 #include "utils/assert.h"
 #include "utils/sim.h"
 
@@ -24,7 +25,9 @@ void plan_submit(plan_t *plan) {
 
 // plan_wait waits for the current plan to be implemented.
 void plan_wait() {
+  pin_clear(PROBE_PLAN);
   while (current_plan.state != PLAN_STATE_IMPLEMENTED) {}
+  pin_set(PROBE_PLAN);
 }
 
 // plan_submit_and_wait submits a new plan, and wait for it to be implemented.

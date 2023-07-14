@@ -12,14 +12,13 @@
 
 #include "platform/pin.h"
 
-// The power levels of each motor.
-// Range: [-511, 511]
-extern int16_t motor_power_left;
-extern int16_t motor_power_right;
-
 // motor_init initializes the motors.
 void motor_init();
 
-// Sets the power of the motors.
+// motor_set sets the power levels of the motors.
 // Range: [-511, 511]
 void motor_set(int16_t left, int16_t right);
+
+// motor_read reads the power levels of the motors.
+// Range: [-511, 511]
+void motor_read(int16_t* left, int16_t* right);

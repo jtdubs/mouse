@@ -15,10 +15,10 @@ static const uint8_t SelectorThresholds[16] = {21,  42,  60,  77,  91,  102, 112
 
 uint8_t selector_update() {
   // Read the selector voltage.
-  uint8_t v;
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    v = adc_values[ADC_SELECTOR] >> 2;
-  }
+  uint16_t raw;
+  adc_read(ADC_SELECTOR, &raw);
+
+  uint8_t v = raw >> 2;
 
   if (v > 180) {
     // If the button was just pressed, return the selected value.

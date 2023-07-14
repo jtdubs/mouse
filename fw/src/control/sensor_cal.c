@@ -52,9 +52,13 @@ bool sensor_cal_tick() {
     return true;
   }
 
-  sensor_sum_left   += adc_values[ADC_SENSOR_LEFT];
-  sensor_sum_right  += adc_values[ADC_SENSOR_RIGHT];
-  sensor_sum_center += adc_values[ADC_SENSOR_CENTER];
+  uint16_t left, right, center;
+  adc_read(ADC_SENSOR_LEFT, &left);
+  adc_read(ADC_SENSOR_RIGHT, &right);
+  adc_read(ADC_SENSOR_CENTER, &center);
+  sensor_sum_left   += left;
+  sensor_sum_right  += right;
+  sensor_sum_center += center;
   sensor_sample_count++;
 
   return false;

@@ -1,13 +1,15 @@
 #include "motor.h"
 
 #include <avr/io.h>
+#include <stddef.h>
+#include <util/atomic.h>
 
 #include "platform/pin.h"
 #include "utils/assert.h"
 #include "utils/math.h"
 
-int16_t motor_power_left;
-int16_t motor_power_right;
+static int16_t motor_power_left;
+static int16_t motor_power_right;
 
 // motor_init initializes the motors.
 void motor_init() {
@@ -30,14 +32,28 @@ void motor_set(int16_t left, int16_t right) {
   assert(ASSERT_MOTOR + 0, left > -512 && left < 512);
   assert(ASSERT_MOTOR + 1, right > -512 && right < 512);
 
-  motor_power_left  = left;
-  motor_power_right = right;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    motor_power_left  = left;
+    motor_power_right = right;
 
-  // set the direction of the motors
-  pin_set2(LEFT_DIR, left < 0);
-  pin_set2(RIGHT_DIR, right >= 0);
+    // set the direction of the motors
+    pin_set2(LEFT_DIR, left < 0);
+    pin_set2(RIGHT_DIR, right >= 0);
 
-  // set the PWM duty cycle for each motor
-  OCR1A = abs16(left);
-  OCR1B = abs16(right);
+    // set the PWM duty cycle for each motor
+    OCR1A = abs16(left);
+    OCR1B = abs16(right);
+  }
+}
+
+// motor_read reads the power levels of the motors.
+// Range: [-511, 511]
+void motor_read(int16_t* left, int16_t* right) {
+  assert(ASSERT_MOTOR + 2, left != NULL);
+  assert(ASSERT_MOTOR + 3, right != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *left  = motor_power_left;
+    *right = motor_power_right;
+  }
 }

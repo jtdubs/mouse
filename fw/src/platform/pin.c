@@ -7,7 +7,7 @@ const pin_t LED_LEFT    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(3)};
 const pin_t IR_LEDS     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(4)};
 const pin_t LED_BUILTIN = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(5)};
 const pin_t PROBE_TICK  = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(3)};
-const pin_t PROBE_1     = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(4)};
+const pin_t PROBE_PLAN  = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(4)};
 const pin_t PROBE_2     = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(5)};
 const pin_t LED_RIGHT   = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(6)};
 const pin_t LEFT_DIR    = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(7)};
@@ -22,7 +22,7 @@ void pin_init() {
        | (IR_LEDS.mask)       //
        | (LED_BUILTIN.mask);  //
   DDRC = (PROBE_TICK.mask)    //
-       | (PROBE_1.mask)       //
+       | (PROBE_PLAN.mask)    //
        | (PROBE_2.mask);      //
   DDRD = (LED_RIGHT.mask)     //
        | (LEFT_DIR.mask);     //

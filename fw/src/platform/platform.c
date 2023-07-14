@@ -2,6 +2,7 @@
 
 #include <avr/power.h>
 #include <stddef.h>
+#include <util/atomic.h>
 
 #include "platform/adc.h"
 #include "platform/encoders.h"
@@ -59,17 +60,22 @@ uint8_t platform_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   assert(ASSERT_PLATFORM + 0, buffer != NULL);
   assert(ASSERT_PLATFORM + 1, len >= sizeof(platform_report_t));
 
-  platform_report_t *report = (platform_report_t *)buffer;
-  report->encoders.left     = encoders_left;
-  report->encoders.right    = encoders_right;
-  report->leds.ir           = pin_is_set(IR_LEDS);
-  report->leds.left         = pin_is_set(LED_LEFT);
-  report->leds.right        = pin_is_set(LED_RIGHT);
-  report->leds.onboard      = pin_is_set(LED_BUILTIN);
-  report->motors.left       = motor_power_left;
-  report->motors.right      = motor_power_right;
-  report->sensors.left      = adc_values[ADC_SENSOR_LEFT];
-  report->sensors.center    = adc_values[ADC_SENSOR_CENTER];
-  report->sensors.right     = adc_values[ADC_SENSOR_RIGHT];
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    platform_report_t *report = (platform_report_t *)buffer;
+    encoders_read(&report->encoders.left, &report->encoders.right);
+    report->leds.ir      = pin_is_set(IR_LEDS);
+    report->leds.left    = pin_is_set(LED_LEFT);
+    report->leds.right   = pin_is_set(LED_RIGHT);
+    report->leds.onboard = pin_is_set(LED_BUILTIN);
+    motor_read(&report->motors.left, &report->motors.right);
+
+    uint16_t left, right, center;
+    adc_read(ADC_SENSOR_LEFT, &left);
+    adc_read(ADC_SENSOR_CENTER, &center);
+    adc_read(ADC_SENSOR_RIGHT, &right);
+    report->sensors.left   = left;
+    report->sensors.center = center;
+    report->sensors.right  = right;
+  }
   return sizeof(platform_report_t);
 }

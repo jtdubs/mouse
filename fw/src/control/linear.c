@@ -81,7 +81,8 @@ void linear_start(float distance /* mm */, bool stop) {
 }
 
 bool linear_tick() {
-  uint16_t center = adc_values[ADC_SENSOR_CENTER];
+  uint16_t center;
+  adc_read(ADC_SENSOR_CENTER, &center);
 
   // Emergency stop if too close to a wall.
   if (center >= SENSOR_EMERGENCY_STOP) {

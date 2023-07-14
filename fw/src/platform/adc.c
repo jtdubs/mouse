@@ -2,11 +2,26 @@
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <stddef.h>
+#include <util/atomic.h>
 
 #include "platform/pin.h"
+#include "utils/assert.h"
+
+// adc_next_channel defines the sequence in which channels are read.
+constexpr adc_channel_t ADC_NEXT_CHANNEL[ADC_CHANNEL_COUNT] = {
+    [ADC_SENSOR_RIGHT]    = ADC_SENSOR_CENTER,    //
+    [ADC_SENSOR_CENTER]   = ADC_SENSOR_LEFT,      //
+    [ADC_SENSOR_LEFT]     = ADC_SELECTOR,         //
+    [ADC_SELECTOR]        = ADC_BATTERY_VOLTAGE,  //
+    [ADC_BATTERY_VOLTAGE] = ADC_SENSOR_RIGHT,
+};
+
+// adc_first_channel is the first channel to be read.
+constexpr adc_channel_t ADC_FIRST_CHANNEL = ADC_SENSOR_RIGHT;
 
 // Raw 10-bit readings from ADC channels.
-uint16_t adc_values[ADC_CHANNEL_COUNT];
+static uint16_t adc_values[ADC_CHANNEL_COUNT];
 
 // adc_init initializes the ADC.
 void adc_init() {
@@ -22,6 +37,15 @@ void adc_init() {
 // adc_sample samples the ADC channels.
 void adc_sample() {
   ADCSRA |= _BV(ADSC);
+}
+
+void adc_read(adc_channel_t channel, uint16_t* value) {
+  assert(ASSERT_ADC + 0, channel < ADC_CHANNEL_COUNT);
+  assert(ASSERT_ADC + 1, value != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *value = adc_values[channel];
+  }
 }
 
 ISR(ADC_vect, ISR_BLOCK) {

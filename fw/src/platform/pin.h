@@ -26,7 +26,7 @@ extern const pin_t LED_LEFT;
 extern const pin_t IR_LEDS;
 extern const pin_t LED_BUILTIN;
 extern const pin_t PROBE_TICK;
-extern const pin_t PROBE_1;
+extern const pin_t PROBE_PLAN;
 extern const pin_t PROBE_2;
 extern const pin_t LED_RIGHT;
 extern const pin_t LEFT_DIR;

@@ -19,17 +19,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// Encoder counts.
-extern int32_t encoders_left;
-extern int32_t encoders_right;
-
-// Changes to encoder counts since the last update.
-extern int8_t encoders_left_delta;
-extern int8_t encoders_right_delta;
-
 // encoders_init initializes the encoders.
 void encoders_init();
 
 // encoders_update applies changes since the last update.
 // NOTE: this must be called frequently so the deltas do not overflow!
 void encoders_update();
+
+// encoders_read reads the encoder counts.
+void encoders_read(int32_t* left, int32_t* right);
+
+// encoders_read_deltas reads the changes to the encoder counts since the last update.
+void encoders_read_deltas(int32_t* left, int32_t* right);

@@ -2,17 +2,20 @@
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <stddef.h>
+#include <util/atomic.h>
 
 #include "platform/pin.h"
 #include "platform/rtc.h"
+#include "utils/assert.h"
 
 // Encoder counts.
-int32_t encoders_left;
-int32_t encoders_right;
+static int32_t encoders_left;
+static int32_t encoders_right;
 
 // Changes to encoder counts since the last update.
-int8_t encoders_left_delta;
-int8_t encoders_right_delta;
+static int8_t encoders_left_delta;
+static int8_t encoders_right_delta;
 
 // encoders_init initializes the encoders.
 void encoders_init() {
@@ -23,12 +26,33 @@ void encoders_init() {
 }
 
 // encoders_update applies changes since the last update.
-// NOTE: MUST BE CALLED FROM AN ATOMIC BLOCK!
 void encoders_update() {
-  encoders_left        += (int32_t)encoders_left_delta;
-  encoders_right       += (int32_t)encoders_right_delta;
-  encoders_left_delta   = 0;
-  encoders_right_delta  = 0;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    encoders_left        += (int32_t)encoders_left_delta;
+    encoders_right       += (int32_t)encoders_right_delta;
+    encoders_left_delta   = 0;
+    encoders_right_delta  = 0;
+  }
+}
+
+void encoders_read(int32_t* left, int32_t* right) {
+  assert(ASSERT_ENCODERS + 0, left != NULL);
+  assert(ASSERT_ENCODERS + 1, right != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *left  = encoders_left;
+    *right = encoders_right;
+  }
+}
+
+void encoders_read_deltas(int32_t* left, int32_t* right) {
+  assert(ASSERT_ENCODERS + 2, left != NULL);
+  assert(ASSERT_ENCODERS + 3, right != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *left  = encoders_left_delta;
+    *right = encoders_right_delta;
+  }
 }
 
 // Left Encoder Clock

@@ -33,23 +33,11 @@ typedef enum : uint8_t {
   ADC_CHANNEL_COUNT,
 } adc_channel_t;
 
-// Raw 10-bit readings from ADC channels.
-extern uint16_t adc_values[ADC_CHANNEL_COUNT];
-
 // adc_init initializes the ADC.
 void adc_init();
 
 // adc_sample samples the ADC channels.
 void adc_sample();
 
-// adc_next_channel defines the sequence in which channels are read.
-constexpr adc_channel_t ADC_NEXT_CHANNEL[ADC_CHANNEL_COUNT] = {
-    [ADC_SENSOR_RIGHT]    = ADC_SENSOR_CENTER,    //
-    [ADC_SENSOR_CENTER]   = ADC_SENSOR_LEFT,      //
-    [ADC_SENSOR_LEFT]     = ADC_SELECTOR,         //
-    [ADC_SELECTOR]        = ADC_BATTERY_VOLTAGE,  //
-    [ADC_BATTERY_VOLTAGE] = ADC_SENSOR_RIGHT,
-};
-
-// adc_first_channel is the first channel to be read.
-constexpr adc_channel_t ADC_FIRST_CHANNEL = ADC_SENSOR_RIGHT;
+// adc_read reads the value of an ADC channel.
+void adc_read(adc_channel_t channel, uint16_t* value);

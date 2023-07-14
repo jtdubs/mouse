@@ -1,6 +1,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stddef.h>
+#include <util/atomic.h>
 
 #include "platform/usart0_int.h"
 #include "utils/assert.h"
@@ -31,13 +32,17 @@ void usart0_disable_receiver() {
 // usart0_enable_receiver enables the USART0 receiver.
 void usart0_enable_receiver() {
   assert(ASSERT_USART0_READ + 0, usart0_read_callback != NULL);
+
   UCSR0B |= _BV(RXEN0);
 }
 
 // usart0_set_read_callback sets the read callback for USART0.
 void usart0_set_read_callback(read_callback_t callback) {
   assert(ASSERT_USART0_READ + 1, callback != NULL);
-  usart0_read_callback = callback;
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    usart0_read_callback = callback;
+  }
 }
 
 // The USART0 Receive Complete Interrupt.

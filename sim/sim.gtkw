@@ -49,7 +49,7 @@ logic.report_type[7:0]
 -Probes
 @28
 logic.PROBE_TICK
-logic.PROBE_1
+logic.PROBE_PLAN
 logic.PROBE_2
 @200
 -LEDs

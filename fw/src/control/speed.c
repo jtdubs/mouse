@@ -49,16 +49,19 @@ void speed_init() {
 }
 
 void speed_update() {
+  int32_t left_delta, right_delta;
+  encoders_read_deltas(&left_delta, &right_delta);
+
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
 #if defined(ALLOW_SPEED_PID_TUNING)
-    speed_measured_left = (speed_alpha * COUNTS_TO_RPM(encoders_left_delta))  //
+    speed_measured_left = (speed_alpha * COUNTS_TO_RPM(left_delta))  //
                         + ((1.0f - speed_alpha) * speed_measured_left);
-    speed_measured_right = (speed_alpha * COUNTS_TO_RPM(encoders_right_delta))  //
+    speed_measured_right = (speed_alpha * COUNTS_TO_RPM(right_delta))  //
                          + ((1.0f - speed_alpha) * speed_measured_right);
 #else
-    speed_measured_left = (SPEED_ALPHA * COUNTS_TO_RPM(encoders_left_delta))  //
+    speed_measured_left = (SPEED_ALPHA * COUNTS_TO_RPM(left_delta))  //
                         + ((1.0f - SPEED_ALPHA) * speed_measured_left);
-    speed_measured_right = (SPEED_ALPHA * COUNTS_TO_RPM(encoders_right_delta))  //
+    speed_measured_right = (SPEED_ALPHA * COUNTS_TO_RPM(right_delta))  //
                          + ((1.0f - SPEED_ALPHA) * speed_measured_right);
 #endif
   }

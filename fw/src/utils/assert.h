@@ -22,6 +22,9 @@ enum assert_range_t : uint32_t {
   ASSERT_PLATFORM     = 0x80000000,
   ASSERT_CONTROL      = 0x90000000,
   ASSERT_EXPLORE      = 0xA0000000,
+  ASSERT_ADC          = 0xB0000000,
+  ASSERT_TIMER        = 0xC0000000,
+  ASSERT_ENCODERS     = 0xD0000000,
 };
 
 #if !defined(NOASSERT)

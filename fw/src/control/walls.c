@@ -22,9 +22,10 @@ void walls_led_control(bool enabled) {
 }
 
 void walls_update() {
-  uint16_t left  = adc_values[ADC_SENSOR_LEFT];
-  uint16_t right = adc_values[ADC_SENSOR_RIGHT];
-  uint16_t front = adc_values[ADC_SENSOR_CENTER];
+  uint16_t left, right, front;
+  adc_read(ADC_SENSOR_LEFT, &left);
+  adc_read(ADC_SENSOR_RIGHT, &right);
+  adc_read(ADC_SENSOR_CENTER, &front);
 
   wall_left_present    = (left >= (sensor_threshold_left - 80));
   wall_right_present   = (right >= (sensor_threshold_right - 80));
