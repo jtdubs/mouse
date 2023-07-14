@@ -142,7 +142,7 @@ void explore() {
   }
 
   // Go back to the starting cell
-  while (explorer_path_top != 0x00) {
+  while (explorer_path_top != 0x01) {
     maze_location_t curr = path_pop();
     maze_location_t prev = path_peek();
     face(adjacent(curr, prev));
