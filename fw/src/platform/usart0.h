@@ -26,8 +26,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-constexpr uint8_t START_BYTE = 0x02;
-
 typedef void (*read_callback_t)(uint8_t* buffer, uint8_t length);
 
 // usart0_init initializes USART0.

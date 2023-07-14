@@ -7,8 +7,8 @@
 #include "utils/assert.h"
 
 // The encoded and decoded command, and associated state.
-volatile command_t *command;
-volatile bool       command_available;
+static command_t *command;
+static bool       command_available;
 
 // on_command_received is the USART0 callback for when a command is received.
 static void on_command_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
@@ -30,4 +30,18 @@ void command_processed() {
   command           = NULL;
   command_available = false;
   usart0_enable_receiver();
+}
+
+// command_next gets the next command, if one is available.
+bool command_next(command_t *c) {
+  bool result = false;
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    if (command_available) {
+      *c     = *command;
+      result = true;
+    }
+  }
+
+  return result;
 }

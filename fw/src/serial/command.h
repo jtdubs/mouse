@@ -60,12 +60,11 @@ typedef struct {
 } command_t;
 #pragma pack(pop)
 
-// command is the current command.
-extern volatile command_t *command;
-extern volatile bool       command_available;
-
 // command_init initializes the command module.
 void command_init();
 
 // command_processed indicates the command has been processed.
 void command_processed();
+
+// command_next gets the next command, if one is available.
+bool command_next(command_t *command);

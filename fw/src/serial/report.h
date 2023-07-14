@@ -24,29 +24,6 @@
 
 #include <stdint.h>
 
-// report_type_t identifies the type of a given report.
-typedef enum : uint8_t {
-  // Individual report types.
-  REPORT_PLATFORM,
-  REPORT_CONTROL,
-  REPORT_MAZE,
-  REPORT_EXPLORE,
-} report_type_t;
-
-#pragma pack(push, 1)
-// report_header_t represents a mouse report header.
-typedef struct {
-  report_type_t type;
-  uint32_t      rtc_micros;
-} report_header_t;
-
-// report_t represents a mouse report.
-typedef struct {
-  report_header_t header;
-  uint8_t         data[48];  // the format of the data is defined by the report type
-} report_t;
-#pragma pack(pop)
-
 // report_init initializes the report module.
 void report_init();
 

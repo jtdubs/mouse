@@ -2,7 +2,7 @@
 #include <avr/io.h>
 #include <stddef.h>
 
-#include "platform/usart0.h"
+#include "platform/usart0_int.h"
 #include "utils/assert.h"
 
 constexpr uint8_t MAX_READ_SIZE = 64;
