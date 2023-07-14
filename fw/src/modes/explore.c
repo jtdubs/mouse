@@ -118,9 +118,13 @@ void explore() {
     maze_location_t next = next_peek();
     maze_location_t curr = path_peek();
 
-    while (maze.cells[next].visited) {
+    while (explorer_next_top != 0xFF && maze.cells[next].visited) {
       next_pop();
       next = next_peek();
+    }
+
+    if (explorer_next_top == 0xFF) {
+      break;
     }
 
     orientation_t next_orientation = adjacent(curr, next);
