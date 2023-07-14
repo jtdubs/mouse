@@ -1,6 +1,7 @@
 #include "maze.h"
 
 #include <string.h>
+#include <util/atomic.h>
 
 #include "utils/assert.h"
 
@@ -69,11 +70,13 @@ void maze_update(maze_location_t loc, cell_t cell) {
   assert(ASSERT_MAZE + 0, maze_x(loc) < MAZE_WIDTH);
   assert(ASSERT_MAZE + 1, maze_y(loc) < MAZE_HEIGHT);
 
-  maze.cells[loc] = cell;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    maze.cells[loc] = cell;
 
-  if (maze_update_queue_length < 16) {
-    maze_update_queue[maze_update_queue_length++] = loc;
-  } else {
-    maze_send();
+    if (maze_update_queue_length < 16) {
+      maze_update_queue[maze_update_queue_length++] = loc;
+    } else {
+      maze_send();
+    }
   }
 }

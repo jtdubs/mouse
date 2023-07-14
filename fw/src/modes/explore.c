@@ -45,7 +45,7 @@ typedef struct {
 } queue_update_t;
 #pragma pack(pop)
 
-queue_update_t queue_updates[8];
+queue_update_t queue_updates[16];
 uint8_t        queue_updates_length;
 
 static inline maze_location_t path_peek() {
@@ -54,17 +54,21 @@ static inline maze_location_t path_peek() {
 
 static inline maze_location_t path_pop() {
   maze_location_t result = path_peek();
-  if (queue_updates_length < 16) {
-    queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_PATH, .push = false, .value = result};
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    if (queue_updates_length < 16) {
+      queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_PATH, .push = false, .value = result};
+    }
+    explorer_path_stack[explorer_path_top--] = 0;
   }
-  explorer_path_stack[explorer_path_top--] = 0;
   return result;
 }
 
 static inline void path_push(maze_location_t loc) {
-  explorer_path_stack[++explorer_path_top] = loc;
-  if (queue_updates_length < 16) {
-    queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_PATH, .push = true, .value = loc};
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    explorer_path_stack[++explorer_path_top] = loc;
+    if (queue_updates_length < 16) {
+      queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_PATH, .push = true, .value = loc};
+    }
   }
 }
 
@@ -74,17 +78,21 @@ static inline maze_location_t next_peek() {
 
 static inline maze_location_t next_pop() {
   maze_location_t result = next_peek();
-  if (queue_updates_length < 16) {
-    queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_NEXT, .push = false, .value = result};
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    if (queue_updates_length < 16) {
+      queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_NEXT, .push = false, .value = result};
+    }
+    explorer_next_stack[explorer_next_top--] = 0;
   }
-  explorer_next_stack[explorer_next_top--] = 0;
   return result;
 }
 
 static inline void next_push(maze_location_t loc) {
-  explorer_next_stack[++explorer_next_top] = loc;
-  if (queue_updates_length < 16) {
-    queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_NEXT, .push = true, .value = loc};
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    explorer_next_stack[++explorer_next_top] = loc;
+    if (queue_updates_length < 16) {
+      queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_NEXT, .push = true, .value = loc};
+    }
   }
 }
 
