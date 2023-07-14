@@ -45,7 +45,7 @@ typedef struct {
 } queue_update_t;
 #pragma pack(pop)
 
-queue_update_t queue_updates[16];
+queue_update_t queue_updates[8];
 uint8_t        queue_updates_length;
 
 static inline maze_location_t path_peek() {

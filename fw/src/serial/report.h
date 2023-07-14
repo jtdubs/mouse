@@ -43,7 +43,7 @@ typedef struct {
 // report_t represents a mouse report.
 typedef struct {
   report_header_t header;
-  uint8_t         data[64];  // the format of the data is defined by the report type
+  uint8_t         data[48];  // the format of the data is defined by the report type
 } report_t;
 #pragma pack(pop)
 

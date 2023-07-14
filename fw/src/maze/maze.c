@@ -7,7 +7,7 @@
 maze_t  maze;
 uint8_t maze_report_row;
 
-static maze_location_t maze_update_queue[16];
+static maze_location_t maze_update_queue[4];
 static uint8_t         maze_update_queue_length;
 
 void maze_init() {
