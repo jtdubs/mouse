@@ -48,18 +48,16 @@ void report_send() {
     return;
   }
 
-  uint8_t len = 0;
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    report.header.rtc_micros = rtc_micros();
-    if ((len = explore_report(report.data, sizeof(report.data))) > 0) {
-      report.header.type = REPORT_EXPLORE;
-    } else if ((len = maze_report(report.data, sizeof(report.data))) > 0) {
-      report.header.type = REPORT_MAZE;
-    } else if ((len = control_report(report.data, sizeof(report.data))) > 0) {
-      report.header.type = REPORT_CONTROL;
-    } else if ((len = platform_report(report.data, sizeof(report.data))) > 0) {
-      report.header.type = REPORT_PLATFORM;
-    }
+  uint8_t len              = 0;
+  report.header.rtc_micros = rtc_micros();
+  if ((len = explore_report(report.data, sizeof(report.data))) > 0) {
+    report.header.type = REPORT_EXPLORE;
+  } else if ((len = maze_report(report.data, sizeof(report.data))) > 0) {
+    report.header.type = REPORT_MAZE;
+  } else if ((len = control_report(report.data, sizeof(report.data))) > 0) {
+    report.header.type = REPORT_CONTROL;
+  } else if ((len = platform_report(report.data, sizeof(report.data))) > 0) {
+    report.header.type = REPORT_PLATFORM;
   }
 
   if (len == 0) {

@@ -60,20 +60,21 @@ uint8_t platform_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   assert(ASSERT_PLATFORM + 0, buffer != NULL);
   assert(ASSERT_PLATFORM + 1, len >= sizeof(platform_report_t));
 
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    platform_report_t *report = (platform_report_t *)buffer;
-    encoders_read(&report->encoders.left, &report->encoders.right);
-    report->leds.ir      = pin_is_set(IR_LEDS);
-    report->leds.left    = pin_is_set(LED_LEFT);
-    report->leds.right   = pin_is_set(LED_RIGHT);
-    report->leds.onboard = pin_is_set(LED_BUILTIN);
-    motor_read(&report->motors.left, &report->motors.right);
+  uint16_t left, right, center;
+  adc_read_sensors(&left, &center, &right);
 
-    uint16_t left, right, center;
-    adc_read_sensors(&left, &center, &right);
-    report->sensors.left   = left;
-    report->sensors.center = center;
-    report->sensors.right  = right;
-  }
+  platform_report_t *report = (platform_report_t *)buffer;
+  encoders_read(&report->encoders.left, &report->encoders.right);
+
+  motor_read(&report->motors.left, &report->motors.right);
+
+  report->leds.ir        = pin_is_set(IR_LEDS);
+  report->leds.left      = pin_is_set(LED_LEFT);
+  report->leds.right     = pin_is_set(LED_RIGHT);
+  report->leds.onboard   = pin_is_set(LED_BUILTIN);
+  report->sensors.left   = left;
+  report->sensors.center = center;
+  report->sensors.right  = right;
+
   return sizeof(platform_report_t);
 }
