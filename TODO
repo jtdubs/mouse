@@ -1,5 +1,5 @@
 Exploration mode:
-- The "queues" are actually stacks :/
+- Pull out queue and stack helper libraries in utils/
 - There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.
 - Can also skip visiting cells if we've learned about all it's walls from other vantage points.
 - Maze and Explore queue updates need to be in an atomic block...
@@ -31,5 +31,5 @@ High-level phases of development:
 [x] Learn to operate the hardware.
 [x] Learn to drive specific distances / turn specific angles.
 [x] Learn not to hit walls.
-[ ] Learn to map out a maze.
+[x] Learn to map out a maze.
 [ ] Learn to drive the solution to a maze.
