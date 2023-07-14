@@ -81,9 +81,6 @@ typedef struct {
   } data;
 } plan_t;
 
-// current_plan is the current plan
-extern volatile plan_t current_plan;
-
 // plan_init initializes the plan module.
 void plan_init();
 
@@ -98,3 +95,6 @@ void plan_submit_and_wait(plan_t *plan);
 
 // plan_set_state sets the current plan state.
 void plan_set_state(plan_state_t state);
+
+// plan_read reads the current plan.
+void plan_read(plan_t *plan);

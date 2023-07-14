@@ -6,9 +6,21 @@
 
 #include "platform/motor.h"
 #include "platform/pin.h"
+#include "utils/sim.h"
+
+static char hex_table[16] = "0123456789ABCDEF";
 
 // _assert_failed is called when an assertion fails.
 void _assert_failed(uint32_t error_code) {
+  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 28 & 0xF];
+  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 24 & 0xF];
+  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 20 & 0xF];
+  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 16 & 0xF];
+  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 12 & 0xF];
+  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 8 & 0xF];
+  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 4 & 0xF];
+  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 0 & 0xF];
+
   // disable interrupts and the watchdog (we are here forever!)
   cli();
   wdt_disable();

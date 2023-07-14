@@ -317,7 +317,9 @@ void stop() {
 
 // update_location updates the cell index and offset based on the traveled distance.
 void update_location() {
+  float position_distance, position_theta;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    position_read(&position_distance, &position_theta);
     explore_cell_offset += position_distance;
     position_clear();
   }

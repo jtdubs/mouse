@@ -27,6 +27,9 @@ enum assert_range_t : uint32_t {
   ASSERT_ENCODERS     = 0x0D000000,
   ASSERT_SPEED        = 0x0E000000,
   ASSERT_WALLS        = 0x0F000000,
+  ASSERT_SENSOR       = 0x10000000,
+  ASSERT_POSITION     = 0x20000000,
+  ASSERT_LINEAR       = 0x30000000,
 };
 
 #if !defined(NOASSERT)

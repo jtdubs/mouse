@@ -1,3 +1,10 @@
+Cleanup:
+- Replace with getter functions that take "out" variables and include an atomic block.
+- This should let us clean up the header files a bit.
+- Move more loose variables into state structs for modules.
+- Consistency: Onboard vs Built-in
+- Consistency: Left/Right/Center vs. Left/Center/Right vs. Left/Right/Forward?
+
 Exploration mode:
 - Pull out queue and stack helper libraries in utils/
 - There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.
@@ -11,10 +18,6 @@ Solve mode:
 Linear:
 - It would probably be easier if linear motion took a target position rather than a distance.
 - Then we just do a "tare" when we change directions, setting the position to what we believe it is.
-
-Volatile:
-- Replace with getter functions that take "out" variables and include an atomic block.
-- This should let us clean up the header files a bit.
 
 Timer:
 - Main timer interrupt should probably be ISR_NONBLOCK.

@@ -16,11 +16,15 @@
 
 #include <stdbool.h>
 
-#include "control/pid.h"
-
-extern float linear_start_distance;   // mm
-extern float linear_target_distance;  // mm
-extern float linear_target_speed;     // mm/s
+#pragma pack(push, 1)
+typedef struct {
+  float start_distance;   // mm
+  float target_distance;  // mm
+  float target_speed;     // mm/s
+  float wall_error;
+  bool  leds_prev_state;
+} linear_state_t;
+#pragma pack(pop)
 
 // linear_init initializes the linear motion module.
 void linear_init();
@@ -35,3 +39,6 @@ bool linear_tick();
 // PID tuning functions.
 void linear_wall_tune(float kp, float ki, float kd, float alpha);
 void linear_angle_tune(float kp, float ki, float kd, float alpha);
+
+// linear_state reads the current linear state.
+void linear_state(linear_state_t *state);

@@ -7,12 +7,12 @@
 #include <util/atomic.h>
 
 #include "control/config.h"
-#include "control/pid.h"
 #include "platform/encoders.h"
 #include "platform/motor.h"
 #include "platform/pin.h"
 #include "platform/rtc.h"
 #include "utils/assert.h"
+#include "utils/pid.h"
 
 // Motor speeds in RPMs.
 static float speed_measured_left;

@@ -29,12 +29,15 @@ void walls_update() {
   uint16_t left, front, right;
   adc_read_sensors(&left, &front, &right);
 
+  uint16_t left_cal, right_cal, front_cal;
+  sensor_cal_read(&left_cal, &right_cal, &front_cal);
+
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    wall_left_present    = (left >= (sensor_threshold_left - 80));
-    wall_right_present   = (right >= (sensor_threshold_right - 80));
-    wall_forward_present = (front >= (sensor_threshold_center - 60));
-    wall_error_left      = left - sensor_threshold_left;
-    wall_error_right     = sensor_threshold_right - right;
+    wall_left_present    = (left >= (left_cal - 80));
+    wall_right_present   = (right >= (right_cal - 80));
+    wall_forward_present = (front >= (front_cal - 60));
+    wall_error_left      = left - left_cal;
+    wall_error_right     = right_cal - right;
   }
 
   if (wall_led_control) {

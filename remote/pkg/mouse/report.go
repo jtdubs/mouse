@@ -116,7 +116,8 @@ type RotationReport struct {
 func (RotationReport) isControlReport() {}
 
 type LinearReport struct {
-	StartDistance, TargetDistance, TargetSpeed float32
+	StartDistance, TargetDistance, TargetSpeed, WallError float32
+	LEDsPrevState                                         bool
 }
 
 func (LinearReport) isControlReport() {}

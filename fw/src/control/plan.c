@@ -1,5 +1,6 @@
 #include "plan.h"
 
+#include <stddef.h>
 #include <util/atomic.h>
 
 #include "platform/pin.h"
@@ -7,7 +8,7 @@
 #include "utils/sim.h"
 
 // current_plan is the current plan
-volatile plan_t current_plan;
+static plan_t current_plan;
 
 // plan_init initializes the plan module.
 void plan_init() {
@@ -26,7 +27,8 @@ void plan_submit(plan_t *plan) {
 // plan_wait waits for the current plan to be implemented.
 void plan_wait() {
   pin_clear(PROBE_PLAN);
-  while (current_plan.state != PLAN_STATE_IMPLEMENTED) {}
+  volatile plan_state_t *state = &current_plan.state;
+  while (*state != PLAN_STATE_IMPLEMENTED) {}
   pin_set(PROBE_PLAN);
 }
 
@@ -41,4 +43,13 @@ void plan_submit_and_wait(plan_t *plan) {
 void plan_set_state(plan_state_t state) {
   current_plan.state = state;
   sim_watch_plan(state);
+}
+
+// plan_read reads the current plan.
+void plan_read(plan_t *plan) {
+  assert(ASSERT_PLAN + 0, plan != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *plan = current_plan;
+  }
 }

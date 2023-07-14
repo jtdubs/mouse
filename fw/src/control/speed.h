@@ -13,8 +13,6 @@
 
 #include <stdint.h>
 
-#include "control/pid.h"
-
 // speed_init initializes the speed module.
 void speed_init();
 

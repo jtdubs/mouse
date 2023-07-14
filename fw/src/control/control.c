@@ -36,16 +36,8 @@ typedef struct {
       uint16_t right;   // ADC reading
       uint16_t center;  // ADC reading
     } sensor_cal;
-    struct {
-      float start_theta;   // radians
-      float target_theta;  // radians
-      bool  direction;     // true = positive, false = negative
-    } rotation;
-    struct {
-      float start_distance;   // mm
-      float target_distance;  // mm
-      float target_speed;     // mm/s
-    } linear;
+    rotational_state_t rotation;
+    linear_state_t     linear;
   } plan_data;
 } control_report_t;
 #pragma pack(pop)
@@ -68,9 +60,12 @@ void control_tick() {
   encoders_update();
   walls_update();
 
-  switch (current_plan.type) {
+  plan_t plan;
+  plan_read(&plan);
+
+  switch (plan.type) {
     case PLAN_TYPE_IDLE:
-      if (current_plan.state == PLAN_STATE_SCHEDULED) {
+      if (plan.state == PLAN_STATE_SCHEDULED) {
         plan_set_state(PLAN_STATE_UNDERWAY);
         motor_set(0, 0);
         pin_clear(LED_LEFT);
@@ -81,39 +76,39 @@ void control_tick() {
       }
       break;
     case PLAN_TYPE_LEDS:
-      if (current_plan.state == PLAN_STATE_SCHEDULED) {
+      if (plan.state == PLAN_STATE_SCHEDULED) {
         plan_set_state(PLAN_STATE_UNDERWAY);
-        pin_set2(LED_LEFT, current_plan.data.leds.left);
-        pin_set2(LED_RIGHT, current_plan.data.leds.right);
-        pin_set2(LED_BUILTIN, current_plan.data.leds.builtin);
+        pin_set2(LED_LEFT, plan.data.leds.left);
+        pin_set2(LED_RIGHT, plan.data.leds.right);
+        pin_set2(LED_BUILTIN, plan.data.leds.builtin);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
     case PLAN_TYPE_IR:
-      if (current_plan.state == PLAN_STATE_SCHEDULED) {
+      if (plan.state == PLAN_STATE_SCHEDULED) {
         plan_set_state(PLAN_STATE_UNDERWAY);
-        pin_set2(IR_LEDS, current_plan.data.ir.on);
+        pin_set2(IR_LEDS, plan.data.ir.on);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
     case PLAN_TYPE_FIXED_POWER:
-      if (current_plan.state == PLAN_STATE_SCHEDULED) {
+      if (plan.state == PLAN_STATE_SCHEDULED) {
         plan_set_state(PLAN_STATE_UNDERWAY);
-        motor_set(current_plan.data.power.left, current_plan.data.power.right);
+        motor_set(plan.data.power.left, plan.data.power.right);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
     case PLAN_TYPE_FIXED_SPEED:
-      if (current_plan.state == PLAN_STATE_SCHEDULED) {
+      if (plan.state == PLAN_STATE_SCHEDULED) {
         plan_set_state(PLAN_STATE_UNDERWAY);
-        speed_set(current_plan.data.speed.left, current_plan.data.speed.right);
+        speed_set(plan.data.speed.left, plan.data.speed.right);
         plan_set_state(PLAN_STATE_IMPLEMENTED);
       }
       break;
     case PLAN_TYPE_LINEAR_MOTION:
-      switch (current_plan.state) {
+      switch (plan.state) {
         case PLAN_STATE_SCHEDULED:
-          linear_start(current_plan.data.linear.distance, current_plan.data.linear.stop);
+          linear_start(plan.data.linear.distance, plan.data.linear.stop);
           plan_set_state(PLAN_STATE_UNDERWAY);
           [[fallthrough]];
         case PLAN_STATE_UNDERWAY:
@@ -126,9 +121,9 @@ void control_tick() {
       }
       break;
     case PLAN_TYPE_ROTATIONAL_MOTION:
-      switch (current_plan.state) {
+      switch (plan.state) {
         case PLAN_STATE_SCHEDULED:
-          rotational_start(current_plan.data.rotational.d_theta);
+          rotational_start(plan.data.rotational.d_theta);
           plan_set_state(PLAN_STATE_UNDERWAY);
           [[fallthrough]];
         case PLAN_STATE_UNDERWAY:
@@ -141,7 +136,7 @@ void control_tick() {
       }
       break;
     case PLAN_TYPE_SENSOR_CAL:
-      switch (current_plan.state) {
+      switch (plan.state) {
         case PLAN_STATE_SCHEDULED:
           sensor_cal_start();
           plan_set_state(PLAN_STATE_UNDERWAY);
@@ -174,13 +169,16 @@ uint8_t control_report(uint8_t *buffer, uint8_t len) {
   static plan_type_t  previous_plan_type  = PLAN_TYPE_IDLE;
   static uint8_t      counter             = 0;
 
+  plan_t plan;
+  plan_read(&plan);
+
   // count how many ticks since the last plan change.
-  if (current_plan.state == previous_plan_state && current_plan.type == previous_plan_type) {
+  if (plan.state == previous_plan_state && plan.type == previous_plan_type) {
     counter++;
   } else {
     counter             = 0;
-    previous_plan_state = current_plan.state;
-    previous_plan_type  = current_plan.type;
+    previous_plan_state = plan.state;
+    previous_plan_type  = plan.type;
   }
 
   // if the report hasn't changed, only report every 8th tick.
@@ -190,26 +188,21 @@ uint8_t control_report(uint8_t *buffer, uint8_t len) {
 
   control_report_t *report = (control_report_t *)buffer;
 
-  report->plan = current_plan;
+  plan_read(&report->plan);
   speed_read(&report->speed.measured_left, &report->speed.measured_right);
   speed_read_setpoints(&report->speed.setpoint_left, &report->speed.setpoint_right);
-  report->position.distance = position_distance;
-  report->position.theta    = position_theta;
-  switch (current_plan.type) {
+  position_read(&report->position.distance, &report->position.theta);
+  switch (report->plan.type) {
     case PLAN_TYPE_SENSOR_CAL:
-      report->plan_data.sensor_cal.left   = sensor_threshold_left;
-      report->plan_data.sensor_cal.right  = sensor_threshold_right;
-      report->plan_data.sensor_cal.center = sensor_threshold_center;
+      sensor_cal_read(&report->plan_data.sensor_cal.left,   //
+                      &report->plan_data.sensor_cal.right,  //
+                      &report->plan_data.sensor_cal.center);
       break;
     case PLAN_TYPE_ROTATIONAL_MOTION:
-      report->plan_data.rotation.start_theta  = rotational_start_theta;
-      report->plan_data.rotation.target_theta = rotational_target_theta;
-      report->plan_data.rotation.direction    = rotational_direction;
+      rotational_state(&report->plan_data.rotation);
       break;
     case PLAN_TYPE_LINEAR_MOTION:
-      report->plan_data.linear.start_distance  = linear_start_distance;
-      report->plan_data.linear.target_distance = linear_target_distance;
-      report->plan_data.linear.target_speed    = linear_target_speed;
+      linear_state(&report->plan_data.linear);
       break;
     default:
       break;
