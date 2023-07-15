@@ -1,4 +1,6 @@
-#include "platform/usart0.h"
+#if defined(BOARD_NANO)
+
+#include "usart0.h"
 
 #include <avr/io.h>
 #include <stdint.h>
@@ -19,3 +21,5 @@ void usart0_init() {
          | _BV(TXEN0);                 // Enable transmitter.
   UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);  // 8-bit data.
 }
+
+#endif

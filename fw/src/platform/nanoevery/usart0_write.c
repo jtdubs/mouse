@@ -1,9 +1,11 @@
+#if defined(BOARD_NANOEVERY)
+
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "platform/usart0_int.h"
+#include "usart0_int.h"
 #include "utils/assert.h"
 
 // Write states
@@ -81,3 +83,5 @@ ISR(USART_UDRE_vect, ISR_BLOCK) {
       break;
   }
 }
+
+#endif

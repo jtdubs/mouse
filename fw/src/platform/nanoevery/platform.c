@@ -1,3 +1,5 @@
+#if defined(BOARD_NANOEVERY)
+
 #include "platform.h"
 
 #include <avr/power.h>
@@ -78,3 +80,5 @@ uint8_t platform_report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
 
   return sizeof(platform_report_t);
 }
+
+#endif

@@ -1,4 +1,6 @@
-#include "platform/pin.h"
+#if defined(BOARD_NANOEVERY)
+
+#include "pin.h"
 
 const pin_t RIGHT_DIR   = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)};
 const pin_t LEFT_PWM    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(1)};
@@ -32,3 +34,5 @@ void pin_init() {
   PORTC = 0;
   PORTD = 0;
 }
+
+#endif

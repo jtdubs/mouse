@@ -1,11 +1,13 @@
-#include "platform/adc.h"
+#if defined(BOARD_NANOEVERY)
+
+#include "adc.h"
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "platform/pin.h"
+#include "pin.h"
 #include "utils/assert.h"
 
 // adc_next_channel defines the sequence in which channels are read.
@@ -76,3 +78,5 @@ ISR(ADC_vect, ISR_BLOCK) {
     ADCSRA |= _BV(ADSC);
   }
 }
+
+#endif

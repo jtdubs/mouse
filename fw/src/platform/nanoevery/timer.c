@@ -1,14 +1,16 @@
-#include "platform/timer.h"
+#if defined(BOARD_NANOEVERY)
+
+#include "timer.h"
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
-#include <avr/wdt.h>
+// #include <avr/wdt.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "platform/adc.h"
-#include "platform/pin.h"
+#include "adc.h"
+#include "pin.h"
 #include "utils/assert.h"
 
 static timer_callback_t timer_callback;
@@ -32,11 +34,11 @@ void timer_init() {
   TCNT0 = 0;                                // Reset the timer
 
   // Enable watchdog timer to reset the device if the timer interrupt fails.
-  wdt_enable(WDTO_15MS);
+  // wdt_enable(WDTO_15MS);
 }
 
 ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
-  wdt_reset();
+  // wdt_reset();
   if (timer_callback) {
     NONATOMIC_BLOCK(NONATOMIC_RESTORESTATE) {
       timer_callback();
@@ -47,3 +49,5 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
 ISR(TIMER0_COMPB_vect, ISR_BLOCK) {
   adc_sample();
 }
+
+#endif

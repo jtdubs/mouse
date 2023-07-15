@@ -1,3 +1,5 @@
+#if defined(BOARD_NANO)
+
 #include "encoders.h"
 
 #include <avr/interrupt.h>
@@ -5,8 +7,8 @@
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "platform/pin.h"
-#include "platform/rtc.h"
+#include "pin.h"
+#include "rtc.h"
 #include "utils/assert.h"
 
 // Encoder counts.
@@ -94,3 +96,5 @@ ISR(INT1_vect, ISR_BLOCK) {
 
   right_last_b = b;
 }
+
+#endif

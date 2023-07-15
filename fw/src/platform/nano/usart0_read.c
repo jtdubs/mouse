@@ -1,9 +1,11 @@
+#if defined(BOARD_NANO)
+
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "platform/usart0_int.h"
+#include "usart0_int.h"
 #include "utils/assert.h"
 
 constexpr uint8_t MAX_READ_SIZE = 64;
@@ -89,3 +91,5 @@ ISR(USART_RX_vect, ISR_BLOCK) {
       usart0_read_state = READ_IDLE;
   }
 }
+
+#endif

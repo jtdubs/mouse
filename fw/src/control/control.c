@@ -12,6 +12,7 @@
 #include "control/walls.h"
 #include "platform/encoders.h"
 #include "platform/motor.h"
+#include "platform/pin.h"
 #include "platform/timer.h"
 #include "serial/report.h"
 #include "utils/assert.h"

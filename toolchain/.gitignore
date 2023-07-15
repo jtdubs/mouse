@@ -2,3 +2,4 @@
 /binutils-gdb
 /gcc
 /avrdude
+*.diff.xz

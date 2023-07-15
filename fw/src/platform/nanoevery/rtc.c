@@ -1,3 +1,5 @@
+#if defined(BOARD_NANOEVERY)
+
 #include "rtc.h"
 
 #include <avr/io.h>
@@ -39,3 +41,5 @@ uint32_t rtc_micros() {
 ISR(TIMER2_OVF_vect, ISR_BLOCK) {
   rtc_overflow_count++;
 }
+
+#endif

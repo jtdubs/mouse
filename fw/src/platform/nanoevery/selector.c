@@ -1,9 +1,11 @@
+#if defined(BOARD_NANOEVERY)
+
 #include "selector.h"
 
 #include <stdbool.h>
 #include <util/atomic.h>
 
-#include "platform/adc.h"
+#include "adc.h"
 
 // The proposed value (from the DIP switches) and the button state.
 static uint8_t selector_value;
@@ -40,3 +42,5 @@ uint8_t selector_update() {
   // Nothing was selected.
   return 0xFF;
 }
+
+#endif

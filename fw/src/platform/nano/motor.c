@@ -1,10 +1,12 @@
+#if defined(BOARD_NANO)
+
 #include "motor.h"
 
 #include <avr/io.h>
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "platform/pin.h"
+#include "pin.h"
 #include "utils/assert.h"
 #include "utils/math.h"
 
@@ -57,3 +59,5 @@ void motor_read(int16_t* left, int16_t* right) {
     *right = motor_power_right;
   }
 }
+
+#endif

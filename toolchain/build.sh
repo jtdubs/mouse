@@ -24,6 +24,10 @@ if [ ! -d avrdude ]; then
   git clone git@github.com:avrdudes/avrdude
 fi
 
+if [ ! -e avrxmega3-v12.diff.xz ]; then
+  curl -L https://savannah.nongnu.org/patch/download.php?file_id=52334 -o avrxmega3-v12.diff.xz
+fi
+
 pushd binutils-gdb
   if [ "$(git describe --tags)" != "$BINUTILS_TAG" ]; then
     git reset --hard
@@ -84,6 +88,7 @@ pushd avr-libc
     git clean -dfx
     git fetch --tags
     git checkout $AVRLIBC_TAG
+    xzcat ../avrxmega3-v12.diff.xz | patch -p0
     ./bootstrap
     mkdir build
     pushd build

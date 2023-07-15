@@ -1,7 +1,7 @@
 #include "assert.h"
 
 #include <avr/interrupt.h>
-#include <avr/wdt.h>
+// #include <avr/wdt.h>
 #include <util/delay.h>
 
 #include "platform/motor.h"
@@ -14,7 +14,7 @@ static char hex_table[16] = "0123456789ABCDEF";
 void _assert_failed(uint32_t error_code) {
   // disable interrupts and the watchdog (we are here forever!)
   cli();
-  wdt_disable();
+  // wdt_disable();
 
   // print the error code to the console (if in the simulator)
   SIM_CONSOLE_REG = (uint8_t)'A';
