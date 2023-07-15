@@ -18,6 +18,7 @@ DEFINE_DEQUEUE(plan_t, plans, 16);
 
 // remote is a mode that allows the robot to be controlled remotely.
 void remote() {
+  plans_init();
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
 
   for (;;) {

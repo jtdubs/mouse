@@ -20,11 +20,14 @@ typedef enum : uint8_t {
     name##_dequeue_callback_t callback;                                                \
   } name##_dequeue_t;                                                                  \
                                                                                        \
-  static name##_dequeue_t name##_dequeue = {                                           \
-      .front  = len - 1,                                                               \
-      .back   = 0,                                                                     \
-      .buffer = {},                                                                    \
-  };                                                                                   \
+  static name##_dequeue_t name##_dequeue;                                              \
+                                                                                       \
+  [[maybe_unused]] static void name##_init() {                                         \
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {                                                \
+      name##_dequeue.front = len - 1;                                                  \
+      name##_dequeue.back  = 0;                                                        \
+    }                                                                                  \
+  }                                                                                    \
                                                                                        \
   [[maybe_unused]] static void name##_register_callback(name##_dequeue_callback_t c) { \
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {                                                \

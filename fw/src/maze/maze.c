@@ -20,6 +20,8 @@ static uint8_t maze_report_row;
 DEFINE_DEQUEUE(maze_location_t, updates, 6);
 
 void maze_init() {
+  updates_init();
+
   maze_report_row = MAZE_HEIGHT;
 
   // Distances default to 0xFF, which is the maximum possible distance.

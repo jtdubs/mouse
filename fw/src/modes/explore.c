@@ -66,7 +66,10 @@ void next_queue_callback(dequeue_event_type_t event, maze_location_t value) {
 }
 
 void explore() {
-  // Register dequeue callbacks.
+  // Initialize dequeues.
+  path_init();
+  next_init();
+  updates_init();
   path_register_callback(path_queue_callback);
   next_register_callback(next_queue_callback);
 
