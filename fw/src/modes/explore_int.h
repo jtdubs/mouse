@@ -47,5 +47,5 @@ void classify(maze_location_t loc);
 // on the control module's position data.
 void update_location();
 
-// solve calculates the shortest path to the goal.
-void solve();
+// floodfill calculates the shortest path to the goal.
+void floodfill();

@@ -35,6 +35,9 @@ void remote() {
       case COMMAND_EXPLORE:
         explore();
         break;
+      case COMMAND_SOLVE:
+        solve();
+        break;
       case COMMAND_SEND_MAZE:
         maze_send();
         break;

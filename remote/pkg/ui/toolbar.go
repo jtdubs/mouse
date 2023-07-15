@@ -37,6 +37,13 @@ func (w *toolbarWindow) drawToolbar() {
 	if imgui.IsItemHovered() {
 		imgui.SetTooltip("Explore")
 	}
+	imgui.SameLine()
+	if w.toolbarButton("Solve", "flag-checkered") {
+		w.mouse.SendCommand(mouse.NewSolveCommand())
+	}
+	if imgui.IsItemHovered() {
+		imgui.SetTooltip("Solve")
+	}
 	imgui.EndDisabled()
 	imgui.SameLineV(0, 20)
 	if w.mouse.Updating {

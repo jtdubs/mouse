@@ -120,7 +120,7 @@ void explore() {
   next_register_callback(NULL);
 
   // Solve the maze, and tramit the new maze data to the host.
-  solve();
+  floodfill();
   maze_send();
 }
 
@@ -387,8 +387,8 @@ void classify(maze_location_t loc) {
   maze_update(loc, cell);
 }
 
-// solve calculates the shortest path to the goal.
-void solve() {
+// floodfill calculates the shortest path to the goal.
+void floodfill() {
   // Step 1. Find the 2x2 square of cells with no internal walls that is the goal.
   maze_location_t goal = maze_location(15, 15);
   for (uint8_t x = 0; x < MAZE_WIDTH - 1; x++) {
@@ -461,4 +461,54 @@ void solve() {
       }
     }
   }
+}
+
+// solve follows the shortest path to the goal.
+void solve() {
+  maze_location_t curr     = maze_location(0, 0);
+  uint8_t         distance = maze_read(curr).distance;
+
+  while (distance != 0) {
+    maze_location_t north = curr + maze_location(0, 1);
+    maze_location_t east  = curr + maze_location(1, 0);
+    maze_location_t south = curr - maze_location(0, 1);
+    maze_location_t west  = curr - maze_location(1, 0);
+
+    maze_location_t next = curr;
+
+    if (maze_x(curr) < (MAZE_HEIGHT - 1) && maze_read(north).distance < distance) {
+      next     = north;
+      distance = maze_read(north).distance;
+    }
+
+    if (maze_y(curr) < (MAZE_WIDTH - 1) && maze_read(east).distance < distance) {
+      next     = east;
+      distance = maze_read(east).distance;
+    }
+
+    if (maze_x(curr) > 0 && maze_read(south).distance < distance) {
+      next     = south;
+      distance = maze_read(south).distance;
+    }
+
+    if (maze_y(curr) > 0 && maze_read(west).distance < distance) {
+      next     = west;
+      distance = maze_read(west).distance;
+    }
+
+    if (next == curr) {
+      // No path to the goal.
+      return;
+    }
+
+    face(adjacent(curr, next));
+    advance(next, false);
+    curr = next;
+  }
+
+  // Stop in the middle of the goal cell.
+  stop();
+
+  // Ensure the control system is idling (no motor activity).
+  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
 }

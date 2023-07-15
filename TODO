@@ -1,7 +1,3 @@
-Solve mode:
-- Pull out the {orientation, offset, stopped} into a struct, and then all the explore functions (face, advance, etc.) can be re-used by explore and solve...
-- Just walks the distance gradient calculated by exploration mode and stops in the center.
-
 Firmware:
 - Pull out the "platform" code into a nano BSP, and add one for the nano every.
 - Add a speed ramp for rotation?

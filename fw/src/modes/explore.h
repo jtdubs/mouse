@@ -34,5 +34,8 @@ void explore_init();
 // explore() is the entry point for the explore mode.
 void explore();
 
+// solve() is the entry point for solve mode.
+void solve();
+
 // explore_report() is the report handler for the explore mode.
 uint8_t explore_report(uint8_t *buffer, uint8_t len);
