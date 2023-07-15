@@ -18,8 +18,7 @@
 
 #pragma pack(push, 1)
 typedef struct {
-  float start_distance;   // mm
-  float target_distance;  // mm
+  float target_position;  // mm
   float target_speed;     // mm/s
   float wall_error;
   bool  leds_prev_state;
@@ -30,7 +29,7 @@ typedef struct {
 void linear_init();
 
 // linear_start starts a linear motion plan.
-void linear_start(float distance /* mm */, bool stop);
+void linear_start(float position /* mm */, bool stop);
 
 // linear_tick updates the platform to implement the plan.
 // Returns true if the plan is complete.

@@ -68,7 +68,7 @@ typedef struct {
     } speed;
     // PLAN_LINEAR_MOTION
     struct {
-      float distance;  // mm
+      float position;  // mm
       bool  stop;
     } linear;
     // PLAN_ROTATIONAL_MOTION

@@ -20,3 +20,6 @@ void position_clear();
 
 // position_read reads the current position.
 void position_read(float* distance, float* theta);
+
+// position_tare reads the clears the current position.
+void position_tare(float* distance, float* theta);

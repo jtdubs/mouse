@@ -108,7 +108,7 @@ void control_tick() {
     case PLAN_TYPE_LINEAR_MOTION:
       switch (plan.state) {
         case PLAN_STATE_SCHEDULED:
-          linear_start(plan.data.linear.distance, plan.data.linear.stop);
+          linear_start(plan.data.linear.position, plan.data.linear.stop);
           plan_set_state(PLAN_STATE_UNDERWAY);
           [[fallthrough]];
         case PLAN_STATE_UNDERWAY:

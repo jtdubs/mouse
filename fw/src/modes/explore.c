@@ -227,7 +227,8 @@ void face(orientation_t orientation) {
       break;
   }
 
-  update_location();
+  float position, theta;
+  position_tare(&position, &theta);
 
   // assuming we were centered horizontally in the previous direction of travel
   // then we are now in the middle of the cell along the new direction of travel.
@@ -243,11 +244,10 @@ void advance(maze_location_t loc, bool update_path) {
   plan_submit_and_wait(  //
       &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,
                 .data.linear = {
-                    .distance = CELL_SIZE - (explore_cell_offset - ENTRY_OFFSET),
+                    .position = CELL_SIZE - (explore_cell_offset - ENTRY_OFFSET),
                     .stop     = false,
                 }});
 
-  update_location();
   if (update_path) {
     path_push_back(loc);
   }
@@ -269,22 +269,18 @@ void stop() {
   plan_submit_and_wait(                                  //
       &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,  //
                 .data.linear = {
-                    .distance = CELL_SIZE_2 - explore_cell_offset,
+                    .position = CELL_SIZE_2 - explore_cell_offset,
                     .stop     = true  //
                 }});
 
-  update_location();
   explore_stopped = true;
 }
 
 // update_location updates the cell index and offset based on the traveled distance.
 void update_location() {
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    float position_distance, position_theta;
-    position_read(&position_distance, &position_theta);
-    explore_cell_offset += position_distance;
-    position_clear();
-  }
+  float position_distance, position_theta;
+  position_tare(&position_distance, &position_theta);
+  explore_cell_offset += position_distance;
 
   // this is a (% CELL_SIZE) without using the % operator because it is expensive.
   while (explore_cell_offset > CELL_SIZE) {

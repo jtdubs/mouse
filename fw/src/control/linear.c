@@ -51,14 +51,13 @@ void linear_init() {
 #endif
 }
 
-void linear_start(float distance /* mm */, bool stop) {
+void linear_start(float position /* mm */, bool stop) {
   float position_distance, position_theta;
   position_read(&position_distance, &position_theta);
 
   linear_state_t s;
-  s.start_distance  = position_distance;             // mm
-  s.target_distance = position_distance + distance;  // mm
-  s.target_speed    = stop ? 0.0 : SPEED_CRUISE;     // mm/s
+  s.target_position = position;                   // mm
+  s.target_speed    = stop ? 0.0 : SPEED_CRUISE;  // mm/s
   s.wall_error      = 0;
   s.leds_prev_state = pin_is_set(IR_LEDS);
 
@@ -100,7 +99,7 @@ bool linear_tick() {
   }
 
   // If we are there, then we are done.
-  if (position_distance >= s.target_distance) {
+  if (position_distance >= s.target_position) {
     float rpm = SPEED_TO_RPM(s.target_speed);
     pin_set2(IR_LEDS, s.leds_prev_state);
     speed_set(rpm, rpm);
@@ -114,7 +113,7 @@ bool linear_tick() {
   float braking_accel = 0;  // mm/s^2
   if (current_speed > s.target_speed) {
     float dV      = s.target_speed - current_speed;                           // mm/s
-    float dX      = s.target_distance - position_distance;                    // mm
+    float dX      = s.target_position - position_distance;                    // mm
     braking_accel = ((2.0f * current_speed * dV) + (dV * dV)) / (2.0f * dX);  // mm/s^2
   }
 

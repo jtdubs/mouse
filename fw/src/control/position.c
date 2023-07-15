@@ -56,3 +56,15 @@ void position_read(float* distance, float* theta) {
     *theta    = position_theta;
   }
 }
+
+void position_tare(float* distance, float* theta) {
+  assert(ASSERT_POSITION + 2, distance != NULL);
+  assert(ASSERT_POSITION + 3, theta != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *distance         = position_distance;
+    *theta            = position_theta;
+    position_distance = 0;
+    position_theta    = 0;
+  }
+}

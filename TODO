@@ -1,7 +1,3 @@
-Position:
-- Add a position_tare(&pos, &theta) that sets to zero and returns current values in an atomic block.
-- Update the advance() and face() functions to use it.
-
 Solve mode:
 - Pull out the {orientation, offset, stopped} into a struct, and then all the explore functions (face, advance, etc.) can be re-used by explore and solve...
 - Just walks the distance gradient calculated by exploration mode and stops in the center.
