@@ -1,16 +1,10 @@
 Exploration mode:
-- Cleanup and documentation needed here.
 - There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.
 - Can also skip visiting cells if we've learned about all it's walls from other vantage points.
-- Maze and Explore queue updates need to be in an atomic block...
 
 Solve mode:
 - Would be helpful to factor out the "face", "advance", etc. stuff from explorer first.
 - Just walks the distance gradient calculated by exploration mode and stops in the center.
-
-Linear:
-- It would probably be easier if linear motion took a target position rather than a distance.
-- Then we just do a "tare" when we change directions, setting the position to what we believe it is.
 
 Timer:
 - Tighten tick to run every 1-2ms instead of 5.

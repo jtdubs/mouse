@@ -1,3 +1,11 @@
+//
+// System: maze
+// Module: maze
+//
+// Purpose:
+// - Hold the state of our knowledge of the maze.
+// - Provide updates back to the remote when the maze is updated.
+//
 #pragma once
 
 #include <stdbool.h>
