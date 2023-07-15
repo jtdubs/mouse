@@ -90,7 +90,7 @@ void explore() {
     maze_location_t next = next_peek_back();
     maze_location_t curr = path_peek_back();
 
-    while (!next_empty() && maze.cells[next].visited) {
+    while (!next_empty() && maze_read(next).visited) {
       next_pop_back();
       next = next_peek_back();
     }
@@ -165,13 +165,13 @@ orientation_t adjacent(maze_location_t a, maze_location_t b) {
 
   if (ax == bx) {
     if (ay + 1 == by) {
-      if (maze.cells[a].wall_north) {
+      if (maze_read(a).wall_north) {
         return INVALID;
       } else {
         return NORTH;
       }
     } else if (ay - 1 == by) {
-      if (maze.cells[a].wall_south) {
+      if (maze_read(a).wall_south) {
         return INVALID;
       } else {
         return SOUTH;
@@ -181,13 +181,13 @@ orientation_t adjacent(maze_location_t a, maze_location_t b) {
     }
   } else if (ay == by) {
     if (ax + 1 == bx) {
-      if (maze.cells[a].wall_east) {
+      if (maze_read(a).wall_east) {
         return INVALID;
       } else {
         return EAST;
       }
     } else if (ax - 1 == bx) {
-      if (maze.cells[a].wall_west) {
+      if (maze_read(a).wall_west) {
         return INVALID;
       } else {
         return WEST;
@@ -306,7 +306,7 @@ void update_location() {
 }
 
 void queue(maze_location_t loc) {
-  if (!maze.cells[loc].visited) {
+  if (!maze_read(loc).visited) {
     next_push_back(loc);
   }
 }
@@ -320,7 +320,7 @@ void classify(maze_location_t loc) {
   walls_present(&wall_left, &wall_right, &wall_forward);
 
   // Classify the square based on sensor readings.
-  cell_t cell = {
+  maze_cell_t cell = {
       .visited    = true,
       .distance   = 0xFF,
       .wall_north = false,
@@ -409,8 +409,8 @@ void solve() {
   maze_location_t goal = maze_location(15, 15);
   for (uint8_t x = 0; x < MAZE_WIDTH - 1; x++) {
     for (uint8_t y = 0; y < MAZE_HEIGHT - 1; y++) {
-      cell_t a = maze.cells[maze_location(x, y)];
-      cell_t b = maze.cells[maze_location(x + 1, y + 1)];
+      maze_cell_t a = maze_read(maze_location(x, y));
+      maze_cell_t b = maze_read(maze_location(x + 1, y + 1));
       if (a.visited && b.visited && !a.wall_east && !a.wall_north && !b.wall_west && !b.wall_south) {
         goal = maze_location(x, y);
         break;
@@ -423,51 +423,58 @@ void solve() {
   }
 
   // Step 2. Find the cell in the goal square with the gateway.
-  if (!maze.cells[goal + maze_location(0, 1)].wall_north || !maze.cells[goal + maze_location(0, 1)].wall_west) {
+  if (!maze_read(goal + maze_location(0, 1)).wall_north || !maze_read(goal + maze_location(0, 1)).wall_west) {
     goal += maze_location(0, 1);
-  } else if (!maze.cells[goal + maze_location(1, 0)].wall_south || !maze.cells[goal + maze_location(1, 0)].wall_east) {
+  } else if (!maze_read(goal + maze_location(1, 0)).wall_south || !maze_read(goal + maze_location(1, 0)).wall_east) {
     goal += maze_location(1, 0);
-  } else if (!maze.cells[goal + maze_location(1, 1)].wall_north || !maze.cells[goal + maze_location(1, 1)].wall_east) {
+  } else if (!maze_read(goal + maze_location(1, 1)).wall_north || !maze_read(goal + maze_location(1, 1)).wall_east) {
     goal += maze_location(1, 1);
   }
 
   // Step 3. Floodfill outwards from the goal cell.
   path_clear();
-  maze.cells[goal].distance = 0;
+  maze_cell_t goal_cell = maze_read(goal);
+  goal_cell.distance    = 0;
+  maze_update(goal, goal_cell);
   path_push_back(goal);
   while (!path_empty()) {
     maze_location_t loc  = path_pop_front();
-    cell_t          cell = maze.cells[loc];
+    maze_cell_t     cell = maze_read(loc);
     if (!cell.wall_north) {
-      maze_location_t next = loc + maze_location(0, 1);
-      if (maze.cells[next].distance == 0xFF) {
-        maze.cells[next].distance = cell.distance + 1;
+      maze_location_t next      = loc + maze_location(0, 1);
+      maze_cell_t     next_cell = maze_read(next);
+      if (next_cell.distance == 0xFF) {
+        next_cell.distance = cell.distance + 1;
+        maze_update(next, next_cell);
         path_push_back(next);
       }
     }
     if (!cell.wall_east) {
-      maze_location_t next = loc + maze_location(1, 0);
-      if (maze.cells[next].distance == 0xFF) {
-        maze.cells[next].distance = cell.distance + 1;
+      maze_location_t next      = loc + maze_location(1, 0);
+      maze_cell_t     next_cell = maze_read(next);
+      if (next_cell.distance == 0xFF) {
+        next_cell.distance = cell.distance + 1;
+        maze_update(next, next_cell);
         path_push_back(next);
       }
     }
     if (!cell.wall_south) {
-      maze_location_t next = loc - maze_location(0, 1);
-      if (maze.cells[next].distance == 0xFF) {
-        maze.cells[next].distance = cell.distance + 1;
+      maze_location_t next      = loc - maze_location(0, 1);
+      maze_cell_t     next_cell = maze_read(next);
+      if (next_cell.distance == 0xFF) {
+        next_cell.distance = cell.distance + 1;
+        maze_update(next, next_cell);
         path_push_back(next);
       }
     }
     if (!cell.wall_west) {
-      maze_location_t next = loc - maze_location(1, 0);
-      if (maze.cells[next].distance == 0xFF) {
-        maze.cells[next].distance = cell.distance + 1;
+      maze_location_t next      = loc - maze_location(1, 0);
+      maze_cell_t     next_cell = maze_read(next);
+      if (next_cell.distance == 0xFF) {
+        next_cell.distance = cell.distance + 1;
+        maze_update(next, next_cell);
         path_push_back(next);
       }
     }
   }
-
-  // Step 4. Trigger retransmission of the maze state to the remote.
-  maze_send();
 }
