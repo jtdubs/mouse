@@ -33,13 +33,6 @@ inline uint8_t maze_y(maze_location_t loc) {
   return loc & 0x0F;
 }
 
-#pragma pack(push, 1)
-typedef struct {
-  maze_location_t location;
-  cell_t          cell;
-} maze_update_t;
-#pragma pack(pop)
-
 extern maze_t maze;
 
 void maze_init();

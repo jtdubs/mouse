@@ -1,8 +1,11 @@
 Exploration mode:
-- Pull out queue and stack helper libraries in utils/
+- Cleanup and documentation needed here.
 - There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.
 - Can also skip visiting cells if we've learned about all it's walls from other vantage points.
 - Maze and Explore queue updates need to be in an atomic block...
+
+Maze code:
+- Cleanup and documentation needed here.
 
 Solve mode:
 - Would be helpful to factor out the "face", "advance", etc. stuff from explorer first.

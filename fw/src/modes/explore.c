@@ -16,6 +16,7 @@
 #include "platform/pin.h"
 #include "serial/command.h"
 #include "utils/assert.h"
+#include "utils/dequeue.h"
 
 typedef enum : uint8_t { NORTH, EAST, SOUTH, WEST, INVALID } orientation_t;
 
@@ -27,11 +28,6 @@ static orientation_t explore_orientation;
 static float         explore_cell_offset;
 static bool          explore_stopped;
 
-static maze_location_t explorer_path_stack[256];
-static maze_location_t explorer_next_stack[256];
-static uint8_t         explorer_path_top;
-static uint8_t         explorer_next_top;
-
 typedef enum : uint8_t {
   STACK_PATH,
   STACK_NEXT,
@@ -39,62 +35,15 @@ typedef enum : uint8_t {
 
 #pragma pack(push, 1)
 typedef struct {
-  stack_id_t      stack_id : 7;
-  bool            push     : 1;
-  maze_location_t value;
+  stack_id_t           stack_id : 6;
+  dequeue_event_type_t event    : 2;
+  maze_location_t      value;
 } queue_update_t;
 #pragma pack(pop)
 
-queue_update_t queue_updates[16];
-uint8_t        queue_updates_length;
-
-static inline maze_location_t path_peek() {
-  return explorer_path_stack[explorer_path_top];
-}
-
-static inline maze_location_t path_pop() {
-  maze_location_t result = path_peek();
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    if (queue_updates_length < 16) {
-      queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_PATH, .push = false, .value = result};
-    }
-    explorer_path_stack[explorer_path_top--] = 0;
-  }
-  return result;
-}
-
-static inline void path_push(maze_location_t loc) {
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    explorer_path_stack[++explorer_path_top] = loc;
-    if (queue_updates_length < 16) {
-      queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_PATH, .push = true, .value = loc};
-    }
-  }
-}
-
-static inline maze_location_t next_peek() {
-  return explorer_next_stack[explorer_next_top];
-}
-
-static inline maze_location_t next_pop() {
-  maze_location_t result = next_peek();
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    if (queue_updates_length < 16) {
-      queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_NEXT, .push = false, .value = result};
-    }
-    explorer_next_stack[explorer_next_top--] = 0;
-  }
-  return result;
-}
-
-static inline void next_push(maze_location_t loc) {
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    explorer_next_stack[++explorer_next_top] = loc;
-    if (queue_updates_length < 16) {
-      queue_updates[queue_updates_length++] = (queue_update_t){.stack_id = STACK_NEXT, .push = true, .value = loc};
-    }
-  }
-}
+DEFINE_DEQUEUE(maze_location_t, path, 256);
+DEFINE_DEQUEUE(maze_location_t, next, 256);
+DEFINE_DEQUEUE(queue_update_t, updates, 16);
 
 void          stop();
 void          face(orientation_t orientation);
@@ -104,7 +53,23 @@ void          classify(maze_location_t loc);
 void          update_location();
 void          solve();
 
+void path_queue_callback(dequeue_event_type_t event, maze_location_t value) {
+  if (!updates_full()) {
+    updates_push_back((queue_update_t){.stack_id = STACK_PATH, .event = event, .value = value});
+  }
+}
+
+void next_queue_callback(dequeue_event_type_t event, maze_location_t value) {
+  if (!updates_full()) {
+    updates_push_back((queue_update_t){.stack_id = STACK_NEXT, .event = event, .value = value});
+  }
+}
+
 void explore() {
+  // Register dequeue callbacks.
+  path_register_callback(path_queue_callback);
+  next_register_callback(next_queue_callback);
+
   // Idle the mouse and turn on the IR LEDs.
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IR, .data.ir = {true}});
@@ -117,22 +82,20 @@ void explore() {
   explore_stopped     = true;
 
   // Our path so far is just the starting square, and we want to visit the square to our north.
-  explorer_path_top = 0xFF;
-  explorer_next_top = 0xFF;
-  path_push(maze_location(0, 0));
-  next_push(maze_location(0, 1));
+  path_push_back(maze_location(0, 0));
+  next_push_back(maze_location(0, 1));
 
   // While we have squares to visit...
-  while (explorer_next_top != 0xFF) {
-    maze_location_t next = next_peek();
-    maze_location_t curr = path_peek();
+  while (!next_empty()) {
+    maze_location_t next = next_peek_back();
+    maze_location_t curr = path_peek_back();
 
-    while (explorer_next_top != 0xFF && maze.cells[next].visited) {
-      next_pop();
-      next = next_peek();
+    while (!next_empty() && maze.cells[next].visited) {
+      next_pop_back();
+      next = next_peek_back();
     }
 
-    if (explorer_next_top == 0xFF) {
+    if (next_empty()) {
       break;
     }
 
@@ -141,23 +104,23 @@ void explore() {
     // If we are adjacent to the next square...
     if (next_orientation != INVALID) {
       // Then move to it and update our map.
-      next_pop();
+      next_pop_back();
       face(next_orientation);
       advance(next, true);
       classify(next);
     } else {
       // Otherwise, backtrack a square.
-      path_pop();
-      maze_location_t prev = path_peek();
+      path_pop_back();
+      maze_location_t prev = path_peek_back();
       face(adjacent(curr, prev));
       advance(prev, false);
     }
   }
 
   // Go back to the starting cell
-  while (explorer_path_top != 0) {
-    maze_location_t curr = path_pop();
-    maze_location_t prev = path_peek();
+  while (!path_empty()) {
+    maze_location_t curr = path_pop_back();
+    maze_location_t prev = path_peek_back();
     face(adjacent(curr, prev));
     advance(prev, false);
   }
@@ -169,6 +132,10 @@ void explore() {
   // Return to idling.
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
 
+  // Deregister dequeue callbacks.
+  path_register_callback(NULL);
+  next_register_callback(NULL);
+
   // Solve the maze.
   solve();
 }
@@ -178,13 +145,14 @@ uint8_t explore_report(uint8_t *buffer, uint8_t len) {
   assert(ASSERT_EXPLORE + 0, buffer != NULL);
   assert(ASSERT_EXPLORE + 1, len >= (sizeof(queue_update_t) * 16));
 
-  queue_update_t *updates = (queue_update_t *)buffer;
+  uint8_t i          = 0;
+  uint8_t report_len = 0;
 
-  uint8_t report_len = queue_updates_length * sizeof(queue_update_t);
-  for (int i = 0; i < queue_updates_length; i++) {
-    updates[i] = queue_updates[i];
+  queue_update_t *updates = (queue_update_t *)buffer;
+  while (!updates_empty()) {
+    updates[i++]  = updates_pop_front();
+    report_len   += sizeof(queue_update_t);
   }
-  queue_updates_length = 0;
 
   return report_len;
 }
@@ -296,7 +264,7 @@ void advance(maze_location_t loc, bool update_path) {
 
   update_location();
   if (update_path) {
-    path_push(loc);
+    path_push_back(loc);
   }
   explore_stopped = false;
 }
@@ -339,7 +307,7 @@ void update_location() {
 
 void queue(maze_location_t loc) {
   if (!maze.cells[loc].visited) {
-    next_push(loc);
+    next_push_back(loc);
   }
 }
 
@@ -464,39 +432,38 @@ void solve() {
   }
 
   // Step 3. Floodfill outwards from the goal cell.
-  uint8_t path_front               = 0;
-  uint8_t path_back                = 0;
-  maze.cells[goal].distance        = 0;
-  explorer_path_stack[path_back++] = goal;
-  while (path_front != path_back) {
-    maze_location_t loc  = explorer_path_stack[path_front++];
+  path_clear();
+  maze.cells[goal].distance = 0;
+  path_push_back(goal);
+  while (!path_empty()) {
+    maze_location_t loc  = path_pop_front();
     cell_t          cell = maze.cells[loc];
     if (!cell.wall_north) {
       maze_location_t next = loc + maze_location(0, 1);
       if (maze.cells[next].distance == 0xFF) {
-        maze.cells[next].distance        = cell.distance + 1;
-        explorer_path_stack[path_back++] = next;
+        maze.cells[next].distance = cell.distance + 1;
+        path_push_back(next);
       }
     }
     if (!cell.wall_east) {
       maze_location_t next = loc + maze_location(1, 0);
       if (maze.cells[next].distance == 0xFF) {
-        maze.cells[next].distance        = cell.distance + 1;
-        explorer_path_stack[path_back++] = next;
+        maze.cells[next].distance = cell.distance + 1;
+        path_push_back(next);
       }
     }
     if (!cell.wall_south) {
       maze_location_t next = loc - maze_location(0, 1);
       if (maze.cells[next].distance == 0xFF) {
-        maze.cells[next].distance        = cell.distance + 1;
-        explorer_path_stack[path_back++] = next;
+        maze.cells[next].distance = cell.distance + 1;
+        path_push_back(next);
       }
     }
     if (!cell.wall_west) {
       maze_location_t next = loc - maze_location(1, 0);
       if (maze.cells[next].distance == 0xFF) {
-        maze.cells[next].distance        = cell.distance + 1;
-        explorer_path_stack[path_back++] = next;
+        maze.cells[next].distance = cell.distance + 1;
+        path_push_back(next);
       }
     }
   }

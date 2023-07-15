@@ -8,6 +8,8 @@
     "files.associations": {
       "*.psl": "verilog",
       "*.h": "c",
+      "chrono": "c",
+      "typeinfo": "c"
     }
   },
 }

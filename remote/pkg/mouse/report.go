@@ -182,17 +182,26 @@ const (
 	StackIDNext
 )
 
+type QueueOperation uint8
+
+const (
+	PushFront QueueOperation = iota
+	PopFront
+	PushBack
+	PopBack
+)
+
 type QueueUpdate struct {
 	Op uint8
 	XY uint8
 }
 
 func (q QueueUpdate) StackID() StackID {
-	return StackID(q.Op & 0x7F)
+	return StackID(q.Op & 0x3F)
 }
 
-func (q QueueUpdate) Push() bool {
-	return (q.Op & 0x80) == 0x80
+func (q QueueUpdate) Operation() QueueOperation {
+	return QueueOperation(q.Op >> 6)
 }
 
 func (q QueueUpdate) Location() (X, Y int) {

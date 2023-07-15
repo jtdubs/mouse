@@ -30,6 +30,7 @@ enum assert_range_t : uint32_t {
   ASSERT_SENSOR       = 0x10000000,
   ASSERT_POSITION     = 0x20000000,
   ASSERT_LINEAR       = 0x30000000,
+  ASSERT_DEQUEUE      = 0x40000000,
 };
 
 #if !defined(NOASSERT)

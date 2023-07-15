@@ -4,12 +4,19 @@
 #include <util/atomic.h>
 
 #include "utils/assert.h"
+#include "utils/dequeue.h"
+
+#pragma pack(push, 1)
+typedef struct {
+  maze_location_t location;
+  cell_t          cell;
+} maze_update_t;
+#pragma pack(pop)
 
 maze_t  maze;
 uint8_t maze_report_row;
 
-static maze_location_t maze_update_queue[4];
-static uint8_t         maze_update_queue_length;
+DEFINE_DEQUEUE(maze_location_t, updates, 6);
 
 void maze_init() {
   maze_report_row = MAZE_HEIGHT;
@@ -35,8 +42,7 @@ void maze_init() {
 }
 
 void maze_send() {
-  maze_update_queue_length = 0;
-  maze_report_row          = 0;
+  maze_report_row = 0;
 }
 
 uint8_t maze_report(uint8_t *buffer, uint8_t len) {
@@ -56,12 +62,13 @@ uint8_t maze_report(uint8_t *buffer, uint8_t len) {
     return MAZE_WIDTH * sizeof(maze_update_t);
   }
 
-  uint8_t report_len = maze_update_queue_length * sizeof(maze_update_t);
-  for (int i = 0; i < maze_update_queue_length; i++) {
-    maze_location_t loc = maze_update_queue[i];
-    updates[i]          = (maze_update_t){.location = loc, .cell = maze.cells[loc]};
+  uint8_t report_len = 0;
+  uint8_t i          = 0;
+  while (!updates_empty()) {
+    maze_location_t loc  = updates_pop_front();
+    updates[i++]         = (maze_update_t){.location = loc, .cell = maze.cells[loc]};
+    report_len          += sizeof(maze_update_t);
   }
-  maze_update_queue_length = 0;
 
   return report_len;
 }
@@ -73,10 +80,10 @@ void maze_update(maze_location_t loc, cell_t cell) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     maze.cells[loc] = cell;
 
-    if (maze_update_queue_length < 16) {
-      maze_update_queue[maze_update_queue_length++] = loc;
-    } else {
+    if (updates_full()) {
       maze_send();
+    } else {
+      updates_push_back(loc);
     }
   }
 }
