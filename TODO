@@ -1,15 +1,19 @@
+Solve mode:
+- Pull out the {orientation, offset, stopped} into a struct, and then all the explore functions (face, advance, etc.) can be re-used by explore and solve...
+- Just walks the distance gradient calculated by exploration mode and stops in the center.
+
 Exploration mode:
 - There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.
 - Can also skip visiting cells if we've learned about all it's walls from other vantage points.
-
-Solve mode:
-- Would be helpful to factor out the "face", "advance", etc. stuff from explorer first.
-- Just walks the distance gradient calculated by exploration mode and stops in the center.
 
 Timer:
 - Tighten tick to run every 1-2ms instead of 5.
   - This is problematic as the encoder pulses are relatively infrequent, so we'll end up with either 0 or 1 each tick...
   - This may be "okay" if we just make the low-pass filter stronger?
+
+Sim and Remote:
+- Both probably need a re-write.
+- TBH, C might be easier if I can directly use structs from the mouse header files.
 
 Board improvements:
 - Center of mass too far back due to battery, makes it prone to "bucking" under heavy acceleration.
