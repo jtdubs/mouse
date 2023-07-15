@@ -476,22 +476,22 @@ void solve() {
 
     maze_location_t next = curr;
 
-    if (maze_x(curr) < (MAZE_HEIGHT - 1) && maze_read(north).distance < distance) {
+    if (maze_x(curr) < (MAZE_HEIGHT - 1) && !maze_read(curr).wall_north && maze_read(north).distance < distance) {
       next     = north;
       distance = maze_read(north).distance;
     }
 
-    if (maze_y(curr) < (MAZE_WIDTH - 1) && maze_read(east).distance < distance) {
+    if (maze_y(curr) < (MAZE_WIDTH - 1) && !maze_read(curr).wall_east && maze_read(east).distance < distance) {
       next     = east;
       distance = maze_read(east).distance;
     }
 
-    if (maze_x(curr) > 0 && maze_read(south).distance < distance) {
+    if (maze_x(curr) > 0 && !maze_read(curr).wall_south && maze_read(south).distance < distance) {
       next     = south;
       distance = maze_read(south).distance;
     }
 
-    if (maze_y(curr) > 0 && maze_read(west).distance < distance) {
+    if (maze_y(curr) > 0 && !maze_read(curr).wall_west && maze_read(west).distance < distance) {
       next     = west;
       distance = maze_read(west).distance;
     }
