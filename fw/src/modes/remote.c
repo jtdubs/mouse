@@ -1,6 +1,7 @@
 #include "modes/remote.h"
 
 #include <avr/interrupt.h>
+#include <util/atomic.h>
 #include <util/delay.h>
 
 #include "control/linear.h"
@@ -11,21 +12,16 @@
 #include "platform/motor.h"
 #include "platform/pin.h"
 #include "serial/command.h"
+#include "utils/dequeue.h"
 
-static plan_t  remote_plan_queue[16];
-static uint8_t remote_plan_queue_size = 0;
-
-static void remote_enqueue(plan_t plan) {
-  if (remote_plan_queue_size < 16) {
-    remote_plan_queue[remote_plan_queue_size++] = plan;
-  }
-}
+DEFINE_DEQUEUE(plan_t, plans, 16);
 
 // remote is a mode that allows the robot to be controlled remotely.
 void remote() {
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
 
   for (;;) {
+    // wait until there's a command to process.
     command_t command;
     while (!command_next(&command)) {}
 
@@ -36,9 +32,8 @@ void remote() {
         _delay_ms(60000.0);
         break;
       case COMMAND_EXPLORE:
-        command_processed();
         explore();
-        continue;
+        break;
       case COMMAND_SEND_MAZE:
         maze_send();
         break;
@@ -65,13 +60,13 @@ void remote() {
         }
         break;
       case COMMAND_PLAN_ENQUEUE:
-        remote_enqueue(command.data.plan);
+        plans_push_back(command.data.plan);
         break;
       case COMMAND_PLAN_EXECUTE:
-        for (uint8_t i = 0; i < remote_plan_queue_size; i++) {
-          plan_submit_and_wait(&remote_plan_queue[i]);
+        while (!plans_empty()) {
+          plan_t plan = plans_pop_front();
+          plan_submit_and_wait(&plan);
         }
-        remote_plan_queue_size = 0;
         break;
       default:
         break;
