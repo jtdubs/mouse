@@ -12,6 +12,13 @@ static char hex_table[16] = "0123456789ABCDEF";
 
 // _assert_failed is called when an assertion fails.
 void _assert_failed(uint32_t error_code) {
+  // disable interrupts and the watchdog (we are here forever!)
+  cli();
+  wdt_disable();
+
+  // print the error code to the console (if in the simulator)
+  SIM_CONSOLE_REG = (uint8_t)'A';
+  SIM_CONSOLE_REG = (uint8_t)':';
   SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 28 & 0xF];
   SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 24 & 0xF];
   SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 20 & 0xF];
@@ -20,10 +27,7 @@ void _assert_failed(uint32_t error_code) {
   SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 8 & 0xF];
   SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 4 & 0xF];
   SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 0 & 0xF];
-
-  // disable interrupts and the watchdog (we are here forever!)
-  cli();
-  wdt_disable();
+  SIM_CONSOLE_REG = (uint8_t)'\n';
 
   // disable all peripherals
   motor_set(0, 0);

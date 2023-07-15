@@ -20,8 +20,10 @@ constexpr float WHEEL_DIAMETER = 32.50;  // mm
 constexpr float AXLE_OFFSET    = 36.00;  // mm, from back of board
 
 // Maze dimensions
-constexpr uint8_t MAZE_WIDTH  = 16;  // dimensionless
-constexpr uint8_t MAZE_HEIGHT = 16;  // dimensionless
+constexpr uint8_t MAZE_WIDTH  = 16;                 // dimensionless
+constexpr uint8_t MAZE_HEIGHT = 16;                 // dimensionless
+constexpr float   CELL_SIZE   = 180.0;              // mm
+constexpr float   CELL_SIZE_2 = (CELL_SIZE / 2.0);  // mm
 
 // Sensor performance
 constexpr uint16_t SENSOR_EMERGENCY_STOP    = 800;

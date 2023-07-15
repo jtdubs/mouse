@@ -1,5 +1,3 @@
-#include "modes/explore.h"
-
 #include <avr/interrupt.h>
 #include <stddef.h>
 #include <util/atomic.h>
@@ -11,6 +9,7 @@
 #include "control/speed.h"
 #include "control/walls.h"
 #include "maze/maze.h"
+#include "modes/explore_int.h"
 #include "modes/remote.h"
 #include "platform/motor.h"
 #include "platform/pin.h"
@@ -18,68 +17,44 @@
 #include "utils/assert.h"
 #include "utils/dequeue.h"
 
-typedef enum : uint8_t { NORTH, EAST, SOUTH, WEST, INVALID } orientation_t;
+static orientation_t explore_orientation;  // The current orientation of the mouse.
+static float         explore_cell_offset;  // The offset into the current cell.
+static bool          explore_stopped;      // Whether or not the mouse has stopped.
 
-constexpr float ENTRY_OFFSET = 16.0;               // mm
-constexpr float CELL_SIZE    = 180.0;              // mm
-constexpr float CELL_SIZE_2  = (CELL_SIZE / 2.0);  // mm
+DEFINE_DEQUEUE(maze_location_t, path, 256);     // The breadcrumb trail.
+DEFINE_DEQUEUE(maze_location_t, next, 256);     // The stack of unvisited cells.
+DEFINE_DEQUEUE(dequeue_update_t, updates, 16);  // The queue of updates to send to the host.
 
-static orientation_t explore_orientation;
-static float         explore_cell_offset;
-static bool          explore_stopped;
-
-typedef enum : uint8_t {
-  STACK_PATH,
-  STACK_NEXT,
-} stack_id_t;
-
-#pragma pack(push, 1)
-typedef struct {
-  stack_id_t           stack_id : 6;
-  dequeue_event_type_t event    : 2;
-  maze_location_t      value;
-} queue_update_t;
-#pragma pack(pop)
-
-DEFINE_DEQUEUE(maze_location_t, path, 256);
-DEFINE_DEQUEUE(maze_location_t, next, 256);
-DEFINE_DEQUEUE(queue_update_t, updates, 16);
-
-void          stop();
-void          face(orientation_t orientation);
-void          advance(maze_location_t loc, bool update_path);
-orientation_t adjacent(maze_location_t a, maze_location_t b);
-void          classify(maze_location_t loc);
-void          update_location();
-void          solve();
-
+// path_queue_callback is the callback for changes the path queue.
 void path_queue_callback(dequeue_event_type_t event, maze_location_t value) {
   if (!updates_full()) {
-    updates_push_back((queue_update_t){.stack_id = STACK_PATH, .event = event, .value = value});
+    updates_push_back((dequeue_update_t){.dequeue_id = DEQUEUE_PATH, .event = event, .value = value});
   }
 }
 
+// next_queue_callback is the callback for changes the next queue.
 void next_queue_callback(dequeue_event_type_t event, maze_location_t value) {
   if (!updates_full()) {
-    updates_push_back((queue_update_t){.stack_id = STACK_NEXT, .event = event, .value = value});
+    updates_push_back((dequeue_update_t){.dequeue_id = DEQUEUE_NEXT, .event = event, .value = value});
   }
 }
 
-void explore() {
-  // Initialize dequeues.
+void explore_init() {
   path_init();
   next_init();
   updates_init();
   path_register_callback(path_queue_callback);
   next_register_callback(next_queue_callback);
+}
 
+void explore() {
   // Idle the mouse and turn on the IR LEDs.
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IR, .data.ir = {true}});
 
   // Assumption:
   // We start centered along the back wall of the starting square, with our back touching the wall.
-  // Therefore our "position", measured by the center of the axle is AXLE_OFFSET from the wall, in cell (0, 0).
+  // Therefore our "position", measured by the center of the axle is AXLE_OFFSET from the wall.
   explore_orientation = NORTH;
   explore_cell_offset = AXLE_OFFSET;
   explore_stopped     = true;
@@ -90,76 +65,83 @@ void explore() {
 
   // While we have squares to visit...
   while (!next_empty()) {
-    maze_location_t next = next_peek_back();
-    maze_location_t curr = path_peek_back();
-
-    while (!next_empty() && maze_read(next).visited) {
+    // Skips cells we already visited since they were added to the stack.
+    while (!next_empty() && maze_read(next_peek_back()).visited) {
       next_pop_back();
-      next = next_peek_back();
     }
 
+    // If we have no more cells to visit, then we are done.
     if (next_empty()) {
       break;
     }
 
+    maze_location_t curr = path_peek_back();
+    maze_location_t next = next_peek_back();
+    maze_location_t prev;
+
+    // Determine which direction to drive to reach the cell (if it is adjancent).
     orientation_t next_orientation = adjacent(curr, next);
 
-    // If we are adjacent to the next square...
+    // If we are adjacent to the next cell
     if (next_orientation != INVALID) {
-      // Then move to it and update our map.
-      next_pop_back();
-      face(next_orientation);
-      advance(next, true);
-      classify(next);
+      next_pop_back();         // Remove the cell from the "next" stack.
+      face(next_orientation);  // Turn to face the cell.
+      advance(next, true);     // Advance into it, updating the breadcrumb trail.
+      classify(next);          // Update our maze representation, and note any new cells to visit.
     } else {
       // Otherwise, backtrack a square.
-      path_pop_back();
-      maze_location_t prev = path_peek_back();
-      face(adjacent(curr, prev));
-      advance(prev, false);
+      path_pop_back();             // Remove the current cell from the breadcrumb trail.
+      prev = path_peek_back();     // Check which cell we came from.
+      face(adjacent(curr, prev));  // Turn to face it.
+      advance(prev, false);        // Advance into it, but do NOT update the breadcrumb trail.
     }
   }
 
-  // Go back to the starting cell
-  while (!path_empty()) {
+  // Now that exploration is complete, we return to the starting cell.
+  if (!path_empty()) {
     maze_location_t curr = path_pop_back();
-    maze_location_t prev = path_peek_back();
-    face(adjacent(curr, prev));
-    advance(prev, false);
+    while (!path_empty()) {
+      maze_location_t prev = path_pop_back();
+      face(adjacent(curr, prev));
+      advance(prev, false);
+      curr = prev;
+    }
   }
 
-  // Stop in the middle of the last square.
+  // Stop in the middle of the last square, facing north.
   stop();
   face(NORTH);
 
-  // Return to idling.
+  // Ensure the control system is idling (no motor activity).
   plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
 
   // Deregister dequeue callbacks.
   path_register_callback(NULL);
   next_register_callback(NULL);
 
-  // Solve the maze.
+  // Solve the maze, and tramit the new maze data to the host.
   solve();
+  maze_send();
 }
 
 // explore_report() is the report handler for the explore mode.
 uint8_t explore_report(uint8_t *buffer, uint8_t len) {
   assert(ASSERT_EXPLORE + 0, buffer != NULL);
-  assert(ASSERT_EXPLORE + 1, len >= (sizeof(queue_update_t) * 16));
+  assert(ASSERT_EXPLORE + 1, len >= (sizeof(dequeue_update_t) * 16));
 
   uint8_t i          = 0;
   uint8_t report_len = 0;
 
-  queue_update_t *updates = (queue_update_t *)buffer;
+  dequeue_update_t *updates = (dequeue_update_t *)buffer;
   while (!updates_empty()) {
     updates[i++]  = updates_pop_front();
-    report_len   += sizeof(queue_update_t);
+    report_len   += sizeof(dequeue_update_t);
   }
 
   return report_len;
 }
 
+// adjacent determines the orientation needed to drive between two adjacent cells.
 orientation_t adjacent(maze_location_t a, maze_location_t b) {
   uint8_t ax = maze_x(a);
   uint8_t ay = maze_y(a);
@@ -214,10 +196,10 @@ void face(orientation_t orientation) {
   // stop in the middle of the cell
   stop();
 
-  uint8_t delta = (orientation + 4) - explore_orientation;
-  if (delta >= 4) {
-    delta -= 4;
-  }
+  // determine the delta between the current orientation and the desired orientation
+  // Note: The (+4) and (&3) is to ensure the result is in [0,3] without using an expensive % operator.
+  uint8_t delta  = (orientation + 4) - explore_orientation;
+  delta         &= 3;
 
   switch (delta) {
     case 0:
@@ -280,6 +262,7 @@ void stop() {
 
   update_location();
 
+  // we should never decide to stop once we have already passed the center of a cell.
   assert(ASSERT_EXPLORE + 3, explore_cell_offset <= CELL_SIZE_2);
 
   // stop at the center of the cell
@@ -296,26 +279,27 @@ void stop() {
 
 // update_location updates the cell index and offset based on the traveled distance.
 void update_location() {
-  float position_distance, position_theta;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    float position_distance, position_theta;
     position_read(&position_distance, &position_theta);
     explore_cell_offset += position_distance;
     position_clear();
   }
 
+  // this is a (% CELL_SIZE) without using the % operator because it is expensive.
   while (explore_cell_offset > CELL_SIZE) {
     explore_cell_offset -= CELL_SIZE;
   }
 }
 
-void queue(maze_location_t loc) {
+// queue_unvisited adds a cell to the "next" stack if it has not already been visited.
+void queue_unvisited(maze_location_t loc) {
   if (!maze_read(loc).visited) {
     next_push_back(loc);
   }
 }
 
-// classify updates the state of a cell.
-// assumption: we are at ENTRY_OFFSET into the cell.
+// classify updates the state of a cell, and adds unvisited neighbors to the "next" stack.
 void classify(maze_location_t loc) {
   assert(ASSERT_EXPLORE + 4, explore_orientation != INVALID);
 
@@ -336,68 +320,68 @@ void classify(maze_location_t loc) {
       if (wall_right) {
         cell.wall_east = wall_right;
       } else {
-        queue(loc + maze_location(1, 0));
+        queue_unvisited(loc + maze_location(1, 0));
       }
       if (wall_left) {
         cell.wall_west = wall_left;
       } else {
-        queue(loc - maze_location(1, 0));
+        queue_unvisited(loc - maze_location(1, 0));
       }
       if (wall_forward) {
         cell.wall_north = wall_forward;
       } else {
-        queue(loc + maze_location(0, 1));
+        queue_unvisited(loc + maze_location(0, 1));
       }
       break;
     case EAST:
       if (wall_right) {
         cell.wall_south = wall_right;
       } else {
-        queue(loc - maze_location(0, 1));
+        queue_unvisited(loc - maze_location(0, 1));
       }
       if (wall_left) {
         cell.wall_north = wall_left;
       } else {
-        queue(loc + maze_location(0, 1));
+        queue_unvisited(loc + maze_location(0, 1));
       }
       if (wall_forward) {
         cell.wall_east = wall_forward;
       } else {
-        queue(loc + maze_location(1, 0));
+        queue_unvisited(loc + maze_location(1, 0));
       }
       break;
     case SOUTH:
       if (wall_right) {
         cell.wall_west = wall_right;
       } else {
-        queue(loc - maze_location(1, 0));
+        queue_unvisited(loc - maze_location(1, 0));
       }
       if (wall_left) {
         cell.wall_east = wall_left;
       } else {
-        queue(loc + maze_location(1, 0));
+        queue_unvisited(loc + maze_location(1, 0));
       }
       if (wall_forward) {
         cell.wall_south = wall_forward;
       } else {
-        queue(loc - maze_location(0, 1));
+        queue_unvisited(loc - maze_location(0, 1));
       }
       break;
     case WEST:
       if (wall_right) {
         cell.wall_north = wall_right;
       } else {
-        queue(loc + maze_location(0, 1));
+        queue_unvisited(loc + maze_location(0, 1));
       }
       if (wall_left) {
         cell.wall_south = wall_left;
       } else {
-        queue(loc - maze_location(0, 1));
+        queue_unvisited(loc - maze_location(0, 1));
       }
       if (wall_forward) {
         cell.wall_west = wall_forward;
       } else {
-        queue(loc - maze_location(1, 0));
+        queue_unvisited(loc - maze_location(1, 0));
       }
       break;
     case INVALID:
@@ -407,6 +391,7 @@ void classify(maze_location_t loc) {
   maze_update(loc, cell);
 }
 
+// solve calculates the shortest path to the goal.
 void solve() {
   // Step 1. Find the 2x2 square of cells with no internal walls that is the goal.
   maze_location_t goal = maze_location(15, 15);
@@ -425,7 +410,7 @@ void solve() {
     return;
   }
 
-  // Step 2. Find the cell in the goal square with the gateway.
+  // Step 2. Find the cell in the goal square with the gateway, as that's where we want to get.
   if (!maze_read(goal + maze_location(0, 1)).wall_north || !maze_read(goal + maze_location(0, 1)).wall_west) {
     goal += maze_location(0, 1);
   } else if (!maze_read(goal + maze_location(1, 0)).wall_south || !maze_read(goal + maze_location(1, 0)).wall_east) {

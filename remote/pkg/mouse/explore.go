@@ -1,41 +1,61 @@
 package mouse
 
+import (
+	"sync"
+)
+
 type Explore struct {
-	PathStack []uint8
-	NextStack []uint8
+	pathStack []uint8
+	nextStack []uint8
+	lock      *sync.Mutex
 }
 
 func NewExplore() *Explore {
 	return &Explore{
-		PathStack: make([]uint8, 0, 16),
-		NextStack: make([]uint8, 0, 16),
+		pathStack: make([]uint8, 0, 16),
+		nextStack: make([]uint8, 0, 16),
+		lock:      &sync.Mutex{},
 	}
 }
 
+func (e *Explore) Read() (path, next []uint8) {
+	e.lock.Lock()
+	defer e.lock.Unlock()
+
+	path = make([]uint8, len(e.pathStack))
+	copy(path, e.pathStack)
+	next = make([]uint8, len(e.nextStack))
+	copy(next, e.nextStack)
+	return
+}
+
 func (e *Explore) Update(u QueueUpdate) {
+	e.lock.Lock()
+	defer e.lock.Unlock()
+
 	switch u.StackID() {
 	case StackIDPath:
 		switch u.Operation() {
 		case PushFront:
-			e.PathStack = append([]uint8{u.XY}, e.PathStack...)
+			e.pathStack = append([]uint8{u.XY}, e.pathStack...)
 		case PopFront:
-			e.PathStack = e.PathStack[1:]
+			e.pathStack = e.pathStack[1:]
 		case PushBack:
-			e.PathStack = append(e.PathStack, u.XY)
+			e.pathStack = append(e.pathStack, u.XY)
 		case PopBack:
-			e.PathStack = e.PathStack[:len(e.PathStack)-1]
+			e.pathStack = e.pathStack[:len(e.pathStack)-1]
 		}
 
 	case StackIDNext:
 		switch u.Operation() {
 		case PushFront:
-			e.NextStack = append([]uint8{u.XY}, e.NextStack...)
+			e.nextStack = append([]uint8{u.XY}, e.nextStack...)
 		case PopFront:
-			e.NextStack = e.NextStack[1:]
+			e.nextStack = e.nextStack[1:]
 		case PushBack:
-			e.NextStack = append(e.NextStack, u.XY)
+			e.nextStack = append(e.nextStack, u.XY)
 		case PopBack:
-			e.NextStack = e.NextStack[:len(e.NextStack)-1]
+			e.nextStack = e.nextStack[:len(e.nextStack)-1]
 		}
 	}
 }

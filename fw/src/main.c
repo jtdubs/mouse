@@ -2,6 +2,7 @@
 
 #include "control/control.h"
 #include "maze/maze.h"
+#include "modes/explore.h"
 #include "modes/remote.h"
 #include "platform/platform.h"
 #include "serial/serial.h"
@@ -12,6 +13,7 @@ int main() {
   serial_init();    // serial report/command system
   control_init();   // control planning
   maze_init();      // maze data structure
+  explore_init();   // maze exploration mode
 
   // enable interrupts
   sei();

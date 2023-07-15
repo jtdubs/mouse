@@ -51,7 +51,7 @@ func New() *Mouse {
 		Recording:    false,
 		Updating:     true,
 		Maze:         &Maze{},
-		Explore:      &Explore{},
+		Explore:      NewExplore(),
 		status:       "Closed",
 		portOpen:     false,
 		serialBuffer: make([]byte, 256),
