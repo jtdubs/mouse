@@ -1,6 +1,7 @@
+Build:
+- Switch to a better build system: bazel?  build2?  
+
 Firmware:
-- Pull out the "platform" code into a nano BSP, and add one for the nano every.
-- Probably switch to a better build system (cmake???)
 - Add a speed ramp for rotation?
 
 Sim and Remote:
