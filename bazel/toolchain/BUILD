@@ -11,7 +11,7 @@ toolchain(
         "@platforms//os:linux",
     ],
     target_compatible_with = [
-        "//bazel/platforms:atmega328p",
+        "//bazel/platforms/avr:yes",
     ],
     toolchain = ":avr_cc_toolchain",
     toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",

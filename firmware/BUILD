@@ -1,12 +1,19 @@
 load("//bazel/rules:objcopy.bzl", "objcopy")
 load("//bazel/rules:objdump.bzl", "objdump")
 
+platform_library = select(
+    {
+        "//bazel/platforms/cpu:atmega328p": ["//firmware/platform/atmega328p"],
+        "//conditions:default": [],
+    },
+)
+
 cc_binary(
     name = "mouse",
     srcs = glob(["*.c"]),
     linkstatic = True,
     target_compatible_with = select({
-        "//bazel/platforms:atmega328p": [],
+        "//bazel/platforms/avr:yes": [],
         "//conditions:default": ["@platforms//:incompatible"],
     }),
     deps = [
@@ -16,24 +23,15 @@ cc_binary(
         "//firmware/lib/report",
         "//firmware/lib/utils",
         "//firmware/platform",
-        "//firmware/platform/nano",
-    ],
+    ] + platform_library,
 )
 
 objcopy(
     name = "mouse_hex",
     src = ":mouse",
-    target_compatible_with = select({
-        "//bazel/platforms:atmega328p": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
 )
 
 objdump(
     name = "mouse_s",
     src = ":mouse",
-    target_compatible_with = select({
-        "//bazel/platforms:atmega328p": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
 )

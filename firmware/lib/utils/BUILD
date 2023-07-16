@@ -5,7 +5,7 @@ cc_library(
     srcs = glob(["*.c"]),
     hdrs = glob(["*.h"]),
     target_compatible_with = select({
-        "//bazel/platforms:atmega328p": [],
+        "//bazel/platforms/avr:yes": [],
         "//conditions:default": ["@platforms//:incompatible"],
     }),
     deps = ["//firmware/platform"],
