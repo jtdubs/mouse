@@ -6,10 +6,7 @@
   ],
   "settings": {
     "files.associations": {
-      "*.psl": "verilog",
       "*.h": "c",
-      "chrono": "c",
-      "typeinfo": "c"
     },
     "files.exclude": {
       "**/.git": true,
@@ -17,6 +14,10 @@
       "bazel-out/": true,
       "bazel-testlogs/": true,
       "bazel-mouse/": true,
+      "remote.*": true,
+      "sim.*": true,
+      "remote": true,
+      "sim": true,
     }
   },
 }
