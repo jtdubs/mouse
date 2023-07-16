@@ -2,3 +2,7 @@
 *.fst
 *.vcd
 build/
+*.log
+bazel-*
+/remote
+/sim

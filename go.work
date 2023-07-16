@@ -1,6 +1,6 @@
 go 1.20
 
 use (
-	./remote
-	./sim
+	./tools/remote
+	./tools/sim
 )

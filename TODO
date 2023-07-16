@@ -1,6 +1,3 @@
-Build:
-- Switch to a better build system: bazel?  build2?  
-
 Firmware:
 - Add a speed ramp for rotation?
 

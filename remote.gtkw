@@ -1,0 +1,73 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Thu Jul 13 22:38:04 2023
+[*]
+[dumpfile] "/home/jtdubs/dev/mouse/remote/remote.vcd"
+[dumpfile_mtime] "Thu Jul 13 22:32:54 2023"
+[dumpfile_size] 537201
+[savefile] "/home/jtdubs/dev/mouse/remote/remote.gtkw"
+[timestart] 3185442
+[size] 1885 2096
+[pos] 952 0
+*-22.000000 5701252 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 265
+[signals_width] 540
+[sst_expanded] 1
+[sst_vpaned_height] 658
+@88022
+mouse.rtc_now[31:0]
+@200
+-Sensors
+@88022
+mouse.platform_sensor_forward[9:0]
+mouse.platform_sensor_left[9:0]
+mouse.platform_sensor_right[9:0]
+mouse.sensor_cal_forward[9:0]
+mouse.sensor_cal_left[9:0]
+mouse.sensor_cal_right[9:0]
+@200
+-LEDs
+@28
+mouse.platform_led_left
+mouse.platform_led_right
+mouse.platform_led_onboard
+mouse.platform_led_ir
+@200
+-Encoders
+@88420
+mouse.platform_encoder_left[31:0]
+mouse.platform_encoder_right[31:0]
+@200
+-Motor
+@88420
+mouse.platform_motor_left[15:0]
+mouse.platform_motor_right[15:0]
+@200
+-Speed
+@c8020
+mouse.control_speed_measured_left[31:0]
+mouse.control_speed_measured_right[31:0]
+mouse.control_speed_setpoint_left[31:0]
+mouse.control_speed_setpoint_right[31:0]
+@200
+-Position
+@c8020
+mouse.control_position_distance[31:0]
+mouse.control_position_theta[31:0]
+@200
+-Plan
+@22
+mouse.control_plan_state[7:0]
+mouse.control_plan_type[7:0]
+@200
+-Linear
+@c8020
+mouse.linear_plan_distance[31:0]
+@28
+mouse.linear_plan_stop
+@c8020
+mouse.linear_start_distance[31:0]
+mouse.linear_target_distance[31:0]
+mouse.linear_target_speed[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
