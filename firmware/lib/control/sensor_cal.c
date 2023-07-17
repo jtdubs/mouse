@@ -1,5 +1,3 @@
-#include "sensor_cal.h"
-
 #include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -10,6 +8,7 @@
 #include "firmware/lib/utils/math.h"
 #include "firmware/platform/adc.h"
 #include "firmware/platform/pin.h"
+#include "sensor_cal_impl.h"
 
 constexpr uint16_t SensorCalSamplePower = 9;                            // dimensionless
 constexpr uint16_t SensorCalSampleLimit = (1 << SensorCalSamplePower);  // dimensionless

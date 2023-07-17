@@ -1,5 +1,3 @@
-#include "linear.h"
-
 #include <stdbool.h>
 #include <stddef.h>
 #include <util/atomic.h>
@@ -10,10 +8,11 @@
 #include "firmware/lib/utils/pid.h"
 #include "firmware/platform/adc.h"
 #include "firmware/platform/pin.h"
+#include "linear_impl.h"
 #include "position.h"
 #include "sensor_cal.h"
-#include "speed.h"
-#include "walls.h"
+#include "speed_impl.h"
+#include "walls_impl.h"
 
 static linear_state_t state;
 

@@ -1,11 +1,10 @@
-#include "rotational.h"
-
 #include <stdbool.h>
 #include <util/atomic.h>
 
 #include "config.h"
 #include "firmware/lib/utils/math.h"
 #include "position.h"
+#include "rotational_impl.h"
 #include "speed.h"
 
 static rotational_state_t state;

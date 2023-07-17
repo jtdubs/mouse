@@ -81,9 +81,6 @@ typedef struct {
   } data;
 } plan_t;
 
-// plan_init initializes the plan module.
-void plan_init();
-
 // plan_submit submits a new plan to be implemented.
 void plan_submit(plan_t *plan);
 

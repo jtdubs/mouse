@@ -1,20 +1,19 @@
-#include "control.h"
-
 #include <stddef.h>
 
 #include "config.h"
+#include "control_impl.h"
 #include "firmware/lib/utils/assert.h"
 #include "firmware/platform/encoders.h"
 #include "firmware/platform/motor.h"
 #include "firmware/platform/pin.h"
 #include "firmware/platform/timer.h"
-#include "linear.h"
-#include "plan.h"
-#include "position.h"
-#include "rotational.h"
-#include "sensor_cal.h"
-#include "speed.h"
-#include "walls.h"
+#include "linear_impl.h"
+#include "plan_impl.h"
+#include "position_impl.h"
+#include "rotational_impl.h"
+#include "sensor_cal_impl.h"
+#include "speed_impl.h"
+#include "walls_impl.h"
 
 #pragma pack(push, 1)
 // control_report_t is the report sent by the control module.

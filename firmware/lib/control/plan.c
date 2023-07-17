@@ -1,11 +1,10 @@
-#include "plan.h"
-
 #include <stddef.h>
 #include <util/atomic.h>
 
 #include "firmware/lib/utils/assert.h"
 #include "firmware/lib/utils/sim.h"
 #include "firmware/platform/pin.h"
+#include "plan_impl.h"
 
 // current_plan is the current plan
 static plan_t current_plan;

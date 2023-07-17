@@ -1,5 +1,3 @@
-#include "speed.h"
-
 #include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -13,6 +11,7 @@
 #include "firmware/platform/motor.h"
 #include "firmware/platform/pin.h"
 #include "firmware/platform/rtc.h"
+#include "speed_impl.h"
 
 // Motor speeds in RPMs.
 static float speed_measured_left;

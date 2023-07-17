@@ -1,12 +1,11 @@
-#include "walls.h"
-
 #include <stddef.h>
 #include <util/atomic.h>
 
 #include "firmware/lib/utils/assert.h"
 #include "firmware/platform/adc.h"
 #include "firmware/platform/pin.h"
-#include "sensor_cal.h"
+#include "sensor_cal_impl.h"
+#include "walls_impl.h"
 
 typedef struct {
   bool    left_present;

@@ -1,5 +1,3 @@
-#include "position.h"
-
 #include <math.h>
 #include <stddef.h>
 #include <util/atomic.h>
@@ -8,6 +6,7 @@
 #include "firmware/lib/utils/assert.h"
 #include "firmware/lib/utils/math.h"
 #include "firmware/platform/encoders.h"
+#include "position_impl.h"
 
 static float position_distance;  // in mms
 static float position_theta;     // in radians
@@ -40,11 +39,6 @@ void position_update() {
     position_distance = distance;
     position_theta    = theta;
   }
-}
-
-void position_clear() {
-  position_distance = 0;
-  position_theta    = 0;
 }
 
 void position_read(float* distance, float* theta) {
