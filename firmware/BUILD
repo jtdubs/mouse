@@ -4,6 +4,7 @@ load("//bazel/rules:objdump.bzl", "objdump")
 platform_library = select(
     {
         "//bazel/platforms/cpu:atmega328p": ["//firmware/platform/atmega328p"],
+        "//bazel/platforms/cpu:atmega4809": ["//firmware/platform/atmega4809"],
         "//conditions:default": [],
     },
 )
