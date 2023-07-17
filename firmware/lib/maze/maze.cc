@@ -18,10 +18,10 @@ typedef struct {
 static maze_t  maze;
 static uint8_t maze_report_row;
 
-DEFINE_DEQUEUE(maze_location_t, updates, 6);
+DEFINE_DEQUEUE(maze_location_t, maze_updates, 6);
 
 void maze_init() {
-  updates_init();
+  maze_updates_init();
 
   maze_report_row = MAZE_HEIGHT;
 
@@ -72,8 +72,8 @@ uint8_t maze_report(uint8_t *buffer, uint8_t len) {
   // otherwise, send any pending updates.
   uint8_t report_len = 0;
   uint8_t i          = 0;
-  while (!updates_empty()) {
-    maze_location_t loc  = updates_pop_front();
+  while (!maze_updates_empty()) {
+    maze_location_t loc  = maze_updates_pop_front();
     updates[i++]         = (maze_update_t){.location = loc, .cell = maze.cells[loc]};
     report_len          += sizeof(maze_update_t);
   }
@@ -95,10 +95,10 @@ void maze_update(maze_location_t loc, maze_cell_t cell) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     maze.cells[loc] = cell;
 
-    if (updates_full()) {
+    if (maze_updates_full()) {
       maze_send();
     } else {
-      updates_push_back(loc);
+      maze_updates_push_back(loc);
     }
   }
 }

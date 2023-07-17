@@ -8,7 +8,9 @@
 #include "firmware/platform/pin.h"
 #include "sim.h"
 
-static char hex_table[16] = "0123456789ABCDEF";
+static char hex_table[16] = {
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+};
 
 // _assert_failed is called when an assertion fails.
 void _assert_failed(uint32_t error_code) {

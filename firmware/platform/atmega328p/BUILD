@@ -3,7 +3,7 @@ package(default_visibility = ["//visibility:public"])
 cc_library(
     name = "atmega328p",
     srcs = glob([
-        "*.c",
+        "*.cc",
         "*.h",
     ]),
     target_compatible_with = select({

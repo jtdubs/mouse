@@ -48,8 +48,8 @@ void explore_init() {
 
 void explore() {
   // Idle the mouse and turn on the IR LEDs.
-  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
-  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IR, .data.ir = {true}});
+  plan_submit_and_wait((plan_t){.type = PLAN_TYPE_IDLE, .state = PLAN_STATE_SCHEDULED, .data = {.idle = {}}});
+  plan_submit_and_wait((plan_t){.type = PLAN_TYPE_IR, .state = PLAN_STATE_SCHEDULED, .data = {.ir = {true}}});
 
   // Assumption:
   // We start centered along the back wall of the starting square, with our back touching the wall.
@@ -112,7 +112,7 @@ void explore() {
   face(NORTH);
 
   // Ensure the control system is idling (no motor activity).
-  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
+  plan_submit_and_wait((plan_t){.type = PLAN_TYPE_IDLE, .state = PLAN_STATE_SCHEDULED, .data = {.idle = {}}});
 
   // Deregister dequeue callbacks.
   path_register_callback(NULL);
@@ -205,24 +205,27 @@ void face(orientation_t orientation) {
       break;
     case 1:
       plan_submit_and_wait(  //
-          &(plan_t){.type            = PLAN_TYPE_ROTATIONAL_MOTION,
-                    .data.rotational = {
-                        .d_theta = -M_PI_2,
-                    }});
+          (plan_t){.type  = PLAN_TYPE_ROTATIONAL_MOTION,
+                   .state = PLAN_STATE_SCHEDULED,
+                   .data  = {.rotational = {
+                                 .d_theta = -M_PI_2,
+                            }}});
       break;
     case 2:
       plan_submit_and_wait(  //
-          &(plan_t){.type            = PLAN_TYPE_ROTATIONAL_MOTION,
-                    .data.rotational = {
-                        .d_theta = M_PI,
-                    }});
+          (plan_t){.type  = PLAN_TYPE_ROTATIONAL_MOTION,
+                   .state = PLAN_STATE_SCHEDULED,
+                   .data  = {.rotational = {
+                                 .d_theta = M_PI,
+                            }}});
       break;
     case 3:
       plan_submit_and_wait(  //
-          &(plan_t){.type            = PLAN_TYPE_ROTATIONAL_MOTION,
-                    .data.rotational = {
-                        .d_theta = M_PI_2,
-                    }});
+          (plan_t){.type  = PLAN_TYPE_ROTATIONAL_MOTION,
+                   .state = PLAN_STATE_SCHEDULED,
+                   .data  = {.rotational = {
+                                 .d_theta = M_PI_2,
+                            }}});
       break;
   }
 
@@ -241,11 +244,12 @@ void advance(maze_location_t loc, bool update_path) {
   update_location();
 
   plan_submit_and_wait(  //
-      &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,
-                .data.linear = {
-                    .position = CELL_SIZE - (explore_cell_offset - ENTRY_OFFSET),
-                    .stop     = false,
-                }});
+      (plan_t){.type  = PLAN_TYPE_LINEAR_MOTION,
+               .state = PLAN_STATE_SCHEDULED,
+               .data  = {.linear = {
+                             .position = CELL_SIZE - (explore_cell_offset - ENTRY_OFFSET),
+                             .stop     = false,
+                        }}});
 
   if (update_path) {
     path_push_back(loc);
@@ -265,12 +269,13 @@ void stop() {
   assert(ASSERT_EXPLORE + 3, explore_cell_offset <= CELL_SIZE_2);
 
   // stop at the center of the cell
-  plan_submit_and_wait(                                  //
-      &(plan_t){.type        = PLAN_TYPE_LINEAR_MOTION,  //
-                .data.linear = {
-                    .position = CELL_SIZE_2 - explore_cell_offset,
-                    .stop     = true  //
-                }});
+  plan_submit_and_wait(                           //
+      (plan_t){.type  = PLAN_TYPE_LINEAR_MOTION,  //
+               .state = PLAN_STATE_SCHEDULED,     //
+               .data  = {.linear = {
+                             .position = CELL_SIZE_2 - explore_cell_offset,
+                             .stop     = true  //
+                        }}});
 
   explore_stopped = true;
 }
@@ -303,12 +308,13 @@ void classify(maze_location_t loc) {
 
   // Classify the square based on sensor readings.
   maze_cell_t cell = {
-      .visited    = true,
-      .distance   = 0xFF,
       .wall_north = false,
       .wall_east  = false,
       .wall_south = false,
       .wall_west  = false,
+      .visited    = true,
+      .padding    = 0,
+      .distance   = 0xFF,
   };
   switch (explore_orientation) {
     case NORTH:
@@ -509,5 +515,5 @@ void solve() {
   stop();
 
   // Ensure the control system is idling (no motor activity).
-  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
+  plan_submit_and_wait((plan_t){.type = PLAN_TYPE_IDLE, .state = PLAN_STATE_SCHEDULED, .data = {.idle = {}}});
 }

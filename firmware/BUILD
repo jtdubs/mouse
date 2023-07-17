@@ -11,7 +11,7 @@ platform_library = select(
 
 cc_binary(
     name = "mouse",
-    srcs = glob(["*.c"]),
+    srcs = glob(["*.cc"]),
     linkstatic = True,
     target_compatible_with = select({
         "//bazel/platforms/avr:yes": [],

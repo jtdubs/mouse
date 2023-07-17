@@ -16,9 +16,9 @@ void plan_init() {
 }
 
 // plan_submit submits a new plan to be implemented.
-void plan_submit(plan_t *plan) {
+void plan_submit(plan_t plan) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    current_plan = *plan;
+    current_plan = plan;
     plan_set_state(PLAN_STATE_SCHEDULED);
   }
 }
@@ -33,7 +33,7 @@ void plan_wait() {
 
 // plan_submit_and_wait submits a new plan, and wait for it to be implemented.
 // NOTE: this plan will replace the current plan, even if it is not fully implemented!
-void plan_submit_and_wait(plan_t *plan) {
+void plan_submit_and_wait(plan_t plan) {
   plan_submit(plan);
   plan_wait();
 }

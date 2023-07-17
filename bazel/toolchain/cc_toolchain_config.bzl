@@ -112,11 +112,30 @@ def _impl(ctx):
                     ]),
                 ),
                 flag_set(
-                    actions = all_compiler_actions,
+                    actions = [ACTION_NAMES.c_compile],
                     flag_groups = ([
                         flag_group(
                             flags = [
                                 "-std=c2x",
+                            ],
+                        ),
+                    ]),
+                ),
+                flag_set(
+                    actions = [ACTION_NAMES.cpp_compile],
+                    flag_groups = ([
+                        flag_group(
+                            flags = [
+                                "-std=c++20",
+                            ],
+                        ),
+                    ]),
+                ),
+                flag_set(
+                    actions = all_compiler_actions,
+                    flag_groups = ([
+                        flag_group(
+                            flags = [
                                 "-Wall",
                                 "-Werror",
                                 "-Wextra",

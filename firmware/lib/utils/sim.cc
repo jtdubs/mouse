@@ -36,8 +36,16 @@ AVR_MCU_VCD_IRQ_TRACE(ADC_vect_num, 1, "ADC");
 
 // PWM outputs
 const struct avr_mmcu_vcd_trace_t PWMTrace[] _MMCU_ = {
-    {AVR_MCU_VCD_SYMBOL("LEFT_PWM"), .what = (void*)&OCR1A},
-    {AVR_MCU_VCD_SYMBOL("RIGHT_PWM"), .what = (void*)&OCR1B},
+    {.tag  = AVR_MMCU_TAG_VCD_TRACE,
+     .len  = sizeof(struct avr_mmcu_vcd_trace_t) - 2,
+     .mask = 0,
+     .what = (void*)&OCR1A,
+     .name = "LEFT_PWM"},
+    {.tag  = AVR_MMCU_TAG_VCD_TRACE,
+     .len  = sizeof(struct avr_mmcu_vcd_trace_t) - 2,
+     .mask = 0,
+     .what = (void*)&OCR1B,
+     .name = "RIGHT_PWM"},
 };
 
 // Console and command registers

@@ -10,11 +10,8 @@
 
 // adc_next_channel defines the sequence in which channels are read.
 constexpr adc_channel_t ADC_NEXT_CHANNEL[ADC_CHANNEL_COUNT] = {
-    [ADC_SENSOR_RIGHT]    = ADC_SENSOR_FORWARD,   //
-    [ADC_SENSOR_FORWARD]  = ADC_SENSOR_LEFT,      //
-    [ADC_SENSOR_LEFT]     = ADC_SELECTOR,         //
-    [ADC_SELECTOR]        = ADC_BATTERY_VOLTAGE,  //
-    [ADC_BATTERY_VOLTAGE] = ADC_SENSOR_RIGHT,
+    ADC_SENSOR_FORWARD, ADC_SENSOR_LEFT,  ADC_SELECTOR,        ADC_SENSOR_RIGHT,
+    ADC_SENSOR_RIGHT,   ADC_SENSOR_RIGHT, ADC_BATTERY_VOLTAGE, ADC_SENSOR_RIGHT,
 };
 
 // adc_first_channel is the first channel to be read.
@@ -62,7 +59,7 @@ void adc_read_sensors(uint16_t* left, uint16_t* right, uint16_t* forward) {
 
 ISR(ADC_vect, ISR_BLOCK) {
   // Check which channel was just read, and which channel should be read next.
-  adc_channel_t adc_index = ADMUX & 0x0F;
+  adc_channel_t adc_index = (adc_channel_t)(ADMUX & 0x0F);
   adc_channel_t adc_next  = ADC_NEXT_CHANNEL[adc_index];
 
   // Store the ADC result.

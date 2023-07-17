@@ -46,6 +46,8 @@ void usart0_write(uint8_t *buffer, uint8_t length) {
   UCSR0B |= 1 << UDRIE0;
 }
 
+uint8_t byte;
+
 // The USART0 Data Register Empty Interrupt.
 ISR(USART_UDRE_vect, ISR_BLOCK) {
   switch (usart0_write_state) {
@@ -61,7 +63,7 @@ ISR(USART_UDRE_vect, ISR_BLOCK) {
       break;
     case WRITE_DATA:
       // Write the next byte, update the checksum, and transition after all bytes are written.
-      uint8_t byte           = usart0_write_buffer[usart0_write_index++];
+      byte                   = usart0_write_buffer[usart0_write_index++];
       UDR0                   = byte;
       usart0_write_checksum += byte;
       if (usart0_write_index == usart0_write_length) {

@@ -19,7 +19,7 @@ DEFINE_DEQUEUE(plan_t, plans, 16);
 void remote() {
   command_init();
   plans_init();
-  plan_submit_and_wait(&(plan_t){.type = PLAN_TYPE_IDLE});
+  plan_submit_and_wait((plan_t){.type = PLAN_TYPE_IDLE, .state = PLAN_STATE_SCHEDULED, .data = {.idle = {}}});
 
   for (;;) {
     // wait until there's a command to process.
@@ -68,8 +68,7 @@ void remote() {
         break;
       case COMMAND_PLAN_EXECUTE:
         while (!plans_empty()) {
-          plan_t plan = plans_pop_front();
-          plan_submit_and_wait(&plan);
+          plan_submit_and_wait(plans_pop_front());
         }
         break;
       default:

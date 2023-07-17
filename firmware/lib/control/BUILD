@@ -3,7 +3,7 @@ package(default_visibility = ["//visibility:public"])
 cc_library(
     name = "control",
     srcs = glob([
-        "*.c",
+        "*.cc",
         "*_impl.h",
     ]),
     hdrs = glob(

@@ -46,6 +46,9 @@ typedef struct {
   plan_type_t  type;
   plan_state_t state;
   union {
+    // PLAN_IDLE
+    struct {
+    } idle;
     // PLAN_LEDS
     struct {
       bool left;
@@ -82,13 +85,13 @@ typedef struct {
 } plan_t;
 
 // plan_submit submits a new plan to be implemented.
-void plan_submit(plan_t *plan);
+void plan_submit(plan_t plan);
 
 // plan_wait waits for the current plan to be implemented.
 void plan_wait();
 
 // plan_submit_and_wait submits a new plan, and wait for it to be implemented.
-void plan_submit_and_wait(plan_t *plan);
+void plan_submit_and_wait(plan_t plan);
 
 // plan_set_state sets the current plan state.
 void plan_set_state(plan_state_t state);
