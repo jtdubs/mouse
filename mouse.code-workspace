@@ -6,7 +6,9 @@
   ],
   "settings": {
     "files.associations": {
+      "*.psl": "verilog",
       "*.h": "c",
+      "cstdint": "cpp"
     },
     "files.exclude": {
       "**/.git": true,

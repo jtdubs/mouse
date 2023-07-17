@@ -1,19 +1,23 @@
-#include "assert.h"
+#include "assert.hh"
 
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
 #include <util/delay.h>
 
-#include "firmware/platform/motor.h"
-#include "firmware/platform/pin.h"
-#include "sim.h"
+#include "firmware/platform/motor.hh"
+#include "firmware/platform/pin.hh"
+#include "sim.hh"
 
-static char hex_table[16] = {
+namespace assert {
+
+namespace {
+const char hex_table[16] = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
 };
+}
 
-// _assert_failed is called when an assertion fails.
-void _assert_failed(uint32_t error_code) {
+// failed is called when an assertion fails.
+void failed(uint32_t error_code) {
   // disable interrupts and the watchdog (we are here forever!)
   cli();
   wdt_disable();
@@ -32,11 +36,11 @@ void _assert_failed(uint32_t error_code) {
   SIM_CONSOLE_REG = (uint8_t)'\n';
 
   // disable all peripherals
-  motor_set(0, 0);
-  pin_clear(LED_LEFT);
-  pin_clear(LED_RIGHT);
-  pin_clear(LED_ONBOARD);
-  pin_clear(IR_LEDS);
+  motor::set(0, 0);
+  pin::clear(pin::LED_LEFT);
+  pin::clear(pin::LED_RIGHT);
+  pin::clear(pin::LED_ONBOARD);
+  pin::clear(pin::IR_LEDS);
 
   for (;;) {
     // blink out each bit in the error code
@@ -44,9 +48,9 @@ void _assert_failed(uint32_t error_code) {
       bool bit = (error_code >> (31 - bit_index)) & 1;
 
       // on for 20ms, off for 230ms (determined by visual inspection)
-      pin_set(bit ? LED_LEFT : LED_RIGHT);
+      pin::set(bit ? pin::LED_LEFT : pin::LED_RIGHT);
       _delay_ms(20);
-      pin_clear(bit ? LED_LEFT : LED_RIGHT);
+      pin::clear(bit ? pin::LED_LEFT : pin::LED_RIGHT);
       _delay_ms(230);
 
       if ((bit_index & 3) == 3) {
@@ -58,3 +62,5 @@ void _assert_failed(uint32_t error_code) {
     _delay_ms(2000);
   }
 }
+
+}  // namespace assert

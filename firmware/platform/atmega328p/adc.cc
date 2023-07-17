@@ -1,75 +1,71 @@
-#include "adc.h"
-
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "firmware/lib/utils/assert.h"
-#include "pin.h"
+#include "adc_impl.hh"
+#include "firmware/lib/utils/assert.hh"
+#include "pin_impl.hh"
 
-// adc_next_channel defines the sequence in which channels are read.
-constexpr adc_channel_t ADC_NEXT_CHANNEL[ADC_CHANNEL_COUNT] = {
-    ADC_SENSOR_FORWARD, ADC_SENSOR_LEFT,  ADC_SELECTOR,        ADC_SENSOR_RIGHT,
-    ADC_SENSOR_RIGHT,   ADC_SENSOR_RIGHT, ADC_BATTERY_VOLTAGE, ADC_SENSOR_RIGHT,
-};
+namespace adc {
 
-// adc_first_channel is the first channel to be read.
-constexpr adc_channel_t ADC_FIRST_CHANNEL = ADC_SENSOR_RIGHT;
-
+namespace {
 // Raw 10-bit readings from ADC channels.
-static uint16_t adc_values[ADC_CHANNEL_COUNT];
+uint16_t values[CHANNEL_COUNT];
+}  // namespace
 
-// adc_init initializes the ADC.
-void adc_init() {
+// init initializes the ADC.
+void init() {
   ADMUX  = _BV(REFS0);                             // AVCC with external capacitor at AREF pin
   ADCSRA = _BV(ADIE)                               // Enable ADC interrupt
          | _BV(ADPS0) | _BV(ADPS1) | _BV(ADPS2);   // Prescaler 128 (slow but accurate ADC readings)
   ADCSRB  = 0;                                     // Free running mode
   DIDR0   = _BV(ADC0D) | _BV(ADC1D) | _BV(ADC2D);  // Disable digital input buffer on ADC2
-  ADMUX  |= ADC_FIRST_CHANNEL;                     // Select the first channel.
+  ADMUX  |= FIRST_CHANNEL;                         // Select the first channel.
   ADCSRA |= _BV(ADEN);                             // Enable ADC
 }
 
-// adc_sample samples the ADC channels.
-void adc_sample() {
+// sample samples the ADC channels.
+void sample() {
   ADCSRA |= _BV(ADSC);
 }
 
-void adc_read(adc_channel_t channel, uint16_t* value) {
-  assert(ASSERT_ADC + 0, channel < ADC_CHANNEL_COUNT);
-  assert(ASSERT_ADC + 1, value != NULL);
+void read(channel_t channel, uint16_t* value) {
+  assert(assert::_ADC + 0, channel < CHANNEL_COUNT);
+  assert(assert::_ADC + 1, value != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *value = adc_values[channel];
+    *value = values[channel];
   }
 }
 
-void adc_read_sensors(uint16_t* left, uint16_t* right, uint16_t* forward) {
-  assert(ASSERT_ADC + 2, left != NULL);
-  assert(ASSERT_ADC + 3, right != NULL);
-  assert(ASSERT_ADC + 4, forward != NULL);
+void read_sensors(uint16_t* left, uint16_t* right, uint16_t* forward) {
+  assert(assert::_ADC + 2, left != NULL);
+  assert(assert::_ADC + 3, right != NULL);
+  assert(assert::_ADC + 4, forward != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left    = adc_values[ADC_SENSOR_LEFT];
-    *right   = adc_values[ADC_SENSOR_RIGHT];
-    *forward = adc_values[ADC_SENSOR_FORWARD];
+    *left    = values[SENSOR_LEFT];
+    *right   = values[SENSOR_RIGHT];
+    *forward = values[SENSOR_FORWARD];
   }
 }
 
 ISR(ADC_vect, ISR_BLOCK) {
   // Check which channel was just read, and which channel should be read next.
-  adc_channel_t adc_index = (adc_channel_t)(ADMUX & 0x0F);
-  adc_channel_t adc_next  = ADC_NEXT_CHANNEL[adc_index];
+  channel_t index = (channel_t)(ADMUX & 0x0F);
+  channel_t next  = NEXT_CHANNEL[index];
 
   // Store the ADC result.
-  adc_values[adc_index] = ADC;
+  values[index] = ADC;
 
   // Select the next ADC channel
-  ADMUX = (ADMUX & 0xF0) | adc_next;
+  ADMUX = (ADMUX & 0xF0) | next;
 
   // Start the next conversion, unless we are at the end of the sampling round.
-  if (adc_next != ADC_FIRST_CHANNEL) {
+  if (next != FIRST_CHANNEL) {
     ADCSRA |= _BV(ADSC);
   }
 }
+
+}  // namespace adc

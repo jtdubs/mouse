@@ -2,79 +2,85 @@
 #include <util/atomic.h>
 #include <util/delay.h>
 
-#include "command_impl.h"
-#include "firmware/lib/control/linear.h"
-#include "firmware/lib/control/plan.h"
-#include "firmware/lib/control/speed.h"
-#include "firmware/lib/maze/maze.h"
-#include "firmware/lib/mode/explore/explore.h"
-#include "firmware/lib/utils/dequeue.h"
-#include "firmware/platform/motor.h"
-#include "firmware/platform/pin.h"
-#include "remote_impl.h"
+#include "command_impl.hh"
+#include "firmware/lib/control/linear.hh"
+#include "firmware/lib/control/plan.hh"
+#include "firmware/lib/control/speed.hh"
+#include "firmware/lib/maze/maze.hh"
+#include "firmware/lib/mode/explore/explore.hh"
+#include "firmware/lib/utils/dequeue.hh"
+#include "firmware/platform/motor.hh"
+#include "firmware/platform/pin.hh"
+#include "remote_impl.hh"
 
-DEFINE_DEQUEUE(plan_t, plans, 16);
+namespace remote {
+
+namespace {
+DEFINE_DEQUEUE(plan::plan_t, plans, 16);
+}
 
 // remote is a mode that allows the robot to be controlled remotely.
 void remote() {
-  command_init();
+  command::init();
   plans_init();
-  plan_submit_and_wait((plan_t){.type = PLAN_TYPE_IDLE, .state = PLAN_STATE_SCHEDULED, .data = {.idle = {}}});
+  plan::submit_and_wait((plan::plan_t){.type = plan::TYPE_IDLE, .state = plan::STATE_SCHEDULED, .data = {.idle = {}}});
 
   for (;;) {
     // wait until there's a command to process.
-    command_t command;
-    while (!command_next(&command)) {}
+    command::command_t command;
+    while (!command::next(&command)) {}
 
     switch (command.type) {
-      case COMMAND_RESET:
+      case command::RESET:
         // Just turn off interrupts and wait for the watchdog to reset us.
         cli();
         _delay_ms(60000.0);
         break;
-      case COMMAND_EXPLORE:
-        explore();
+      case command::EXPLORE:
+        explore::explore();
         break;
-      case COMMAND_SOLVE:
-        solve();
+      case command::SOLVE:
+        explore::solve();
         break;
-      case COMMAND_SEND_MAZE:
-        maze_send();
+      case command::SEND_MAZE:
+        maze::send();
         break;
-      case COMMAND_TUNE_PID:
+      case command::TUNE_PID:
         switch (command.data.pid.id) {
-          case PID_SPEED:
-            speed_tune(command.data.pid.kp,  //
-                       command.data.pid.ki,  //
-                       command.data.pid.kd,  //
-                       command.data.pid.alpha);
+          case command::PID_SPEED:
+            speed::tune(command.data.pid.kp,  //
+                        command.data.pid.ki,  //
+                        command.data.pid.kd,  //
+                        command.data.pid.alpha);
             break;
-          case PID_WALL:
-            linear_wall_tune(command.data.pid.kp,  //
-                             command.data.pid.ki,  //
-                             command.data.pid.kd,  //
-                             command.data.pid.alpha);
-            break;
-          case PID_ANGLE:
-            linear_angle_tune(command.data.pid.kp,  //
+          case command::PID_WALL:
+            linear::wall_tune(command.data.pid.kp,  //
                               command.data.pid.ki,  //
                               command.data.pid.kd,  //
                               command.data.pid.alpha);
             break;
+          case command::PID_ANGLE:
+            linear::angle_tune(command.data.pid.kp,  //
+                               command.data.pid.ki,  //
+                               command.data.pid.kd,  //
+                               command.data.pid.alpha);
+            break;
         }
         break;
-      case COMMAND_PLAN_ENQUEUE:
+      case command::PLAN_ENQUEUE:
         plans_push_back(command.data.plan);
         break;
-      case COMMAND_PLAN_EXECUTE:
+      case command::PLAN_EXECUTE:
         while (!plans_empty()) {
-          plan_submit_and_wait(plans_pop_front());
+          plan::submit_and_wait(plans_pop_front());
         }
         break;
       default:
         break;
     }
 
-    command_processed();
+    command::processed();
   }
 }
+
+}  // namespace remote

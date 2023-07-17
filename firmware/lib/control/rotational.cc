@@ -1,20 +1,24 @@
 #include <stdbool.h>
 #include <util/atomic.h>
 
-#include "config.h"
-#include "firmware/lib/utils/math.h"
-#include "position.h"
-#include "rotational_impl.h"
-#include "speed.h"
+#include "config.hh"
+#include "firmware/lib/utils/math.hh"
+#include "position.hh"
+#include "rotational_impl.hh"
+#include "speed.hh"
 
-static rotational_state_t state;
+namespace rotational {
 
-void rotational_init() {}
+namespace {
+state_t state;
+}
 
-void rotational_start(float dtheta /* radians */) {
-  rotational_state_t s;
-  float              pdistance;
-  position_read(&pdistance, &s.start_theta);
+void init() {}
+
+void start(float dtheta /* radians */) {
+  state_t s;
+  float   distance;
+  position::read(&distance, &s.start_theta);
 
   s.target_theta = s.start_theta + dtheta;
   s.direction    = dtheta > 0;
@@ -24,18 +28,18 @@ void rotational_start(float dtheta /* radians */) {
   }
 }
 
-bool rotational_tick() {
-  float position_distance, position_theta;
-  position_read(&position_distance, &position_theta);
+bool tick() {
+  float distance, theta;
+  position::read(&distance, &theta);
 
-  rotational_state_t s;
+  state_t s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     s = state;
   }
 
   // If we are there, then we are done.
-  if (fabsf(position_theta - s.target_theta) < (MM_THETA * 2.0f)) {
-    speed_set(0, 0);
+  if (fabsf(theta - s.target_theta) < (MM_THETA * 2.0f)) {
+    speed::set(0, 0);
     return true;
   }
 
@@ -45,16 +49,18 @@ bool rotational_tick() {
   float right_speed = rpm * ((1.0 + WHEEL_BIAS) / (1.0 - WHEEL_BIAS));
 
   if (s.direction) {
-    speed_set(-left_speed, right_speed);
+    speed::set(-left_speed, right_speed);
   } else {
-    speed_set(left_speed, -right_speed);
+    speed::set(left_speed, -right_speed);
   }
 
   return false;
 }
 
-void rotational_state(rotational_state_t *s) {
+void read(state_t *s) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     *s = state;
   }
 }
+
+}  // namespace rotational

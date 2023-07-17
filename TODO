@@ -1,3 +1,8 @@
+C++:
+- Nested namespaces for platform and control.
+- Maze should probably be a class.... what else?
+- Dequeue is a template...
+
 Firmware:
 - Add a speed ramp for rotation?
 

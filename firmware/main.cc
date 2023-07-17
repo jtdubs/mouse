@@ -1,28 +1,28 @@
 #include <avr/interrupt.h>
 
-#include "firmware/lib/control/control.h"
-#include "firmware/lib/maze/maze.h"
-#include "firmware/lib/mode/explore/explore.h"
-#include "firmware/lib/mode/remote/remote.h"
-#include "firmware/lib/report/report.h"
-#include "firmware/lib/utils/assert.h"
-#include "firmware/platform/platform.h"
+#include "firmware/lib/control/control.hh"
+#include "firmware/lib/maze/maze.hh"
+#include "firmware/lib/mode/explore/explore.hh"
+#include "firmware/lib/mode/remote/remote.hh"
+#include "firmware/lib/report/report.hh"
+#include "firmware/lib/utils/assert.hh"
+#include "firmware/platform/platform.hh"
 
 int main() {
-  platform_init();  // hardware peripherals
-  control_init();   // control planning
-  maze_init();      // maze data structure
-  explore_init();   // maze exploration mode
-  report_init();    // serial report system
+  platform::init();  // hardware peripherals
+  control::init();   // control planning
+  maze::init();      // maze data structure
+  explore::init();   // maze exploration mode
+  report::init();    // serial report system
 
   // enable interrupts
   sei();
 
   // remote control mode (never returns)
-  remote();
+  remote::remote();
 
   // seriously... it should never return.
-  _assert_failed(ASSERT_MAIN + 0);
+  assert::failed(assert::MAIN + 0);
 
   return 0;
 }

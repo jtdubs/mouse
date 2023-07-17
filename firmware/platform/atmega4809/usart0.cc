@@ -1,10 +1,12 @@
-#include "usart0.h"
-
 #include <avr/io.h>
 #include <stdint.h>
 
-// usart0_init initializes USART0.
-void usart0_init() {
+#include "usart0_impl.hh"
+
+namespace usart0 {
+
+// init initializes USART0.
+void init() {
 #if defined(DEBUG)
   // avrsim doesn't recognize support double speed mode.
   uint16_t baud = (F_CPU / 16 / 115200) - 1;  // 115.2k
@@ -19,3 +21,5 @@ void usart0_init() {
          | _BV(TXEN0);                 // Enable transmitter.
   UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);  // 8-bit data.
 }
+
+}  // namespace usart0

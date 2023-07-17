@@ -2,20 +2,24 @@
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "config.h"
-#include "firmware/lib/utils/assert.h"
-#include "firmware/lib/utils/math.h"
-#include "firmware/platform/encoders.h"
-#include "position_impl.h"
+#include "config.hh"
+#include "firmware/lib/utils/assert.hh"
+#include "firmware/lib/utils/math.hh"
+#include "firmware/platform/encoders.hh"
+#include "position_impl.hh"
 
-static float position_distance;  // in mms
-static float position_theta;     // in radians
+namespace position {
 
-void position_init() {}
+namespace {
+float distance;  // in mms
+float theta;     // in radians
+}  // namespace
 
-void position_update() {
+void init() {}
+
+void update() {
   int32_t left_delta, right_delta;
-  encoders_read_deltas(&left_delta, &right_delta);
+  encoders::read_deltas(&left_delta, &right_delta);
 
   float left_distance  = ((float)left_delta) * COUNT_DISTANCE_LEFT;    // mm
   float right_distance = ((float)right_delta) * COUNT_DISTANCE_RIGHT;  // mm
@@ -26,39 +30,41 @@ void position_update() {
   // Encoder updates in opposite directions subtract to produce rotational motion.
   float rotation = (right_distance - left_distance) * MM_THETA;  // radians
 
-  float distance, theta;
+  float d, t;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    distance = position_distance;
-    theta    = position_theta;
+    d = distance;
+    t = theta;
   }
 
-  distance += forward;
-  theta    += rotation;
+  d += forward;
+  t += rotation;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    position_distance = distance;
-    position_theta    = theta;
-  }
-}
-
-void position_read(float* distance, float* theta) {
-  assert(ASSERT_POSITION + 0, distance != NULL);
-  assert(ASSERT_POSITION + 1, theta != NULL);
-
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *distance = position_distance;
-    *theta    = position_theta;
+    distance = d;
+    theta    = t;
   }
 }
 
-void position_tare(float* distance, float* theta) {
-  assert(ASSERT_POSITION + 2, distance != NULL);
-  assert(ASSERT_POSITION + 3, theta != NULL);
+void read(float* d, float* t) {
+  assert(assert::POSITION + 0, d != NULL);
+  assert(assert::POSITION + 1, t != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *distance         = position_distance;
-    *theta            = position_theta;
-    position_distance = 0;
-    position_theta    = 0;
+    *d = distance;
+    *t = theta;
   }
 }
+
+void tare(float* d, float* t) {
+  assert(assert::POSITION + 2, d != NULL);
+  assert(assert::POSITION + 3, t != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *d       = distance;
+    *t       = theta;
+    distance = 0;
+    theta    = 0;
+  }
+}
+
+}  // namespace position

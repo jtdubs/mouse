@@ -1,4 +1,6 @@
-#include "pin.h"
+#include "pin_impl.hh"
+
+namespace pin {
 
 const pin_t RIGHT_DIR   = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)};
 const pin_t LEFT_PWM    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(1)};
@@ -12,8 +14,8 @@ const pin_t PROBE_2     = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(5)};
 const pin_t LED_RIGHT   = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(6)};
 const pin_t LEFT_DIR    = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(7)};
 
-// pin_init initializes all pins.
-void pin_init() {
+// init initializes all pins.
+void init() {
   // Set all output pins to output mode.
   DDRB = (RIGHT_DIR.mask)     //
        | (LEFT_PWM.mask)      //
@@ -32,3 +34,5 @@ void pin_init() {
   PORTC = 0;
   PORTD = 0;
 }
+
+}  // namespace pin

@@ -4,7 +4,7 @@ cc_library(
     name = "atmega328p",
     srcs = glob([
         "*.cc",
-        "*.h",
+        "*.hh",
     ]),
     target_compatible_with = select({
         "//bazel/platforms/cpu:atmega328p": [],

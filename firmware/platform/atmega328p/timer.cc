@@ -1,5 +1,3 @@
-#include "timer.h"
-
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <avr/wdt.h>
@@ -7,24 +5,29 @@
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "adc.h"
-#include "firmware/lib/utils/assert.h"
-#include "pin.h"
+#include "adc_impl.hh"
+#include "firmware/lib/utils/assert.hh"
+#include "pin_impl.hh"
+#include "timer_impl.hh"
 
-static timer_callback_t timer_callbacks[4];
-static uint8_t          timer_callback_count = 0;
+namespace timer {
 
-void timer_add_callback(timer_callback_t callback) {
-  assert(ASSERT_TIMER + 0, callback != NULL);
-  assert(ASSERT_TIMER + 1, timer_callback_count < 4);
+namespace {
+callback_t callbacks[4];
+uint8_t    callback_count = 0;
+}  // namespace
+
+void add_callback(callback_t callback) {
+  assert(assert::TIMER + 0, callback != NULL);
+  assert(assert::TIMER + 1, callback_count < 4);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    timer_callbacks[timer_callback_count++] = callback;
+    callbacks[callback_count++] = callback;
   }
 }
 
-// timer_init initializes timer.
-void timer_init() {
+// init initializes timer.
+void init() {
   TCCR0A = _BV(WGM01);                      // Clear timer on OCRA match
   TCCR0B = _BV(CS02) | _BV(CS00);           // Use clk/1024 prescaler (15.625kHz)
   OCR0A  = (F_CPU / 1024 / (200 + 1)) + 1;  // 200Hz = 5ms
@@ -40,12 +43,14 @@ void timer_init() {
 ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
   wdt_reset();
   NONATOMIC_BLOCK(NONATOMIC_RESTORESTATE) {
-    for (uint8_t i = 0; i < timer_callback_count; i++) {
-      timer_callbacks[i]();
+    for (uint8_t i = 0; i < callback_count; i++) {
+      callbacks[i]();
     }
   }
 }
 
 ISR(TIMER0_COMPB_vect, ISR_BLOCK) {
-  adc_sample();
+  adc::sample();
 }
+
+}  // namespace timer

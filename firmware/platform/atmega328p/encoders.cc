@@ -1,57 +1,60 @@
-#include "encoders.h"
-
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "firmware/lib/utils/assert.h"
-#include "pin.h"
-#include "rtc.h"
+#include "encoders_impl.hh"
+#include "firmware/lib/utils/assert.hh"
+#include "pin_impl.hh"
+#include "rtc_impl.hh"
 
+namespace encoders {
+
+namespace {
 // Encoder counts.
-static int32_t encoders_left;
-static int32_t encoders_right;
+int32_t left;
+int32_t right;
 
 // Changes to encoder counts since the last update.
-static int8_t encoders_left_delta;
-static int8_t encoders_right_delta;
+int8_t left_delta;
+int8_t right_delta;
+}  // namespace
 
-// encoders_init initializes the encoders.
-void encoders_init() {
+// init initializes the encoders.
+void init() {
   EICRA = _BV(ISC00)   // Trigger INT0 on any logical change
         | _BV(ISC10);  // Trigger INT1 on any logical change
   EIMSK = _BV(INT0)    // Enable INT0
         | _BV(INT1);   // Enable INT1
 }
 
-// encoders_update applies changes since the last update.
-void encoders_update() {
+// update applies changes since the last update.
+void update() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    encoders_left        += (int32_t)encoders_left_delta;
-    encoders_right       += (int32_t)encoders_right_delta;
-    encoders_left_delta   = 0;
-    encoders_right_delta  = 0;
+    left        += (int32_t)left_delta;
+    right       += (int32_t)right_delta;
+    left_delta   = 0;
+    right_delta  = 0;
   }
 }
 
-void encoders_read(int32_t* left, int32_t* right) {
-  assert(ASSERT_ENCODERS + 0, left != NULL);
-  assert(ASSERT_ENCODERS + 1, right != NULL);
+void read(int32_t* l, int32_t* r) {
+  assert(assert::ENCODERS + 0, l != NULL);
+  assert(assert::ENCODERS + 1, r != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left  = encoders_left;
-    *right = encoders_right;
+    *l = left;
+    *r = right;
   }
 }
 
-void encoders_read_deltas(int32_t* left, int32_t* right) {
-  assert(ASSERT_ENCODERS + 2, left != NULL);
-  assert(ASSERT_ENCODERS + 3, right != NULL);
+void read_deltas(int32_t* left, int32_t* right) {
+  assert(assert::ENCODERS + 2, left != NULL);
+  assert(assert::ENCODERS + 3, right != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left  = encoders_left_delta;
-    *right = encoders_right_delta;
+    *left  = left_delta;
+    *right = right_delta;
   }
 }
 
@@ -67,9 +70,9 @@ ISR(INT0_vect, ISR_BLOCK) {
 
   // Update the encoder count based on rotation direction.
   if (a == left_last_b) {
-    encoders_left_delta++;
+    left_delta++;
   } else {
-    encoders_left_delta--;
+    left_delta--;
   }
 
   left_last_b = b;
@@ -87,10 +90,12 @@ ISR(INT1_vect, ISR_BLOCK) {
 
   // Update the encoder count based on rotation direction.
   if (a == right_last_b) {
-    encoders_right_delta--;
+    right_delta--;
   } else {
-    encoders_right_delta++;
+    right_delta++;
   }
 
   right_last_b = b;
 }
+
+}  // namespace encoders

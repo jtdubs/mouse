@@ -4,11 +4,11 @@ cc_library(
     name = "maze",
     srcs = glob([
         "*.cc",
-        "*_impl.h",
+        "*_impl.hh",
     ]),
     hdrs = glob(
-        include = ["*.h"],
-        exclude = ["*_impl.h"],
+        include = ["*.hh"],
+        exclude = ["*_impl.hh"],
     ),
     target_compatible_with = select({
         "//bazel/platforms/avr:yes": [],

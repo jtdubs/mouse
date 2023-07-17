@@ -4,7 +4,7 @@ cc_library(
     name = "atmega4809",
     srcs = glob([
         "*.cc",
-        "*.h",
+        "*.hh",
     ]),
     target_compatible_with = select({
         "//bazel/platforms/cpu:atmega4809": [],

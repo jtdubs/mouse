@@ -1,39 +1,35 @@
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "firmware/lib/utils/assert.h"
-#include "firmware/platform/adc.h"
-#include "firmware/platform/pin.h"
-#include "sensor_cal_impl.h"
-#include "walls_impl.h"
+#include "firmware/lib/utils/assert.hh"
+#include "firmware/platform/adc.hh"
+#include "firmware/platform/pin.hh"
+#include "sensor_cal_impl.hh"
+#include "walls_impl.hh"
 
-typedef struct {
-  bool    left_present;
-  bool    right_present;
-  bool    forward_present;
-  int16_t error_left;
-  int16_t error_right;
-} walls_state_t;
+namespace walls {
 
-static bool          led_control;
-static walls_state_t state;
+namespace {
+bool    control_leds;
+state_t state;
+}  // namespace
 
-void walls_init() {
-  led_control = true;
+void init() {
+  control_leds = true;
 }
 
-void walls_led_control(bool enabled) {
-  led_control = enabled;
+void led_control(bool enabled) {
+  control_leds = enabled;
 }
 
-void walls_update() {
+void update() {
   uint16_t left, right, forward;
-  adc_read_sensors(&left, &right, &forward);
+  adc::read_sensors(&left, &right, &forward);
 
   uint16_t left_cal, right_cal, forward_cal;
-  sensor_cal_read(&left_cal, &right_cal, &forward_cal);
+  sensor_cal::read(&left_cal, &right_cal, &forward_cal);
 
-  walls_state_t s;
+  state_t s;
   s.left_present    = (left >= (left_cal - 80));
   s.right_present   = (right >= (right_cal - 80));
   s.forward_present = (forward >= (forward_cal - 60));
@@ -44,16 +40,16 @@ void walls_update() {
     state = s;
   }
 
-  if (led_control) {
-    pin_set2(LED_LEFT, s.left_present);
-    pin_set2(LED_RIGHT, s.right_present);
-    pin_set2(LED_ONBOARD, s.forward_present);
+  if (control_leds) {
+    pin::set2(pin::LED_LEFT, s.left_present);
+    pin::set2(pin::LED_RIGHT, s.right_present);
+    pin::set2(pin::LED_ONBOARD, s.forward_present);
   }
 }
 
-// walls_error returns the "centering error" of the mouse, based on wall distances.
-float walls_error() {
-  walls_state_t s;
+// error returns the "centering error" of the mouse, based on wall distances.
+float error() {
+  state_t s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     s = state;
   }
@@ -69,11 +65,11 @@ float walls_error() {
   }
 }
 
-// walls_present returns the presence of walls on each side of the mouse.
-void walls_present(bool* left, bool* right, bool* forward) {
-  assert(ASSERT_WALLS + 0, left != NULL);
-  assert(ASSERT_WALLS + 1, right != NULL);
-  assert(ASSERT_WALLS + 2, forward != NULL);
+// present returns the presence of walls on each side of the mouse.
+void present(bool* left, bool* right, bool* forward) {
+  assert(assert::WALLS + 0, left != NULL);
+  assert(assert::WALLS + 1, right != NULL);
+  assert(assert::WALLS + 2, forward != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     *left    = state.left_present;
@@ -81,3 +77,5 @@ void walls_present(bool* left, bool* right, bool* forward) {
     *forward = state.forward_present;
   }
 }
+
+}  // namespace walls

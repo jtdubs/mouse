@@ -1,35 +1,39 @@
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "command_impl.h"
-#include "firmware/lib/utils/assert.h"
-#include "firmware/platform/usart0.h"
+#include "command_impl.hh"
+#include "firmware/lib/utils/assert.hh"
+#include "firmware/platform/usart0.hh"
 
+namespace remote::command {
+
+namespace {
 // The encoded and decoded command, and associated state.
-static command_t *command;
+command_t *command;
+}  // namespace
 
-// on_command_received is the USART0 callback for when a command is received.
-static void on_command_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
-  assert(ASSERT_COMMAND + 0, command == NULL);
+// on_received is the USART0 callback for when a command is received.
+static void on_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
+  assert(assert::COMMAND + 0, command == NULL);
 
   command = (command_t *)buffer;
 }
 
-// command_init initializes the command module.
-void command_init() {
-  usart0_set_read_callback(on_command_received);
-  usart0_enable_receiver();
+// init initializes the command module.
+void init() {
+  usart0::set_read_callback(on_received);
+  usart0::enable_receiver();
 }
 
-// command_processed indicates the command has been processed.
-void command_processed() {
+// processed indicates the command has been processed.
+void processed() {
   command = NULL;
-  usart0_enable_receiver();
+  usart0::enable_receiver();
 }
 
-// command_next gets the next command, if one is available.
-bool command_next(command_t *c) {
-  assert(ASSERT_COMMAND + 2, c != NULL);
+// next gets the next command, if one is available.
+bool next(command_t *c) {
+  assert(assert::COMMAND + 2, c != NULL);
 
   bool result = false;
 
@@ -42,3 +46,5 @@ bool command_next(command_t *c) {
 
   return result;
 }
+
+}  // namespace remote::command

@@ -2,5 +2,5 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "platform",
-    hdrs = glob(["*.h"]),
+    hdrs = glob(["*.hh"]),
 )
