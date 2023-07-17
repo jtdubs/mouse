@@ -3,7 +3,8 @@
 #include <util/atomic.h>
 #include <util/delay.h>
 
-#include "explore_int.h"
+#include "explore_impl.h"
+#include "firmware/lib/control/config.h"
 #include "firmware/lib/control/linear.h"
 #include "firmware/lib/control/plan.h"
 #include "firmware/lib/control/position.h"

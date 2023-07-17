@@ -1,10 +1,11 @@
-#include "maze.h"
-
+#include <stdbool.h>
 #include <string.h>
 #include <util/atomic.h>
 
+#include "firmware/lib/control/config.h"
 #include "firmware/lib/utils/assert.h"
 #include "firmware/lib/utils/dequeue.h"
+#include "maze_impl.h"
 
 // maze_update_t is a single update to the maze.
 #pragma pack(push, 1)

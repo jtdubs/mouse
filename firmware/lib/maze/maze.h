@@ -10,8 +10,6 @@
 
 #include <stdbool.h>
 
-#include "firmware/lib/control/config.h"
-
 // cell_t represents a single cell in the maze.
 #pragma pack(push, 1)
 typedef struct {

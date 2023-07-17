@@ -1,5 +1,3 @@
-#include "report.h"
-
 #include <stddef.h>
 #include <stdint.h>
 #include <util/atomic.h>
@@ -12,6 +10,7 @@
 #include "firmware/platform/rtc.h"
 #include "firmware/platform/timer.h"
 #include "firmware/platform/usart0.h"
+#include "report_impl.h"
 
 // report_type_t identifies the type of a given report.
 typedef enum : uint8_t {

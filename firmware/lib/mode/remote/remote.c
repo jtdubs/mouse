@@ -1,10 +1,8 @@
-#include "remote.h"
-
 #include <avr/interrupt.h>
 #include <util/atomic.h>
 #include <util/delay.h>
 
-#include "command.h"
+#include "command_impl.h"
 #include "firmware/lib/control/linear.h"
 #include "firmware/lib/control/plan.h"
 #include "firmware/lib/control/speed.h"
@@ -13,6 +11,7 @@
 #include "firmware/lib/utils/dequeue.h"
 #include "firmware/platform/motor.h"
 #include "firmware/platform/pin.h"
+#include "remote_impl.h"
 
 DEFINE_DEQUEUE(plan_t, plans, 16);
 
