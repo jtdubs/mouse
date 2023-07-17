@@ -3,8 +3,6 @@ Firmware:
 
 Sim and Remote:
 - Both probably need a re-write.
-- Remote as webapp using web serial??
-- TBH, C might be easier if I can directly use structs from the mouse header files.
 
 Timer:
 - Tighten tick to run every 1-2ms instead of 5.
