@@ -4,12 +4,8 @@ cc_library(
     name = "atmega328p",
     srcs = glob([
         "*.c",
-        "*_impl.h",
+        "*.h",
     ]),
-    hdrs = glob(
-        include = ["*.h"],
-        exclude = ["*_impl.h"],
-    ),
     target_compatible_with = select({
         "//bazel/platforms/cpu:atmega328p": [],
         "//conditions:default": ["@platforms//:incompatible"],
