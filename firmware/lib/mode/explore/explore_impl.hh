@@ -23,9 +23,9 @@ typedef enum : uint8_t {
 // dequeue_update_t is an update event for a dequeue of maze locations.
 #pragma pack(push, 1)
 typedef struct {
-  dequeue_id_t         dequeue_id : 6;
-  dequeue_event_type_t event      : 2;
-  maze::location_t     value;
+  dequeue_id_t          dequeue_id : 6;
+  dequeue::event_type_t event      : 2;
+  maze::location_t      value;
 } dequeue_update_t;
 #pragma pack(pop)
 

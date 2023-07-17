@@ -10,15 +10,12 @@
 namespace maze {
 
 namespace {
-maze_t  maze;
-uint8_t report_row;
-
-DEFINE_DEQUEUE(location_t, updates, 6);
+maze_t                          maze;
+uint8_t                         report_row;
+dequeue::dequeue<location_t, 6> updates;
 }  // namespace
 
 void init() {
-  updates_init();
-
   report_row = MAZE_HEIGHT;
 
   // Distances default to 0xFF, which is the maximum possible distance.
@@ -51,12 +48,12 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   assert(assert::MAZE + 0, buffer != NULL);
   assert(assert::MAZE + 1, len >= (sizeof(update_t) * MAZE_WIDTH));
 
-  update_t *updates = (update_t *)buffer;
+  update_t *update_array = (update_t *)buffer;
 
   // if we have full rows to transmit, thensend the next one.
   if (report_row < MAZE_HEIGHT) {
     for (int i = 0; i < MAZE_WIDTH; i++) {
-      updates[i] = (update_t){
+      update_array[i] = (update_t){
           .location = location(i, report_row),
           .cell     = maze.cells[location(i, report_row)],
       };
@@ -68,10 +65,10 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   // otherwise, send any pending updates.
   uint8_t report_len = 0;
   uint8_t i          = 0;
-  while (!updates_empty()) {
-    location_t loc  = updates_pop_front();
-    updates[i++]    = (update_t){.location = loc, .cell = maze.cells[loc]};
-    report_len     += sizeof(update_t);
+  while (!updates.empty()) {
+    location_t loc     = updates.pop_front();
+    update_array[i++]  = (update_t){.location = loc, .cell = maze.cells[loc]};
+    report_len        += sizeof(update_t);
   }
 
   return report_len;
@@ -91,10 +88,10 @@ void update(location_t loc, cell_t cell) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     maze.cells[loc] = cell;
 
-    if (updates_full()) {
+    if (updates.full()) {
       send();
     } else {
-      updates_push_back(loc);
+      updates.push_back(loc);
     }
   }
 }

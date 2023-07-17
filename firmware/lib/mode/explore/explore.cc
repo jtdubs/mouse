@@ -18,35 +18,31 @@
 namespace explore {
 
 namespace {
-orientation_t orientation;  // The current orientation of the mouse.
-float         cell_offset;  // The offset into the current cell.
-bool          stopped;      // Whether or not the mouse has stopped.
-
-DEFINE_DEQUEUE(maze::location_t, path, 256);    // The breadcrumb trail.
-DEFINE_DEQUEUE(maze::location_t, next, 256);    // The stack of unvisited cells.
-DEFINE_DEQUEUE(dequeue_update_t, updates, 16);  // The queue of updates to send to the host.
+orientation_t                           orientation;  // The current orientation of the mouse.
+float                                   cell_offset;  // The offset into the current cell.
+bool                                    stopped;      // Whether or not the mouse has stopped.
+dequeue::dequeue<maze::location_t, 256> path;         // The breadcrumb trail.
+dequeue::dequeue<maze::location_t, 256> next;         // The stack of unvisited cells.
+dequeue::dequeue<dequeue_update_t, 16>  updates;      // The queue of updates to send to the host.
 }  // namespace
 
 // path_queue_callback is the callback for changes the path queue.
-void path_queue_callback(dequeue_event_type_t event, maze::location_t value) {
-  if (!updates_full()) {
-    updates_push_back((dequeue_update_t){.dequeue_id = DEQUEUE_PATH, .event = event, .value = value});
+void path_queue_callback(dequeue::event_type_t event, maze::location_t value) {
+  if (!updates.full()) {
+    updates.push_back((dequeue_update_t){.dequeue_id = DEQUEUE_PATH, .event = event, .value = value});
   }
 }
 
 // next_queue_callback is the callback for changes the next queue.
-void next_queue_callback(dequeue_event_type_t event, maze::location_t value) {
-  if (!updates_full()) {
-    updates_push_back((dequeue_update_t){.dequeue_id = DEQUEUE_NEXT, .event = event, .value = value});
+void next_queue_callback(dequeue::event_type_t event, maze::location_t value) {
+  if (!updates.full()) {
+    updates.push_back((dequeue_update_t){.dequeue_id = DEQUEUE_NEXT, .event = event, .value = value});
   }
 }
 
 void init() {
-  path_init();
-  next_init();
-  updates_init();
-  path_register_callback(path_queue_callback);
-  next_register_callback(next_queue_callback);
+  path.register_callback(path_queue_callback);
+  next.register_callback(next_queue_callback);
 }
 
 void explore() {
@@ -62,48 +58,48 @@ void explore() {
   stopped     = true;
 
   // Our path so far is just the starting square, and we want to visit the square to our north.
-  path_push_back(maze::location(0, 0));
-  next_push_back(maze::location(0, 1));
+  path.push_back(maze::location(0, 0));
+  next.push_back(maze::location(0, 1));
 
   // While we have squares to visit...
-  while (!next_empty()) {
+  while (!next.empty()) {
     // Skips cells we already visited since they were added to the stack.
-    while (!next_empty() && maze::read(next_peek_back()).visited) {
-      next_pop_back();
+    while (!next.empty() && maze::read(next.peek_back()).visited) {
+      next.pop_back();
     }
 
     // If we have no more cells to visit, then we are done.
-    if (next_empty()) {
+    if (next.empty()) {
       break;
     }
 
-    maze::location_t curr = path_peek_back();
-    maze::location_t next = next_peek_back();
-    maze::location_t prev;
+    maze::location_t curr_loc = path.peek_back();
+    maze::location_t next_loc = next.peek_back();
+    maze::location_t prev_loc;
 
     // Determine which direction to drive to reach the cell (if it is adjancent).
-    orientation_t next_orientation = adjacent(curr, next);
+    orientation_t next_orientation = adjacent(curr_loc, next_loc);
 
     // If we are adjacent to the next cell
     if (next_orientation != INVALID) {
-      next_pop_back();         // Remove the cell from the "next" stack.
-      face(next_orientation);  // Turn to face the cell.
-      advance(next, true);     // Advance into it, updating the breadcrumb trail.
-      classify(next);          // Update our maze representation, and note any new cells to visit.
+      next.pop_back();          // Remove the cell from the "next" stack.
+      face(next_orientation);   // Turn to face the cell.
+      advance(next_loc, true);  // Advance into it, updating the breadcrumb trail.
+      classify(next_loc);       // Update our maze representation, and note any new cells to visit.
     } else {
       // Otherwise, backtrack a square.
-      path_pop_back();             // Remove the current cell from the breadcrumb trail.
-      prev = path_peek_back();     // Check which cell we came from.
-      face(adjacent(curr, prev));  // Turn to face it.
-      advance(prev, false);        // Advance into it, but do NOT update the breadcrumb trail.
+      path.pop_back();                     // Remove the current cell from the breadcrumb trail.
+      prev_loc = path.peek_back();         // Check which cell we came from.
+      face(adjacent(curr_loc, prev_loc));  // Turn to face it.
+      advance(prev_loc, false);            // Advance into it, but do NOT update the breadcrumb trail.
     }
   }
 
   // Now that exploration is complete, we return to the starting cell.
-  if (!path_empty()) {
-    maze::location_t curr = path_pop_back();
-    while (!path_empty()) {
-      maze::location_t prev = path_pop_back();
+  if (!path.empty()) {
+    maze::location_t curr = path.pop_back();
+    while (!path.empty()) {
+      maze::location_t prev = path.pop_back();
       face(adjacent(curr, prev));
       advance(prev, false);
       curr = prev;
@@ -118,8 +114,8 @@ void explore() {
   plan::submit_and_wait((plan::plan_t){.type = plan::TYPE_IDLE, .state = plan::STATE_SCHEDULED, .data = {.idle = {}}});
 
   // Deregister dequeue callbacks.
-  path_register_callback(NULL);
-  next_register_callback(NULL);
+  path.register_callback(NULL);
+  next.register_callback(NULL);
 
   // Solve the maze, and tramit the new maze data to the host.
   floodfill();
@@ -134,10 +130,10 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   uint8_t i          = 0;
   uint8_t report_len = 0;
 
-  dequeue_update_t *updates = (dequeue_update_t *)buffer;
-  while (!updates_empty()) {
-    updates[i++]  = updates_pop_front();
-    report_len   += sizeof(dequeue_update_t);
+  dequeue_update_t *updates_buffer = (dequeue_update_t *)buffer;
+  while (!updates.empty()) {
+    updates_buffer[i++]  = updates.pop_front();
+    report_len          += sizeof(dequeue_update_t);
   }
 
   return report_len;
@@ -255,7 +251,7 @@ void advance(maze::location_t loc, bool update_path) {
                               }}});
 
   if (update_path) {
-    path_push_back(loc);
+    path.push_back(loc);
   }
   stopped = false;
 }
@@ -298,7 +294,7 @@ void update_location() {
 // queue_unvisited adds a cell to the "next" stack if it has not already been visited.
 void queue_unvisited(maze::location_t loc) {
   if (!maze::read(loc).visited) {
-    next_push_back(loc);
+    next.push_back(loc);
   }
 }
 
@@ -426,13 +422,13 @@ void floodfill() {
   }
 
   // Step 3. Floodfill outwards from the goal cell.
-  path_clear();
+  path.clear();
   maze::cell_t goal_cell = maze::read(goal);
   goal_cell.distance     = 0;
   maze::update(goal, goal_cell);
-  path_push_back(goal);
-  while (!path_empty()) {
-    maze::location_t loc  = path_pop_front();
+  path.push_back(goal);
+  while (!path.empty()) {
+    maze::location_t loc  = path.pop_front();
     maze::cell_t     cell = maze::read(loc);
     if (!cell.wall_north) {
       maze::location_t next      = loc + maze::location(0, 1);
@@ -440,7 +436,7 @@ void floodfill() {
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::update(next, next_cell);
-        path_push_back(next);
+        path.push_back(next);
       }
     }
     if (!cell.wall_east) {
@@ -449,7 +445,7 @@ void floodfill() {
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::update(next, next_cell);
-        path_push_back(next);
+        path.push_back(next);
       }
     }
     if (!cell.wall_south) {
@@ -458,7 +454,7 @@ void floodfill() {
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::update(next, next_cell);
-        path_push_back(next);
+        path.push_back(next);
       }
     }
     if (!cell.wall_west) {
@@ -467,7 +463,7 @@ void floodfill() {
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::update(next, next_cell);
-        path_push_back(next);
+        path.push_back(next);
       }
     }
   }
