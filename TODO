@@ -1,8 +1,3 @@
-4809:
-- Split internal and external interfaces into separate headers.
-- Split cc_library rules into srcs (internal) and hdrs (external).
-- Start fleshing out the 4809 implementation.
-
 Firmware:
 - Add a speed ramp for rotation?
 

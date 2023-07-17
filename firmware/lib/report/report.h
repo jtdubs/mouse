@@ -26,6 +26,3 @@
 
 // report_init initializes the report module.
 void report_init();
-
-// report_send sends the next report.
-void report_send();
