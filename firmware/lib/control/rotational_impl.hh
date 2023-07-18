@@ -7,11 +7,11 @@
 namespace rotational {
 
 #pragma pack(push, 1)
-typedef struct {
+struct state_t {
   float start_theta;   // radians
   float target_theta;  // radians
   bool  direction;     // true = positive, false = negative
-} state_t;
+};
 #pragma pack(pop)
 
 // init initializes the rotational motion module.

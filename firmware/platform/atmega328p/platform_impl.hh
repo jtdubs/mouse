@@ -6,7 +6,7 @@ namespace platform {
 
 #pragma pack(push, 1)
 // platform_report_t represents a report of the platform state.
-typedef struct {
+struct report_t {
   uint8_t battery_volts;  // 8-bit ADC value
   struct {
     uint16_t left    : 10;  // 10-bit ADC value
@@ -29,7 +29,7 @@ typedef struct {
     int16_t left;
     int16_t right;
   } motors;
-} report_t;
+};
 #pragma pack(pop)
 
 }  // namespace platform

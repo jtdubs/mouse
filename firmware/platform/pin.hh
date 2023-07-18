@@ -15,11 +15,11 @@
 namespace pin {
 
 // pin_t represents an output pin on the atmega328p.
-typedef struct {
+struct pin_t {
   volatile uint8_t* port;
   volatile uint8_t* ddr;
   uint8_t           mask;
-} pin_t;
+};
 
 // motors pins
 extern const pin_t RIGHT_DIR;

@@ -44,7 +44,7 @@ enum class Type : uint8_t {
   SensorCal,
 };
 
-typedef struct {
+struct plan_t {
   Type  type;
   State state;
   union {
@@ -84,7 +84,7 @@ typedef struct {
     struct {
     } sensor_cal;
   } data;
-} plan_t;
+};
 
 // submit submits a new plan to be implemented.
 void submit(plan_t plan);

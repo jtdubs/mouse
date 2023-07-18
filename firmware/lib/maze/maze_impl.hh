@@ -6,10 +6,10 @@ namespace maze {
 
 // update_t is a single update to the maze.
 #pragma pack(push, 1)
-typedef struct {
+struct update_t {
   location_t location;
   cell_t     cell;
-} update_t;
+};
 #pragma pack(pop)
 
-}
+}  // namespace maze

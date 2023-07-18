@@ -14,32 +14,32 @@
 namespace pid {
 
 // PID controller for a process variable.
-typedef struct {
+struct pid_t {
   float min, max;    // bounds for pid output
   float kp, ki, kd;  // pid constants
   float i;           // integral
   float last_pv;     // last process variable
-} pid_t;
+};
 
 // PI controller for a process variable.
-typedef struct {
+struct pi_t {
   float min, max;  // bounds for pi output
   float kp, ki;    // pi constants
   float i;         // integral
-} pi_t;
+};
 
 // PD controller for a process variable.
-typedef struct {
+struct pd_t {
   float min, max;  // bounds for pd output
   float kp, kd;    // pd constants
   float last_pv;   // last process variable
-} pd_t;
+};
 
 // P controller for a process variable.
-typedef struct {
+struct p_t {
   float min, max;  // bounds for pid output
   float kp;        // pid constants
-} p_t;
+};
 
 // update determines the manipulated value, given a setpoint and process variable.
 inline float update(pid_t &pid, float sp /* setpoint */, float pv /* process variable */) {

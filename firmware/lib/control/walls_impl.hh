@@ -7,13 +7,13 @@
 
 namespace walls {
 
-typedef struct {
+struct state_t {
   bool    left_present;
   bool    right_present;
   bool    forward_present;
   int16_t error_left;
   int16_t error_right;
-} state_t;
+};
 
 // init initializes the walls module.
 void init();

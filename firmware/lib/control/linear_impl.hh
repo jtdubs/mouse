@@ -7,12 +7,12 @@
 namespace linear {
 
 #pragma pack(push, 1)
-typedef struct {
+struct state_t {
   float target_position;  // mm
   float target_speed;     // mm/s
   float wall_error;
   bool  leds_prev_state;
-} state_t;
+};
 #pragma pack(pop)
 
 // init initializes the linear motion module.

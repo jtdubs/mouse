@@ -42,7 +42,7 @@ enum class PidID : uint8_t {
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.
-typedef struct {
+struct command_t {
   Type type;
   union {
     struct {
@@ -60,7 +60,7 @@ typedef struct {
     } pid;
     plan::plan_t plan;
   } data;
-} command_t;
+};
 #pragma pack(pop)
 
 // init initializes the command module.

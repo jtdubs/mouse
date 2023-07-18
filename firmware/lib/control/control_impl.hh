@@ -9,7 +9,7 @@ namespace control {
 
 #pragma pack(push, 1)
 // control_report_t is the report sent by the control module.
-typedef struct {
+struct report_t {
   plan::plan_t plan;
   struct {
     float measured_left;   // RPMs
@@ -30,7 +30,7 @@ typedef struct {
     rotational::state_t rotation;
     linear::state_t     linear;
   } plan_data;
-} report_t;
+};
 #pragma pack(pop)
 
 // tick executes one tick of the control module.

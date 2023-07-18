@@ -14,7 +14,7 @@ namespace maze {
 
 // cell_t represents a single cell in the maze.
 #pragma pack(push, 1)
-typedef struct {
+struct cell_t {
   bool    wall_north : 1;
   bool    wall_east  : 1;
   bool    wall_south : 1;
@@ -22,13 +22,13 @@ typedef struct {
   bool    visited    : 1;
   uint8_t padding    : 3;
   uint8_t distance   : 8;  // Distance from the center of the maze.
-} cell_t;
+};
 #pragma pack(pop)
 
 // maze_t represents the entire maze at it's maximum allowed size.
-typedef struct {
+struct maze_t {
   cell_t cells[256];
-} maze_t;
+};
 
 // location_t holds the coordinates of a cell in the maze.
 // format: 0xXY, where X is the x coordinate and Y is the y coordinate.
