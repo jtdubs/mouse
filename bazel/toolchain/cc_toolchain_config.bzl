@@ -85,7 +85,6 @@ def _impl(ctx):
                                 "-lm",
                                 "-Wl,--relax",
                                 "-Wl,--gc-sections",
-                                "-Wl,--print-gc-sections",
                             ],
                         ),
                     ]),
@@ -97,16 +96,6 @@ def _impl(ctx):
                             flags = [
                                 "--plugin",
                                 "/opt/avr-toolchain/libexec/gcc/avr/13.1.0/liblto_plugin.so",
-                            ],
-                        ),
-                    ]),
-                ),
-                flag_set(
-                    actions = all_link_actions,
-                    flag_groups = ([
-                        flag_group(
-                            flags = [
-                                "-Wl,--undefined=_mmcu,--section-start=.mmcu=0x910000",
                             ],
                         ),
                     ]),
@@ -154,6 +143,7 @@ def _impl(ctx):
                     flag_groups = ([
                         flag_group(
                             flags = [
+                                "-Wl,--undefined=_mmcu,--section-start=.mmcu=0x910000",
                                 "-mmcu=" + ctx.attr.mmcu,
                                 "-ffunction-sections",
                                 "-fdata-sections",

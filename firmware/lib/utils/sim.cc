@@ -1,7 +1,5 @@
 #include "sim_impl.hh"
 
-namespace sim {
-
 // Define the CPU model, frequency and voltages.
 AVR_MCU(F_CPU, "atmega328p");
 AVR_MCU_VOLTAGES(5000, 5000, 5000);
@@ -53,5 +51,3 @@ const struct avr_mmcu_vcd_trace_t PWMTrace[] _MMCU_ = {
 // Console and command registers
 AVR_MCU_SIMAVR_COMMAND(&SIM_COMMAND_REG);
 AVR_MCU_SIMAVR_CONSOLE(&SIM_CONSOLE_REG);
-
-}
