@@ -49,7 +49,7 @@ class Location {
     return loc_ & 0x0F;
   }
 
-  operator size_t() const {
+  inline operator size_t() const {
     return loc_;
   }
 

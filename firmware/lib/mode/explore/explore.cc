@@ -431,8 +431,8 @@ void Floodfill() {
       }
     }
     if (!cell.wall_east) {
-      maze::Location next      = loc + maze::Location(1, 0);
-      auto           next_cell = maze::Read(next);
+      auto next      = loc + maze::Location(1, 0);
+      auto next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::Write(next, next_cell);
@@ -440,8 +440,8 @@ void Floodfill() {
       }
     }
     if (!cell.wall_south) {
-      maze::Location next      = loc - maze::Location(0, 1);
-      auto           next_cell = maze::Read(next);
+      auto next      = loc - maze::Location(0, 1);
+      auto next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::Write(next, next_cell);
@@ -449,8 +449,8 @@ void Floodfill() {
       }
     }
     if (!cell.wall_west) {
-      maze::Location next      = loc - maze::Location(1, 0);
-      auto           next_cell = maze::Read(next);
+      auto next      = loc - maze::Location(1, 0);
+      auto next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::Write(next, next_cell);
@@ -466,10 +466,10 @@ void Solve() {
   auto distance = maze::Read(curr).distance;
 
   while (distance != 0) {
-    maze::Location north = curr + maze::Location(0, 1);
-    maze::Location east  = curr + maze::Location(1, 0);
-    maze::Location south = curr - maze::Location(0, 1);
-    maze::Location west  = curr - maze::Location(1, 0);
+    auto north = curr + maze::Location(0, 1);
+    auto east  = curr + maze::Location(1, 0);
+    auto south = curr - maze::Location(0, 1);
+    auto west  = curr - maze::Location(1, 0);
 
     auto next = curr;
 
