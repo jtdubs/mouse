@@ -9,6 +9,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stddef.h>
 
 namespace maze {
 
@@ -30,24 +31,44 @@ struct Maze {
   Cell cells[256];
 };
 
-// Location holds the coordinates of a cell in the maze.
-// format: 0xXY, where X is the x coordinate and Y is the y coordinate.
-typedef uint8_t Location;
+class Location {
+ private:
+  uint8_t loc_;
 
-// location constructs a Location from x and y coordinates.
-inline Location Loc(uint8_t x, uint8_t y) {
-  return (x << 4) | y;
-}
+ public:
+  Location() : loc_(0) {}
+  Location(uint8_t xy) : loc_(xy) {}
+  Location(uint8_t x, uint8_t y) : loc_((x << 4) | y) {}
+  Location(const Location &o) : loc_(o.loc_) {}
 
-// x extracts the x coordinate from a Location.
-inline uint8_t x(Location loc) {
-  return loc >> 4;
-}
+  inline uint8_t X() const {
+    return loc_ >> 4;
+  }
 
-// y extracts the y coordinate from a Location.
-inline uint8_t y(Location loc) {
-  return loc & 0x0F;
-}
+  inline uint8_t Y() const {
+    return loc_ & 0x0F;
+  }
+
+  operator size_t() const {
+    return loc_;
+  }
+
+  inline Location operator+(Location o) const {
+    return Location(loc_ + o.loc_);
+  }
+
+  inline void operator+=(Location o) {
+    loc_ += o.loc_;
+  }
+
+  inline Location operator-(Location o) const {
+    return Location(loc_ - o.loc_);
+  }
+
+  inline void operator=(Location o) {
+    loc_ = o.loc_;
+  }
+};
 
 // Init initializes the maze to it's default state.
 void Init();

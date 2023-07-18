@@ -49,8 +49,8 @@ void Explore() {
   stopped     = true;
 
   // Our path so far is just the starting square, and we want to visit the square to our north.
-  path.PushBack(maze::Loc(0, 0));
-  next.PushBack(maze::Loc(0, 1));
+  path.PushBack(maze::Location(0, 0));
+  next.PushBack(maze::Location(0, 1));
 
   // While we have squares to visit...
   while (!next.Empty()) {
@@ -66,7 +66,7 @@ void Explore() {
 
     auto curr_loc = path.PeekBack();
     auto next_loc = next.PeekBack();
-    auto prev_loc = maze::Loc(0, 0);
+    auto prev_loc = maze::Location(0, 0);
 
     // Determine which direction to drive to reach the cell (if it is adjancent).
     Orientation next_orientation = Adjacent(curr_loc, next_loc);
@@ -132,10 +132,10 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
 
 // adjacent determines the orientation needed to drive between two adjacent cells.
 Orientation Adjacent(maze::Location a, maze::Location b) {
-  auto ax = maze::x(a);
-  auto ay = maze::y(a);
-  auto bx = maze::x(b);
-  auto by = maze::y(b);
+  auto ax = a.X();
+  auto ay = a.Y();
+  auto bx = b.X();
+  auto by = b.Y();
 
   if (ax == bx) {
     if (ay + 1 == by) {
@@ -311,68 +311,68 @@ void Classify(maze::Location loc) {
       if (wall_right) {
         cell.wall_east = wall_right;
       } else {
-        queue_unvisited(loc + maze::Loc(1, 0));
+        queue_unvisited(loc + maze::Location(1, 0));
       }
       if (wall_left) {
         cell.wall_west = wall_left;
       } else {
-        queue_unvisited(loc - maze::Loc(1, 0));
+        queue_unvisited(loc - maze::Location(1, 0));
       }
       if (wall_forward) {
         cell.wall_north = wall_forward;
       } else {
-        queue_unvisited(loc + maze::Loc(0, 1));
+        queue_unvisited(loc + maze::Location(0, 1));
       }
       break;
     case Orientation::East:
       if (wall_right) {
         cell.wall_south = wall_right;
       } else {
-        queue_unvisited(loc - maze::Loc(0, 1));
+        queue_unvisited(loc - maze::Location(0, 1));
       }
       if (wall_left) {
         cell.wall_north = wall_left;
       } else {
-        queue_unvisited(loc + maze::Loc(0, 1));
+        queue_unvisited(loc + maze::Location(0, 1));
       }
       if (wall_forward) {
         cell.wall_east = wall_forward;
       } else {
-        queue_unvisited(loc + maze::Loc(1, 0));
+        queue_unvisited(loc + maze::Location(1, 0));
       }
       break;
     case Orientation::South:
       if (wall_right) {
         cell.wall_west = wall_right;
       } else {
-        queue_unvisited(loc - maze::Loc(1, 0));
+        queue_unvisited(loc - maze::Location(1, 0));
       }
       if (wall_left) {
         cell.wall_east = wall_left;
       } else {
-        queue_unvisited(loc + maze::Loc(1, 0));
+        queue_unvisited(loc + maze::Location(1, 0));
       }
       if (wall_forward) {
         cell.wall_south = wall_forward;
       } else {
-        queue_unvisited(loc - maze::Loc(0, 1));
+        queue_unvisited(loc - maze::Location(0, 1));
       }
       break;
     case Orientation::West:
       if (wall_right) {
         cell.wall_north = wall_right;
       } else {
-        queue_unvisited(loc + maze::Loc(0, 1));
+        queue_unvisited(loc + maze::Location(0, 1));
       }
       if (wall_left) {
         cell.wall_south = wall_left;
       } else {
-        queue_unvisited(loc - maze::Loc(0, 1));
+        queue_unvisited(loc - maze::Location(0, 1));
       }
       if (wall_forward) {
         cell.wall_west = wall_forward;
       } else {
-        queue_unvisited(loc - maze::Loc(1, 0));
+        queue_unvisited(loc - maze::Location(1, 0));
       }
       break;
     case Orientation::Invalid:
@@ -385,13 +385,13 @@ void Classify(maze::Location loc) {
 // Floodfill calculates the shortest path to the goal.
 void Floodfill() {
   // Step 1. Find the 2x2 square of cells with no internal walls that is the goal.
-  auto goal = maze::Loc(15, 15);
+  auto goal = maze::Location(15, 15);
   for (uint8_t x = 0; x < kMazeWidth - 1; x++) {
     for (uint8_t y = 0; y < kMazeHeight - 1; y++) {
-      auto a = maze::Read(maze::Loc(x, y));
-      auto b = maze::Read(maze::Loc(x + 1, y + 1));
+      auto a = maze::Read(maze::Location(x, y));
+      auto b = maze::Read(maze::Location(x + 1, y + 1));
       if (a.visited && b.visited && !a.wall_east && !a.wall_north && !b.wall_west && !b.wall_south) {
-        goal = maze::Loc(x, y);
+        goal = maze::Location(x, y);
         break;
       }
     }
@@ -402,12 +402,14 @@ void Floodfill() {
   }
 
   // Step 2. Find the cell in the goal square with the gateway, as that's where we want to get.
-  if (!maze::Read(goal + maze::Loc(0, 1)).wall_north || !maze::Read(goal + maze::Loc(0, 1)).wall_west) {
-    goal += maze::Loc(0, 1);
-  } else if (!maze::Read(goal + maze::Loc(1, 0)).wall_south || !maze::Read(goal + maze::Loc(1, 0)).wall_east) {
-    goal += maze::Loc(1, 0);
-  } else if (!maze::Read(goal + maze::Loc(1, 1)).wall_north || !maze::Read(goal + maze::Loc(1, 1)).wall_east) {
-    goal += maze::Loc(1, 1);
+  if (!maze::Read(goal + maze::Location(0, 1)).wall_north || !maze::Read(goal + maze::Location(0, 1)).wall_west) {
+    goal += maze::Location(0, 1);
+  } else if (!maze::Read(goal + maze::Location(1, 0)).wall_south
+             || !maze::Read(goal + maze::Location(1, 0)).wall_east) {
+    goal += maze::Location(1, 0);
+  } else if (!maze::Read(goal + maze::Location(1, 1)).wall_north
+             || !maze::Read(goal + maze::Location(1, 1)).wall_east) {
+    goal += maze::Location(1, 1);
   }
 
   // Step 3. Floodfill outwards from the goal cell.
@@ -420,7 +422,7 @@ void Floodfill() {
     auto loc  = path.PopFront();
     auto cell = maze::Read(loc);
     if (!cell.wall_north) {
-      auto next      = loc + maze::Loc(0, 1);
+      auto next      = loc + maze::Location(0, 1);
       auto next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
@@ -429,8 +431,8 @@ void Floodfill() {
       }
     }
     if (!cell.wall_east) {
-      auto next      = loc + maze::Loc(1, 0);
-      auto next_cell = maze::Read(next);
+      maze::Location next      = loc + maze::Location(1, 0);
+      auto           next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::Write(next, next_cell);
@@ -438,8 +440,8 @@ void Floodfill() {
       }
     }
     if (!cell.wall_south) {
-      auto next      = loc - maze::Loc(0, 1);
-      auto next_cell = maze::Read(next);
+      maze::Location next      = loc - maze::Location(0, 1);
+      auto           next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::Write(next, next_cell);
@@ -447,8 +449,8 @@ void Floodfill() {
       }
     }
     if (!cell.wall_west) {
-      auto next      = loc - maze::Loc(1, 0);
-      auto next_cell = maze::Read(next);
+      maze::Location next      = loc - maze::Location(1, 0);
+      auto           next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::Write(next, next_cell);
@@ -460,33 +462,33 @@ void Floodfill() {
 
 // solve follows the shortest path to the goal.
 void Solve() {
-  auto curr     = maze::Loc(0, 0);
+  auto curr     = maze::Location(0, 0);
   auto distance = maze::Read(curr).distance;
 
   while (distance != 0) {
-    auto north = curr + maze::Loc(0, 1);
-    auto east  = curr + maze::Loc(1, 0);
-    auto south = curr - maze::Loc(0, 1);
-    auto west  = curr - maze::Loc(1, 0);
+    maze::Location north = curr + maze::Location(0, 1);
+    maze::Location east  = curr + maze::Location(1, 0);
+    maze::Location south = curr - maze::Location(0, 1);
+    maze::Location west  = curr - maze::Location(1, 0);
 
     auto next = curr;
 
-    if (maze::x(curr) < (kMazeHeight - 1) && !maze::Read(curr).wall_north && maze::Read(north).distance < distance) {
+    if (curr.X() < (kMazeHeight - 1) && !maze::Read(curr).wall_north && maze::Read(north).distance < distance) {
       next     = north;
       distance = maze::Read(north).distance;
     }
 
-    if (maze::y(curr) < (kMazeWidth - 1) && !maze::Read(curr).wall_east && maze::Read(east).distance < distance) {
+    if (curr.Y() < (kMazeWidth - 1) && !maze::Read(curr).wall_east && maze::Read(east).distance < distance) {
       next     = east;
       distance = maze::Read(east).distance;
     }
 
-    if (maze::x(curr) > 0 && !maze::Read(curr).wall_south && maze::Read(south).distance < distance) {
+    if (curr.X() > 0 && !maze::Read(curr).wall_south && maze::Read(south).distance < distance) {
       next     = south;
       distance = maze::Read(south).distance;
     }
 
-    if (maze::y(curr) > 0 && !maze::Read(curr).wall_west && maze::Read(west).distance < distance) {
+    if (curr.Y() > 0 && !maze::Read(curr).wall_west && maze::Read(west).distance < distance) {
       next     = west;
       distance = maze::Read(west).distance;
     }

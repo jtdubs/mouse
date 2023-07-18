@@ -25,19 +25,19 @@ void Init() {
 
   // Bottom and top rows always have outer walls.
   for (uint8_t x = 0; x < kMazeWidth; x++) {
-    maze.cells[Loc(x, 0)].wall_south               = true;
-    maze.cells[Loc(x, kMazeHeight - 1)].wall_north = true;
+    maze.cells[Location(x, 0)].wall_south               = true;
+    maze.cells[Location(x, kMazeHeight - 1)].wall_north = true;
   }
 
   // Left and right columns always have outer walls.
   for (int y = 0; y < kMazeHeight; y++) {
-    maze.cells[Loc(0, y)].wall_west              = true;
-    maze.cells[Loc(kMazeWidth - 1, y)].wall_east = true;
+    maze.cells[Location(0, y)].wall_west              = true;
+    maze.cells[Location(kMazeWidth - 1, y)].wall_east = true;
   }
 
   // The starting cell has been visited, and always has a wall to the east.
-  maze.cells[Loc(0, 0)].visited   = true;
-  maze.cells[Loc(0, 0)].wall_east = true;
+  maze.cells[Location(0, 0)].visited   = true;
+  maze.cells[Location(0, 0)].wall_east = true;
 }
 
 void Send() {
@@ -54,8 +54,8 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   if (report_row < kMazeHeight) {
     for (int i = 0; i < kMazeWidth; i++) {
       update_array[i] = (Update){
-          .location = Loc(i, report_row),
-          .cell     = maze.cells[Loc(i, report_row)],
+          .location = Location(i, report_row),
+          .cell     = maze.cells[Location(i, report_row)],
       };
     }
     report_row++;
@@ -75,15 +75,15 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
 }
 
 Cell Read(Location loc) {
-  assert(assert::MAZE + 2, x(loc) < kMazeWidth);
-  assert(assert::MAZE + 3, y(loc) < kMazeHeight);
+  assert(assert::MAZE + 2, loc.X() < kMazeWidth);
+  assert(assert::MAZE + 3, loc.Y() < kMazeHeight);
 
   return maze.cells[loc];
 }
 
 void Write(Location loc, Cell cell) {
-  assert(assert::MAZE + 4, x(loc) < kMazeWidth);
-  assert(assert::MAZE + 5, y(loc) < kMazeHeight);
+  assert(assert::MAZE + 4, loc.X() < kMazeWidth);
+  assert(assert::MAZE + 5, loc.Y() < kMazeHeight);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     maze.cells[loc] = cell;
