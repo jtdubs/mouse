@@ -227,7 +227,7 @@ void face(orientation_t new_orientation) {
   }
 
   float position, theta;
-  position::tare(&position, &theta);
+  position::tare(position, theta);
 
   // assuming we were centered horizontally in the previous direction of travel
   // then we are now in the middle of the cell along the new direction of travel.
@@ -280,7 +280,7 @@ void stop() {
 // update_location updates the cell index and offset based on the traveled distance.
 void update_location() {
   float position_distance, position_theta;
-  position::tare(&position_distance, &position_theta);
+  position::tare(position_distance, position_theta);
   cell_offset += position_distance;
 
   // this is a (% CELL_SIZE) without using the % operator because it is expensive.
@@ -301,7 +301,7 @@ void classify(maze::location_t loc) {
   assert(assert::EXPLORE + 4, orientation != INVALID);
 
   bool wall_forward, wall_left, wall_right;
-  walls::present(&wall_left, &wall_right, &wall_forward);
+  walls::present(wall_left, wall_right, wall_forward);
 
   // Classify the square based on sensor readings.
   maze::cell_t cell = {

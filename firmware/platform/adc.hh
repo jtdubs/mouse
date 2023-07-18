@@ -39,9 +39,9 @@ typedef enum : uint8_t {
 void sample();
 
 // read reads the value of an ADC channel.
-void read(channel_t channel, uint16_t* value);
+uint16_t read(channel_t channel);
 
 // read_sensors reads the value of an ADC channel.
-void read_sensors(uint16_t* left, uint16_t* right, uint16_t* forward);
+void read_sensors(uint16_t& left, uint16_t& right, uint16_t& forward);
 
 }  // namespace adc

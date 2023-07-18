@@ -56,7 +56,7 @@ void init() {
 
 void start(float position /* mm */, bool stop) {
   float position_distance, position_theta;
-  position::read(&position_distance, &position_theta);
+  position::read(position_distance, position_theta);
 
   state_t s;
   s.target_position = position;                   // mm
@@ -77,17 +77,16 @@ void start(float position /* mm */, bool stop) {
 }
 
 bool tick() {
-  uint16_t forward;
-  adc::read(adc::SENSOR_FORWARD, &forward);
+  uint16_t forward = adc::read(adc::SENSOR_FORWARD);
 
   float speed_measured_left, speed_measured_right;
-  speed::read(&speed_measured_left, &speed_measured_right);
+  speed::read(speed_measured_left, speed_measured_right);
 
   float speed_setpoint_left, speed_setpoint_right;
-  speed::read_setpoints(&speed_setpoint_left, &speed_setpoint_right);
+  speed::read_setpoints(speed_setpoint_left, speed_setpoint_right);
 
   float position_distance, position_theta;
-  position::read(&position_distance, &position_theta);
+  position::read(position_distance, position_theta);
 
   state_t s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -141,11 +140,11 @@ bool tick() {
 #if defined(ALLOW_WALL_PID_TUNING)
   s.wall_error = (wall_alpha * walls::error())  //
                + ((1.0f - wall_alpha) * s.wall_error);
-  float wall_adjustment = pid_update(&wall_error_pid, 0.0, s.wall_error);
+  float wall_adjustment = pid::update(wall_error_pid, 0.0, s.wall_error);
 #else
   s.wall_error = (WALL_ALPHA * walls::error())  //
                + ((1.0f - WALL_ALPHA) * s.wall_error);
-  float wall_adjustment = pid::update(&wall_error_pid, 0.0, s.wall_error);
+  float wall_adjustment = pid::update(wall_error_pid, 0.0, s.wall_error);
 #endif
   left_speed  -= wall_adjustment;
   right_speed += wall_adjustment;
@@ -154,7 +153,7 @@ bool tick() {
 #if defined(ALLOW_ANGLE_PID_TUNING)
   angle_error = (angle_alpha * (s.start_theta - position_theta))  //
               + ((1.0f - angle_alpha) * angle_error);
-  float angle_adjustment  = pid_update(&angle_error_pid, s.start_theta, position_theta);
+  float angle_adjustment  = pid::update(angle_error_pid, s.start_theta, position_theta);
   left_speed             -= angle_adjustment;
   right_speed            += angle_adjustment;
 #endif
@@ -201,11 +200,9 @@ void angle_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_un
 }
 
 // read reads the current linear state.
-void read(state_t *s) {
-  assert(assert::LINEAR + 0, s != NULL);
-
+void read(state_t &s) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *s = state;
+    s = state;
   }
 }
 

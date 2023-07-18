@@ -24,6 +24,6 @@ void start(float dtheta /* radians */);
 bool tick();
 
 // state reads the current rotational state.
-void read(state_t *state);
+void read(state_t &state);
 
 }  // namespace rotational

@@ -48,13 +48,13 @@ void set_state(state_t state) {
   sim_watch_plan(state);
 }
 
-// read reads the current plan.
-void read(plan_t *plan) {
-  assert(assert::PLAN + 0, plan != NULL);
-
+// current gets the current plan.
+plan_t current() {
+  plan_t result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *plan = current_plan;
+    result = current_plan;
   }
+  return result;
 }
 
 }  // namespace plan

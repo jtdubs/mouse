@@ -26,6 +26,6 @@ void start(float position /* mm */, bool stop);
 bool tick();
 
 // state reads the current linear state.
-void read(state_t *s);
+void read(state_t &s);
 
 }  // namespace linear

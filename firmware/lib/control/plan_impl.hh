@@ -13,7 +13,7 @@ void init();
 // set_state sets the current plan state.
 void set_state(state_t state);
 
-// read reads the current plan.
-void read(plan_t *plan);
+// current gets the current plan.
+plan_t current();
 
 }  // namespace plan

@@ -38,23 +38,17 @@ void update() {
   }
 }
 
-void read(int32_t* left, int32_t* right) {
-  assert(assert::ENCODERS + 0, left != NULL);
-  assert(assert::ENCODERS + 1, right != NULL);
-
+void read(int32_t& left, int32_t& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left  = encoders::left;
-    *right = encoders::right;
+    left  = encoders::left;
+    right = encoders::right;
   }
 }
 
-void read_deltas(int32_t* left, int32_t* right) {
-  assert(assert::ENCODERS + 2, left != NULL);
-  assert(assert::ENCODERS + 3, right != NULL);
-
+void read_deltas(int32_t& left, int32_t& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left  = left_delta;
-    *right = right_delta;
+    left  = left_delta;
+    right = right_delta;
   }
 }
 

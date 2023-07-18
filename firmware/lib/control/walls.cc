@@ -24,10 +24,10 @@ void led_control(bool enabled) {
 
 void update() {
   uint16_t left, right, forward;
-  adc::read_sensors(&left, &right, &forward);
+  adc::read_sensors(left, right, forward);
 
   uint16_t left_cal, right_cal, forward_cal;
-  sensor_cal::read(&left_cal, &right_cal, &forward_cal);
+  sensor_cal::read(left_cal, right_cal, forward_cal);
 
   state_t s;
   s.left_present    = (left >= (left_cal - 80));
@@ -66,15 +66,11 @@ float error() {
 }
 
 // present returns the presence of walls on each side of the mouse.
-void present(bool* left, bool* right, bool* forward) {
-  assert(assert::WALLS + 0, left != NULL);
-  assert(assert::WALLS + 1, right != NULL);
-  assert(assert::WALLS + 2, forward != NULL);
-
+void present(bool& left, bool& right, bool& forward) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left    = state.left_present;
-    *right   = state.right_present;
-    *forward = state.forward_present;
+    left    = state.left_present;
+    right   = state.right_present;
+    forward = state.forward_present;
   }
 }
 

@@ -30,24 +30,21 @@ void sample() {
   ADCSRA |= _BV(ADSC);
 }
 
-void read(channel_t channel, uint16_t* value) {
+uint16_t read(channel_t channel) {
   assert(assert::_ADC + 0, channel < CHANNEL_COUNT);
-  assert(assert::_ADC + 1, value != NULL);
 
+  uint16_t result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *value = values[channel];
+    result = values[channel];
   }
+  return result;
 }
 
-void read_sensors(uint16_t* left, uint16_t* right, uint16_t* forward) {
-  assert(assert::_ADC + 2, left != NULL);
-  assert(assert::_ADC + 3, right != NULL);
-  assert(assert::_ADC + 4, forward != NULL);
-
+void read_sensors(uint16_t& left, uint16_t& right, uint16_t& forward) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left    = values[SENSOR_LEFT];
-    *right   = values[SENSOR_RIGHT];
-    *forward = values[SENSOR_FORWARD];
+    left    = values[SENSOR_LEFT];
+    right   = values[SENSOR_RIGHT];
+    forward = values[SENSOR_FORWARD];
   }
 }
 

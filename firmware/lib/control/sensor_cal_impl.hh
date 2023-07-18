@@ -17,6 +17,6 @@ void start();
 bool tick();
 
 // read reads the calibrated sensor values.
-void read(uint16_t *left, uint16_t *right, uint16_t *forward);
+void read(uint16_t &left, uint16_t &right, uint16_t &forward);
 
-}
+}  // namespace sensor_cal

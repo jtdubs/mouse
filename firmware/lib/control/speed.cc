@@ -55,7 +55,7 @@ void init() {
 
 void update() {
   int32_t left_delta, right_delta;
-  encoders::read_deltas(&left_delta, &right_delta);
+  encoders::read_deltas(left_delta, right_delta);
 
   float measured_left, measured_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -95,20 +95,20 @@ void tick() {
   float power_left        = LEFT_RPM_TO_POWER(setpoint_left_mag);
 
   if (setpoint_left_mag < MIN_MOTOR_RPM) {
-    pid::reset(&pid_left);
+    pid::reset(pid_left);
     power_left = 0;
   } else {
-    power_left += pid::update(&pid_left, setpoint_left_mag, fabsf(measured_left));
+    power_left += pid::update(pid_left, setpoint_left_mag, fabsf(measured_left));
   }
 
   float setpoint_right_mag = fabsf(setpoint_right);
   float power_right        = RIGHT_RPM_TO_POWER(setpoint_right_mag);
 
   if (setpoint_right_mag < MIN_MOTOR_RPM) {
-    pid::reset(&pid_right);
+    pid::reset(pid_right);
     power_right = 0;
   } else {
-    power_right += pid::update(&pid_right, setpoint_right_mag, fabsf(measured_right));
+    power_right += pid::update(pid_right, setpoint_right_mag, fabsf(measured_right));
   }
 
   bool    forward_left  = signbitf(setpoint_left) == 0;
@@ -141,24 +141,18 @@ void tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]]
 }
 
 // read reads the motor speeds.
-void read(float* left, float* right) {
-  assert(assert::SPEED + 0, left != NULL);
-  assert(assert::SPEED + 1, right != NULL);
-
+void read(float& left, float& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left  = measured_left;
-    *right = measured_right;
+    left  = measured_left;
+    right = measured_right;
   }
 }
 
 // read_setpoints reads the motor speed setpoints.
-void read_setpoints(float* left, float* right) {
-  assert(assert::SPEED + 2, left != NULL);
-  assert(assert::SPEED + 3, right != NULL);
-
+void read_setpoints(float& left, float& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left  = setpoint_left;
-    *right = setpoint_right;
+    left  = setpoint_left;
+    right = setpoint_right;
   }
 }
 

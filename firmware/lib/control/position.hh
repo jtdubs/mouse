@@ -12,9 +12,9 @@
 namespace position {
 
 // read reads the current position.
-void read(float* distance, float* theta);
+void read(float& distance, float& theta);
 
 // tare reads the clears the current position.
-void tare(float* distance, float* theta);
+void tare(float& distance, float& theta);
 
-}
+}  // namespace position

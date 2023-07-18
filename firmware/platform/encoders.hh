@@ -25,9 +25,9 @@ namespace encoders {
 void update();
 
 // read reads the encoder counts.
-void read(int32_t* left, int32_t* right);
+void read(int32_t& left, int32_t& right);
 
 // read_deltas reads the changes to the encoder counts since the last update.
-void read_deltas(int32_t* left, int32_t* right);
+void read_deltas(int32_t& left, int32_t& right);
 
 }  // namespace encoders

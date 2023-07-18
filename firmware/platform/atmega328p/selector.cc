@@ -14,8 +14,7 @@ bool    button_pressed;
 
 uint8_t update() {
   // Read the selector voltage.
-  uint16_t raw;
-  adc::read(adc::SELECTOR, &raw);
+  uint16_t raw = adc::read(adc::SELECTOR);
 
   uint8_t v = raw >> 2;
 

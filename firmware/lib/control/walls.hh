@@ -21,6 +21,6 @@ namespace walls {
 void led_control(bool enabled);
 
 // present returns the presence of walls on each side of the mouse.
-void present(bool* left, bool* right, bool* forward);
+void present(bool& left, bool& right, bool& forward);
 
 }  // namespace walls

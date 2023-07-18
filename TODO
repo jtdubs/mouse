@@ -1,3 +1,17 @@
+C++:
+- pointers to references
+- auto variables?
+- lambdas for callbacks
+- std::array
+- range loops
+- c++ casts
+- enum class
+- delete the new operators
+- tuples
+- noexcept
+- modules
+- PID classes
+
 Bazel:
 - Auto-build cross-compile toolchain.
 

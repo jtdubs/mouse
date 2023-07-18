@@ -16,9 +16,9 @@ void update();
 void tick();
 
 // read reads the motor speeds.
-void read(float* left, float* right);
+void read(float& left, float& right);
 
 // read_setpoints reads the motor speed setpoints.
-void read_setpoints(float* left, float* right);
+void read_setpoints(float& left, float& right);
 
-}
+}  // namespace speed

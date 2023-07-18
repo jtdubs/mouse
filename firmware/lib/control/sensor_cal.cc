@@ -62,7 +62,7 @@ bool tick() {
   }
 
   uint16_t left, right, forward;
-  adc::read_sensors(&left, &right, &forward);
+  adc::read_sensors(left, right, forward);
   sum_left    += left;
   sum_right   += right;
   sum_forward += forward;
@@ -71,15 +71,11 @@ bool tick() {
   return false;
 }
 
-void read(uint16_t *left, uint16_t *right, uint16_t *forward) {
-  assert(assert::SENSOR + 0, left != NULL);
-  assert(assert::SENSOR + 1, right != NULL);
-  assert(assert::SENSOR + 2, forward != NULL);
-
+void read(uint16_t &left, uint16_t &right, uint16_t &forward) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left    = threshold_left;
-    *right   = threshold_right;
-    *forward = threshold_forward;
+    left    = threshold_left;
+    right   = threshold_right;
+    forward = threshold_forward;
   }
 }
 

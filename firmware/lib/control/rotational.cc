@@ -18,7 +18,7 @@ void init() {}
 void start(float dtheta /* radians */) {
   state_t s;
   float   distance;
-  position::read(&distance, &s.start_theta);
+  position::read(distance, s.start_theta);
 
   s.target_theta = s.start_theta + dtheta;
   s.direction    = dtheta > 0;
@@ -30,7 +30,7 @@ void start(float dtheta /* radians */) {
 
 bool tick() {
   float distance, theta;
-  position::read(&distance, &theta);
+  position::read(distance, theta);
 
   state_t s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -57,9 +57,9 @@ bool tick() {
   return false;
 }
 
-void read(state_t *s) {
+void read(state_t &s) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *s = state;
+    s = state;
   }
 }
 

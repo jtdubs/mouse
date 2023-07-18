@@ -32,8 +32,7 @@ void tick() {
   encoders::update();
   walls::update();
 
-  plan::plan_t plan;
-  plan::read(&plan);
+  plan::plan_t plan = plan::current();
 
   switch (plan.type) {
     case plan::TYPE_IDLE:
@@ -140,8 +139,7 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   static plan::type_t  previous_plan_type  = plan::TYPE_IDLE;
   static uint8_t       counter             = 0;
 
-  plan::plan_t plan;
-  plan::read(&plan);
+  plan::plan_t plan = plan::current();
 
   // count how many ticks since the last plan change.
   if (plan.state == previous_plan_state && plan.type == previous_plan_type) {
@@ -159,21 +157,21 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
 
   report_t *report = (report_t *)buffer;
 
-  plan::read(&report->plan);
-  speed::read(&report->speed.measured_left, &report->speed.measured_right);
-  speed::read_setpoints(&report->speed.setpoint_left, &report->speed.setpoint_right);
-  position::read(&report->position.distance, &report->position.theta);
+  report->plan = plan::current();
+  speed::read(report->speed.measured_left, report->speed.measured_right);
+  speed::read_setpoints(report->speed.setpoint_left, report->speed.setpoint_right);
+  position::read(report->position.distance, report->position.theta);
   switch (report->plan.type) {
     case plan::TYPE_SENSOR_CAL:
-      sensor_cal::read(&report->plan_data.sensor_cal.left,   //
-                       &report->plan_data.sensor_cal.right,  //
-                       &report->plan_data.sensor_cal.forward);
+      sensor_cal::read(report->plan_data.sensor_cal.left,   //
+                       report->plan_data.sensor_cal.right,  //
+                       report->plan_data.sensor_cal.forward);
       break;
     case plan::TYPE_ROTATIONAL_MOTION:
-      rotational::read(&report->plan_data.rotation);
+      rotational::read(report->plan_data.rotation);
       break;
     case plan::TYPE_LINEAR_MOTION:
-      linear::read(&report->plan_data.linear);
+      linear::read(report->plan_data.linear);
       break;
     default:
       break;

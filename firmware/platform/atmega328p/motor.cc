@@ -51,13 +51,10 @@ void set(int16_t left, int16_t right) {
 
 // read reads the power levels of the motors.
 // Range: [-511, 511]
-void read(int16_t* left, int16_t* right) {
-  assert(assert::MOTOR + 2, left != NULL);
-  assert(assert::MOTOR + 3, right != NULL);
-
+void read(int16_t& left, int16_t& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *left  = power_left;
-    *right = power_right;
+    left  = power_left;
+    right = power_right;
   }
 }
 

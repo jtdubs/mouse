@@ -19,7 +19,7 @@ void init() {}
 
 void update() {
   int32_t left_delta, right_delta;
-  encoders::read_deltas(&left_delta, &right_delta);
+  encoders::read_deltas(left_delta, right_delta);
 
   float left_distance  = ((float)left_delta) * COUNT_DISTANCE_LEFT;    // mm
   float right_distance = ((float)right_delta) * COUNT_DISTANCE_RIGHT;  // mm
@@ -45,23 +45,17 @@ void update() {
   }
 }
 
-void read(float* distance, float* theta) {
-  assert(assert::POSITION + 0, distance != NULL);
-  assert(assert::POSITION + 1, theta != NULL);
-
+void read(float& distance, float& theta) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *distance = position::distance;
-    *theta    = position::theta;
+    distance = position::distance;
+    theta    = position::theta;
   }
 }
 
-void tare(float* distance, float* theta) {
-  assert(assert::POSITION + 2, distance != NULL);
-  assert(assert::POSITION + 3, theta != NULL);
-
+void tare(float& distance, float& theta) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *distance          = position::distance;
-    *theta             = position::theta;
+    distance           = position::distance;
+    theta              = position::theta;
     position::distance = 0;
     position::theta    = 0;
   }
