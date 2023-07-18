@@ -4,7 +4,7 @@
 //
 // Purpose:
 // - Define mapping between pins and peripherals.
-// - Provides functions for managing pin state (set/clear/toggle).
+// - Provides functions for managing pin state (set/Clear/toggle).
 //
 #pragma once
 
@@ -28,18 +28,18 @@ extern const pin_t LEFT_PWM;
 extern const pin_t RIGHT_PWM;
 
 // led pins
-extern const pin_t LED_LEFT;
-extern const pin_t LED_RIGHT;
-extern const pin_t LED_ONBOARD;
+extern const pin_t kLEDLeft;
+extern const pin_t kLEDRight;
+extern const pin_t kLEDOnboard;
 extern const pin_t IR_LEDS;
 
 // probe pins
-extern const pin_t PROBE_TICK;
+extern const pin_t kProbeTick;
 extern const pin_t PROBE_PLAN;
 extern const pin_t PROBE_2;
 
-// set2 sets the value of the pin.
-inline void set2(pin_t pin, bool on) {
+// Set2 sets the value of the pin.
+inline void Set2(pin_t pin, bool on) {
   if (on) {
     *pin.port |= pin.mask;
   } else {
@@ -48,12 +48,12 @@ inline void set2(pin_t pin, bool on) {
 }
 
 // set sets the pin to high.
-inline void set(pin_t pin) {
+inline void Set(pin_t pin) {
   *pin.port |= pin.mask;
 }
 
-// clear sets the pin to low.
-inline void clear(pin_t pin) {
+// Clear sets the pin to low.
+inline void Clear(pin_t pin) {
   *pin.port &= ~pin.mask;
 }
 

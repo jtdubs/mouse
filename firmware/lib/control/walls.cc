@@ -13,20 +13,20 @@ bool  control_leds;
 State state;
 }  // namespace
 
-void init() {
+void Init() {
   control_leds = true;
 }
 
-void led_control(bool enabled) {
+void ControlLEDs(bool enabled) {
   control_leds = enabled;
 }
 
-void update() {
+void Update() {
   uint16_t left, right, forward;
   adc::read_sensors(left, right, forward);
 
   uint16_t left_cal, right_cal, forward_cal;
-  sensor_cal::read(left_cal, right_cal, forward_cal);
+  sensor_cal::Read(left_cal, right_cal, forward_cal);
 
   State s;
   s.left_present    = (left >= (left_cal - 80));
@@ -40,9 +40,9 @@ void update() {
   }
 
   if (control_leds) {
-    pin::set2(pin::LED_LEFT, s.left_present);
-    pin::set2(pin::LED_RIGHT, s.right_present);
-    pin::set2(pin::LED_ONBOARD, s.forward_present);
+    pin::Set2(pin::kLEDLeft, s.left_present);
+    pin::Set2(pin::kLEDRight, s.right_present);
+    pin::Set2(pin::kLEDOnboard, s.forward_present);
   }
 }
 
@@ -65,7 +65,7 @@ float error() {
 }
 
 // present returns the presence of walls on each side of the mouse.
-void present(bool& left, bool& right, bool& forward) {
+void Present(bool& left, bool& right, bool& forward) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     left    = state.left_present;
     right   = state.right_present;

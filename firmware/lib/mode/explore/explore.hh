@@ -36,7 +36,7 @@ void explore();
 // solve() is the entry point for solve mode.
 void solve();
 
-// report() is the report handler for the explore mode.
-uint8_t report(uint8_t *buffer, uint8_t len);
+// GetReport() is the report handler for the explore mode.
+uint8_t GetReport(uint8_t *buffer, uint8_t len);
 
 }  // namespace explore

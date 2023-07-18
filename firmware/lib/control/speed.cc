@@ -32,19 +32,19 @@ pid::PIController pid_right;
 #endif
 }  // namespace
 
-void init() {
+void Init() {
   pid_left.SetRange(-200, 200);
-  pid_left.Tune(SPEED_KP, SPEED_KI, SPEED_KD);
+  pid_left.Tune(kSpeedKp, kSpeedKi, kSpeedKd);
 
   pid_right.SetRange(-200, 200);
-  pid_right.Tune(SPEED_KP, SPEED_KI, SPEED_KD);
+  pid_right.Tune(kSpeedKp, kSpeedKi, kSpeedKd);
 
 #if defined(ALLOW_SPEED_PID_TUNING)
-  alpha = SPEED_ALPHA;
+  alpha = kSpeedAlpha;
 #endif
 }
 
-void update() {
+void Update() {
   int32_t left_delta, right_delta;
   encoders::read_deltas(left_delta, right_delta);
 
@@ -55,15 +55,15 @@ void update() {
   }
 
 #if defined(ALLOW_SPEED_PID_TUNING)
-  measured_left = (alpha * COUNTS_TO_RPM(left_delta))  //
+  measured_left = (alpha * CountsToRPM(left_delta))  //
                 + ((1.0f - alpha) * measured_left);
-  measured_right = (alpha * COUNTS_TO_RPM(right_delta))  //
+  measured_right = (alpha * CountsToRPM(right_delta))  //
                  + ((1.0f - alpha) * measured_right);
 #else
-  measured_left = (SPEED_ALPHA * COUNTS_TO_RPM(left_delta))  //
-                + ((1.0f - SPEED_ALPHA) * measured_left);
-  measured_right = (SPEED_ALPHA * COUNTS_TO_RPM(right_delta))  //
-                 + ((1.0f - SPEED_ALPHA) * measured_right);
+  measured_left = (kSpeedAlpha * CountsToRPM(left_delta))  //
+                + ((1.0f - kSpeedAlpha) * measured_left);
+  measured_right = (kSpeedAlpha * CountsToRPM(right_delta))  //
+                 + ((1.0f - kSpeedAlpha) * measured_right);
 #endif
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -72,7 +72,7 @@ void update() {
   }
 }
 
-void tick() {
+void Tick() {
   float measured_left, measured_right;
   float setpoint_left, setpoint_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -83,9 +83,9 @@ void tick() {
   }
 
   float setpoint_left_mag = fabsf(setpoint_left);
-  float power_left        = LEFT_RPM_TO_POWER(setpoint_left_mag);
+  float power_left        = LeftRPMToPower(setpoint_left_mag);
 
-  if (setpoint_left_mag < MIN_MOTOR_RPM) {
+  if (setpoint_left_mag < kMinMotorRPM) {
     pid_left.Reset();
     power_left = 0;
   } else {
@@ -93,9 +93,9 @@ void tick() {
   }
 
   float setpoint_right_mag = fabsf(setpoint_right);
-  float power_right        = RIGHT_RPM_TO_POWER(setpoint_right_mag);
+  float power_right        = RightRPMToPower(setpoint_right_mag);
 
-  if (setpoint_right_mag < MIN_MOTOR_RPM) {
+  if (setpoint_right_mag < kMinMotorRPM) {
     pid_right.Reset();
     power_right = 0;
   } else {
@@ -106,18 +106,18 @@ void tick() {
   bool    forward_right = signbitf(setpoint_right) == 0;
   int16_t left          = (int16_t)lrintf(forward_left ? power_left : -power_left);
   int16_t right         = (int16_t)lrintf(forward_right ? power_right : -power_right);
-  motor::set(left, right);
+  motor::Set(left, right);
 }
 
-void set(float left, float right) {
+void Set(float left, float right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     setpoint_left  = left;
     setpoint_right = right;
   }
 }
 
-void tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
-          [[maybe_unused]] float alpha) {
+void TunePID([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
+             [[maybe_unused]] float alpha) {
 #if defined(ALLOW_SPEED_PID_TUNING)
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     alpha = alpha;
@@ -132,15 +132,15 @@ void tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]]
 }
 
 // read reads the motor speeds.
-void read(float& left, float& right) {
+void Read(float& left, float& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     left  = measured_left;
     right = measured_right;
   }
 }
 
-// read_setpoints reads the motor speed setpoints.
-void read_setpoints(float& left, float& right) {
+// ReadSetpoints reads the motor speed setpoints.
+void ReadSetpoints(float& left, float& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     left  = setpoint_left;
     right = setpoint_right;

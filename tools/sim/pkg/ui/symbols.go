@@ -27,7 +27,7 @@ func newSymbolsWindow(sim *sim.Sim) *symbolsWindow {
 	}
 }
 
-func (w *symbolsWindow) init() {
+func (w *symbolsWindow) Init() {
 	w.names = maps.Keys(w.sim.Symbols.Symbols)
 	sort.Strings(w.names)
 }

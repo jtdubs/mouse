@@ -4,6 +4,6 @@
 
 namespace rtc {
 
-void init();
+void Init();
 
 }

@@ -13,43 +13,43 @@ namespace {
 Plan current_plan;
 }  // namespace
 
-// init initializes the plan module.
-void init() {
+// Init initializes the plan module.
+void Init() {
   current_plan.type = Type::Idle;
-  set_state(State::Scheduled);
+  SetState(State::Scheduled);
 }
 
 // submit submits a new plan to be implemented.
-void submit(Plan plan) {
+void Submit(Plan plan) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     current_plan = plan;
-    set_state(State::Scheduled);
+    SetState(State::Scheduled);
   }
 }
 
 // wait waits for the current plan to be implemented.
-void wait() {
-  pin::clear(pin::PROBE_PLAN);
+void Wait() {
+  pin::Clear(pin::PROBE_PLAN);
   volatile State *state = &current_plan.state;
   while (*state != State::Implemented) {}
-  pin::set(pin::PROBE_PLAN);
+  pin::Set(pin::PROBE_PLAN);
 }
 
-// submit_and_wait submits a new plan, and wait for it to be implemented.
+// SubmitAndWait submits a new plan, and wait for it to be implemented.
 // NOTE: this plan will replace the current plan, even if it is not fully implemented!
-void submit_and_wait(Plan plan) {
-  submit(plan);
-  wait();
+void SubmitAndWait(Plan plan) {
+  Submit(plan);
+  Wait();
 }
 
-// set_state sets the current plan state.
-void set_state(State state) {
+// SetState sets the current plan state.
+void SetState(State state) {
   current_plan.state = state;
   sim_watch_plan((uint8_t)state);
 }
 
 // current gets the current plan.
-Plan current() {
+Plan Current() {
   Plan result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     result = current_plan;

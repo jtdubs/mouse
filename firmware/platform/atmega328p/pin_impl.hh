@@ -4,6 +4,6 @@
 
 namespace pin {
 
-void init();
+void Init();
 
 }  // namespace pin

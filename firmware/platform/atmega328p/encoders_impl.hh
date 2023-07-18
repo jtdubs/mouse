@@ -4,6 +4,6 @@
 
 namespace encoders {
 
-void init();
+void Init();
 
 }

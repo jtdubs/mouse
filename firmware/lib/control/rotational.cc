@@ -13,12 +13,12 @@ namespace {
 State state;
 }
 
-void init() {}
+void Init() {}
 
-void start(float dtheta /* radians */) {
+void Start(float dtheta /* radians */) {
   State s;
   float distance;
-  position::read(distance, s.start_theta);
+  position::Read(distance, s.start_theta);
 
   s.target_theta = s.start_theta + dtheta;
   s.direction    = dtheta > 0;
@@ -28,9 +28,9 @@ void start(float dtheta /* radians */) {
   }
 }
 
-bool tick() {
+bool Tick() {
   float distance, theta;
-  position::read(distance, theta);
+  position::Read(distance, theta);
 
   State s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -38,26 +38,26 @@ bool tick() {
   }
 
   // If we are there, then we are done.
-  if (fabsf(theta - s.target_theta) < (MM_THETA * 2.0f)) {
-    speed::set(0, 0);
+  if (fabsf(theta - s.target_theta) < (kMMTheta * 2.0f)) {
+    speed::Set(0, 0);
     return true;
   }
 
   // Otherwise, calculate fixed speeds including the wheel bias.
-  float rpm         = MIN_MOTOR_RPM * 1.5;
+  float rpm         = kMinMotorRPM * 1.5;
   float left_speed  = rpm;
-  float right_speed = rpm * ((1.0 + WHEEL_BIAS) / (1.0 - WHEEL_BIAS));
+  float right_speed = rpm * ((1.0 + kWheelBias) / (1.0 - kWheelBias));
 
   if (s.direction) {
-    speed::set(-left_speed, right_speed);
+    speed::Set(-left_speed, right_speed);
   } else {
-    speed::set(left_speed, -right_speed);
+    speed::Set(left_speed, -right_speed);
   }
 
   return false;
 }
 
-void read(State &s) {
+void Read(State &s) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     s = state;
   }

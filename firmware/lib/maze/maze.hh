@@ -49,19 +49,19 @@ inline uint8_t y(location_t loc) {
   return loc & 0x0F;
 }
 
-// init initializes the maze to it's default state.
-void init();
+// Init initializes the maze to it's default state.
+void Init();
 
 // read returns the cell at the given location.
-cell_t read(location_t loc);
+cell_t Read(location_t loc);
 
 // update updates the cell at the given location.
-void update(location_t loc, cell_t cell);
+void Write(location_t loc, cell_t cell);
 
 // report generates a report of changes to the maze.
-uint8_t report(uint8_t *buffer, uint8_t len);
+uint8_t GetReport(uint8_t *buffer, uint8_t len);
 
 // send triggers retransmission of the maze.
-void send();
+void Send();
 
 }  // namespace maze

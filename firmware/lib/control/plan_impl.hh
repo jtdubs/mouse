@@ -7,13 +7,13 @@
 
 namespace plan {
 
-// init initializes the plan module.
-void init();
+// Init initializes the plan module.
+void Init();
 
-// set_state sets the current plan state.
-void set_state(State state);
+// SetState sets the current plan state.
+void SetState(State state);
 
 // current gets the current plan.
-Plan current();
+Plan Current();
 
 }  // namespace plan

@@ -35,11 +35,11 @@ void failed(uint32_t error_code) {
   SIM_CONSOLE_REG = (uint8_t)'\n';
 
   // disable all peripherals
-  motor::set(0, 0);
-  pin::clear(pin::LED_LEFT);
-  pin::clear(pin::LED_RIGHT);
-  pin::clear(pin::LED_ONBOARD);
-  pin::clear(pin::IR_LEDS);
+  motor::Set(0, 0);
+  pin::Clear(pin::kLEDLeft);
+  pin::Clear(pin::kLEDRight);
+  pin::Clear(pin::kLEDOnboard);
+  pin::Clear(pin::IR_LEDS);
 
   for (;;) {
     // blink out each bit in the error code
@@ -47,9 +47,9 @@ void failed(uint32_t error_code) {
       bool bit = (error_code >> (31 - bit_index)) & 1;
 
       // on for 20ms, off for 230ms (determined by visual inspection)
-      pin::set(bit ? pin::LED_LEFT : pin::LED_RIGHT);
+      pin::Set(bit ? pin::kLEDLeft : pin::kLEDRight);
       _delay_ms(20);
-      pin::clear(bit ? pin::LED_LEFT : pin::LED_RIGHT);
+      pin::Clear(bit ? pin::kLEDLeft : pin::kLEDRight);
       _delay_ms(230);
 
       if ((bit_index & 3) == 3) {

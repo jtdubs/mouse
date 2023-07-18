@@ -30,8 +30,8 @@ namespace usart0 {
 
 typedef void (*read_callback_t)(uint8_t* buffer, uint8_t length);
 
-// init initializes USART0.
-void init();
+// Init initializes USART0.
+void Init();
 
 // write_ready determines if USART0 is ready to be written to.
 bool write_ready();
@@ -48,4 +48,4 @@ void enable_receiver();
 // set_read_callback sets the read callback for USART0.
 void set_read_callback(read_callback_t callback);
 
-}
+}  // namespace usart0

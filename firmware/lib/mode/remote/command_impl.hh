@@ -63,8 +63,8 @@ struct Command {
 };
 #pragma pack(pop)
 
-// init initializes the command module.
-void init();
+// Init initializes the command module.
+void Init();
 
 // processed indicates the command has been processed.
 void processed();

@@ -19,7 +19,7 @@
 namespace linear {
 
 // PID tuning functions.
-void wall_tune(float kp, float ki, float kd, float alpha);
-void angle_tune(float kp, float ki, float kd, float alpha);
+void TuneWallPID(float kp, float ki, float kd, float alpha);
+void TuneAnglePID(float kp, float ki, float kd, float alpha);
 
 }  // namespace linear

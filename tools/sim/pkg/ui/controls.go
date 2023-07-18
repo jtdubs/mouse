@@ -18,7 +18,7 @@ func newControlsWindow(sim *sim.Sim) *controlsWindow {
 	}
 }
 
-func (w *controlsWindow) init() {}
+func (w *controlsWindow) Init() {}
 
 func (w *controlsWindow) draw() {
 	if !imgui.Begin("Controls") {

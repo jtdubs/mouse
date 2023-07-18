@@ -33,7 +33,7 @@ struct Report {
 };
 #pragma pack(pop)
 
-// tick executes one tick of the control module.
-void tick();
+// Tick executes one Tick of the control module.
+void Tick();
 
 }  // namespace control

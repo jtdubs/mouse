@@ -19,7 +19,7 @@ func newReportWindow(mouse *mouse.Mouse) *reportWindow {
 	}
 }
 
-func (w *reportWindow) init() {}
+func (w *reportWindow) Init() {}
 
 func (w *reportWindow) drawLatest() {
 	r, ok := w.mouse.Report(mouse.ReportKeyLatest)

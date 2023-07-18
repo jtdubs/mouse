@@ -19,7 +19,7 @@ func newMazeWindow(mouse *mouse.Mouse) *mazeWindow {
 	}
 }
 
-func (w *mazeWindow) init() {}
+func (w *mazeWindow) Init() {}
 
 func (w *mazeWindow) draw() {
 	gridWidth := len(w.mouse.Maze.Cells)

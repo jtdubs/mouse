@@ -17,7 +17,7 @@ callback_t callbacks[4];
 uint8_t    callback_count = 0;
 }  // namespace
 
-void add_callback(callback_t callback) {
+void AddCallback(callback_t callback) {
   assert(assert::TIMER + 0, callback != NULL);
   assert(assert::TIMER + 1, callback_count < 4);
 
@@ -26,8 +26,8 @@ void add_callback(callback_t callback) {
   }
 }
 
-// init initializes timer.
-void init() {
+// Init initializes timer.
+void Init() {
   TCCR0A = _BV(WGM01);                      // Clear timer on OCRA match
   TCCR0B = _BV(CS02) | _BV(CS00);           // Use clk/1024 prescaler (15.625kHz)
   OCR0A  = (F_CPU / 1024 / (200 + 1)) + 1;  // 200Hz = 5ms

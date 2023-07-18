@@ -64,10 +64,10 @@ func (m *Motor) Init() {
 	C.avr_cycle_timer_register(m.avr, m.avr.cycle+10000, on_cycle_cgo, pointer.Save(m))
 }
 
-const LEFT_MOTOR_M float32 = 2.760
-const LEFT_MOTOR_B float32 = -67.2
-const RIGHT_MOTOR_M float32 = 2.695
-const RIGHT_MOTOR_B float32 = -57.7
+const kLeftMotorM float32 = 2.760
+const kLeftMotorB float32 = -67.2
+const kRightMotorM float32 = 2.695
+const kRightMotorB float32 = -57.7
 
 func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 	if irq == m.pwmIRQ {
@@ -77,9 +77,9 @@ func (m *Motor) OnIRQ(irq *C.avr_irq_t, value uint32, param unsafe.Pointer) {
 		} else {
 			var rpm float32
 			if m.left {
-				rpm = (float32(value) * LEFT_MOTOR_M) + LEFT_MOTOR_B
+				rpm = (float32(value) * kLeftMotorM) + kLeftMotorB
 			} else {
-				rpm = (float32(value) * RIGHT_MOTOR_M) + RIGHT_MOTOR_B
+				rpm = (float32(value) * kRightMotorM) + kRightMotorB
 			}
 			period := (16000000.0 * 60.0 / 240.0) / rpm
 			m.DesiredPeriod = uint32(period)

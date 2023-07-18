@@ -19,8 +19,8 @@ void on_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
   command = (Command *)buffer;
 }
 
-// init initializes the command module.
-void init() {
+// Init initializes the command module.
+void Init() {
   usart0::set_read_callback(on_received);
   usart0::enable_receiver();
 }

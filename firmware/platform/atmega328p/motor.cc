@@ -14,8 +14,8 @@ int16_t power_left;
 int16_t power_right;
 }  // namespace
 
-// init initializes the motors.
-void init() {
+// Init initializes the motors.
+void Init() {
   TCCR1A = _BV(COM1A1)   // Clear OC1A when up-counting, set when down-counting
          | _BV(COM1B1);  // Clear OCBA when up-counting, set when down-counting
   TCCR1B = _BV(WGM13)    // Phase and frequency correct PWM
@@ -27,11 +27,11 @@ void init() {
   TIFR0  = 0;            // Clear interrupt flags.
   TCNT1  = 0;            // Reset counter.
 
-  set(0, 0);
+  Set(0, 0);
 }
 
 // set sets the direction of the motors.
-void set(int16_t left, int16_t right) {
+void Set(int16_t left, int16_t right) {
   assert(assert::MOTOR + 0, left > -512 && left < 512);
   assert(assert::MOTOR + 1, right > -512 && right < 512);
 
@@ -40,8 +40,8 @@ void set(int16_t left, int16_t right) {
     power_right = right;
 
     // set the direction of the motors
-    pin::set2(pin::LEFT_DIR, left < 0);
-    pin::set2(pin::RIGHT_DIR, right >= 0);
+    pin::Set2(pin::LEFT_DIR, left < 0);
+    pin::Set2(pin::RIGHT_DIR, right >= 0);
 
     // set the PWM duty cycle for each motor
     OCR1A = math::abs16(left);
@@ -51,7 +51,7 @@ void set(int16_t left, int16_t right) {
 
 // read reads the power levels of the motors.
 // Range: [-511, 511]
-void read(int16_t& left, int16_t& right) {
+void Read(int16_t& left, int16_t& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     left  = power_left;
     right = power_right;

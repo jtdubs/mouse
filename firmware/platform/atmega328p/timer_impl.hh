@@ -4,6 +4,6 @@
 
 namespace timer {
 
-void init();
+void Init();
 
 }

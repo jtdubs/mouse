@@ -18,7 +18,7 @@ func newToolbarWindow(sim *sim.Sim) *toolbarWindow {
 	}
 }
 
-func (w *toolbarWindow) init() {}
+func (w *toolbarWindow) Init() {}
 
 func (w *toolbarWindow) toolbarButton(name string, icon string) bool {
 	return imgui.ImageButtonV(name, Textures[icon].ID(), imgui.NewVec2(24, 24), imgui.NewVec2(0, 0), imgui.NewVec2(1, 1), imgui.NewVec4(0, 0, 0, 0), imgui.NewVec4(1, 1, 1, 1))

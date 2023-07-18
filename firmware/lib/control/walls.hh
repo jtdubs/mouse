@@ -16,11 +16,11 @@
 
 namespace walls {
 
-// led_control determines whether or not this module controls the status LEDs.
+// ControlLEDs determines whether or not this module controls the status LEDs.
 // If enabled, the LEDs will reflect the presence or absence of walls.
-void led_control(bool enabled);
+void ControlLEDs(bool enabled);
 
 // present returns the presence of walls on each side of the mouse.
-void present(bool& left, bool& right, bool& forward);
+void Present(bool& left, bool& right, bool& forward);
 
 }  // namespace walls

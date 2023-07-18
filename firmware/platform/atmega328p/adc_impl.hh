@@ -13,6 +13,6 @@ constexpr Channel NEXT_CHANNEL[8] = {
 // first_channel is the first channel to be read.
 constexpr Channel FIRST_CHANNEL = Channel::SensorRight;
 
-void init();
+void Init();
 
 }  // namespace adc

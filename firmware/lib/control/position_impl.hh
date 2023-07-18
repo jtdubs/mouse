@@ -6,10 +6,10 @@
 
 namespace position {
 
-// init initializes the position module.
-void init();
+// Init initializes the position module.
+void Init();
 
 // update updates the position based on encoder deltas.
-void update();
+void Update();
 
 }

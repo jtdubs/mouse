@@ -17,7 +17,7 @@ func newStatusWindow(m *mouse.Mouse) *statusWindow {
 	}
 }
 
-func (w *statusWindow) init() {
+func (w *statusWindow) Init() {
 }
 
 func (w *statusWindow) drawStatus() {

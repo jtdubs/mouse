@@ -16,26 +16,26 @@ namespace {
 Report report;
 }  // namespace
 
-// init initializes the report module.
-void init() {
-  timer::add_callback(send);
+// Init initializes the report module.
+void Init() {
+  timer::AddCallback(Send);
 }
 
 // send sends the report, if usart0 is ready.
-void send() {
+void Send() {
   if (!usart0::write_ready()) {
     return;
   }
 
   uint8_t len              = 0;
   report.header.rtc_micros = rtc::micros();
-  if ((len = explore::report(report.data, sizeof(report.data))) > 0) {
+  if ((len = explore::GetReport(report.data, sizeof(report.data))) > 0) {
     report.header.type = Type::Explore;
-  } else if ((len = maze::report(report.data, sizeof(report.data))) > 0) {
+  } else if ((len = maze::GetReport(report.data, sizeof(report.data))) > 0) {
     report.header.type = Type::Maze;
-  } else if ((len = control::report(report.data, sizeof(report.data))) > 0) {
+  } else if ((len = control::GetReport(report.data, sizeof(report.data))) > 0) {
     report.header.type = Type::Control;
-  } else if ((len = platform::report(report.data, sizeof(report.data))) > 0) {
+  } else if ((len = platform::GetReport(report.data, sizeof(report.data))) > 0) {
     report.header.type = Type::Platform;
   }
 

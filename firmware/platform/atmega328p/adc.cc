@@ -14,8 +14,8 @@ namespace {
 uint16_t values[8];
 }  // namespace
 
-// init initializes the ADC.
-void init() {
+// Init initializes the ADC.
+void Init() {
   ADMUX  = _BV(REFS0);                             // AVCC with external capacitor at AREF pin
   ADCSRA = _BV(ADIE)                               // Enable ADC interrupt
          | _BV(ADPS0) | _BV(ADPS1) | _BV(ADPS2);   // Prescaler 128 (slow but accurate ADC readings)
@@ -30,7 +30,7 @@ void sample() {
   ADCSRA |= _BV(ADSC);
 }
 
-uint16_t read(Channel channel) {
+uint16_t Read(Channel channel) {
   uint16_t result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     result = values[(uint8_t)channel];

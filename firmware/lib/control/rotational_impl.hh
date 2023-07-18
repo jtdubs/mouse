@@ -14,16 +14,16 @@ struct State {
 };
 #pragma pack(pop)
 
-// init initializes the rotational motion module.
-void init();
+// Init initializes the rotational motion module.
+void Init();
 
 // start starts a rotational motion.
-void start(float dtheta /* radians */);
+void Start(float dtheta /* radians */);
 
-// tick updates the platform to perform the rotation.
-bool tick();
+// Tick updates the platform to perform the rotation.
+bool Tick();
 
 // state reads the current rotational state.
-void read(State &state);
+void Read(State &state);
 
 }  // namespace rotational

@@ -18,7 +18,7 @@ namespace timer {
 
 typedef void (*callback_t)();
 
-// add_callback sets the callback function to be called on each timer expiration.
-void add_callback(callback_t callback);
+// AddCallback sets the callback function to be called on each timer expiration.
+void AddCallback(callback_t callback);
 
 }  // namespace timer

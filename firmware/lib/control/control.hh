@@ -17,10 +17,10 @@
 
 namespace control {
 
-// init initializes the control module.
-void init();
+// Init initializes the control module.
+void Init();
 
 // report sends a control report.
-uint8_t report(uint8_t *buffer, uint8_t len);
+uint8_t GetReport(uint8_t *buffer, uint8_t len);
 
-}
+}  // namespace control

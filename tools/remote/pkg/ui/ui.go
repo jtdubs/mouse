@@ -13,7 +13,7 @@ import (
 var Textures map[string]*imgui.Texture = make(map[string]*imgui.Texture)
 
 type window interface {
-	init()
+	Init()
 	draw()
 }
 
@@ -40,7 +40,7 @@ func New(mouse *mouse.Mouse) *UI {
 	}
 
 	backend.SetBgColor(imgui.NewVec4(0.45, 0.55, 0.6, 1.0))
-	backend.SetAfterCreateContextHook(ui.init)
+	backend.SetAfterCreateContextHook(ui.Init)
 	backend.CreateWindow("Mouse Remote", 1240, 700, imgui.GLFWWindowFlags(0))
 	backend.SetTargetFPS(60)
 
@@ -51,7 +51,7 @@ func New(mouse *mouse.Mouse) *UI {
 	return ui
 }
 
-func (ui *UI) init() {
+func (ui *UI) Init() {
 	imgui.PlotCreateContext()
 
 	files, _ := filepath.Glob("tools/icons/*.png")
@@ -61,7 +61,7 @@ func (ui *UI) init() {
 	}
 
 	for _, window := range ui.windows {
-		window.init()
+		window.Init()
 	}
 }
 

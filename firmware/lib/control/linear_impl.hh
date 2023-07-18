@@ -15,17 +15,17 @@ struct State {
 };
 #pragma pack(pop)
 
-// init initializes the linear motion module.
-void init();
+// Init initializes the linear motion module.
+void Init();
 
 // start starts a linear motion plan.
-void start(float position /* mm */, bool stop);
+void Start(float position /* mm */, bool stop);
 
-// tick updates the platform to implement the plan.
+// Tick updates the platform to implement the plan.
 // Returns true if the plan is complete.
-bool tick();
+bool Tick();
 
 // state reads the current linear state.
-void read(State &s);
+void Read(State &s);
 
 }  // namespace linear

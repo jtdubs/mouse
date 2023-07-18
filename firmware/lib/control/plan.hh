@@ -7,8 +7,8 @@
 //
 // Design:
 // - There is a single active plan.
-// - The plan can be set with submit().
-// - The plan can be waited on with wait(), which is a busy-loop.
+// - The plan can be set with Submit().
+// - The plan can be waited on with Wait(), which is a busy-loop.
 // - The plan state is updated by the control loop.
 //
 #pragma once
@@ -87,12 +87,12 @@ struct Plan {
 };
 
 // submit submits a new plan to be implemented.
-void submit(Plan plan);
+void Submit(Plan plan);
 
 // wait waits for the current plan to be implemented.
-void wait();
+void Wait();
 
-// submit_and_wait submits a new plan, and wait for it to be implemented.
-void submit_and_wait(Plan plan);
+// SubmitAndWait submits a new plan, and wait for it to be implemented.
+void SubmitAndWait(Plan plan);
 
 }  // namespace plan

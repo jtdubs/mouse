@@ -20,7 +20,7 @@ func newStatusWindow(sim *sim.Sim) *statusWindow {
 	}
 }
 
-func (w *statusWindow) init() {}
+func (w *statusWindow) Init() {}
 
 func (w *statusWindow) draw() {
 	if !imgui.Begin("Status") {

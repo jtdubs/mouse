@@ -20,7 +20,7 @@ func newLogWindow(m *mouse.Mouse) *logWindow {
 	}
 }
 
-func (w *logWindow) init() {
+func (w *logWindow) Init() {
 }
 
 func (w *logWindow) draw() {

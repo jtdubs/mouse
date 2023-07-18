@@ -15,11 +15,11 @@ struct State {
   int16_t error_right;
 };
 
-// init initializes the walls module.
-void init();
+// Init initializes the walls module.
+void Init();
 
 // update reads the current sensor values and updates the wall state.
-void update();
+void Update();
 
 // error returns the "centering error" of the mouse, based on wall distances.
 float error();

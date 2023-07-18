@@ -26,14 +26,14 @@ uint16_t sample_count;
 bool     leds_prev_state;
 }  // namespace
 
-void init() {
+void Init() {
   // These are reasonable guesses in case calibration is not performed.
-  threshold_left    = SENSOR_SIDE_DEFAULT_CAL;
-  threshold_right   = SENSOR_SIDE_DEFAULT_CAL;
-  threshold_forward = SENSOR_FRONT_DEFAULT_CAL;
+  threshold_left    = kSensorSideDefaultCal;
+  threshold_right   = kSensorSideDefaultCal;
+  threshold_forward = kSensorFrontDefaultCal;
 }
 
-void start() {
+void Start() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     sum_left     = 0;
     sum_right    = 0;
@@ -41,12 +41,12 @@ void start() {
     sample_count = 0;
   }
   leds_prev_state = pin::is_set(pin::IR_LEDS);
-  pin::set(pin::IR_LEDS);
+  pin::Set(pin::IR_LEDS);
 }
 
-bool tick() {
+bool Tick() {
   if (sample_count == SampleLimit) {
-    pin::set2(pin::IR_LEDS, leds_prev_state);
+    pin::Set2(pin::IR_LEDS, leds_prev_state);
 
     // The left and right thresholds are averaged to compensate for the mouse not being positioned
     // perfectly in the center of the corridor during calibration.
@@ -70,7 +70,7 @@ bool tick() {
   return false;
 }
 
-void read(uint16_t &left, uint16_t &right, uint16_t &forward) {
+void Read(uint16_t &left, uint16_t &right, uint16_t &forward) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     left    = threshold_left;
     right   = threshold_right;

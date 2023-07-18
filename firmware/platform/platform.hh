@@ -21,10 +21,10 @@
 
 namespace platform {
 
-// init initializes the platform system.
-void init();
+// Init initializes the platform system.
+void Init();
 
 // report returns a report of the platform state.
-uint8_t report(uint8_t *buffer, uint8_t len);
+uint8_t GetReport(uint8_t *buffer, uint8_t len);
 
 }  // namespace platform

@@ -26,46 +26,46 @@ dequeue::Dequeue<DequeueUpdate, 16>     updates;      // The queue of updates to
 }  // namespace
 
 void explore() {
-  path.register_callback([](dequeue::Event event, maze::location_t value) {
-    if (!updates.full()) {
-      updates.push_back((DequeueUpdate){.dequeue_id = DequeueID::Path, .event = event, .value = value});
+  path.RegisterCallback([](dequeue::Event event, maze::location_t value) {
+    if (!updates.Full()) {
+      updates.PushBack((DequeueUpdate){.dequeue_id = DequeueID::Path, .event = event, .value = value});
     }
   });
-  next.register_callback([](dequeue::Event event, maze::location_t value) {
-    if (!updates.full()) {
-      updates.push_back((DequeueUpdate){.dequeue_id = DequeueID::Next, .event = event, .value = value});
+  next.RegisterCallback([](dequeue::Event event, maze::location_t value) {
+    if (!updates.Full()) {
+      updates.PushBack((DequeueUpdate){.dequeue_id = DequeueID::Next, .event = event, .value = value});
     }
   });
 
   // Idle the mouse and turn on the IR LEDs.
-  plan::submit_and_wait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
-  plan::submit_and_wait((plan::Plan){.type = plan::Type::IR, .state = plan::State::Scheduled, .data = {.ir = {true}}});
+  plan::SubmitAndWait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  plan::SubmitAndWait((plan::Plan){.type = plan::Type::IR, .state = plan::State::Scheduled, .data = {.ir = {true}}});
 
   // Assumption:
   // We start centered along the back wall of the starting square, with our back touching the wall.
-  // Therefore our "position", measured by the center of the axle is AXLE_OFFSET from the wall.
+  // Therefore our "position", measured by the center of the axle is kAxleOffset from the wall.
   orientation = Orientation::North;
-  cell_offset = AXLE_OFFSET;
+  cell_offset = kAxleOffset;
   stopped     = true;
 
   // Our path so far is just the starting square, and we want to visit the square to our north.
-  path.push_back(maze::location(0, 0));
-  next.push_back(maze::location(0, 1));
+  path.PushBack(maze::location(0, 0));
+  next.PushBack(maze::location(0, 1));
 
   // While we have squares to visit...
-  while (!next.empty()) {
+  while (!next.Empty()) {
     // Skips cells we already visited since they were added to the stack.
-    while (!next.empty() && maze::read(next.peek_back()).visited) {
-      next.pop_back();
+    while (!next.Empty() && maze::Read(next.PeekBack()).visited) {
+      next.PopBack();
     }
 
     // If we have no more cells to visit, then we are done.
-    if (next.empty()) {
+    if (next.Empty()) {
       break;
     }
 
-    auto curr_loc = path.peek_back();
-    auto next_loc = next.peek_back();
+    auto curr_loc = path.PeekBack();
+    auto next_loc = next.PeekBack();
     auto prev_loc = maze::location(0, 0);
 
     // Determine which direction to drive to reach the cell (if it is adjancent).
@@ -73,24 +73,24 @@ void explore() {
 
     // If we are adjacent to the next cell
     if (next_orientation != Orientation::Invalid) {
-      next.pop_back();          // Remove the cell from the "next" stack.
+      next.PopBack();          // Remove the cell from the "next" stack.
       face(next_orientation);   // Turn to face the cell.
       advance(next_loc, true);  // Advance into it, updating the breadcrumb trail.
       classify(next_loc);       // Update our maze representation, and note any new cells to visit.
     } else {
       // Otherwise, backtrack a square.
-      path.pop_back();                     // Remove the current cell from the breadcrumb trail.
-      prev_loc = path.peek_back();         // Check which cell we came from.
+      path.PopBack();                     // Remove the current cell from the breadcrumb trail.
+      prev_loc = path.PeekBack();         // Check which cell we came from.
       face(adjacent(curr_loc, prev_loc));  // Turn to face it.
       advance(prev_loc, false);            // Advance into it, but do NOT update the breadcrumb trail.
     }
   }
 
   // Now that exploration is complete, we return to the starting cell.
-  if (!path.empty()) {
-    auto curr = path.pop_back();
-    while (!path.empty()) {
-      auto prev = path.pop_back();
+  if (!path.Empty()) {
+    auto curr = path.PopBack();
+    while (!path.Empty()) {
+      auto prev = path.PopBack();
       face(adjacent(curr, prev));
       advance(prev, false);
       curr = prev;
@@ -102,19 +102,19 @@ void explore() {
   face(Orientation::North);
 
   // Ensure the control system is idling (no motor activity).
-  plan::submit_and_wait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  plan::SubmitAndWait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
 
   // Deregister dequeue callbacks.
-  path.register_callback(NULL);
-  next.register_callback(NULL);
+  path.RegisterCallback(NULL);
+  next.RegisterCallback(NULL);
 
   // Solve the maze, and tramit the new maze data to the host.
   floodfill();
-  maze::send();
+  maze::Send();
 }
 
-// report() is the report handler for the explore mode.
-uint8_t report(uint8_t *buffer, uint8_t len) {
+// GetReport() is the report handler for the explore mode.
+uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   assert(assert::EXPLORE + 0, buffer != NULL);
   assert(assert::EXPLORE + 1, len >= (sizeof(DequeueUpdate) * 16));
 
@@ -122,8 +122,8 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   uint8_t report_len = 0;
 
   auto *updates_buffer = (DequeueUpdate *)buffer;
-  while (!updates.empty()) {
-    updates_buffer[i++]  = updates.pop_front();
+  while (!updates.Empty()) {
+    updates_buffer[i++]  = updates.PopFront();
     report_len          += sizeof(DequeueUpdate);
   }
 
@@ -139,13 +139,13 @@ Orientation adjacent(maze::location_t a, maze::location_t b) {
 
   if (ax == bx) {
     if (ay + 1 == by) {
-      if (maze::read(a).wall_north) {
+      if (maze::Read(a).wall_north) {
         return Orientation::Invalid;
       } else {
         return Orientation::North;
       }
     } else if (ay - 1 == by) {
-      if (maze::read(a).wall_south) {
+      if (maze::Read(a).wall_south) {
         return Orientation::Invalid;
       } else {
         return Orientation::South;
@@ -155,13 +155,13 @@ Orientation adjacent(maze::location_t a, maze::location_t b) {
     }
   } else if (ay == by) {
     if (ax + 1 == bx) {
-      if (maze::read(a).wall_east) {
+      if (maze::Read(a).wall_east) {
         return Orientation::Invalid;
       } else {
         return Orientation::East;
       }
     } else if (ax - 1 == bx) {
-      if (maze::read(a).wall_west) {
+      if (maze::Read(a).wall_west) {
         return Orientation::Invalid;
       } else {
         return Orientation::West;
@@ -194,7 +194,7 @@ void face(Orientation new_orientation) {
     case 0:
       break;
     case 1:
-      plan::submit_and_wait(  //
+      plan::SubmitAndWait(  //
           (plan::Plan){.type  = plan::Type::RotationalMotion,
                        .state = plan::State::Scheduled,
                        .data  = {.rotational = {
@@ -202,7 +202,7 @@ void face(Orientation new_orientation) {
                                 }}});
       break;
     case 2:
-      plan::submit_and_wait(  //
+      plan::SubmitAndWait(  //
           (plan::Plan){.type  = plan::Type::RotationalMotion,
                        .state = plan::State::Scheduled,
                        .data  = {.rotational = {
@@ -210,7 +210,7 @@ void face(Orientation new_orientation) {
                                 }}});
       break;
     case 3:
-      plan::submit_and_wait(  //
+      plan::SubmitAndWait(  //
           (plan::Plan){.type  = plan::Type::RotationalMotion,
                        .state = plan::State::Scheduled,
                        .data  = {.rotational = {
@@ -220,11 +220,11 @@ void face(Orientation new_orientation) {
   }
 
   float position, theta;
-  position::tare(position, theta);
+  position::Tare(position, theta);
 
   // assuming we were centered horizontally in the previous direction of travel
   // then we are now in the middle of the cell along the new direction of travel.
-  cell_offset = CELL_SIZE_2;
+  cell_offset = kCellSize2;
   orientation = new_orientation;
 }
 
@@ -233,16 +233,16 @@ void face(Orientation new_orientation) {
 void advance(maze::location_t loc, bool update_path) {
   update_location();
 
-  plan::submit_and_wait(  //
+  plan::SubmitAndWait(  //
       (plan::Plan){.type  = plan::Type::LinearMotion,
                    .state = plan::State::Scheduled,
                    .data  = {.linear = {
-                                 .position = CELL_SIZE - (cell_offset - ENTRY_OFFSET),
+                                 .position = kCellSize - (cell_offset - ENTRY_OFFSET),
                                  .stop     = false,
                             }}});
 
   if (update_path) {
-    path.push_back(loc);
+    path.PushBack(loc);
   }
   stopped = false;
 }
@@ -256,14 +256,14 @@ void stop() {
   update_location();
 
   // we should never decide to stop once we have already passed the center of a cell.
-  assert(assert::EXPLORE + 3, cell_offset <= CELL_SIZE_2);
+  assert(assert::EXPLORE + 3, cell_offset <= kCellSize2);
 
   // stop at the center of the cell
-  plan::submit_and_wait(                               //
+  plan::SubmitAndWait(                                 //
       (plan::Plan){.type  = plan::Type::LinearMotion,  //
                    .state = plan::State::Scheduled,    //
                    .data  = {.linear = {
-                                 .position = CELL_SIZE_2 - cell_offset,
+                                 .position = kCellSize2 - cell_offset,
                                  .stop     = true  //
                             }}});
 
@@ -273,19 +273,19 @@ void stop() {
 // update_location updates the cell index and offset based on the traveled distance.
 void update_location() {
   float position_distance, position_theta;
-  position::tare(position_distance, position_theta);
+  position::Tare(position_distance, position_theta);
   cell_offset += position_distance;
 
-  // this is a (% CELL_SIZE) without using the % operator because it is expensive.
-  while (cell_offset > CELL_SIZE) {
-    cell_offset -= CELL_SIZE;
+  // this is a (% kCellSize) without using the % operator because it is expensive.
+  while (cell_offset > kCellSize) {
+    cell_offset -= kCellSize;
   }
 }
 
 // queue_unvisited adds a cell to the "next" stack if it has not already been visited.
 void queue_unvisited(maze::location_t loc) {
-  if (!maze::read(loc).visited) {
-    next.push_back(loc);
+  if (!maze::Read(loc).visited) {
+    next.PushBack(loc);
   }
 }
 
@@ -294,7 +294,7 @@ void classify(maze::location_t loc) {
   assert(assert::EXPLORE + 4, orientation != Orientation::Invalid);
 
   bool wall_forward, wall_left, wall_right;
-  walls::present(wall_left, wall_right, wall_forward);
+  walls::Present(wall_left, wall_right, wall_forward);
 
   // Classify the square based on sensor readings.
   maze::cell_t cell = {
@@ -379,17 +379,17 @@ void classify(maze::location_t loc) {
       break;
   }
 
-  maze::update(loc, cell);
+  maze::Write(loc, cell);
 }
 
 // floodfill calculates the shortest path to the goal.
 void floodfill() {
   // Step 1. Find the 2x2 square of cells with no internal walls that is the goal.
   auto goal = maze::location(15, 15);
-  for (uint8_t x = 0; x < MAZE_WIDTH - 1; x++) {
-    for (uint8_t y = 0; y < MAZE_HEIGHT - 1; y++) {
-      auto a = maze::read(maze::location(x, y));
-      auto b = maze::read(maze::location(x + 1, y + 1));
+  for (uint8_t x = 0; x < kMazeWidth - 1; x++) {
+    for (uint8_t y = 0; y < kMazeHeight - 1; y++) {
+      auto a = maze::Read(maze::location(x, y));
+      auto b = maze::Read(maze::location(x + 1, y + 1));
       if (a.visited && b.visited && !a.wall_east && !a.wall_north && !b.wall_west && !b.wall_south) {
         goal = maze::location(x, y);
         break;
@@ -402,59 +402,59 @@ void floodfill() {
   }
 
   // Step 2. Find the cell in the goal square with the gateway, as that's where we want to get.
-  if (!maze::read(goal + maze::location(0, 1)).wall_north || !maze::read(goal + maze::location(0, 1)).wall_west) {
+  if (!maze::Read(goal + maze::location(0, 1)).wall_north || !maze::Read(goal + maze::location(0, 1)).wall_west) {
     goal += maze::location(0, 1);
-  } else if (!maze::read(goal + maze::location(1, 0)).wall_south
-             || !maze::read(goal + maze::location(1, 0)).wall_east) {
+  } else if (!maze::Read(goal + maze::location(1, 0)).wall_south
+             || !maze::Read(goal + maze::location(1, 0)).wall_east) {
     goal += maze::location(1, 0);
-  } else if (!maze::read(goal + maze::location(1, 1)).wall_north
-             || !maze::read(goal + maze::location(1, 1)).wall_east) {
+  } else if (!maze::Read(goal + maze::location(1, 1)).wall_north
+             || !maze::Read(goal + maze::location(1, 1)).wall_east) {
     goal += maze::location(1, 1);
   }
 
   // Step 3. Floodfill outwards from the goal cell.
-  path.clear();
-  auto goal_cell     = maze::read(goal);
+  path.Clear();
+  auto goal_cell     = maze::Read(goal);
   goal_cell.distance = 0;
-  maze::update(goal, goal_cell);
-  path.push_back(goal);
-  while (!path.empty()) {
-    auto loc  = path.pop_front();
-    auto cell = maze::read(loc);
+  maze::Write(goal, goal_cell);
+  path.PushBack(goal);
+  while (!path.Empty()) {
+    auto loc  = path.PopFront();
+    auto cell = maze::Read(loc);
     if (!cell.wall_north) {
       auto next      = loc + maze::location(0, 1);
-      auto next_cell = maze::read(next);
+      auto next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
-        maze::update(next, next_cell);
-        path.push_back(next);
+        maze::Write(next, next_cell);
+        path.PushBack(next);
       }
     }
     if (!cell.wall_east) {
       auto next      = loc + maze::location(1, 0);
-      auto next_cell = maze::read(next);
+      auto next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
-        maze::update(next, next_cell);
-        path.push_back(next);
+        maze::Write(next, next_cell);
+        path.PushBack(next);
       }
     }
     if (!cell.wall_south) {
       auto next      = loc - maze::location(0, 1);
-      auto next_cell = maze::read(next);
+      auto next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
-        maze::update(next, next_cell);
-        path.push_back(next);
+        maze::Write(next, next_cell);
+        path.PushBack(next);
       }
     }
     if (!cell.wall_west) {
       auto next      = loc - maze::location(1, 0);
-      auto next_cell = maze::read(next);
+      auto next_cell = maze::Read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
-        maze::update(next, next_cell);
-        path.push_back(next);
+        maze::Write(next, next_cell);
+        path.PushBack(next);
       }
     }
   }
@@ -463,7 +463,7 @@ void floodfill() {
 // solve follows the shortest path to the goal.
 void solve() {
   auto curr     = maze::location(0, 0);
-  auto distance = maze::read(curr).distance;
+  auto distance = maze::Read(curr).distance;
 
   while (distance != 0) {
     auto north = curr + maze::location(0, 1);
@@ -473,24 +473,24 @@ void solve() {
 
     auto next = curr;
 
-    if (maze::x(curr) < (MAZE_HEIGHT - 1) && !maze::read(curr).wall_north && maze::read(north).distance < distance) {
+    if (maze::x(curr) < (kMazeHeight - 1) && !maze::Read(curr).wall_north && maze::Read(north).distance < distance) {
       next     = north;
-      distance = maze::read(north).distance;
+      distance = maze::Read(north).distance;
     }
 
-    if (maze::y(curr) < (MAZE_WIDTH - 1) && !maze::read(curr).wall_east && maze::read(east).distance < distance) {
+    if (maze::y(curr) < (kMazeWidth - 1) && !maze::Read(curr).wall_east && maze::Read(east).distance < distance) {
       next     = east;
-      distance = maze::read(east).distance;
+      distance = maze::Read(east).distance;
     }
 
-    if (maze::x(curr) > 0 && !maze::read(curr).wall_south && maze::read(south).distance < distance) {
+    if (maze::x(curr) > 0 && !maze::Read(curr).wall_south && maze::Read(south).distance < distance) {
       next     = south;
-      distance = maze::read(south).distance;
+      distance = maze::Read(south).distance;
     }
 
-    if (maze::y(curr) > 0 && !maze::read(curr).wall_west && maze::read(west).distance < distance) {
+    if (maze::y(curr) > 0 && !maze::Read(curr).wall_west && maze::Read(west).distance < distance) {
       next     = west;
-      distance = maze::read(west).distance;
+      distance = maze::Read(west).distance;
     }
 
     if (next == curr) {
@@ -507,7 +507,7 @@ void solve() {
   stop();
 
   // Ensure the control system is idling (no motor activity).
-  plan::submit_and_wait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  plan::SubmitAndWait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
 }
 
 }  // namespace explore

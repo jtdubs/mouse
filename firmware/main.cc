@@ -16,10 +16,10 @@
 // void operator delete[](void *, unsigned int) noexcept = delete;
 
 int main() {
-  platform::init();  // hardware peripherals
-  control::init();   // control planning
-  maze::init();      // maze data structure
-  report::init();    // serial report system
+  platform::Init();  // hardware peripherals
+  control::Init();   // control planning
+  maze::Init();      // maze data structure
+  report::Init();    // serial report system
 
   // enable interrupts
   sei();

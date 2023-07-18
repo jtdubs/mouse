@@ -7,16 +7,16 @@
 
 namespace sensor_cal {
 
-// init initializes the sensor calibration module.
-void init();
+// Init initializes the sensor calibration module.
+void Init();
 
 // start starts a sensor calibration plan.
-void start();
+void Start();
 
-// tick updates the platform to perform the calibration.
-bool tick();
+// Tick updates the platform to perform the calibration.
+bool Tick();
 
 // read reads the calibrated sensor values.
-void read(uint16_t &left, uint16_t &right, uint16_t &forward);
+void Read(uint16_t &left, uint16_t &right, uint16_t &forward);
 
 }  // namespace sensor_cal

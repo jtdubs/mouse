@@ -6,19 +6,19 @@
 
 namespace speed {
 
-// init initializes the speed module.
-void init();
+// Init initializes the speed module.
+void Init();
 
 // update reads the current motor speeds.
-void update();
+void Update();
 
-// tick updates the motor PWM values.
-void tick();
+// Tick updates the motor PWM values.
+void Tick();
 
 // read reads the motor speeds.
-void read(float& left, float& right);
+void Read(float& left, float& right);
 
-// read_setpoints reads the motor speed setpoints.
-void read_setpoints(float& left, float& right);
+// ReadSetpoints reads the motor speed setpoints.
+void ReadSetpoints(float& left, float& right);
 
 }  // namespace speed

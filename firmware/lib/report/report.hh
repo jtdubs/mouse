@@ -26,7 +26,7 @@
 
 namespace report {
 
-// init initializes the report module.
-void init();
+// Init initializes the report module.
+void Init();
 
 }

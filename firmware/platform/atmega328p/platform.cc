@@ -14,22 +14,22 @@
 
 namespace platform {
 
-void init() {
+void Init() {
   // Turn off unused hardware to save a few mA.
   power_spi_disable();
   power_twi_disable();
 
   // Initialize all the platform modules.
-  pin::init();
-  usart0::init();
-  adc::init();
-  encoders::init();
-  motor::init();
-  timer::init();
-  rtc::init();
+  pin::Init();
+  usart0::Init();
+  adc::Init();
+  encoders::Init();
+  motor::Init();
+  timer::Init();
+  rtc::Init();
 }
 
-uint8_t report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
+uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   assert(assert::PLATFORM + 0, buffer != NULL);
   assert(assert::PLATFORM + 1, len >= sizeof(Report));
 
@@ -37,13 +37,13 @@ uint8_t report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   adc::read_sensors(left, right, forward);
 
   Report *report = (Report *)buffer;
-  encoders::read(report->encoders.left, report->encoders.right);
+  encoders::Read(report->encoders.left, report->encoders.right);
 
-  motor::read(report->motors.left, report->motors.right);
+  motor::Read(report->motors.left, report->motors.right);
 
-  report->leds.left       = pin::is_set(pin::LED_LEFT);
-  report->leds.right      = pin::is_set(pin::LED_RIGHT);
-  report->leds.onboard    = pin::is_set(pin::LED_ONBOARD);
+  report->leds.left       = pin::is_set(pin::kLEDLeft);
+  report->leds.right      = pin::is_set(pin::kLEDRight);
+  report->leds.onboard    = pin::is_set(pin::kLEDOnboard);
   report->leds.ir         = pin::is_set(pin::IR_LEDS);
   report->sensors.left    = left;
   report->sensors.right   = right;

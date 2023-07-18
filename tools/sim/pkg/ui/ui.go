@@ -13,7 +13,7 @@ import (
 var Textures map[string]*imgui.Texture = make(map[string]*imgui.Texture)
 
 type window interface {
-	init()
+	Init()
 	draw()
 }
 
@@ -39,7 +39,7 @@ func New(sim *sim.Sim) *UI {
 	}
 
 	backend.SetBgColor(imgui.NewVec4(0.45, 0.55, 0.6, 1.0))
-	backend.SetAfterCreateContextHook(ui.init)
+	backend.SetAfterCreateContextHook(ui.Init)
 	backend.CreateWindow("Mouse Simulator", 1300, 800, imgui.GLFWWindowFlags(0))
 	backend.SetTargetFPS(60)
 
@@ -50,7 +50,7 @@ func New(sim *sim.Sim) *UI {
 	return ui
 }
 
-func (ui *UI) init() {
+func (ui *UI) Init() {
 	files, _ := filepath.Glob("tools/icons/*.png")
 	for _, file := range files {
 		name := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
@@ -58,7 +58,7 @@ func (ui *UI) init() {
 	}
 
 	for _, window := range ui.windows {
-		window.init()
+		window.Init()
 	}
 }
 

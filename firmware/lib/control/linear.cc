@@ -33,27 +33,27 @@ pid::PIDController angle_error_pid;
 #endif
 }  // namespace
 
-void init() {
-  wall_error_pid.Tune(WALL_KP, WALL_KI, WALL_KD);
+void Init() {
+  wall_error_pid.Tune(kWallKp, kWallKi, kWallKd);
   wall_error_pid.SetRange(-100, 100);
 #if defined(ALLOW_WALL_PID_TUNING)
-  wall_alpha = WALL_ALPHA;
+  wall_alpha = kWallAlpha;
 #endif
 
 #if defined(ALLOW_ANGLE_PID_TUNING)
-  angle_error_pid.Tune(ANGLE_KP, ANGLE_KI, ANGLE_KD);
+  angle_error_pid.Tune(kAngleKp, kAngleKi, kAngleKd);
   angle_error_pid.SetRange(-100, 100);
-  angle_alpha = ANGLE_ALPHA;
+  angle_alpha = kAngleAlpha;
 #endif
 }
 
-void start(float position /* mm */, bool stop) {
+void Start(float position /* mm */, bool stop) {
   float position_distance, position_theta;
-  position::read(position_distance, position_theta);
+  position::Read(position_distance, position_theta);
 
   State s;
   s.target_position = position;                   // mm
-  s.target_speed    = stop ? 0.0 : SPEED_CRUISE;  // mm/s
+  s.target_speed    = stop ? 0.0 : kSpeedCruise;  // mm/s
   s.wall_error      = 0;
   s.leds_prev_state = pin::is_set(pin::IR_LEDS);
 
@@ -66,20 +66,20 @@ void start(float position /* mm */, bool stop) {
     state = s;
   }
 
-  pin::set(pin::IR_LEDS);
+  pin::Set(pin::IR_LEDS);
 }
 
-bool tick() {
-  auto forward = adc::read(adc::Channel::SensorForward);
+bool Tick() {
+  auto forward = adc::Read(adc::Channel::SensorForward);
 
   float speed_measured_left, speed_measured_right;
-  speed::read(speed_measured_left, speed_measured_right);
+  speed::Read(speed_measured_left, speed_measured_right);
 
   float speed_setpoint_left, speed_setpoint_right;
-  speed::read_setpoints(speed_setpoint_left, speed_setpoint_right);
+  speed::ReadSetpoints(speed_setpoint_left, speed_setpoint_right);
 
   float position_distance, position_theta;
-  position::read(position_distance, position_theta);
+  position::Read(position_distance, position_theta);
 
   State s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -87,22 +87,22 @@ bool tick() {
   }
 
   // Emergency stop if too close to a wall.
-  if (forward >= SENSOR_EMERGENCY_STOP) {
-    pin::set2(pin::IR_LEDS, s.leds_prev_state);
-    speed::set(0, 0);
+  if (forward >= kSensorEmergencyStop) {
+    pin::Set2(pin::IR_LEDS, s.leds_prev_state);
+    speed::Set(0, 0);
     return true;
   }
 
   // If we are there, then we are done.
   if (position_distance >= s.target_position) {
-    float rpm = SPEED_TO_RPM(s.target_speed);
-    pin::set2(pin::IR_LEDS, s.leds_prev_state);
-    speed::set(rpm, rpm);
+    float rpm = SpeedToRPM(s.target_speed);
+    pin::Set2(pin::IR_LEDS, s.leds_prev_state);
+    speed::Set(rpm, rpm);
     return true;
   }
 
-  float current_speed    = RPM_TO_SPEED((speed_measured_left + speed_measured_right) / 2.0f);  // mm/s
-  float current_setpoint = RPM_TO_SPEED((speed_setpoint_left + speed_setpoint_right) / 2.0f);  // mm/s
+  float current_speed    = RPMToSpeed((speed_measured_left + speed_measured_right) / 2.0f);  // mm/s
+  float current_setpoint = RPMToSpeed((speed_setpoint_left + speed_setpoint_right) / 2.0f);  // mm/s
 
   // Compute the braking distance.
   float braking_accel = 0;  // mm/s^2
@@ -114,10 +114,10 @@ bool tick() {
 
   // Determine the acceleration.
   float accel = 0;  // mm/s^2
-  if (braking_accel <= -ACCEL_DEFAULT) {
+  if (braking_accel <= -kAccelDefault) {
     accel = braking_accel;
-  } else if (current_speed < SPEED_CRUISE) {
-    accel = ACCEL_DEFAULT;
+  } else if (current_speed < kSpeedCruise) {
+    accel = kAccelDefault;
   }
 
   // Calculate the new setpoint.
@@ -126,8 +126,8 @@ bool tick() {
   float right_speed = current_setpoint;
 
   // Add the acceleration.
-  left_speed  += (accel * CONTROL_PERIOD);  // mm/s
-  right_speed += (accel * CONTROL_PERIOD);  // mm/s
+  left_speed  += (accel * kControlPeriod);  // mm/s
+  right_speed += (accel * kControlPeriod);  // mm/s
 
   // Adjust for the wall (centering) error.
 #if defined(ALLOW_WALL_PID_TUNING)
@@ -135,8 +135,8 @@ bool tick() {
                + ((1.0f - wall_alpha) * s.wall_error);
   float wall_adjustment = wall_error_pid.Update(0.0, s.wall_error);
 #else
-  s.wall_error = (WALL_ALPHA * walls::error())  //
-               + ((1.0f - WALL_ALPHA) * s.wall_error);
+  s.wall_error = (kWallAlpha * walls::error())  //
+               + ((1.0f - kWallAlpha) * s.wall_error);
   float wall_adjustment = wall_error_pid.Update(0.0, s.wall_error);
 #endif
   left_speed  -= wall_adjustment;
@@ -152,14 +152,14 @@ bool tick() {
 #endif
 
   // Adjust for the wheel bias.
-  left_speed  *= (1.0 - WHEEL_BIAS);
-  right_speed *= (1.0 + WHEEL_BIAS);
+  left_speed  *= (1.0 - kWheelBias);
+  right_speed *= (1.0 + kWheelBias);
 
   // Convert to RPMs.
-  left_speed  = CLAMP_RPM(SPEED_TO_RPM(left_speed));
-  right_speed = CLAMP_RPM(SPEED_TO_RPM(right_speed));
+  left_speed  = ClampRPM(SpeedToRPM(left_speed));
+  right_speed = ClampRPM(SpeedToRPM(right_speed));
 
-  speed::set(left_speed, right_speed);
+  speed::Set(left_speed, right_speed);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     state = s;
@@ -168,8 +168,8 @@ bool tick() {
   return false;
 }
 
-void wall_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
-               [[maybe_unused]] float alpha) {
+void TuneWallPID([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
+                 [[maybe_unused]] float alpha) {
 #if defined(ALLOW_WALL_PID_TUNING)
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     wall_error_pid.Tune(kp, ki, kd);
@@ -178,8 +178,8 @@ void wall_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unu
 #endif
 }
 
-void angle_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
-                [[maybe_unused]] float alpha) {
+void TuneAnglePID([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unused]] float kd,
+                  [[maybe_unused]] float alpha) {
 #if defined(ALLOW_ANGLE_PID_TUNING)
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     angle_error_pid.Tune(kp, ki, kd);
@@ -189,7 +189,7 @@ void angle_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_un
 }
 
 // read reads the current linear state.
-void read(State &s) {
+void Read(State &s) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     s = state;
   }

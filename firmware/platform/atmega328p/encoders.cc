@@ -20,8 +20,8 @@ int8_t left_delta;
 int8_t right_delta;
 }  // namespace
 
-// init initializes the encoders.
-void init() {
+// Init initializes the encoders.
+void Init() {
   EICRA = _BV(ISC00)   // Trigger INT0 on any logical change
         | _BV(ISC10);  // Trigger INT1 on any logical change
   EIMSK = _BV(INT0)    // Enable INT0
@@ -29,7 +29,7 @@ void init() {
 }
 
 // update applies changes since the last update.
-void update() {
+void Update() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     left        += (int32_t)left_delta;
     right       += (int32_t)right_delta;
@@ -38,7 +38,7 @@ void update() {
   }
 }
 
-void read(int32_t& left, int32_t& right) {
+void Read(int32_t& left, int32_t& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     left  = encoders::left;
     right = encoders::right;

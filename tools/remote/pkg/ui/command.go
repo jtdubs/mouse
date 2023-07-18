@@ -44,7 +44,7 @@ func newCommandWindow(m *mouse.Mouse) *commandWindow {
 	}
 }
 
-func (w *commandWindow) init() {
+func (w *commandWindow) Init() {
 }
 
 func (w *commandWindow) draw() {

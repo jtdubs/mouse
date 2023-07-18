@@ -27,31 +27,31 @@ class Dequeue {
  public:
   Dequeue();
 
-  void register_callback(callback_t c);
-  void clear();
-  bool empty() const;
-  bool full() const;
+  void RegisterCallback(callback_t c);
+  void Clear();
+  bool Empty() const;
+  bool Full() const;
 
-  T    peek_front() const;
-  T    peek_back() const;
-  T    pop_front();
-  T    pop_back();
-  void push_front(T val);
-  void push_back(T val);
+  T    PeekFront() const;
+  T    PeekBack() const;
+  T    PopFront();
+  T    PopBack();
+  void PushFront(T val);
+  void PushBack(T val);
 };
 
 template <typename T, size_t CAPACITY>
 Dequeue<T, CAPACITY>::Dequeue() : front(CAPACITY - 1), back(0) {}
 
 template <typename T, size_t CAPACITY>
-void Dequeue<T, CAPACITY>::register_callback(callback_t c) {
+void Dequeue<T, CAPACITY>::RegisterCallback(callback_t c) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     callback = c;
   }
 }
 
 template <typename T, size_t CAPACITY>
-void Dequeue<T, CAPACITY>::clear() {
+void Dequeue<T, CAPACITY>::Clear() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     front = CAPACITY - 1;
     back  = 0;
@@ -59,7 +59,7 @@ void Dequeue<T, CAPACITY>::clear() {
 }
 
 template <typename T, size_t CAPACITY>
-bool Dequeue<T, CAPACITY>::empty() const {
+bool Dequeue<T, CAPACITY>::Empty() const {
   bool result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     result = ((front + 1) == back) || (front == (CAPACITY - 1) && back == 0);
@@ -68,7 +68,7 @@ bool Dequeue<T, CAPACITY>::empty() const {
 }
 
 template <typename T, size_t CAPACITY>
-bool Dequeue<T, CAPACITY>::full() const {
+bool Dequeue<T, CAPACITY>::Full() const {
   bool result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     result = back == front;
@@ -77,10 +77,10 @@ bool Dequeue<T, CAPACITY>::full() const {
 }
 
 template <typename T, size_t CAPACITY>
-T Dequeue<T, CAPACITY>::peek_front() const {
+T Dequeue<T, CAPACITY>::PeekFront() const {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 0, !empty());
+    assert(assert::DEQUEUE + 0, !Empty());
     if (front == (CAPACITY - 1)) {
       result = buffer[0];
     } else {
@@ -91,10 +91,10 @@ T Dequeue<T, CAPACITY>::peek_front() const {
 }
 
 template <typename T, size_t CAPACITY>
-T Dequeue<T, CAPACITY>::peek_back() const {
+T Dequeue<T, CAPACITY>::PeekBack() const {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 1, !empty());
+    assert(assert::DEQUEUE + 1, !Empty());
     if (back == 0) {
       result = buffer[CAPACITY - 1];
     } else {
@@ -105,10 +105,10 @@ T Dequeue<T, CAPACITY>::peek_back() const {
 }
 
 template <typename T, size_t CAPACITY>
-T Dequeue<T, CAPACITY>::pop_front() {
+T Dequeue<T, CAPACITY>::PopFront() {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 2, !empty());
+    assert(assert::DEQUEUE + 2, !Empty());
     if (front == (CAPACITY - 1)) {
       front = 0;
     } else {
@@ -123,10 +123,10 @@ T Dequeue<T, CAPACITY>::pop_front() {
 }
 
 template <typename T, size_t CAPACITY>
-T Dequeue<T, CAPACITY>::pop_back() {
+T Dequeue<T, CAPACITY>::PopBack() {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 3, !empty());
+    assert(assert::DEQUEUE + 3, !Empty());
     if (back == 0) {
       back = CAPACITY - 1;
     } else {
@@ -141,9 +141,9 @@ T Dequeue<T, CAPACITY>::pop_back() {
 }
 
 template <typename T, size_t CAPACITY>
-void Dequeue<T, CAPACITY>::push_front(T val) {
+void Dequeue<T, CAPACITY>::PushFront(T val) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 4, !full());
+    assert(assert::DEQUEUE + 4, !Full());
     buffer[front] = val;
     if (front == 0) {
       front = CAPACITY - 1;
@@ -157,9 +157,9 @@ void Dequeue<T, CAPACITY>::push_front(T val) {
 }
 
 template <typename T, size_t CAPACITY>
-void Dequeue<T, CAPACITY>::push_back(T val) {
+void Dequeue<T, CAPACITY>::PushBack(T val) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 5, !full());
+    assert(assert::DEQUEUE + 5, !Full());
     buffer[back] = val;
     if (back == (CAPACITY - 1)) {
       back = 0;

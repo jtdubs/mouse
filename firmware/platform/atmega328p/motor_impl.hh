@@ -4,6 +4,6 @@
 
 namespace motor {
 
-void init();
+void Init();
 
 }

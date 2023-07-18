@@ -16,9 +16,9 @@
 namespace speed {
 
 // set sets the motor speed setpoints.
-void set(float left, float right);
+void Set(float left, float right);
 
 // tune tunes the PID controllers.
-void tune(float kp, float ki, float kd, float alpha);
+void TunePID(float kp, float ki, float kd, float alpha);
 
-}
+}  // namespace speed

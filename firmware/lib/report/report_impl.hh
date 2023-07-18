@@ -29,6 +29,6 @@ struct Report {
 #pragma pack(pop)
 
 // send sends the next report.
-void send();
+void Send();
 
 }  // namespace report

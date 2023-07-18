@@ -15,20 +15,20 @@ float distance;  // in mms
 float theta;     // in radians
 }  // namespace
 
-void init() {}
+void Init() {}
 
-void update() {
+void Update() {
   int32_t left_delta, right_delta;
   encoders::read_deltas(left_delta, right_delta);
 
-  float left_distance  = ((float)left_delta) * COUNT_DISTANCE_LEFT;    // mm
-  float right_distance = ((float)right_delta) * COUNT_DISTANCE_RIGHT;  // mm
+  float left_distance  = ((float)left_delta) * kCountDistanceLeft;    // mm
+  float right_distance = ((float)right_delta) * kCountDistanceRight;  // mm
 
   // Encoder updates in the same direction add to produce forward motion.
   float forward = (left_distance + right_distance) / 2.0f;  // mm
 
   // Encoder updates in opposite directions subtract to produce rotational motion.
-  float rotation = (right_distance - left_distance) * MM_THETA;  // radians
+  float rotation = (right_distance - left_distance) * kMMTheta;  // radians
 
   float distance, theta;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -45,14 +45,14 @@ void update() {
   }
 }
 
-void read(float& distance, float& theta) {
+void Read(float& distance, float& theta) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     distance = position::distance;
     theta    = position::theta;
   }
 }
 
-void tare(float& distance, float& theta) {
+void Tare(float& distance, float& theta) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     distance           = position::distance;
     theta              = position::theta;

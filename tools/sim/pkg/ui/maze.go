@@ -23,7 +23,7 @@ func newMazeWindow(sim *sim.Sim) *mazeWindow {
 	}
 }
 
-func (w *mazeWindow) init() {
+func (w *mazeWindow) Init() {
 	w.mazeList = strings.Join(w.sim.Maze.ListMazes(), "\x00") + "\x00\x00"
 }
 

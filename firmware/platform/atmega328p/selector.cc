@@ -12,9 +12,9 @@ uint8_t value;
 bool    button_pressed;
 }  // namespace
 
-uint8_t update() {
+uint8_t Update() {
   // Read the selector voltage.
-  uint16_t raw = adc::read(adc::Channel::Selector);
+  uint16_t raw = adc::Read(adc::Channel::Selector);
 
   uint8_t v = raw >> 2;
 
