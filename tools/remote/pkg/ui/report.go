@@ -159,7 +159,7 @@ func (w *reportWindow) drawControl() {
 
 	case mouse.LinearReport:
 		w.tableRow("Linear:")
-		values := [3]float32{b.StartDistance, b.TargetDistance, b.TargetSpeed}
+		values := [3]float32{b.TargetDistance, b.TargetSpeed, b.WallError}
 		imgui.InputFloat3("##Linear", &values)
 	}
 

@@ -116,8 +116,8 @@ type RotationReport struct {
 func (RotationReport) isControlReport() {}
 
 type LinearReport struct {
-	StartDistance, TargetDistance, TargetSpeed, WallError float32
-	LEDsPrevState                                         bool
+	TargetDistance, TargetSpeed, WallError float32
+	LEDsPrevState                          bool
 }
 
 func (LinearReport) isControlReport() {}
@@ -213,7 +213,7 @@ func (q QueueUpdate) Location() (X, Y int) {
 func ReadReport(r *bytes.Reader) (Report, error) {
 	var header ReportHeader
 	if err := binary.Read(r, binary.LittleEndian, &header); err != nil {
-		return Report{}, err
+		return Report{}, fmt.Errorf("error reading ReportHeader: %w", err)
 	}
 
 	var (
@@ -223,19 +223,19 @@ func ReadReport(r *bytes.Reader) (Report, error) {
 	switch header.Type {
 	case ReportTypePlatform:
 		if body, err = ReadPlatformReport(r); err != nil {
-			return Report{}, err
+			return Report{}, fmt.Errorf("error reading PlatformReport: %w", err)
 		}
 	case ReportTypeControl:
 		if body, err = ReadControlReport(r); err != nil {
-			return Report{}, err
+			return Report{}, fmt.Errorf("error reading ControlReport: %w", err)
 		}
 	case ReportTypeMaze:
 		if body, err = ReadMazeReport(r); err != nil {
-			return Report{}, err
+			return Report{}, fmt.Errorf("error reading MazeReport: %w", err)
 		}
 	case ReportTypeExplore:
 		if body, err = ReadExploreReport(r); err != nil {
-			return Report{}, err
+			return Report{}, fmt.Errorf("error reading ExploreReport: %w", err)
 		}
 	default:
 		return Report{}, fmt.Errorf("unknown report type: %v", header.Type)
@@ -256,7 +256,7 @@ func ReadPlatformReport(r *bytes.Reader) (PlatformReport, error) {
 func ReadControlReport(r *bytes.Reader) (ControlReport, error) {
 	var header ControlReportHeader
 	if err := binary.Read(r, binary.LittleEndian, &header); err != nil {
-		return ControlReport{}, err
+		return ControlReport{}, fmt.Errorf("error reading ControlReportHeader: %w", err)
 	}
 
 	var body ControlReportBody
@@ -264,19 +264,19 @@ func ReadControlReport(r *bytes.Reader) (ControlReport, error) {
 	case PlanTypeLinearMotion:
 		var report LinearReport
 		if err := binary.Read(r, binary.LittleEndian, &report); err != nil {
-			return ControlReport{}, err
+			return ControlReport{}, fmt.Errorf("error reading LinearReport: %w", err)
 		}
 		body = report
 	case PlanTypeRotationalMotion:
 		var report RotationReport
 		if err := binary.Read(r, binary.LittleEndian, &report); err != nil {
-			return ControlReport{}, err
+			return ControlReport{}, fmt.Errorf("error reading RotationReport: %w", err)
 		}
 		body = report
 	case PlanTypeSensorCal:
 		var report SensorCalReport
 		if err := binary.Read(r, binary.LittleEndian, &report); err != nil {
-			return ControlReport{}, err
+			return ControlReport{}, fmt.Errorf("error reading SensorCalReport: %w", err)
 		}
 		body = report
 	default:
@@ -362,7 +362,6 @@ func (LinearReport) Variables() []vcd.VcdDataType {
 	return []vcd.VcdDataType{
 		vcd.NewVariable("linear_plan_distance", "wire", 32),
 		vcd.NewVariable("linear_plan_stop", "wire", 1),
-		vcd.NewVariable("linear_start_distance", "wire", 32),
 		vcd.NewVariable("linear_target_distance", "wire", 32),
 		vcd.NewVariable("linear_target_speed", "wire", 32),
 	}
@@ -441,7 +440,6 @@ func (r LinearReport) Symbols(p DecodedPlan) map[string]string {
 	return map[string]string{
 		"linear_plan_distance":   fmt.Sprint(*(*uint32)(unsafe.Pointer(&plan.Distance))),
 		"linear_plan_stop":       boolMap[plan.Stop],
-		"linear_start_distance":  fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.StartDistance))),
 		"linear_target_distance": fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.TargetDistance))),
 		"linear_target_speed":    fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.TargetSpeed))),
 	}

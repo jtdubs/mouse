@@ -128,4 +128,4 @@ inline float update(p_t *p, float sp /* setpoint */, float pv /* process variabl
 // reset resets the p controller.
 inline void reset([[maybe_unused]] p_t *p) {}
 
-}
+}  // namespace pid
