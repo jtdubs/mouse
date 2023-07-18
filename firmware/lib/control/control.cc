@@ -46,16 +46,16 @@ void Tick() {
     case plan::Type::LEDs:
       if (plan.state == plan::State::Scheduled) {
         plan::SetState(plan::State::Underway);
-        pin::Set2(pin::kLEDLeft, plan.data.leds.left);
-        pin::Set2(pin::kLEDRight, plan.data.leds.right);
-        pin::Set2(pin::kLEDOnboard, plan.data.leds.onboard);
+        pin::Set(pin::kLEDLeft, plan.data.leds.left);
+        pin::Set(pin::kLEDRight, plan.data.leds.right);
+        pin::Set(pin::kLEDOnboard, plan.data.leds.onboard);
         plan::SetState(plan::State::Implemented);
       }
       break;
     case plan::Type::IR:
       if (plan.state == plan::State::Scheduled) {
         plan::SetState(plan::State::Underway);
-        pin::Set2(pin::IR_LEDS, plan.data.ir.on);
+        pin::Set(pin::IR_LEDS, plan.data.ir.on);
         plan::SetState(plan::State::Implemented);
       }
       break;

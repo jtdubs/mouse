@@ -40,9 +40,9 @@ void Update() {
   }
 
   if (control_leds) {
-    pin::Set2(pin::kLEDLeft, s.left_present);
-    pin::Set2(pin::kLEDRight, s.right_present);
-    pin::Set2(pin::kLEDOnboard, s.forward_present);
+    pin::Set(pin::kLEDLeft, s.left_present);
+    pin::Set(pin::kLEDRight, s.right_present);
+    pin::Set(pin::kLEDOnboard, s.forward_present);
   }
 }
 

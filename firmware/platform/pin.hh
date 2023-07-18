@@ -38,8 +38,8 @@ extern const pin_t kProbeTick;
 extern const pin_t PROBE_PLAN;
 extern const pin_t PROBE_2;
 
-// Set2 sets the value of the pin.
-inline void Set2(pin_t pin, bool on) {
+// Set sets the value of the pin.
+inline void Set(pin_t pin, bool on) {
   if (on) {
     *pin.port |= pin.mask;
   } else {
