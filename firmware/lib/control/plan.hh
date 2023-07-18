@@ -18,12 +18,12 @@
 
 namespace plan {
 
-// state_t is the state of the current plan.
-typedef enum : uint8_t {
-  STATE_SCHEDULED,
-  STATE_UNDERWAY,
-  STATE_IMPLEMENTED,
-} state_t;
+// State is the state of the current plan.
+enum class State : uint8_t {
+  Scheduled,
+  Underway,
+  Implemented,
+};
 
 typedef enum : uint8_t {
   // Plan is "implemented" as soon as the board is put into an idle state.
@@ -45,8 +45,8 @@ typedef enum : uint8_t {
 } type_t;
 
 typedef struct {
-  type_t  type;
-  state_t state;
+  type_t type;
+  State  state;
   union {
     // TYPE_IDLE
     struct {
@@ -95,4 +95,4 @@ void wait();
 // submit_and_wait submits a new plan, and wait for it to be implemented.
 void submit_and_wait(plan_t plan);
 
-}
+}  // namespace plan

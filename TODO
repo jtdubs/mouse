@@ -1,11 +1,7 @@
 C++:
 - auto variables?
-- std::array
-- range loops
 - c++ casts
 - enum class
-- delete the new operators
-- tuples
 - noexcept
 - modules
 - PID classes

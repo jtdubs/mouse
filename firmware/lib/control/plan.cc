@@ -16,14 +16,14 @@ plan_t current_plan;
 // init initializes the plan module.
 void init() {
   current_plan.type = TYPE_IDLE;
-  set_state(STATE_SCHEDULED);
+  set_state(State::Scheduled);
 }
 
 // submit submits a new plan to be implemented.
 void submit(plan_t plan) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     current_plan = plan;
-    set_state(STATE_SCHEDULED);
+    set_state(State::Scheduled);
   }
 }
 
@@ -31,7 +31,7 @@ void submit(plan_t plan) {
 void wait() {
   pin::clear(pin::PROBE_PLAN);
   volatile state_t *state = &current_plan.state;
-  while (*state != STATE_IMPLEMENTED) {}
+  while (*state != State::Implemented) {}
   pin::set(pin::PROBE_PLAN);
 }
 
@@ -43,7 +43,7 @@ void submit_and_wait(plan_t plan) {
 }
 
 // set_state sets the current plan state.
-void set_state(state_t state) {
+void set_state(State state) {
   current_plan.state = state;
   sim_watch_plan(state);
 }

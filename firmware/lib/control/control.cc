@@ -36,55 +36,55 @@ void tick() {
 
   switch (plan.type) {
     case plan::TYPE_IDLE:
-      if (plan.state == plan::STATE_SCHEDULED) {
-        plan::set_state(plan::STATE_UNDERWAY);
+      if (plan.state == plan::State::Scheduled) {
+        plan::set_state(plan::State::Underway);
         motor::set(0, 0);
         pin::clear(pin::LED_LEFT);
         pin::clear(pin::LED_RIGHT);
         pin::clear(pin::LED_ONBOARD);
         pin::clear(pin::IR_LEDS);
-        plan::set_state(plan::STATE_IMPLEMENTED);
+        plan::set_state(plan::State::Implemented);
       }
       break;
     case plan::TYPE_LEDS:
-      if (plan.state == plan::STATE_SCHEDULED) {
-        plan::set_state(plan::STATE_UNDERWAY);
+      if (plan.state == plan::State::Scheduled) {
+        plan::set_state(plan::State::Underway);
         pin::set2(pin::LED_LEFT, plan.data.leds.left);
         pin::set2(pin::LED_RIGHT, plan.data.leds.right);
         pin::set2(pin::LED_ONBOARD, plan.data.leds.onboard);
-        plan::set_state(plan::STATE_IMPLEMENTED);
+        plan::set_state(plan::State::Implemented);
       }
       break;
     case plan::TYPE_IR:
-      if (plan.state == plan::STATE_SCHEDULED) {
-        plan::set_state(plan::STATE_UNDERWAY);
+      if (plan.state == plan::State::Scheduled) {
+        plan::set_state(plan::State::Underway);
         pin::set2(pin::IR_LEDS, plan.data.ir.on);
-        plan::set_state(plan::STATE_IMPLEMENTED);
+        plan::set_state(plan::State::Implemented);
       }
       break;
     case plan::TYPE_FIXED_POWER:
-      if (plan.state == plan::STATE_SCHEDULED) {
-        plan::set_state(plan::STATE_UNDERWAY);
+      if (plan.state == plan::State::Scheduled) {
+        plan::set_state(plan::State::Underway);
         motor::set(plan.data.power.left, plan.data.power.right);
-        plan::set_state(plan::STATE_IMPLEMENTED);
+        plan::set_state(plan::State::Implemented);
       }
       break;
     case plan::TYPE_FIXED_SPEED:
-      if (plan.state == plan::STATE_SCHEDULED) {
-        plan::set_state(plan::STATE_UNDERWAY);
+      if (plan.state == plan::State::Scheduled) {
+        plan::set_state(plan::State::Underway);
         speed::set(plan.data.speed.left, plan.data.speed.right);
-        plan::set_state(plan::STATE_IMPLEMENTED);
+        plan::set_state(plan::State::Implemented);
       }
       break;
     case plan::TYPE_LINEAR_MOTION:
       switch (plan.state) {
-        case plan::STATE_SCHEDULED:
+        case plan::State::Scheduled:
           linear::start(plan.data.linear.position, plan.data.linear.stop);
-          plan::set_state(plan::STATE_UNDERWAY);
+          plan::set_state(plan::State::Underway);
           [[fallthrough]];
-        case plan::STATE_UNDERWAY:
+        case plan::State::Underway:
           if (linear::tick()) {
-            plan::set_state(plan::STATE_IMPLEMENTED);
+            plan::set_state(plan::State::Implemented);
           }
           break;
         default:
@@ -93,13 +93,13 @@ void tick() {
       break;
     case plan::TYPE_ROTATIONAL_MOTION:
       switch (plan.state) {
-        case plan::STATE_SCHEDULED:
+        case plan::State::Scheduled:
           rotational::start(plan.data.rotational.d_theta);
-          plan::set_state(plan::STATE_UNDERWAY);
+          plan::set_state(plan::State::Underway);
           [[fallthrough]];
-        case plan::STATE_UNDERWAY:
+        case plan::State::Underway:
           if (rotational::tick()) {
-            plan::set_state(plan::STATE_IMPLEMENTED);
+            plan::set_state(plan::State::Implemented);
           }
           break;
         default:
@@ -108,13 +108,13 @@ void tick() {
       break;
     case plan::TYPE_SENSOR_CAL:
       switch (plan.state) {
-        case plan::STATE_SCHEDULED:
+        case plan::State::Scheduled:
           sensor_cal::start();
-          plan::set_state(plan::STATE_UNDERWAY);
+          plan::set_state(plan::State::Underway);
           break;
-        case plan::STATE_UNDERWAY:
+        case plan::State::Underway:
           if (sensor_cal::tick()) {
-            plan::set_state(plan::STATE_IMPLEMENTED);
+            plan::set_state(plan::State::Implemented);
           }
           break;
         default:
@@ -135,7 +135,7 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   assert(assert::CONTROL + 1, buffer != NULL);
   assert(assert::CONTROL + 2, len >= sizeof(report_t));
 
-  static plan::state_t previous_plan_state = plan::STATE_SCHEDULED;
+  static plan::state_t previous_plan_state = plan::State::Scheduled;
   static plan::type_t  previous_plan_type  = plan::TYPE_IDLE;
   static uint8_t       counter             = 0;
 
