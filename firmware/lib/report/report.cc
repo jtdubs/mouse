@@ -16,7 +16,7 @@ namespace report {
 
 namespace {
 // The report to be sent.
-static report_t report;
+report_t report;
 }  // namespace
 
 // init initializes the report module.

@@ -30,40 +30,40 @@ void update() {
   // Encoder updates in opposite directions subtract to produce rotational motion.
   float rotation = (right_distance - left_distance) * MM_THETA;  // radians
 
-  float d, t;
+  float distance, theta;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    d = distance;
-    t = theta;
+    distance = position::distance;
+    theta    = position::theta;
   }
 
-  d += forward;
-  t += rotation;
+  distance += forward;
+  theta    += rotation;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    distance = d;
-    theta    = t;
-  }
-}
-
-void read(float* d, float* t) {
-  assert(assert::POSITION + 0, d != NULL);
-  assert(assert::POSITION + 1, t != NULL);
-
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *d = distance;
-    *t = theta;
+    position::distance = distance;
+    position::theta    = theta;
   }
 }
 
-void tare(float* d, float* t) {
-  assert(assert::POSITION + 2, d != NULL);
-  assert(assert::POSITION + 3, t != NULL);
+void read(float* distance, float* theta) {
+  assert(assert::POSITION + 0, distance != NULL);
+  assert(assert::POSITION + 1, theta != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *d       = distance;
-    *t       = theta;
-    distance = 0;
-    theta    = 0;
+    *distance = position::distance;
+    *theta    = position::theta;
+  }
+}
+
+void tare(float* distance, float* theta) {
+  assert(assert::POSITION + 2, distance != NULL);
+  assert(assert::POSITION + 3, theta != NULL);
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    *distance          = position::distance;
+    *theta             = position::theta;
+    position::distance = 0;
+    position::theta    = 0;
   }
 }
 

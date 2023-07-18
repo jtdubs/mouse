@@ -38,13 +38,13 @@ void update() {
   }
 }
 
-void read(int32_t* l, int32_t* r) {
-  assert(assert::ENCODERS + 0, l != NULL);
-  assert(assert::ENCODERS + 1, r != NULL);
+void read(int32_t* left, int32_t* right) {
+  assert(assert::ENCODERS + 0, left != NULL);
+  assert(assert::ENCODERS + 1, right != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    *l = left;
-    *r = right;
+    *left  = encoders::left;
+    *right = encoders::right;
   }
 }
 

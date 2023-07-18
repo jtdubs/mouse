@@ -59,8 +59,8 @@ void update() {
 
   float measured_left, measured_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    measured_left  = measured_left;
-    measured_right = measured_right;
+    measured_left  = speed::measured_left;
+    measured_right = speed::measured_right;
   }
 
 #if defined(ALLOW_SPEED_PID_TUNING)
@@ -76,8 +76,8 @@ void update() {
 #endif
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    measured_left  = measured_left;
-    measured_right = measured_right;
+    speed::measured_left  = measured_left;
+    speed::measured_right = measured_right;
   }
 }
 
@@ -85,10 +85,10 @@ void tick() {
   float measured_left, measured_right;
   float setpoint_left, setpoint_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    measured_left  = measured_left;
-    measured_right = measured_right;
-    setpoint_left  = setpoint_left;
-    setpoint_right = setpoint_right;
+    measured_left  = speed::measured_left;
+    measured_right = speed::measured_right;
+    setpoint_left  = speed::setpoint_left;
+    setpoint_right = speed::setpoint_right;
   }
 
   float setpoint_left_mag = fabsf(setpoint_left);

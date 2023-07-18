@@ -10,8 +10,8 @@
 namespace motor {
 
 namespace {
-static int16_t power_left;
-static int16_t power_right;
+int16_t power_left;
+int16_t power_right;
 }  // namespace
 
 // init initializes the motors.
