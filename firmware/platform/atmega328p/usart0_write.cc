@@ -18,15 +18,15 @@ uint8_t    write_checksum;
 }  // namespace
 
 // write_ready determines if a write request can be initiated.
-bool write_ready() {
+bool WriteReady() {
   return write_state == WriteState::Idle;
 }
 
 // write begins an asynchronous write to USART0.
-void write(uint8_t *buffer, uint8_t length) {
+void Write(uint8_t *buffer, uint8_t length) {
   assert(assert::USART0_WRITE + 0, buffer != NULL);
   assert(assert::USART0_WRITE + 1, length > 0);
-  assert(assert::USART0_WRITE + 2, write_ready());
+  assert(assert::USART0_WRITE + 2, WriteReady());
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     // Setup the initial write state.
@@ -48,7 +48,7 @@ ISR(USART_UDRE_vect, ISR_BLOCK) {
   switch (write_state) {
     case WriteState::Start:
       // Write the start byte and transition to the next state.
-      UDR0        = START_BYTE;
+      UDR0        = kStartByte;
       write_state = WriteState::Length;
       break;
     case WriteState::Length:

@@ -25,7 +25,7 @@ int main() {
   sei();
 
   // remote control mode (never returns)
-  remote::remote();
+  remote::Run();
 
   // seriously... it should never return.
   assert::failed(assert::MAIN + 0);

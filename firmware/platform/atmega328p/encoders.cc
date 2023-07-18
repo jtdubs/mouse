@@ -45,7 +45,7 @@ void Read(int32_t& left, int32_t& right) {
   }
 }
 
-void read_deltas(int32_t& left, int32_t& right) {
+void ReadDeltas(int32_t& left, int32_t& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     left  = left_delta;
     right = right_delta;

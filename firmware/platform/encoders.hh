@@ -27,7 +27,7 @@ void Update();
 // read reads the encoder counts.
 void Read(int32_t& left, int32_t& right);
 
-// read_deltas reads the changes to the encoder counts since the last update.
-void read_deltas(int32_t& left, int32_t& right);
+// ReadDeltas reads the changes to the encoder counts since the last update.
+void ReadDeltas(int32_t& left, int32_t& right);
 
 }  // namespace encoders

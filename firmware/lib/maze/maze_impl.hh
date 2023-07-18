@@ -7,8 +7,8 @@ namespace maze {
 // Update is a single update to the maze.
 #pragma pack(push, 1)
 struct Update {
-  location_t location;
-  cell_t     cell;
+  Location location;
+  Cell     cell;
 };
 #pragma pack(pop)
 

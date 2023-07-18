@@ -10,7 +10,7 @@ namespace usart0 {
 
 namespace {
 // The read buffer and associated state.
-uint8_t         read_buffer[MAX_READ_SIZE];
+uint8_t         read_buffer[kMaxReadSize];
 uint8_t         read_index;
 uint8_t         read_length;
 read_callback_t read_callback;
@@ -18,20 +18,20 @@ ReadState       read_state;
 uint8_t         read_checksum;
 }  // namespace
 
-// disable_receiver disables the USART0 receiver.
-void disable_receiver() {
+// DisableReceiver disables the USART0 receiver.
+void DisableReceiver() {
   UCSR0B &= ~_BV(RXEN0);
 }
 
-// enable_receiver enables the USART0 receiver.
-void enable_receiver() {
+// EnableReceiver enables the USART0 receiver.
+void EnableReceiver() {
   assert(assert::USART0_READ + 0, read_callback != NULL);
 
   UCSR0B |= _BV(RXEN0);
 }
 
-// set_read_callback sets the read callback for USART0.
-void set_read_callback(read_callback_t callback) {
+// SetReadCallback sets the read callback for USART0.
+void SetReadCallback(read_callback_t callback) {
   assert(assert::USART0_READ + 1, callback != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -46,7 +46,7 @@ ISR(USART_RX_vect, ISR_BLOCK) {
   switch (read_state) {
     case ReadState::Idle:
       // If the start byte is received, transition to the next state.
-      if (value == START_BYTE) {
+      if (value == kStartByte) {
         read_state    = ReadState::Length;
         read_checksum = 0;
         read_index    = 0;
@@ -57,7 +57,7 @@ ISR(USART_RX_vect, ISR_BLOCK) {
       // Fall back to the idle state if the length is invalid.
       read_length = value;
       read_state  = ReadState::Data;
-      if (read_length == 0 || read_length > MAX_READ_SIZE) {
+      if (read_length == 0 || read_length > kMaxReadSize) {
         read_state = ReadState::Idle;
       }
       break;
@@ -77,7 +77,7 @@ ISR(USART_RX_vect, ISR_BLOCK) {
         // If the command is valid:
         // - Disable the receiver (there's nowhere to store the next command).
         // - Invoke the callback.
-        disable_receiver();
+        DisableReceiver();
         read_callback(read_buffer, read_length);
       }
       read_state = ReadState::Idle;

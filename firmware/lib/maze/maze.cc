@@ -10,9 +10,9 @@
 namespace maze {
 
 namespace {
-maze_t                          maze;
-uint8_t                         report_row;
-dequeue::Dequeue<location_t, 6> updates;
+Maze                          maze;
+uint8_t                       report_row;
+dequeue::Dequeue<Location, 6> updates;
 }  // namespace
 
 void Init() {
@@ -25,19 +25,19 @@ void Init() {
 
   // Bottom and top rows always have outer walls.
   for (uint8_t x = 0; x < kMazeWidth; x++) {
-    maze.cells[location(x, 0)].wall_south               = true;
-    maze.cells[location(x, kMazeHeight - 1)].wall_north = true;
+    maze.cells[Loc(x, 0)].wall_south               = true;
+    maze.cells[Loc(x, kMazeHeight - 1)].wall_north = true;
   }
 
   // Left and right columns always have outer walls.
   for (int y = 0; y < kMazeHeight; y++) {
-    maze.cells[location(0, y)].wall_west              = true;
-    maze.cells[location(kMazeWidth - 1, y)].wall_east = true;
+    maze.cells[Loc(0, y)].wall_west              = true;
+    maze.cells[Loc(kMazeWidth - 1, y)].wall_east = true;
   }
 
   // The starting cell has been visited, and always has a wall to the east.
-  maze.cells[location(0, 0)].visited   = true;
-  maze.cells[location(0, 0)].wall_east = true;
+  maze.cells[Loc(0, 0)].visited   = true;
+  maze.cells[Loc(0, 0)].wall_east = true;
 }
 
 void Send() {
@@ -54,8 +54,8 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   if (report_row < kMazeHeight) {
     for (int i = 0; i < kMazeWidth; i++) {
       update_array[i] = (Update){
-          .location = location(i, report_row),
-          .cell     = maze.cells[location(i, report_row)],
+          .location = Loc(i, report_row),
+          .cell     = maze.cells[Loc(i, report_row)],
       };
     }
     report_row++;
@@ -66,7 +66,7 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   uint8_t report_len = 0;
   uint8_t i          = 0;
   while (!updates.Empty()) {
-    location_t loc     = updates.PopFront();
+    Location loc       = updates.PopFront();
     update_array[i++]  = (Update){.location = loc, .cell = maze.cells[loc]};
     report_len        += sizeof(Update);
   }
@@ -74,14 +74,14 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   return report_len;
 }
 
-cell_t Read(location_t loc) {
+Cell Read(Location loc) {
   assert(assert::MAZE + 2, x(loc) < kMazeWidth);
   assert(assert::MAZE + 3, y(loc) < kMazeHeight);
 
   return maze.cells[loc];
 }
 
-void Write(location_t loc, cell_t cell) {
+void Write(Location loc, Cell cell) {
   assert(assert::MAZE + 4, x(loc) < kMazeWidth);
   assert(assert::MAZE + 5, y(loc) < kMazeHeight);
 

@@ -19,7 +19,7 @@ void Init() {}
 
 void Update() {
   int32_t left_delta, right_delta;
-  encoders::read_deltas(left_delta, right_delta);
+  encoders::ReadDeltas(left_delta, right_delta);
 
   float left_distance  = ((float)left_delta) * kCountDistanceLeft;    // mm
   float right_distance = ((float)right_delta) * kCountDistanceRight;  // mm

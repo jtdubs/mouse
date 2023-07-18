@@ -67,9 +67,9 @@ struct Command {
 void Init();
 
 // processed indicates the command has been processed.
-void processed();
+void Processed();
 
 // next gets the next command, if one is available.
-bool next(Command &command);
+bool Next(Command &command);
 
 }  // namespace remote::command

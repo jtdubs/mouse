@@ -4,8 +4,10 @@
 
 #include "firmware/platform/usart0.hh"
 
-constexpr uint8_t START_BYTE    = 0x02;
-constexpr uint8_t MAX_READ_SIZE = 64;
+namespace usart0 {
+
+constexpr uint8_t kStartByte   = 0x02;
+constexpr uint8_t kMaxReadSize = 64;
 
 // Write states
 enum class WriteState : uint8_t {
@@ -23,3 +25,5 @@ enum class ReadState : uint8_t {
   Data,
   Checksum,
 };
+
+}

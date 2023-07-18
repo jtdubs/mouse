@@ -40,8 +40,8 @@ void Set(int16_t left, int16_t right) {
     power_right = right;
 
     // set the direction of the motors
-    pin::Set(pin::LEFT_DIR, left < 0);
-    pin::Set(pin::RIGHT_DIR, right >= 0);
+    pin::Set(pin::kLeftDir, left < 0);
+    pin::Set(pin::kRightDir, right >= 0);
 
     // set the PWM duty cycle for each motor
     OCR1A = math::abs16(left);

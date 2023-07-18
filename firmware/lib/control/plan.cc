@@ -29,10 +29,10 @@ void Submit(Plan plan) {
 
 // wait waits for the current plan to be implemented.
 void Wait() {
-  pin::Clear(pin::PROBE_PLAN);
+  pin::Clear(pin::kProbePlan);
   volatile State *state = &current_plan.state;
   while (*state != State::Implemented) {}
-  pin::Set(pin::PROBE_PLAN);
+  pin::Set(pin::kProbePlan);
 }
 
 // SubmitAndWait submits a new plan, and wait for it to be implemented.

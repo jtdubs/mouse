@@ -14,32 +14,32 @@
 
 namespace pin {
 
-// pin_t represents an output pin on the atmega328p.
-struct pin_t {
+// Pin represents an output pin on the atmega328p.
+struct Pin {
   volatile uint8_t* port;
   volatile uint8_t* ddr;
   uint8_t           mask;
 };
 
 // motors pins
-extern const pin_t RIGHT_DIR;
-extern const pin_t LEFT_DIR;
-extern const pin_t LEFT_PWM;
-extern const pin_t RIGHT_PWM;
+extern const Pin kRightDir;
+extern const Pin kLeftDir;
+extern const Pin kLeftPWM;
+extern const Pin kRightPWM;
 
 // led pins
-extern const pin_t kLEDLeft;
-extern const pin_t kLEDRight;
-extern const pin_t kLEDOnboard;
-extern const pin_t IR_LEDS;
+extern const Pin kLEDLeft;
+extern const Pin kLEDRight;
+extern const Pin kLEDOnboard;
+extern const Pin kIRLEDs;
 
 // probe pins
-extern const pin_t kProbeTick;
-extern const pin_t PROBE_PLAN;
-extern const pin_t PROBE_2;
+extern const Pin kProbeTick;
+extern const Pin kProbePlan;
+extern const Pin kProbeUnused;
 
 // Set sets the value of the pin.
-inline void Set(pin_t pin, bool on) {
+inline void Set(Pin pin, bool on) {
   if (on) {
     *pin.port |= pin.mask;
   } else {
@@ -48,22 +48,22 @@ inline void Set(pin_t pin, bool on) {
 }
 
 // set sets the pin to high.
-inline void Set(pin_t pin) {
+inline void Set(Pin pin) {
   *pin.port |= pin.mask;
 }
 
 // Clear sets the pin to low.
-inline void Clear(pin_t pin) {
+inline void Clear(Pin pin) {
   *pin.port &= ~pin.mask;
 }
 
 // toggle toggles the pin.
-inline void toggle(pin_t pin) {
+inline void Toggle(Pin pin) {
   *pin.port ^= pin.mask;
 }
 
-// is_set checks if the pin is set.
-inline bool is_set(pin_t pin) {
+// IsSet checks if the pin is set.
+inline bool IsSet(Pin pin) {
   return *pin.port & pin.mask;
 }
 

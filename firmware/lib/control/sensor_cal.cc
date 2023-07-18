@@ -40,13 +40,13 @@ void Start() {
     sum_forward  = 0;
     sample_count = 0;
   }
-  leds_prev_state = pin::is_set(pin::IR_LEDS);
-  pin::Set(pin::IR_LEDS);
+  leds_prev_state = pin::IsSet(pin::kIRLEDs);
+  pin::Set(pin::kIRLEDs);
 }
 
 bool Tick() {
   if (sample_count == SampleLimit) {
-    pin::Set(pin::IR_LEDS, leds_prev_state);
+    pin::Set(pin::kIRLEDs, leds_prev_state);
 
     // The left and right thresholds are averaged to compensate for the mouse not being positioned
     // perfectly in the center of the corridor during calibration.
@@ -61,7 +61,7 @@ bool Tick() {
   }
 
   uint16_t left, right, forward;
-  adc::read_sensors(left, right, forward);
+  adc::ReadSensors(left, right, forward);
   sum_left    += left;
   sum_right   += right;
   sum_forward += forward;

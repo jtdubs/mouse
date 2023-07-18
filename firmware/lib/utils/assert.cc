@@ -39,7 +39,7 @@ void failed(uint32_t error_code) {
   pin::Clear(pin::kLEDLeft);
   pin::Clear(pin::kLEDRight);
   pin::Clear(pin::kLEDOnboard);
-  pin::Clear(pin::IR_LEDS);
+  pin::Clear(pin::kIRLEDs);
 
   for (;;) {
     // blink out each bit in the error code

@@ -2,32 +2,32 @@
 
 namespace pin {
 
-const pin_t RIGHT_DIR   = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)};
-const pin_t LEFT_PWM    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(1)};
-const pin_t RIGHT_PWM   = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(2)};
-const pin_t kLEDLeft    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(3)};
-const pin_t IR_LEDS     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(4)};
-const pin_t kLEDOnboard = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(5)};
-const pin_t kProbeTick  = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(3)};
-const pin_t PROBE_PLAN  = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(4)};
-const pin_t PROBE_2     = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(5)};
-const pin_t kLEDRight   = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(6)};
-const pin_t LEFT_DIR    = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(7)};
+const Pin kRightDir   = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)};
+const Pin kLeftPWM    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(1)};
+const Pin kRightPWM   = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(2)};
+const Pin kLEDLeft    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(3)};
+const Pin kIRLEDs     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(4)};
+const Pin kLEDOnboard = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(5)};
+const Pin kProbeTick  = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(3)};
+const Pin kProbePlan  = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(4)};
+const Pin kProbeUnused     = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(5)};
+const Pin kLEDRight   = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(6)};
+const Pin kLeftDir    = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(7)};
 
 // Init initializes all pins.
 void Init() {
   // Set all output pins to output mode.
-  DDRB = (RIGHT_DIR.mask)     //
-       | (LEFT_PWM.mask)      //
-       | (RIGHT_PWM.mask)     //
+  DDRB = (kRightDir.mask)     //
+       | (kLeftPWM.mask)      //
+       | (kRightPWM.mask)     //
        | (kLEDLeft.mask)      //
-       | (IR_LEDS.mask)       //
+       | (kIRLEDs.mask)       //
        | (kLEDOnboard.mask);  //
   DDRC = (kProbeTick.mask)    //
-       | (PROBE_PLAN.mask)    //
-       | (PROBE_2.mask);      //
+       | (kProbePlan.mask)    //
+       | (kProbeUnused.mask);      //
   DDRD = (kLEDRight.mask)     //
-       | (LEFT_DIR.mask);     //
+       | (kLeftDir.mask);     //
 
   // Everything starts out low.
   PORTB = 0;

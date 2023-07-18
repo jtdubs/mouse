@@ -30,11 +30,11 @@
 
 namespace explore {
 
-// explore() is the entry point for the explore mode.
-void explore();
+// Explore() is the entry point for the explore mode.
+void Explore();
 
-// solve() is the entry point for solve mode.
-void solve();
+// Solve() is the entry point for solve mode.
+void Solve();
 
 // GetReport() is the report handler for the explore mode.
 uint8_t GetReport(uint8_t *buffer, uint8_t len);

@@ -23,7 +23,7 @@ void ControlLEDs(bool enabled) {
 
 void Update() {
   uint16_t left, right, forward;
-  adc::read_sensors(left, right, forward);
+  adc::ReadSensors(left, right, forward);
 
   uint16_t left_cal, right_cal, forward_cal;
   sensor_cal::Read(left_cal, right_cal, forward_cal);

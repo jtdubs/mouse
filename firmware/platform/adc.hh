@@ -35,12 +35,12 @@ enum class Channel : uint8_t {
 };
 
 // sample samples the ADC channels.
-void sample();
+void Sample();
 
 // read reads the value of an ADC channel.
 uint16_t Read(Channel channel);
 
-// read_sensors reads the value of an ADC channel.
-void read_sensors(uint16_t& left, uint16_t& right, uint16_t& forward);
+// ReadSensors reads the value of an ADC channel.
+void ReadSensors(uint16_t& left, uint16_t& right, uint16_t& forward);
 
 }  // namespace adc

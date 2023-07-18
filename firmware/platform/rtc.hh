@@ -18,6 +18,6 @@
 namespace rtc {
 
 // micros returns the number of microseconds since the RTC was initialized.
-uint32_t micros();
+uint32_t Micros();
 
-}
+}  // namespace rtc

@@ -10,7 +10,7 @@
 
 namespace remote {
 
-// remote() is the entry point for the remote mode.
-void remote();
+// Run() is the entry point for the remote mode.
+void Run();
 
 }  // namespace remote

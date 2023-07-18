@@ -23,33 +23,33 @@ enum class DequeueID : uint8_t {
 // DequeueUpdate is an update event for a dequeue of maze locations.
 #pragma pack(push, 1)
 struct DequeueUpdate {
-  DequeueID        dequeue_id : 6;
-  dequeue::Event   event      : 2;
-  maze::location_t value;
+  DequeueID      dequeue_id : 6;
+  dequeue::Event event      : 2;
+  maze::Location value;
 };
 #pragma pack(pop)
 
 // stop stops the mouse in the middle of the current cell.
-void stop();
+void Stop();
 
 // face turns the mouse to face the given orientation, stopping first if needed.
-void face(Orientation orientation);
+void Face(Orientation orientation);
 
 // advance moves the mouse forward one cell, updating the breadcrumb trail if needed.
-void advance(maze::location_t loc, bool update_path);
+void Advance(maze::Location loc, bool update_path);
 
 // adjacent determines the orientation needed to drive between two adjancent cells.
-Orientation adjacent(maze::location_t a, maze::location_t b);
+Orientation Adjacent(maze::Location a, maze::Location b);
 
 // classify senses the maze walls and updates the maze representation, adding any
 // newly discovered cells to the "next" stack.
-void classify(maze::location_t loc);
+void Classify(maze::Location loc);
 
-// update_location updates the mouse's knowledge of where it is within the cell based
+// UpdateLocation updates the mouse's knowledge of where it is within the cell based
 // on the control module's position data.
-void update_location();
+void UpdateLocation();
 
-// floodfill calculates the shortest path to the goal.
-void floodfill();
+// Floodfill calculates the shortest path to the goal.
+void Floodfill();
 
 }  // namespace explore

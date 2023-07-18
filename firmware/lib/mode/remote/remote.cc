@@ -19,14 +19,14 @@ dequeue::Dequeue<plan::Plan, 16> plans;
 }
 
 // remote is a mode that allows the robot to be controlled remotely.
-void remote() {
+void Run() {
   command::Init();
   plan::SubmitAndWait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
 
   for (;;) {
     // wait until there's a command to process.
     command::Command command;
-    while (!command::next(command)) {}
+    while (!command::Next(command)) {}
 
     switch (command.type) {
       case command::Type::Reset:
@@ -35,10 +35,10 @@ void remote() {
         _delay_ms(60000.0);
         break;
       case command::Type::Explore:
-        explore::explore();
+        explore::Explore();
         break;
       case command::Type::Solve:
-        explore::solve();
+        explore::Solve();
         break;
       case command::Type::SendMaze:
         maze::Send();
@@ -77,7 +77,7 @@ void remote() {
         break;
     }
 
-    command::processed();
+    command::Processed();
   }
 }
 

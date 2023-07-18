@@ -22,7 +22,7 @@ void Init() {
 }
 
 // micros returns the number of microseconds since RTC initialization.
-uint32_t micros() {
+uint32_t Micros() {
   uint32_t result;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {

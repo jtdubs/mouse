@@ -46,7 +46,7 @@ void Init() {
 
 void Update() {
   int32_t left_delta, right_delta;
-  encoders::read_deltas(left_delta, right_delta);
+  encoders::ReadDeltas(left_delta, right_delta);
 
   float measured_left, measured_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {

@@ -39,7 +39,7 @@ void Tick() {
         pin::Clear(pin::kLEDLeft);
         pin::Clear(pin::kLEDRight);
         pin::Clear(pin::kLEDOnboard);
-        pin::Clear(pin::IR_LEDS);
+        pin::Clear(pin::kIRLEDs);
         plan::SetState(plan::State::Implemented);
       }
       break;
@@ -55,7 +55,7 @@ void Tick() {
     case plan::Type::IR:
       if (plan.state == plan::State::Scheduled) {
         plan::SetState(plan::State::Underway);
-        pin::Set(pin::IR_LEDS, plan.data.ir.on);
+        pin::Set(pin::kIRLEDs, plan.data.ir.on);
         plan::SetState(plan::State::Implemented);
       }
       break;
@@ -133,18 +133,18 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   assert(assert::CONTROL + 2, len >= sizeof(Report));
 
   static auto    previous_plan_state = plan::State::Scheduled;
-  static auto    previous_Planype    = plan::Type::Idle;
+  static auto    previous_plan_type  = plan::Type::Idle;
   static uint8_t counter             = 0;
 
   auto plan = plan::Current();
 
   // count how many ticks since the last plan change.
-  if (plan.state == previous_plan_state && plan.type == previous_Planype) {
+  if (plan.state == previous_plan_state && plan.type == previous_plan_type) {
     counter++;
   } else {
     counter             = 0;
     previous_plan_state = plan.state;
-    previous_Planype    = plan.type;
+    previous_plan_type  = plan.type;
   }
 
   // if the report hasn't changed, only report every 8th Tick.

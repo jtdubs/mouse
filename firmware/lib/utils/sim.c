@@ -5,25 +5,25 @@ AVR_MCU(F_CPU, "atmega328p");
 AVR_MCU_VOLTAGES(5000, 5000, 5000)
 
 // Right Motor
-AVR_MCU_VCD_PORT_PIN('B', 0, "RIGHT_DIR");
+AVR_MCU_VCD_PORT_PIN('B', 0, "kRightDir");
 AVR_MCU_VCD_PORT_PIN('D', 3, "RIGHT_CLK_A");
 AVR_MCU_VCD_PORT_PIN('D', 5, "RIGHT_B");
 
 // Left Motor
-AVR_MCU_VCD_PORT_PIN('D', 7, "LEFT_DIR");
+AVR_MCU_VCD_PORT_PIN('D', 7, "kLeftDir");
 AVR_MCU_VCD_PORT_PIN('D', 2, "LEFT_CLK_A");
 AVR_MCU_VCD_PORT_PIN('D', 4, "LEFT_B");
 
 // Probes
 AVR_MCU_VCD_PORT_PIN('C', 3, "kProbeTick");
-AVR_MCU_VCD_PORT_PIN('C', 4, "PROBE_PLAN");
-AVR_MCU_VCD_PORT_PIN('C', 5, "PROBE_2");
+AVR_MCU_VCD_PORT_PIN('C', 4, "kProbePlan");
+AVR_MCU_VCD_PORT_PIN('C', 5, "kProbeUnused");
 
 // LEDs
 AVR_MCU_VCD_PORT_PIN('B', 3, "kLEDLeft");
 AVR_MCU_VCD_PORT_PIN('D', 6, "kLEDRight");
 AVR_MCU_VCD_PORT_PIN('B', 5, "kLEDOnboard");
-AVR_MCU_VCD_PORT_PIN('B', 4, "IR_LEDS");
+AVR_MCU_VCD_PORT_PIN('B', 4, "kIRLEDs");
 
 // Interrupts
 AVR_MCU_VCD_IRQ_TRACE(INT0_vect_num, 1, "LEFT_ENCODER_CLK")
@@ -40,12 +40,12 @@ const struct avr_mmcu_vcd_trace_t PWMTrace[] _MMCU_ = {
      .len  = sizeof(struct avr_mmcu_vcd_trace_t) - 2,
      .mask = 0,
      .what = (void*)&OCR1A,
-     .name = "LEFT_PWM"},
+     .name = "kLeftPWM"},
     {.tag  = AVR_MMCU_TAG_VCD_TRACE,
      .len  = sizeof(struct avr_mmcu_vcd_trace_t) - 2,
      .mask = 0,
      .what = (void*)&OCR1B,
-     .name = "RIGHT_PWM"},
+     .name = "kRightPWM"},
 };
 
 // Console and command registers

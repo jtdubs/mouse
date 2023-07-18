@@ -21,18 +21,18 @@ void on_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
 
 // Init initializes the command module.
 void Init() {
-  usart0::set_read_callback(on_received);
-  usart0::enable_receiver();
+  usart0::SetReadCallback(on_received);
+  usart0::EnableReceiver();
 }
 
 // processed indicates the command has been processed.
-void processed() {
+void Processed() {
   command = NULL;
-  usart0::enable_receiver();
+  usart0::EnableReceiver();
 }
 
 // next gets the next command, if one is available.
-bool next(Command &c) {
+bool Next(Command &c) {
   bool result = false;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {

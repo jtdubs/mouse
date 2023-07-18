@@ -34,17 +34,17 @@ uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   assert(assert::PLATFORM + 1, len >= sizeof(Report));
 
   uint16_t left, right, forward;
-  adc::read_sensors(left, right, forward);
+  adc::ReadSensors(left, right, forward);
 
   Report *report = (Report *)buffer;
   encoders::Read(report->encoders.left, report->encoders.right);
 
   motor::Read(report->motors.left, report->motors.right);
 
-  report->leds.left       = pin::is_set(pin::kLEDLeft);
-  report->leds.right      = pin::is_set(pin::kLEDRight);
-  report->leds.onboard    = pin::is_set(pin::kLEDOnboard);
-  report->leds.ir         = pin::is_set(pin::IR_LEDS);
+  report->leds.left       = pin::IsSet(pin::kLEDLeft);
+  report->leds.right      = pin::IsSet(pin::kLEDRight);
+  report->leds.onboard    = pin::IsSet(pin::kLEDOnboard);
+  report->leds.ir         = pin::IsSet(pin::kIRLEDs);
   report->sensors.left    = left;
   report->sensors.right   = right;
   report->sensors.forward = forward;

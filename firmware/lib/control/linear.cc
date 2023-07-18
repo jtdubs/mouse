@@ -55,7 +55,7 @@ void Start(float position /* mm */, bool stop) {
   s.target_position = position;                   // mm
   s.target_speed    = stop ? 0.0 : kSpeedCruise;  // mm/s
   s.wall_error      = 0;
-  s.leds_prev_state = pin::is_set(pin::IR_LEDS);
+  s.leds_prev_state = pin::IsSet(pin::kIRLEDs);
 
 #if defined(ALLOW_ANGLE_PID_TUNING)
   start_theta = position_theta;  // radians
@@ -66,7 +66,7 @@ void Start(float position /* mm */, bool stop) {
     state = s;
   }
 
-  pin::Set(pin::IR_LEDS);
+  pin::Set(pin::kIRLEDs);
 }
 
 bool Tick() {
@@ -88,7 +88,7 @@ bool Tick() {
 
   // Emergency stop if too close to a wall.
   if (forward >= kSensorEmergencyStop) {
-    pin::Set(pin::IR_LEDS, s.leds_prev_state);
+    pin::Set(pin::kIRLEDs, s.leds_prev_state);
     speed::Set(0, 0);
     return true;
   }
@@ -96,7 +96,7 @@ bool Tick() {
   // If we are there, then we are done.
   if (position_distance >= s.target_position) {
     float rpm = SpeedToRPM(s.target_speed);
-    pin::Set(pin::IR_LEDS, s.leds_prev_state);
+    pin::Set(pin::kIRLEDs, s.leds_prev_state);
     speed::Set(rpm, rpm);
     return true;
   }

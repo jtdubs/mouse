@@ -23,12 +23,12 @@ void Init() {
 
 // send sends the report, if usart0 is ready.
 void Send() {
-  if (!usart0::write_ready()) {
+  if (!usart0::WriteReady()) {
     return;
   }
 
   uint8_t len              = 0;
-  report.header.rtc_micros = rtc::micros();
+  report.header.rtc_micros = rtc::Micros();
   if ((len = explore::GetReport(report.data, sizeof(report.data))) > 0) {
     report.header.type = Type::Explore;
   } else if ((len = maze::GetReport(report.data, sizeof(report.data))) > 0) {
@@ -43,7 +43,7 @@ void Send() {
     return;
   }
 
-  usart0::write((uint8_t*)&report, sizeof(report_header_t) + len);
+  usart0::Write((uint8_t*)&report, sizeof(ReportHeader) + len);
 }
 
 }  // namespace report

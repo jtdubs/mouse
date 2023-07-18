@@ -12,9 +12,9 @@ enum class Type : uint8_t {
   Explore,
 };
 
-// report_header_t represents a mouse report header.
+// ReportHeader represents a mouse report header.
 #pragma pack(push, 1)
-struct report_header_t {
+struct ReportHeader {
   Type     type;
   uint32_t rtc_micros;
 };
@@ -23,8 +23,8 @@ struct report_header_t {
 // Report represents a mouse report.
 #pragma pack(push, 1)
 struct Report {
-  report_header_t header;
-  uint8_t         data[64];  // the format of the data is defined by the report type
+  ReportHeader header;
+  uint8_t      data[64];  // the format of the data is defined by the report type
 };
 #pragma pack(pop)
 

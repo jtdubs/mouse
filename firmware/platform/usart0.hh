@@ -16,7 +16,7 @@
 // - Frames are formatted as follows:
 //     Field      | Size (bytes) | Description
 //     -----------|--------------|-----------------------------------------------
-//     START_BYTE | 1            | Always 0x02, used for frame synchronization
+//     kStartByte | 1            | Always 0x02, used for frame synchronization
 //     LENGTH     | 1            | len(DATA)
 //     DATA       | LENGTH       |
 //     CHECKSUM   | 1            | -sum(DATA), used for error detection
@@ -34,18 +34,18 @@ typedef void (*read_callback_t)(uint8_t* buffer, uint8_t length);
 void Init();
 
 // write_ready determines if USART0 is ready to be written to.
-bool write_ready();
+bool WriteReady();
 
 // write begins an asynchronous write to USART0.
-void write(uint8_t* buffer, uint8_t length);
+void Write(uint8_t* buffer, uint8_t length);
 
-// disable_receiver disables the USART0 receiver.
-void disable_receiver();
+// DisableReceiver disables the USART0 receiver.
+void DisableReceiver();
 
-// enable_receiver enables the USART0 receiver.
-void enable_receiver();
+// EnableReceiver enables the USART0 receiver.
+void EnableReceiver();
 
-// set_read_callback sets the read callback for USART0.
-void set_read_callback(read_callback_t callback);
+// SetReadCallback sets the read callback for USART0.
+void SetReadCallback(read_callback_t callback);
 
 }  // namespace usart0

@@ -12,9 +12,9 @@
 
 namespace maze {
 
-// cell_t represents a single cell in the maze.
+// Cell represents a single cell in the maze.
 #pragma pack(push, 1)
-struct cell_t {
+struct Cell {
   bool    wall_north : 1;
   bool    wall_east  : 1;
   bool    wall_south : 1;
@@ -25,27 +25,27 @@ struct cell_t {
 };
 #pragma pack(pop)
 
-// maze_t represents the entire maze at it's maximum allowed size.
-struct maze_t {
-  cell_t cells[256];
+// Maze represents the entire maze at it's maximum allowed size.
+struct Maze {
+  Cell cells[256];
 };
 
-// location_t holds the coordinates of a cell in the maze.
+// Location holds the coordinates of a cell in the maze.
 // format: 0xXY, where X is the x coordinate and Y is the y coordinate.
-typedef uint8_t location_t;
+typedef uint8_t Location;
 
-// location constructs a location_t from x and y coordinates.
-inline location_t location(uint8_t x, uint8_t y) {
+// location constructs a Location from x and y coordinates.
+inline Location Loc(uint8_t x, uint8_t y) {
   return (x << 4) | y;
 }
 
-// x extracts the x coordinate from a location_t.
-inline uint8_t x(location_t loc) {
+// x extracts the x coordinate from a Location.
+inline uint8_t x(Location loc) {
   return loc >> 4;
 }
 
-// y extracts the y coordinate from a location_t.
-inline uint8_t y(location_t loc) {
+// y extracts the y coordinate from a Location.
+inline uint8_t y(Location loc) {
   return loc & 0x0F;
 }
 
@@ -53,10 +53,10 @@ inline uint8_t y(location_t loc) {
 void Init();
 
 // read returns the cell at the given location.
-cell_t Read(location_t loc);
+Cell Read(Location loc);
 
 // update updates the cell at the given location.
-void Write(location_t loc, cell_t cell);
+void Write(Location loc, Cell cell);
 
 // report generates a report of changes to the maze.
 uint8_t GetReport(uint8_t *buffer, uint8_t len);
