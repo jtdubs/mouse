@@ -19,6 +19,7 @@ import (
 	"encoding/binary"
 	"log"
 	"reflect"
+	"regexp"
 	"strings"
 	"unsafe"
 
@@ -94,9 +95,14 @@ func (s *SymbolManager) Init(sim *Sim, elfPath string) {
 
 	for _, sym := range syms {
 		symName := sym.Name
+		if strings.HasPrefix(symName, "__") {
+			continue
+		}
 		if strings.HasPrefix(symName, "_") {
 			if newName, err := demangle.ToString(sym.Name); err == nil {
-				symName = strings.ReplaceAll(newName, "::(anonymous namespace)", "")
+				newName = regexp.MustCompile(`\(.*?\)`).ReplaceAllString(newName, "")
+				newName = strings.ReplaceAll(newName, "::::", "::")
+				symName = newName
 			}
 		}
 		if int(sym.Section) >= len(elfFile.Sections) {

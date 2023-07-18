@@ -4,6 +4,7 @@ REMOTE_SOURCES=$(shell find ./tools/remote -name "*.go")
 SIM_SOURCES=$(shell find ./tools/sim -name "*.go")
 
 all: remote sim
+	bazel build //... --platforms=//bazel/platforms:arduino_nano --compilation_mode opt
 	bazel build //... --platforms=//bazel/platforms:arduino_nano --compilation_mode dbg
 
 clean:
@@ -19,10 +20,10 @@ sim: $(SIM_SOURCES)
 	go build ./tools/sim
 
 upload:
-	avrdude -v -c arduino -P /dev/ttyNano -b 115200 -p atmega328p -D -U flash:w:bazel-bin/firmware/mouse.hex:i
+	avrdude -v -c arduino -P /dev/ttyNano -b 115200 -p atmega328p -D -U flash:w:bazel-out/k8-opt/bin/firmware/mouse.hex:i
 
 run: sim remote
-	./sim --firmware bazel-bin/firmware/mouse 2>&1 | tee sim.log &
+	./sim --firmware bazel-out/k8-dbg/bin/firmware/mouse 2>&1 | tee sim.log &
 	./remote --port /tmp/simavr-uart0 2>&1 | tee remote.log &
 
 monitor:
