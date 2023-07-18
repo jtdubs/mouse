@@ -22,6 +22,7 @@ import (
 	"strings"
 	"unsafe"
 
+	"github.com/ianlancetaylor/demangle"
 	"github.com/mattn/go-pointer"
 )
 
@@ -92,8 +93,11 @@ func (s *SymbolManager) Init(sim *Sim, elfPath string) {
 	}
 
 	for _, sym := range syms {
-		if strings.HasPrefix(sym.Name, "_") {
-			continue
+		symName := sym.Name
+		if strings.HasPrefix(symName, "_") {
+			if newName, err := demangle.ToString(sym.Name); err == nil {
+				symName = strings.ReplaceAll(newName, "::(anonymous namespace)", "")
+			}
 		}
 		if int(sym.Section) >= len(elfFile.Sections) {
 			continue
@@ -102,23 +106,23 @@ func (s *SymbolManager) Init(sim *Sim, elfPath string) {
 		if section.Name != ".bss" {
 			continue
 		}
-		if sym.Name == "" {
+		if symName == "" {
 			continue
 		}
 
 		symbol := &Symbol{
 			sim:     sim,
-			Name:    sym.Name,
+			Name:    symName,
 			Address: int(sym.Value - 0x800000),
 			Length:  int(sym.Size),
 		}
 
-		s.Symbols[sym.Name] = symbol
+		s.Symbols[symName] = symbol
 	}
 
 	var names []*C.char
-	for _, sym := range s.Symbols {
-		names = append(names, C.CString(sym.Name))
+	for name := range s.Symbols {
+		names = append(names, C.CString(name))
 	}
 
 	var irqs []C.avr_irq_t
@@ -128,11 +132,11 @@ func (s *SymbolManager) Init(sim *Sim, elfPath string) {
 	hdr.Cap = len(s.Symbols)
 
 	i := 0
-	for _, sym := range s.Symbols {
+	for name, sym := range s.Symbols {
 		sym.irq = &irqs[i]
 		i += 1
 		if sym.Length <= 4 {
-			C.avr_vcd_add_signal(sim.avr.vcd, sym.irq, C.int(sym.Length*8), C.CString(sym.Name))
+			C.avr_vcd_add_signal(sim.avr.vcd, sym.irq, C.int(sym.Length*8), C.CString(name))
 		}
 	}
 

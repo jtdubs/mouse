@@ -8,3 +8,5 @@ require (
 )
 
 require golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
+
+require github.com/ianlancetaylor/demangle v0.0.0-20230524184225-eabc099b10ab // indirect
