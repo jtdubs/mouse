@@ -32,14 +32,12 @@ void processed() {
 }
 
 // next gets the next command, if one is available.
-bool next(command_t *c) {
-  assert(assert::COMMAND + 2, c != NULL);
-
+bool next(command_t &c) {
   bool result = false;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     if (command != NULL) {
-      *c     = *command;
+      c      = *command;
       result = true;
     }
   }

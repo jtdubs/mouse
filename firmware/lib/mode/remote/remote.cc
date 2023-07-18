@@ -27,7 +27,7 @@ void remote() {
   for (;;) {
     // wait until there's a command to process.
     command::command_t command;
-    while (!command::next(&command)) {}
+    while (!command::next(command)) {}
 
     switch (command.type) {
       case command::RESET:

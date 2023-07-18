@@ -70,6 +70,6 @@ void init();
 void processed();
 
 // next gets the next command, if one is available.
-bool next(command_t *command);
+bool next(command_t &command);
 
 }  // namespace remote::command
