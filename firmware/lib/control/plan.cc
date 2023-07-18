@@ -45,7 +45,7 @@ void SubmitAndWait(Plan plan) {
 // SetState sets the current plan state.
 void SetState(State state) {
   current_plan.state = state;
-  sim_watch_plan((uint8_t)state);
+  sim_watch_plan(static_cast<uint8_t>(state));
 }
 
 // current gets the current plan.

@@ -60,7 +60,7 @@ float error() {
   } else if (!s.left_present && s.right_present) {
     return s.error_right * 2.0f;
   } else {
-    return (float)(s.error_left + s.error_right);
+    return static_cast<float>(s.error_left + s.error_right);
   }
 }
 

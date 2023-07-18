@@ -21,7 +21,7 @@ void Init() {
          | _BV(ADPS0) | _BV(ADPS1) | _BV(ADPS2);   // Prescaler 128 (slow but accurate ADC readings)
   ADCSRB  = 0;                                     // Free running mode
   DIDR0   = _BV(ADC0D) | _BV(ADC1D) | _BV(ADC2D);  // Disable digital input buffer on ADC2
-  ADMUX  |= (uint8_t)kFirstChannel;                // Select the first channel.
+  ADMUX  |= kFirstChannel;                         // Select the first channel.
   ADCSRA |= _BV(ADEN);                             // Enable ADC
 }
 
@@ -33,16 +33,16 @@ void Sample() {
 uint16_t Read(Channel channel) {
   uint16_t result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    result = values[(uint8_t)channel];
+    result = values[channel];
   }
   return result;
 }
 
 void ReadSensors(uint16_t& left, uint16_t& right, uint16_t& forward) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    left    = values[(uint8_t)Channel::SensorLeft];
-    right   = values[(uint8_t)Channel::SensorRight];
-    forward = values[(uint8_t)Channel::SensorForward];
+    left    = values[Channel::SensorLeft];
+    right   = values[Channel::SensorRight];
+    forward = values[Channel::SensorForward];
   }
 }
 
@@ -55,7 +55,7 @@ ISR(ADC_vect, ISR_BLOCK) {
   values[index] = ADC;
 
   // Select the next ADC channel
-  ADMUX = (ADMUX & 0xF0) | (uint8_t)next;
+  ADMUX = (ADMUX & 0xF0) | next;
 
   // Start the next conversion, unless we are at the end of the sampling round.
   if (next != kFirstChannel) {

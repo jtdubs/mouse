@@ -31,8 +31,8 @@ void Init() {
 // update applies changes since the last update.
 void Update() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    left        += (int32_t)left_delta;
-    right       += (int32_t)right_delta;
+    left        += static_cast<int32_t>(left_delta);
+    right       += static_cast<int32_t>(right_delta);
     left_delta   = 0;
     right_delta  = 0;
   }

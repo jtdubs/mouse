@@ -187,7 +187,7 @@ void Face(Orientation new_orientation) {
 
   // determine the delta between the current orientation and the desired orientation
   // Note: The (+4) and (&3) is to ensure the result is in [0,3] without using an expensive % operator.
-  uint8_t delta  = (((uint8_t)new_orientation) + 4) - ((uint8_t)orientation);
+  uint8_t delta  = (static_cast<uint8_t>(new_orientation) + 4) - static_cast<uint8_t>(orientation);
   delta         &= 3;
 
   switch (delta) {

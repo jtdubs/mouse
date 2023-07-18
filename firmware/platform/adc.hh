@@ -23,7 +23,7 @@
 
 namespace adc {
 
-enum class Channel : uint8_t {
+enum Channel : uint8_t {
   SensorRight,
   SensorForward,
   SensorLeft,

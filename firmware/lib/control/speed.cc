@@ -104,8 +104,8 @@ void Tick() {
 
   bool    forward_left  = signbitf(setpoint_left) == 0;
   bool    forward_right = signbitf(setpoint_right) == 0;
-  int16_t left          = (int16_t)lrintf(forward_left ? power_left : -power_left);
-  int16_t right         = (int16_t)lrintf(forward_right ? power_right : -power_right);
+  int16_t left          = static_cast<int16_t>(lrintf(forward_left ? power_left : -power_left));
+  int16_t right         = static_cast<int16_t>(lrintf(forward_right ? power_right : -power_right));
   motor::Set(left, right);
 }
 

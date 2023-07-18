@@ -21,8 +21,8 @@ void Update() {
   int32_t left_delta, right_delta;
   encoders::ReadDeltas(left_delta, right_delta);
 
-  float left_distance  = ((float)left_delta) * kCountDistanceLeft;    // mm
-  float right_distance = ((float)right_delta) * kCountDistanceRight;  // mm
+  float left_distance  = static_cast<float>(left_delta) * kCountDistanceLeft;    // mm
+  float right_distance = static_cast<float>(right_delta) * kCountDistanceRight;  // mm
 
   // Encoder updates in the same direction add to produce forward motion.
   float forward = (left_distance + right_distance) / 2.0f;  // mm

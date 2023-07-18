@@ -22,17 +22,17 @@ void failed(uint32_t error_code) {
   wdt_disable();
 
   // print the error code to the console (if in the simulator)
-  SIM_CONSOLE_REG = (uint8_t)'A';
-  SIM_CONSOLE_REG = (uint8_t)':';
-  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 28 & 0xF];
-  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 24 & 0xF];
-  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 20 & 0xF];
-  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 16 & 0xF];
-  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 12 & 0xF];
-  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 8 & 0xF];
-  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 4 & 0xF];
-  SIM_CONSOLE_REG = (uint8_t)hex_table[error_code >> 0 & 0xF];
-  SIM_CONSOLE_REG = (uint8_t)'\n';
+  SIM_CONSOLE_REG = static_cast<uint8_t>('A');
+  SIM_CONSOLE_REG = static_cast<uint8_t>(':');
+  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 28 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 24 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 20 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 16 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 12 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 8 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 4 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 0 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>('\n');
 
   // disable all peripherals
   motor::Set(0, 0);
