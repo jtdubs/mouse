@@ -1,6 +1,5 @@
 C++:
 - c++ casts
-- noexcept
 - modules
 
 Bazel:
