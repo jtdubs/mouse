@@ -67,9 +67,9 @@ void explore() {
       break;
     }
 
-    maze::location_t curr_loc = path.peek_back();
-    maze::location_t next_loc = next.peek_back();
-    maze::location_t prev_loc;
+    auto curr_loc = path.peek_back();
+    auto next_loc = next.peek_back();
+    auto prev_loc = maze::location(0, 0);
 
     // Determine which direction to drive to reach the cell (if it is adjancent).
     Orientation next_orientation = adjacent(curr_loc, next_loc);
@@ -91,9 +91,9 @@ void explore() {
 
   // Now that exploration is complete, we return to the starting cell.
   if (!path.empty()) {
-    maze::location_t curr = path.pop_back();
+    auto curr = path.pop_back();
     while (!path.empty()) {
-      maze::location_t prev = path.pop_back();
+      auto prev = path.pop_back();
       face(adjacent(curr, prev));
       advance(prev, false);
       curr = prev;
@@ -125,7 +125,7 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   uint8_t i          = 0;
   uint8_t report_len = 0;
 
-  dequeue_update_t *updates_buffer = (dequeue_update_t *)buffer;
+  auto *updates_buffer = (dequeue_update_t *)buffer;
   while (!updates.empty()) {
     updates_buffer[i++]  = updates.pop_front();
     report_len          += sizeof(dequeue_update_t);
@@ -136,10 +136,10 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
 
 // adjacent determines the orientation needed to drive between two adjacent cells.
 Orientation adjacent(maze::location_t a, maze::location_t b) {
-  uint8_t ax = maze::x(a);
-  uint8_t ay = maze::y(a);
-  uint8_t bx = maze::x(b);
-  uint8_t by = maze::y(b);
+  auto ax = maze::x(a);
+  auto ay = maze::y(a);
+  auto bx = maze::x(b);
+  auto by = maze::y(b);
 
   if (ax == bx) {
     if (ay + 1 == by) {
@@ -389,11 +389,11 @@ void classify(maze::location_t loc) {
 // floodfill calculates the shortest path to the goal.
 void floodfill() {
   // Step 1. Find the 2x2 square of cells with no internal walls that is the goal.
-  maze::location_t goal = maze::location(15, 15);
+  auto goal = maze::location(15, 15);
   for (uint8_t x = 0; x < MAZE_WIDTH - 1; x++) {
     for (uint8_t y = 0; y < MAZE_HEIGHT - 1; y++) {
-      maze::cell_t a = maze::read(maze::location(x, y));
-      maze::cell_t b = maze::read(maze::location(x + 1, y + 1));
+      auto a = maze::read(maze::location(x, y));
+      auto b = maze::read(maze::location(x + 1, y + 1));
       if (a.visited && b.visited && !a.wall_east && !a.wall_north && !b.wall_west && !b.wall_south) {
         goal = maze::location(x, y);
         break;
@@ -418,16 +418,16 @@ void floodfill() {
 
   // Step 3. Floodfill outwards from the goal cell.
   path.clear();
-  maze::cell_t goal_cell = maze::read(goal);
-  goal_cell.distance     = 0;
+  auto goal_cell     = maze::read(goal);
+  goal_cell.distance = 0;
   maze::update(goal, goal_cell);
   path.push_back(goal);
   while (!path.empty()) {
-    maze::location_t loc  = path.pop_front();
-    maze::cell_t     cell = maze::read(loc);
+    auto loc  = path.pop_front();
+    auto cell = maze::read(loc);
     if (!cell.wall_north) {
-      maze::location_t next      = loc + maze::location(0, 1);
-      maze::cell_t     next_cell = maze::read(next);
+      auto next      = loc + maze::location(0, 1);
+      auto next_cell = maze::read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::update(next, next_cell);
@@ -435,8 +435,8 @@ void floodfill() {
       }
     }
     if (!cell.wall_east) {
-      maze::location_t next      = loc + maze::location(1, 0);
-      maze::cell_t     next_cell = maze::read(next);
+      auto next      = loc + maze::location(1, 0);
+      auto next_cell = maze::read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::update(next, next_cell);
@@ -444,8 +444,8 @@ void floodfill() {
       }
     }
     if (!cell.wall_south) {
-      maze::location_t next      = loc - maze::location(0, 1);
-      maze::cell_t     next_cell = maze::read(next);
+      auto next      = loc - maze::location(0, 1);
+      auto next_cell = maze::read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::update(next, next_cell);
@@ -453,8 +453,8 @@ void floodfill() {
       }
     }
     if (!cell.wall_west) {
-      maze::location_t next      = loc - maze::location(1, 0);
-      maze::cell_t     next_cell = maze::read(next);
+      auto next      = loc - maze::location(1, 0);
+      auto next_cell = maze::read(next);
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::update(next, next_cell);
@@ -466,16 +466,16 @@ void floodfill() {
 
 // solve follows the shortest path to the goal.
 void solve() {
-  maze::location_t curr     = maze::location(0, 0);
-  uint8_t          distance = maze::read(curr).distance;
+  auto curr     = maze::location(0, 0);
+  auto distance = maze::read(curr).distance;
 
   while (distance != 0) {
-    maze::location_t north = curr + maze::location(0, 1);
-    maze::location_t east  = curr + maze::location(1, 0);
-    maze::location_t south = curr - maze::location(0, 1);
-    maze::location_t west  = curr - maze::location(1, 0);
+    auto north = curr + maze::location(0, 1);
+    auto east  = curr + maze::location(1, 0);
+    auto south = curr - maze::location(0, 1);
+    auto west  = curr - maze::location(1, 0);
 
-    maze::location_t next = curr;
+    auto next = curr;
 
     if (maze::x(curr) < (MAZE_HEIGHT - 1) && !maze::read(curr).wall_north && maze::read(north).distance < distance) {
       next     = north;

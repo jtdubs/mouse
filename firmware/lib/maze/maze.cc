@@ -48,7 +48,7 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   assert(assert::MAZE + 0, buffer != NULL);
   assert(assert::MAZE + 1, len >= (sizeof(update_t) * MAZE_WIDTH));
 
-  update_t *update_array = (update_t *)buffer;
+  auto *update_array = (update_t *)buffer;
 
   // if we have full rows to transmit, thensend the next one.
   if (report_row < MAZE_HEIGHT) {

@@ -32,7 +32,7 @@ void tick() {
   encoders::update();
   walls::update();
 
-  plan::plan_t plan = plan::current();
+  auto plan = plan::current();
 
   switch (plan.type) {
     case plan::Type::Idle:
@@ -135,11 +135,11 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   assert(assert::CONTROL + 1, buffer != NULL);
   assert(assert::CONTROL + 2, len >= sizeof(report_t));
 
-  static plan::State previous_plan_state = plan::State::Scheduled;
-  static plan::Type  previous_plan_type  = plan::Type::Idle;
-  static uint8_t     counter             = 0;
+  static auto    previous_plan_state = plan::State::Scheduled;
+  static auto    previous_plan_type  = plan::Type::Idle;
+  static uint8_t counter             = 0;
 
-  plan::plan_t plan = plan::current();
+  auto plan = plan::current();
 
   // count how many ticks since the last plan change.
   if (plan.state == previous_plan_state && plan.type == previous_plan_type) {
@@ -155,7 +155,7 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
     return 0;
   }
 
-  report_t *report = (report_t *)buffer;
+  auto *report = (report_t *)buffer;
 
   report->plan = plan::current();
   speed::read(report->speed.measured_left, report->speed.measured_right);
