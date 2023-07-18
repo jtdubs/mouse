@@ -3,7 +3,7 @@ C++:
 - noexcept
 - modules
 - PID classes
-- get rid of remaining typedefs.
+- move from blah_t to c++ naming conventions
 
 Bazel:
 - Auto-build cross-compile toolchain.
