@@ -2,8 +2,6 @@ C++:
 - c++ casts
 - noexcept
 - modules
-- PID classes
-- move from blah_t to c++ naming conventions
 
 Bazel:
 - Auto-build cross-compile toolchain.
