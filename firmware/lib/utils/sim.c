@@ -1,4 +1,4 @@
-#include "sim_impl.hh"
+#include "sim.h"
 
 // Define the CPU model, frequency and voltages.
 AVR_MCU(F_CPU, "atmega328p");

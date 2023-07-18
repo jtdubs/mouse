@@ -6,7 +6,7 @@
 
 #include "firmware/platform/motor.hh"
 #include "firmware/platform/pin.hh"
-#include "sim.hh"
+#include "sim.h"
 
 namespace assert {
 

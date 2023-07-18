@@ -2,7 +2,7 @@
 #include <util/atomic.h>
 
 #include "firmware/lib/utils/assert.hh"
-#include "firmware/lib/utils/sim.hh"
+#include "firmware/lib/utils/sim.h"
 #include "firmware/platform/pin.hh"
 #include "plan_impl.hh"
 
@@ -45,7 +45,7 @@ void submit_and_wait(plan_t plan) {
 // set_state sets the current plan state.
 void set_state(state_t state) {
   current_plan.state = state;
-  sim::watch_plan(state);
+  sim_watch_plan(state);
 }
 
 // read reads the current plan.

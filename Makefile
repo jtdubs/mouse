@@ -4,7 +4,7 @@ REMOTE_SOURCES=$(shell find ./tools/remote -name "*.go")
 SIM_SOURCES=$(shell find ./tools/sim -name "*.go")
 
 all: remote sim
-	bazel build //... --platforms=//bazel/platforms:arduino_nano --compilation_mode opt
+	bazel build //... --platforms=//bazel/platforms:arduino_nano --compilation_mode dbg
 
 clean:
 	bazel clean
