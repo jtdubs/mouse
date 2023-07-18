@@ -1,7 +1,5 @@
 C++:
-- Nested namespaces for platform and control.
 - Maze should probably be a class.... what else?
-- Wtf are concepts?
 
 Firmware:
 - Add a speed ramp for rotation?
