@@ -1,7 +1,5 @@
 C++:
-- pointers to references
 - auto variables?
-- lambdas for callbacks
 - std::array
 - range loops
 - c++ casts

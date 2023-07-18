@@ -26,23 +26,17 @@ dequeue::dequeue<maze::location_t, 256> next;         // The stack of unvisited 
 dequeue::dequeue<dequeue_update_t, 16>  updates;      // The queue of updates to send to the host.
 }  // namespace
 
-// path_queue_callback is the callback for changes the path queue.
-void path_queue_callback(dequeue::event_type_t event, maze::location_t value) {
-  if (!updates.full()) {
-    updates.push_back((dequeue_update_t){.dequeue_id = DEQUEUE_PATH, .event = event, .value = value});
-  }
-}
-
-// next_queue_callback is the callback for changes the next queue.
-void next_queue_callback(dequeue::event_type_t event, maze::location_t value) {
-  if (!updates.full()) {
-    updates.push_back((dequeue_update_t){.dequeue_id = DEQUEUE_NEXT, .event = event, .value = value});
-  }
-}
-
 void explore() {
-  path.register_callback(path_queue_callback);
-  next.register_callback(next_queue_callback);
+  path.register_callback([](dequeue::event_type_t event, maze::location_t value) {
+    if (!updates.full()) {
+      updates.push_back((dequeue_update_t){.dequeue_id = DEQUEUE_PATH, .event = event, .value = value});
+    }
+  });
+  next.register_callback([](dequeue::event_type_t event, maze::location_t value) {
+    if (!updates.full()) {
+      updates.push_back((dequeue_update_t){.dequeue_id = DEQUEUE_NEXT, .event = event, .value = value});
+    }
+  });
 
   // Idle the mouse and turn on the IR LEDs.
   plan::submit_and_wait((plan::plan_t){.type = plan::TYPE_IDLE, .state = plan::STATE_SCHEDULED, .data = {.idle = {}}});

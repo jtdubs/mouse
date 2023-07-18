@@ -1,4 +1,5 @@
 #include <avr/interrupt.h>
+// #include <stddef.h>
 
 #include "firmware/lib/control/control.hh"
 #include "firmware/lib/maze/maze.hh"
@@ -6,6 +7,13 @@
 #include "firmware/lib/report/report.hh"
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/platform/platform.hh"
+
+// void *operator new(size_t)                            = delete;
+// void *operator new[](size_t)                          = delete;
+// void operator delete(void *) noexcept                 = delete;
+// void operator delete[](void *) noexcept               = delete;
+// void operator delete(void *, unsigned int) noexcept   = delete;
+// void operator delete[](void *, unsigned int) noexcept = delete;
 
 int main() {
   platform::init();  // hardware peripherals
