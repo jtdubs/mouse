@@ -41,8 +41,8 @@ enum class PidID : uint8_t {
 };
 
 #pragma pack(push, 1)
-// command_t represents a command that can be processed by the mouse.
-struct command_t {
+// Command represents a command that can be processed by the mouse.
+struct Command {
   Type type;
   union {
     struct {
@@ -58,7 +58,7 @@ struct command_t {
       float kd;
       float alpha;
     } pid;
-    plan::plan_t plan;
+    plan::Plan plan;
   } data;
 };
 #pragma pack(pop)
@@ -70,6 +70,6 @@ void init();
 void processed();
 
 // next gets the next command, if one is available.
-bool next(command_t &command);
+bool next(Command &command);
 
 }  // namespace remote::command

@@ -10,14 +10,14 @@
 namespace rotational {
 
 namespace {
-state_t state;
+State state;
 }
 
 void init() {}
 
 void start(float dtheta /* radians */) {
-  state_t s;
-  float   distance;
+  State s;
+  float distance;
   position::read(distance, s.start_theta);
 
   s.target_theta = s.start_theta + dtheta;
@@ -32,7 +32,7 @@ bool tick() {
   float distance, theta;
   position::read(distance, theta);
 
-  state_t s;
+  State s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     s = state;
   }
@@ -57,7 +57,7 @@ bool tick() {
   return false;
 }
 
-void read(state_t &s) {
+void read(State &s) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     s = state;
   }

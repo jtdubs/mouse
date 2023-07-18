@@ -16,7 +16,7 @@
 namespace linear {
 
 namespace {
-state_t state;
+State state;
 
 #if defined(ALLOW_WALL_PID_TUNING)
 float              wall_alpha;
@@ -34,22 +34,16 @@ pid::PIDController angle_error_pid;
 }  // namespace
 
 void init() {
-  wall_error_pid.kp  = WALL_KP;
-  wall_error_pid.ki  = WALL_KI;
-  wall_error_pid.min = -100;
-  wall_error_pid.max = 100;
+  wall_error_pid.Tune(WALL_KP, WALL_KI, WALL_KD);
+  wall_error_pid.SetRange(-100, 100);
 #if defined(ALLOW_WALL_PID_TUNING)
-  wall_error_pid.kd = WALL_KD;
-  wall_alpha        = WALL_ALPHA;
+  wall_alpha = WALL_ALPHA;
 #endif
 
 #if defined(ALLOW_ANGLE_PID_TUNING)
-  angle_error_pid.kp  = ANGLE_KP;
-  angle_error_pid.ki  = ANGLE_KI;
-  angle_error_pid.kd  = ANGLE_KD;
-  angle_error_pid.min = -100;
-  angle_error_pid.max = 100;
-  angle_alpha         = ANGLE_ALPHA;
+  angle_error_pid.Tune(ANGLE_KP, ANGLE_KI, ANGLE_KD);
+  angle_error_pid.SetRange(-100, 100);
+  angle_alpha = ANGLE_ALPHA;
 #endif
 }
 
@@ -57,7 +51,7 @@ void start(float position /* mm */, bool stop) {
   float position_distance, position_theta;
   position::read(position_distance, position_theta);
 
-  state_t s;
+  State s;
   s.target_position = position;                   // mm
   s.target_speed    = stop ? 0.0 : SPEED_CRUISE;  // mm/s
   s.wall_error      = 0;
@@ -87,7 +81,7 @@ bool tick() {
   float position_distance, position_theta;
   position::read(position_distance, position_theta);
 
-  state_t s;
+  State s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     s = state;
   }
@@ -139,11 +133,11 @@ bool tick() {
 #if defined(ALLOW_WALL_PID_TUNING)
   s.wall_error = (wall_alpha * walls::error())  //
                + ((1.0f - wall_alpha) * s.wall_error);
-  float wall_adjustment = pid::update(wall_error_pid, 0.0, s.wall_error);
+  float wall_adjustment = wall_error_pid.Update(0.0, s.wall_error);
 #else
   s.wall_error = (WALL_ALPHA * walls::error())  //
                + ((1.0f - WALL_ALPHA) * s.wall_error);
-  float wall_adjustment = pid::update(wall_error_pid, 0.0, s.wall_error);
+  float wall_adjustment = wall_error_pid.Update(0.0, s.wall_error);
 #endif
   left_speed  -= wall_adjustment;
   right_speed += wall_adjustment;
@@ -152,7 +146,7 @@ bool tick() {
 #if defined(ALLOW_ANGLE_PID_TUNING)
   angle_error = (angle_alpha * (s.start_theta - position_theta))  //
               + ((1.0f - angle_alpha) * angle_error);
-  float angle_adjustment  = pid::update(angle_error_pid, s.start_theta, position_theta);
+  float angle_adjustment  = angle_error_pid.Update(s.start_theta, position_theta);
   left_speed             -= angle_adjustment;
   right_speed            += angle_adjustment;
 #endif
@@ -178,10 +172,8 @@ void wall_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_unu
                [[maybe_unused]] float alpha) {
 #if defined(ALLOW_WALL_PID_TUNING)
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    wall_error_pid.kp = kp;
-    wall_error_pid.ki = ki;
-    wall_error_pid.kd = kd;
-    wall_alpha        = alpha;
+    wall_error_pid.Tune(kp, ki, kd);
+    wall_alpha = alpha;
   }
 #endif
 }
@@ -190,16 +182,14 @@ void angle_tune([[maybe_unused]] float kp, [[maybe_unused]] float ki, [[maybe_un
                 [[maybe_unused]] float alpha) {
 #if defined(ALLOW_ANGLE_PID_TUNING)
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    angle_error_pid.kp = kp;
-    angle_error_pid.ki = ki;
-    angle_error_pid.kd = kd;
-    angle_alpha        = alpha;
+    angle_error_pid.Tune(kp, ki, kd);
+    angle_alpha = alpha;
   }
 #endif
 }
 
 // read reads the current linear state.
-void read(state_t &s) {
+void read(State &s) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     s = state;
   }

@@ -9,14 +9,14 @@ namespace remote::command {
 
 namespace {
 // The encoded and decoded command, and associated state.
-command_t *command;
+Command *command;
 }  // namespace
 
 // on_received is the USART0 callback for when a command is received.
 void on_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
   assert(assert::COMMAND + 0, command == NULL);
 
-  command = (command_t *)buffer;
+  command = (Command *)buffer;
 }
 
 // init initializes the command module.
@@ -32,7 +32,7 @@ void processed() {
 }
 
 // next gets the next command, if one is available.
-bool next(command_t &c) {
+bool next(Command &c) {
   bool result = false;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {

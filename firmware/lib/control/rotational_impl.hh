@@ -7,7 +7,7 @@
 namespace rotational {
 
 #pragma pack(push, 1)
-struct state_t {
+struct State {
   float start_theta;   // radians
   float target_theta;  // radians
   bool  direction;     // true = positive, false = negative
@@ -24,6 +24,6 @@ void start(float dtheta /* radians */);
 bool tick();
 
 // state reads the current rotational state.
-void read(state_t &state);
+void read(State &state);
 
 }  // namespace rotational

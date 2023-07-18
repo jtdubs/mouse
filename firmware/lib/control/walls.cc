@@ -9,8 +9,8 @@
 namespace walls {
 
 namespace {
-bool    control_leds;
-state_t state;
+bool  control_leds;
+State state;
 }  // namespace
 
 void init() {
@@ -28,7 +28,7 @@ void update() {
   uint16_t left_cal, right_cal, forward_cal;
   sensor_cal::read(left_cal, right_cal, forward_cal);
 
-  state_t s;
+  State s;
   s.left_present    = (left >= (left_cal - 80));
   s.right_present   = (right >= (right_cal - 80));
   s.forward_present = (forward >= (forward_cal - 60));
@@ -48,7 +48,7 @@ void update() {
 
 // error returns the "centering error" of the mouse, based on wall distances.
 float error() {
-  state_t s;
+  State s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     s = state;
   }

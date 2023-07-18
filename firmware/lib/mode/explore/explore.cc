@@ -22,26 +22,24 @@ float                                   cell_offset;  // The offset into the cur
 bool                                    stopped;      // Whether or not the mouse has stopped.
 dequeue::Dequeue<maze::location_t, 256> path;         // The breadcrumb trail.
 dequeue::Dequeue<maze::location_t, 256> next;         // The stack of unvisited cells.
-dequeue::Dequeue<dequeue_update_t, 16>  updates;      // The queue of updates to send to the host.
+dequeue::Dequeue<DequeueUpdate, 16>     updates;      // The queue of updates to send to the host.
 }  // namespace
 
 void explore() {
   path.register_callback([](dequeue::Event event, maze::location_t value) {
     if (!updates.full()) {
-      updates.push_back((dequeue_update_t){.dequeue_id = DequeueID::Path, .event = event, .value = value});
+      updates.push_back((DequeueUpdate){.dequeue_id = DequeueID::Path, .event = event, .value = value});
     }
   });
   next.register_callback([](dequeue::Event event, maze::location_t value) {
     if (!updates.full()) {
-      updates.push_back((dequeue_update_t){.dequeue_id = DequeueID::Next, .event = event, .value = value});
+      updates.push_back((DequeueUpdate){.dequeue_id = DequeueID::Next, .event = event, .value = value});
     }
   });
 
   // Idle the mouse and turn on the IR LEDs.
-  plan::submit_and_wait(
-      (plan::plan_t){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
-  plan::submit_and_wait(
-      (plan::plan_t){.type = plan::Type::IR, .state = plan::State::Scheduled, .data = {.ir = {true}}});
+  plan::submit_and_wait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  plan::submit_and_wait((plan::Plan){.type = plan::Type::IR, .state = plan::State::Scheduled, .data = {.ir = {true}}});
 
   // Assumption:
   // We start centered along the back wall of the starting square, with our back touching the wall.
@@ -104,8 +102,7 @@ void explore() {
   face(Orientation::North);
 
   // Ensure the control system is idling (no motor activity).
-  plan::submit_and_wait(
-      (plan::plan_t){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  plan::submit_and_wait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
 
   // Deregister dequeue callbacks.
   path.register_callback(NULL);
@@ -119,15 +116,15 @@ void explore() {
 // report() is the report handler for the explore mode.
 uint8_t report(uint8_t *buffer, uint8_t len) {
   assert(assert::EXPLORE + 0, buffer != NULL);
-  assert(assert::EXPLORE + 1, len >= (sizeof(dequeue_update_t) * 16));
+  assert(assert::EXPLORE + 1, len >= (sizeof(DequeueUpdate) * 16));
 
   uint8_t i          = 0;
   uint8_t report_len = 0;
 
-  auto *updates_buffer = (dequeue_update_t *)buffer;
+  auto *updates_buffer = (DequeueUpdate *)buffer;
   while (!updates.empty()) {
     updates_buffer[i++]  = updates.pop_front();
-    report_len          += sizeof(dequeue_update_t);
+    report_len          += sizeof(DequeueUpdate);
   }
 
   return report_len;
@@ -198,27 +195,27 @@ void face(Orientation new_orientation) {
       break;
     case 1:
       plan::submit_and_wait(  //
-          (plan::plan_t){.type  = plan::Type::RotationalMotion,
-                         .state = plan::State::Scheduled,
-                         .data  = {.rotational = {
-                                       .d_theta = -M_PI_2,
-                                  }}});
+          (plan::Plan){.type  = plan::Type::RotationalMotion,
+                       .state = plan::State::Scheduled,
+                       .data  = {.rotational = {
+                                     .d_theta = -M_PI_2,
+                                }}});
       break;
     case 2:
       plan::submit_and_wait(  //
-          (plan::plan_t){.type  = plan::Type::RotationalMotion,
-                         .state = plan::State::Scheduled,
-                         .data  = {.rotational = {
-                                       .d_theta = M_PI,
-                                  }}});
+          (plan::Plan){.type  = plan::Type::RotationalMotion,
+                       .state = plan::State::Scheduled,
+                       .data  = {.rotational = {
+                                     .d_theta = M_PI,
+                                }}});
       break;
     case 3:
       plan::submit_and_wait(  //
-          (plan::plan_t){.type  = plan::Type::RotationalMotion,
-                         .state = plan::State::Scheduled,
-                         .data  = {.rotational = {
-                                       .d_theta = M_PI_2,
-                                  }}});
+          (plan::Plan){.type  = plan::Type::RotationalMotion,
+                       .state = plan::State::Scheduled,
+                       .data  = {.rotational = {
+                                     .d_theta = M_PI_2,
+                                }}});
       break;
   }
 
@@ -237,12 +234,12 @@ void advance(maze::location_t loc, bool update_path) {
   update_location();
 
   plan::submit_and_wait(  //
-      (plan::plan_t){.type  = plan::Type::LinearMotion,
-                     .state = plan::State::Scheduled,
-                     .data  = {.linear = {
-                                   .position = CELL_SIZE - (cell_offset - ENTRY_OFFSET),
-                                   .stop     = false,
-                              }}});
+      (plan::Plan){.type  = plan::Type::LinearMotion,
+                   .state = plan::State::Scheduled,
+                   .data  = {.linear = {
+                                 .position = CELL_SIZE - (cell_offset - ENTRY_OFFSET),
+                                 .stop     = false,
+                            }}});
 
   if (update_path) {
     path.push_back(loc);
@@ -262,13 +259,13 @@ void stop() {
   assert(assert::EXPLORE + 3, cell_offset <= CELL_SIZE_2);
 
   // stop at the center of the cell
-  plan::submit_and_wait(                                 //
-      (plan::plan_t){.type  = plan::Type::LinearMotion,  //
-                     .state = plan::State::Scheduled,    //
-                     .data  = {.linear = {
-                                   .position = CELL_SIZE_2 - cell_offset,
-                                   .stop     = true  //
-                              }}});
+  plan::submit_and_wait(                               //
+      (plan::Plan){.type  = plan::Type::LinearMotion,  //
+                   .state = plan::State::Scheduled,    //
+                   .data  = {.linear = {
+                                 .position = CELL_SIZE_2 - cell_offset,
+                                 .stop     = true  //
+                            }}});
 
   stopped = true;
 }
@@ -510,8 +507,7 @@ void solve() {
   stop();
 
   // Ensure the control system is idling (no motor activity).
-  plan::submit_and_wait(
-      (plan::plan_t){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  plan::submit_and_wait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
 }
 
 }  // namespace explore

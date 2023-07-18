@@ -7,7 +7,7 @@
 
 namespace walls {
 
-struct state_t {
+struct State {
   bool    left_present;
   bool    right_present;
   bool    forward_present;

@@ -33,20 +33,14 @@ pid::PIController pid_right;
 }  // namespace
 
 void init() {
-  pid_left.min = -200;
-  pid_left.max = 200;
-  pid_left.kp  = SPEED_KP;
-  pid_left.ki  = SPEED_KI;
+  pid_left.SetRange(-200, 200);
+  pid_left.Tune(SPEED_KP, SPEED_KI, SPEED_KD);
 
-  pid_right.min = -200;
-  pid_right.max = 200;
-  pid_right.kp  = SPEED_KP;
-  pid_right.ki  = SPEED_KI;
+  pid_right.SetRange(-200, 200);
+  pid_right.Tune(SPEED_KP, SPEED_KI, SPEED_KD);
 
 #if defined(ALLOW_SPEED_PID_TUNING)
-  alpha        = SPEED_ALPHA;
-  pid_left.ki  = SPEED_KD;
-  pid_right.ki = SPEED_KD;
+  alpha = SPEED_ALPHA;
 #endif
 }
 
@@ -92,20 +86,20 @@ void tick() {
   float power_left        = LEFT_RPM_TO_POWER(setpoint_left_mag);
 
   if (setpoint_left_mag < MIN_MOTOR_RPM) {
-    pid::reset(pid_left);
+    pid_left.Reset();
     power_left = 0;
   } else {
-    power_left += pid::update(pid_left, setpoint_left_mag, fabsf(measured_left));
+    power_left += pid_left.Update(setpoint_left_mag, fabsf(measured_left));
   }
 
   float setpoint_right_mag = fabsf(setpoint_right);
   float power_right        = RIGHT_RPM_TO_POWER(setpoint_right_mag);
 
   if (setpoint_right_mag < MIN_MOTOR_RPM) {
-    pid::reset(pid_right);
+    pid_right.Reset();
     power_right = 0;
   } else {
-    power_right += pid::update(pid_right, setpoint_right_mag, fabsf(measured_right));
+    power_right += pid_right.Update(setpoint_right_mag, fabsf(measured_right));
   }
 
   bool    forward_left  = signbitf(setpoint_left) == 0;

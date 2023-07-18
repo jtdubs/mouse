@@ -44,7 +44,7 @@ enum class Type : uint8_t {
   SensorCal,
 };
 
-struct plan_t {
+struct Plan {
   Type  type;
   State state;
   union {
@@ -87,12 +87,12 @@ struct plan_t {
 };
 
 // submit submits a new plan to be implemented.
-void submit(plan_t plan);
+void submit(Plan plan);
 
 // wait waits for the current plan to be implemented.
 void wait();
 
 // submit_and_wait submits a new plan, and wait for it to be implemented.
-void submit_and_wait(plan_t plan);
+void submit_and_wait(Plan plan);
 
 }  // namespace plan

@@ -20,9 +20,9 @@ enum class DequeueID : uint8_t {
   Next,
 };
 
-// dequeue_update_t is an update event for a dequeue of maze locations.
+// DequeueUpdate is an update event for a dequeue of maze locations.
 #pragma pack(push, 1)
-struct dequeue_update_t {
+struct DequeueUpdate {
   DequeueID        dequeue_id : 6;
   dequeue::Event   event      : 2;
   maze::location_t value;

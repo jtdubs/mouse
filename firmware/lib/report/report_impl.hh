@@ -4,7 +4,7 @@
 
 namespace report {
 
-// report_type_t identifies the type of a given report.
+// Reportype_t identifies the type of a given report.
 enum class Type : uint8_t {
   Platform,
   Control,
@@ -20,9 +20,9 @@ struct report_header_t {
 };
 #pragma pack(pop)
 
-// report_t represents a mouse report.
+// Report represents a mouse report.
 #pragma pack(push, 1)
-struct report_t {
+struct Report {
   report_header_t header;
   uint8_t         data[64];  // the format of the data is defined by the report type
 };

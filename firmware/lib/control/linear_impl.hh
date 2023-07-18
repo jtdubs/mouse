@@ -7,7 +7,7 @@
 namespace linear {
 
 #pragma pack(push, 1)
-struct state_t {
+struct State {
   float target_position;  // mm
   float target_speed;     // mm/s
   float wall_error;
@@ -26,6 +26,6 @@ void start(float position /* mm */, bool stop);
 bool tick();
 
 // state reads the current linear state.
-void read(state_t &s);
+void read(State &s);
 
 }  // namespace linear

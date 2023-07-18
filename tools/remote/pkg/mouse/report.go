@@ -343,7 +343,7 @@ func (PlatformReport) Variables() []vcd.VcdDataType {
 
 func (ControlReport) Variables() []vcd.VcdDataType {
 	result := []vcd.VcdDataType{
-		vcd.NewVariable("control_plan_type", "wire", 8),
+		vcd.NewVariable("control_Planype", "wire", 8),
 		vcd.NewVariable("control_plan_state", "wire", 8),
 		vcd.NewVariable("control_speed_measured_left", "wire", 32),
 		vcd.NewVariable("control_speed_measured_right", "wire", 32),
@@ -418,7 +418,7 @@ func (r PlatformReport) Symbols() map[string]string {
 
 func (r ControlReport) Symbols() map[string]string {
 	result := map[string]string{
-		"control_plan_type":            fmt.Sprint(uint8(r.Header.Plan.Type)),
+		"control_Planype":              fmt.Sprint(uint8(r.Header.Plan.Type)),
 		"control_plan_state":           fmt.Sprint(uint8(r.Header.Plan.State)),
 		"control_speed_measured_left":  fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.Header.SpeedMeasuredLeft))),
 		"control_speed_measured_right": fmt.Sprint(*(*uint32)(unsafe.Pointer(&r.Header.SpeedMeasuredRight))),

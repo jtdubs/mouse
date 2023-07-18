@@ -4,9 +4,9 @@
 
 namespace maze {
 
-// update_t is a single update to the maze.
+// Update is a single update to the maze.
 #pragma pack(push, 1)
-struct update_t {
+struct Update {
   location_t location;
   cell_t     cell;
 };

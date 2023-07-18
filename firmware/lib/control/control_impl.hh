@@ -8,9 +8,9 @@
 namespace control {
 
 #pragma pack(push, 1)
-// control_report_t is the report sent by the control module.
-struct report_t {
-  plan::plan_t plan;
+// control_Report is the report sent by the control module.
+struct Report {
+  plan::Plan plan;
   struct {
     float measured_left;   // RPMs
     float measured_right;  // RPMs
@@ -27,8 +27,8 @@ struct report_t {
       uint16_t right;    // ADC reading
       uint16_t forward;  // ADC reading
     } sensor_cal;
-    rotational::state_t rotation;
-    linear::state_t     linear;
+    rotational::State rotation;
+    linear::State     linear;
   } plan_data;
 };
 #pragma pack(pop)

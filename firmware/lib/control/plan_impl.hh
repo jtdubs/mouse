@@ -14,6 +14,6 @@ void init();
 void set_state(State state);
 
 // current gets the current plan.
-plan_t current();
+Plan current();
 
 }  // namespace plan

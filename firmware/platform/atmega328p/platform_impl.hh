@@ -5,8 +5,8 @@
 namespace platform {
 
 #pragma pack(push, 1)
-// platform_report_t represents a report of the platform state.
-struct report_t {
+// platform_Report represents a report of the platform state.
+struct Report {
   uint8_t battery_volts;  // 8-bit ADC value
   struct {
     uint16_t left    : 10;  // 10-bit ADC value

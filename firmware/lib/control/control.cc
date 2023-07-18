@@ -130,21 +130,21 @@ void tick() {
 
 uint8_t report(uint8_t *buffer, uint8_t len) {
   assert(assert::CONTROL + 1, buffer != NULL);
-  assert(assert::CONTROL + 2, len >= sizeof(report_t));
+  assert(assert::CONTROL + 2, len >= sizeof(Report));
 
   static auto    previous_plan_state = plan::State::Scheduled;
-  static auto    previous_plan_type  = plan::Type::Idle;
+  static auto    previous_Planype    = plan::Type::Idle;
   static uint8_t counter             = 0;
 
   auto plan = plan::current();
 
   // count how many ticks since the last plan change.
-  if (plan.state == previous_plan_state && plan.type == previous_plan_type) {
+  if (plan.state == previous_plan_state && plan.type == previous_Planype) {
     counter++;
   } else {
     counter             = 0;
     previous_plan_state = plan.state;
-    previous_plan_type  = plan.type;
+    previous_Planype    = plan.type;
   }
 
   // if the report hasn't changed, only report every 8th tick.
@@ -152,7 +152,7 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
     return 0;
   }
 
-  auto *report = (report_t *)buffer;
+  auto *report = (Report *)buffer;
 
   report->plan = plan::current();
   speed::read(report->speed.measured_left, report->speed.measured_right);
@@ -174,7 +174,7 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
       break;
   }
 
-  return sizeof(report_t);
+  return sizeof(Report);
 }
 
 }  // namespace control

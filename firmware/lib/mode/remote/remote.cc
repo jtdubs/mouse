@@ -15,18 +15,17 @@
 namespace remote {
 
 namespace {
-dequeue::Dequeue<plan::plan_t, 16> plans;
+dequeue::Dequeue<plan::Plan, 16> plans;
 }
 
 // remote is a mode that allows the robot to be controlled remotely.
 void remote() {
   command::init();
-  plan::submit_and_wait(
-      (plan::plan_t){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  plan::submit_and_wait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
 
   for (;;) {
     // wait until there's a command to process.
-    command::command_t command;
+    command::Command command;
     while (!command::next(command)) {}
 
     switch (command.type) {

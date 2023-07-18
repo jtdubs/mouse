@@ -10,7 +10,7 @@ namespace plan {
 
 namespace {
 // current_plan is the current plan
-plan_t current_plan;
+Plan current_plan;
 }  // namespace
 
 // init initializes the plan module.
@@ -20,7 +20,7 @@ void init() {
 }
 
 // submit submits a new plan to be implemented.
-void submit(plan_t plan) {
+void submit(Plan plan) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     current_plan = plan;
     set_state(State::Scheduled);
@@ -37,7 +37,7 @@ void wait() {
 
 // submit_and_wait submits a new plan, and wait for it to be implemented.
 // NOTE: this plan will replace the current plan, even if it is not fully implemented!
-void submit_and_wait(plan_t plan) {
+void submit_and_wait(Plan plan) {
   submit(plan);
   wait();
 }
@@ -49,8 +49,8 @@ void set_state(State state) {
 }
 
 // current gets the current plan.
-plan_t current() {
-  plan_t result;
+Plan current() {
+  Plan result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     result = current_plan;
   }

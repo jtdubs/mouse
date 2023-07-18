@@ -31,12 +31,12 @@ void init() {
 
 uint8_t report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   assert(assert::PLATFORM + 0, buffer != NULL);
-  assert(assert::PLATFORM + 1, len >= sizeof(report_t));
+  assert(assert::PLATFORM + 1, len >= sizeof(Report));
 
   uint16_t left, right, forward;
   adc::read_sensors(left, right, forward);
 
-  report_t *report = (report_t *)buffer;
+  Report *report = (Report *)buffer;
   encoders::read(report->encoders.left, report->encoders.right);
 
   motor::read(report->motors.left, report->motors.right);
@@ -49,7 +49,7 @@ uint8_t report(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   report->sensors.right   = right;
   report->sensors.forward = forward;
 
-  return sizeof(report_t);
+  return sizeof(Report);
 }
 
 }  // namespace platform

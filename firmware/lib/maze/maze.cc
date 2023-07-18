@@ -46,20 +46,20 @@ void send() {
 
 uint8_t report(uint8_t *buffer, uint8_t len) {
   assert(assert::MAZE + 0, buffer != NULL);
-  assert(assert::MAZE + 1, len >= (sizeof(update_t) * MAZE_WIDTH));
+  assert(assert::MAZE + 1, len >= (sizeof(Update) * MAZE_WIDTH));
 
-  auto *update_array = (update_t *)buffer;
+  auto *update_array = (Update *)buffer;
 
   // if we have full rows to transmit, thensend the next one.
   if (report_row < MAZE_HEIGHT) {
     for (int i = 0; i < MAZE_WIDTH; i++) {
-      update_array[i] = (update_t){
+      update_array[i] = (Update){
           .location = location(i, report_row),
           .cell     = maze.cells[location(i, report_row)],
       };
     }
     report_row++;
-    return MAZE_WIDTH * sizeof(update_t);
+    return MAZE_WIDTH * sizeof(Update);
   }
 
   // otherwise, send any pending updates.
@@ -67,8 +67,8 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   uint8_t i          = 0;
   while (!updates.empty()) {
     location_t loc     = updates.pop_front();
-    update_array[i++]  = (update_t){.location = loc, .cell = maze.cells[loc]};
-    report_len        += sizeof(update_t);
+    update_array[i++]  = (Update){.location = loc, .cell = maze.cells[loc]};
+    report_len        += sizeof(Update);
   }
 
   return report_len;
