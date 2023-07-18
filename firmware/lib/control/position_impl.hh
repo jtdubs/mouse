@@ -12,4 +12,4 @@ void Init();
 // update updates the position based on encoder deltas.
 void Update();
 
-}
+}  // namespace position

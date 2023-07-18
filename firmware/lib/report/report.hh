@@ -29,4 +29,4 @@ namespace report {
 // Init initializes the report module.
 void Init();
 
-}
+}  // namespace report

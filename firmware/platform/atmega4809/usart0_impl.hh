@@ -26,4 +26,4 @@ enum class ReadState : uint8_t {
   Checksum,
 };
 
-}  // namespace usart0
+}
