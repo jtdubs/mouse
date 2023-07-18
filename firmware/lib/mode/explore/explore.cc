@@ -40,12 +40,10 @@ void next_queue_callback(dequeue::event_type_t event, maze::location_t value) {
   }
 }
 
-void init() {
+void explore() {
   path.register_callback(path_queue_callback);
   next.register_callback(next_queue_callback);
-}
 
-void explore() {
   // Idle the mouse and turn on the IR LEDs.
   plan::submit_and_wait((plan::plan_t){.type = plan::TYPE_IDLE, .state = plan::STATE_SCHEDULED, .data = {.idle = {}}});
   plan::submit_and_wait((plan::plan_t){.type = plan::TYPE_IR, .state = plan::STATE_SCHEDULED, .data = {.ir = {true}}});

@@ -30,9 +30,6 @@
 
 namespace explore {
 
-// init initializes the explore mode.
-void init();
-
 // explore() is the entry point for the explore mode.
 void explore();
 

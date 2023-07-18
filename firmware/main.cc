@@ -2,7 +2,6 @@
 
 #include "firmware/lib/control/control.hh"
 #include "firmware/lib/maze/maze.hh"
-#include "firmware/lib/mode/explore/explore.hh"
 #include "firmware/lib/mode/remote/remote.hh"
 #include "firmware/lib/report/report.hh"
 #include "firmware/lib/utils/assert.hh"
@@ -12,7 +11,6 @@ int main() {
   platform::init();  // hardware peripherals
   control::init();   // control planning
   maze::init();      // maze data structure
-  explore::init();   // maze exploration mode
   report::init();    // serial report system
 
   // enable interrupts

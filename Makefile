@@ -11,7 +11,7 @@ clean:
 	bazel clean
 
 size:
-	avr-size bazel-bin/firmware/mouse
+	avr-size bazel-out/k8-opt/bin/firmware/mouse
 
 remote: $(REMOTE_SOURCES)
 	go build ./tools/remote
