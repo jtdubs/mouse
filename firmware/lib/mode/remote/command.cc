@@ -3,7 +3,7 @@
 
 #include "command_impl.hh"
 #include "firmware/lib/utils/assert.hh"
-#include "firmware/platform/usart0.hh"
+#include "firmware/platform/platform.hh"
 
 namespace remote::command {
 

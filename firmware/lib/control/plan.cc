@@ -3,7 +3,7 @@
 
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/lib/utils/sim.h"
-#include "firmware/platform/pin.hh"
+#include "firmware/platform/platform.hh"
 #include "plan_impl.hh"
 
 namespace plan {

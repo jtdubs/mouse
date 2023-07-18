@@ -12,8 +12,7 @@
 #include "firmware/lib/control/walls.hh"
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/lib/utils/dequeue.hh"
-#include "firmware/platform/motor.hh"
-#include "firmware/platform/pin.hh"
+#include "firmware/platform/platform.hh"
 
 namespace explore {
 

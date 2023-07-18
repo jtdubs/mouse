@@ -9,8 +9,7 @@
 #include "firmware/lib/maze/maze.hh"
 #include "firmware/lib/mode/explore/explore.hh"
 #include "firmware/lib/utils/dequeue.hh"
-#include "firmware/platform/motor.hh"
-#include "firmware/platform/pin.hh"
+#include "firmware/platform/platform.hh"
 #include "remote_impl.hh"
 
 namespace remote {

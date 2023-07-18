@@ -4,8 +4,7 @@
 #include <avr/wdt.h>
 #include <util/delay.h>
 
-#include "firmware/platform/motor.hh"
-#include "firmware/platform/pin.hh"
+#include "firmware/platform/platform.hh"
 #include "sim.h"
 
 namespace assert {

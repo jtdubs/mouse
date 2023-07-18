@@ -7,10 +7,7 @@
 #include "config.hh"
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/lib/utils/pid.hh"
-#include "firmware/platform/encoders.hh"
-#include "firmware/platform/motor.hh"
-#include "firmware/platform/pin.hh"
-#include "firmware/platform/rtc.hh"
+#include "firmware/platform/platform.hh"
 #include "speed_impl.hh"
 
 namespace speed {

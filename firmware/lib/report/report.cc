@@ -7,9 +7,6 @@
 #include "firmware/lib/mode/explore/explore.hh"
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/platform/platform.hh"
-#include "firmware/platform/rtc.hh"
-#include "firmware/platform/timer.hh"
-#include "firmware/platform/usart0.hh"
 #include "report_impl.hh"
 
 namespace report {

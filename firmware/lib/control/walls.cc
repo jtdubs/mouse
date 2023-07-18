@@ -2,8 +2,7 @@
 #include <util/atomic.h>
 
 #include "firmware/lib/utils/assert.hh"
-#include "firmware/platform/adc.hh"
-#include "firmware/platform/pin.hh"
+#include "firmware/platform/platform.hh"
 #include "sensor_cal_impl.hh"
 #include "walls_impl.hh"
 

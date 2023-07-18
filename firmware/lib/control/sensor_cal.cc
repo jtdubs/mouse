@@ -6,8 +6,7 @@
 #include "config.hh"
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/lib/utils/math.hh"
-#include "firmware/platform/adc.hh"
-#include "firmware/platform/pin.hh"
+#include "firmware/platform/platform.hh"
 #include "sensor_cal_impl.hh"
 
 namespace sensor_cal {

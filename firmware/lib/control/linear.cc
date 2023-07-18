@@ -6,8 +6,7 @@
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/lib/utils/math.hh"
 #include "firmware/lib/utils/pid.hh"
-#include "firmware/platform/adc.hh"
-#include "firmware/platform/pin.hh"
+#include "firmware/platform/platform.hh"
 #include "linear_impl.hh"
 #include "position.hh"
 #include "sensor_cal.hh"
@@ -77,7 +76,7 @@ void start(float position /* mm */, bool stop) {
 }
 
 bool tick() {
-  uint16_t forward = adc::read(adc::Channel::SensorForward);
+  auto forward = adc::read(adc::Channel::SensorForward);
 
   float speed_measured_left, speed_measured_right;
   speed::read(speed_measured_left, speed_measured_right);

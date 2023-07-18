@@ -5,7 +5,7 @@
 #include "config.hh"
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/lib/utils/math.hh"
-#include "firmware/platform/encoders.hh"
+#include "firmware/platform/platform.hh"
 #include "position_impl.hh"
 
 namespace position {
