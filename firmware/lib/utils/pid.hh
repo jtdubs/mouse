@@ -14,7 +14,7 @@
 namespace pid {
 
 // PID controller for a process variable.
-struct pid_t {
+struct PIDController {
   float min, max;    // bounds for pid output
   float kp, ki, kd;  // pid constants
   float i;           // integral
@@ -22,27 +22,27 @@ struct pid_t {
 };
 
 // PI controller for a process variable.
-struct pi_t {
+struct PIController {
   float min, max;  // bounds for pi output
   float kp, ki;    // pi constants
   float i;         // integral
 };
 
 // PD controller for a process variable.
-struct pd_t {
+struct PDController {
   float min, max;  // bounds for pd output
   float kp, kd;    // pd constants
   float last_pv;   // last process variable
 };
 
 // P controller for a process variable.
-struct p_t {
+struct PController {
   float min, max;  // bounds for pid output
   float kp;        // pid constants
 };
 
 // update determines the manipulated value, given a setpoint and process variable.
-inline float update(pid_t &pid, float sp /* setpoint */, float pv /* process variable */) {
+inline float update(PIDController &pid, float sp /* setpoint */, float pv /* process variable */) {
   float p = sp - pv;           // proportional term is the error
   float i = pid.i + p;         // integral term is the sum of all errors
   float d = pv - pid.last_pv;  // derivative term is the change in the process variable
@@ -67,13 +67,13 @@ inline float update(pid_t &pid, float sp /* setpoint */, float pv /* process var
 }
 
 // reset resets the pid controller.
-inline void reset(pid_t &pid) {
+inline void reset(PIDController &pid) {
   pid.i       = 0;
   pid.last_pv = 0;
 }
 
 // update determines the manipulated value, given a setpoint and process variable.
-inline float update(pi_t &pi, float sp /* setpoint */, float pv /* process variable */) {
+inline float update(PIController &pi, float sp /* setpoint */, float pv /* process variable */) {
   float p = sp - pv;   // proportional term is the error
   float i = pi.i + p;  // integral term is the sum of all errors
 
@@ -91,12 +91,12 @@ inline float update(pi_t &pi, float sp /* setpoint */, float pv /* process varia
 }
 
 // reset resets the pi controller.
-inline void reset(pi_t &pi) {
+inline void reset(PIController &pi) {
   pi.i = 0;
 }
 
 // update determines the manipulated value, given a setpoint and process variable.
-inline float update(pd_t &pd, float sp /* setpoint */, float pv /* process variable */) {
+inline float update(PDController &pd, float sp /* setpoint */, float pv /* process variable */) {
   float p = sp - pv;          // proportional term is the error
   float d = pv - pd.last_pv;  // derivative term is the change in the process variable
 
@@ -113,12 +113,12 @@ inline float update(pd_t &pd, float sp /* setpoint */, float pv /* process varia
 }
 
 // reset resets the pd controller.
-inline void reset(pd_t &pd) {
+inline void reset(PDController &pd) {
   pd.last_pv = 0;
 }
 
 // update determines the manipulated value, given a setpoint and process variable.
-inline float update(p_t &p, float sp /* setpoint */, float pv /* process variable */) {
+inline float update(PController &p, float sp /* setpoint */, float pv /* process variable */) {
   // out = kp * p
   float out = p.kp * (sp - pv);
 
@@ -126,6 +126,6 @@ inline float update(p_t &p, float sp /* setpoint */, float pv /* process variabl
 }
 
 // reset resets the p controller.
-inline void reset([[maybe_unused]] p_t &p) {}
+inline void reset([[maybe_unused]] PController &p) {}
 
 }  // namespace pid

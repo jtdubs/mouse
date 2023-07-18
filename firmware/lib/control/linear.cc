@@ -19,17 +19,17 @@ namespace {
 state_t state;
 
 #if defined(ALLOW_WALL_PID_TUNING)
-float      wall_alpha;
-pid::pid_t wall_error_pid;
+float              wall_alpha;
+pid::PIDController wall_error_pid;
 #else
-pid::pi_t wall_error_pid;
+pid::PIController wall_error_pid;
 #endif
 
 #if defined(ALLOW_ANGLE_PID_TUNING)
-float      start_theta;  // radians
-float      angle_alpha;  // radians
-float      angle_error;  // radians
-pid::pid_t angle_error_pid;
+float              start_theta;  // radians
+float              angle_alpha;  // radians
+float              angle_error;  // radians
+pid::PIDController angle_error_pid;
 #endif
 }  // namespace
 

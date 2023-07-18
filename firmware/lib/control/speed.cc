@@ -23,12 +23,12 @@ float setpoint_right;
 
 // PI controllers for the motors.
 #if defined(ALLOW_SPEED_PID_TUNING)
-pid::pid_t pid_left;
-pid::pid_t pid_right;
-float      alpha;
+pid::PIDController pid_left;
+pid::PIDController pid_right;
+float              alpha;
 #else
-pid::pi_t pid_left;
-pid::pi_t pid_right;
+pid::PIController pid_left;
+pid::PIController pid_right;
 #endif
 }  // namespace
 
