@@ -20,9 +20,9 @@ namespace {
 Orientation                             orientation;  // The current orientation of the mouse.
 float                                   cell_offset;  // The offset into the current cell.
 bool                                    stopped;      // Whether or not the mouse has stopped.
-dequeue::dequeue<maze::location_t, 256> path;         // The breadcrumb trail.
-dequeue::dequeue<maze::location_t, 256> next;         // The stack of unvisited cells.
-dequeue::dequeue<dequeue_update_t, 16>  updates;      // The queue of updates to send to the host.
+dequeue::Dequeue<maze::location_t, 256> path;         // The breadcrumb trail.
+dequeue::Dequeue<maze::location_t, 256> next;         // The stack of unvisited cells.
+dequeue::Dequeue<dequeue_update_t, 16>  updates;      // The queue of updates to send to the host.
 }  // namespace
 
 void explore() {

@@ -15,7 +15,7 @@
 namespace remote {
 
 namespace {
-dequeue::dequeue<plan::plan_t, 16> plans;
+dequeue::Dequeue<plan::plan_t, 16> plans;
 }
 
 // remote is a mode that allows the robot to be controlled remotely.

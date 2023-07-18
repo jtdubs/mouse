@@ -12,7 +12,7 @@ namespace maze {
 namespace {
 maze_t                          maze;
 uint8_t                         report_row;
-dequeue::dequeue<location_t, 6> updates;
+dequeue::Dequeue<location_t, 6> updates;
 }  // namespace
 
 void init() {

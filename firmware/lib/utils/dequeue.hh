@@ -15,7 +15,7 @@ enum class Event : uint8_t {
 };
 
 template <typename T, size_t CAPACITY>
-class dequeue {
+class Dequeue {
   typedef void (*callback_t)(Event, T);
 
  private:
@@ -25,7 +25,7 @@ class dequeue {
   callback_t callback;
 
  public:
-  dequeue();
+  Dequeue();
 
   void register_callback(callback_t c);
   void clear();
@@ -41,17 +41,17 @@ class dequeue {
 };
 
 template <typename T, size_t CAPACITY>
-dequeue<T, CAPACITY>::dequeue() : front(CAPACITY - 1), back(0) {}
+Dequeue<T, CAPACITY>::Dequeue() : front(CAPACITY - 1), back(0) {}
 
 template <typename T, size_t CAPACITY>
-void dequeue<T, CAPACITY>::register_callback(callback_t c) {
+void Dequeue<T, CAPACITY>::register_callback(callback_t c) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     callback = c;
   }
 }
 
 template <typename T, size_t CAPACITY>
-void dequeue<T, CAPACITY>::clear() {
+void Dequeue<T, CAPACITY>::clear() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     front = CAPACITY - 1;
     back  = 0;
@@ -59,7 +59,7 @@ void dequeue<T, CAPACITY>::clear() {
 }
 
 template <typename T, size_t CAPACITY>
-bool dequeue<T, CAPACITY>::empty() const {
+bool Dequeue<T, CAPACITY>::empty() const {
   bool result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     result = ((front + 1) == back) || (front == (CAPACITY - 1) && back == 0);
@@ -68,7 +68,7 @@ bool dequeue<T, CAPACITY>::empty() const {
 }
 
 template <typename T, size_t CAPACITY>
-bool dequeue<T, CAPACITY>::full() const {
+bool Dequeue<T, CAPACITY>::full() const {
   bool result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     result = back == front;
@@ -77,7 +77,7 @@ bool dequeue<T, CAPACITY>::full() const {
 }
 
 template <typename T, size_t CAPACITY>
-T dequeue<T, CAPACITY>::peek_front() const {
+T Dequeue<T, CAPACITY>::peek_front() const {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     assert(assert::DEQUEUE + 0, !empty());
@@ -91,7 +91,7 @@ T dequeue<T, CAPACITY>::peek_front() const {
 }
 
 template <typename T, size_t CAPACITY>
-T dequeue<T, CAPACITY>::peek_back() const {
+T Dequeue<T, CAPACITY>::peek_back() const {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     assert(assert::DEQUEUE + 1, !empty());
@@ -105,7 +105,7 @@ T dequeue<T, CAPACITY>::peek_back() const {
 }
 
 template <typename T, size_t CAPACITY>
-T dequeue<T, CAPACITY>::pop_front() {
+T Dequeue<T, CAPACITY>::pop_front() {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     assert(assert::DEQUEUE + 2, !empty());
@@ -123,7 +123,7 @@ T dequeue<T, CAPACITY>::pop_front() {
 }
 
 template <typename T, size_t CAPACITY>
-T dequeue<T, CAPACITY>::pop_back() {
+T Dequeue<T, CAPACITY>::pop_back() {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     assert(assert::DEQUEUE + 3, !empty());
@@ -141,7 +141,7 @@ T dequeue<T, CAPACITY>::pop_back() {
 }
 
 template <typename T, size_t CAPACITY>
-void dequeue<T, CAPACITY>::push_front(T val) {
+void Dequeue<T, CAPACITY>::push_front(T val) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     assert(assert::DEQUEUE + 4, !full());
     buffer[front] = val;
@@ -157,7 +157,7 @@ void dequeue<T, CAPACITY>::push_front(T val) {
 }
 
 template <typename T, size_t CAPACITY>
-void dequeue<T, CAPACITY>::push_back(T val) {
+void Dequeue<T, CAPACITY>::push_back(T val) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     assert(assert::DEQUEUE + 5, !full());
     buffer[back] = val;
