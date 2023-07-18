@@ -128,6 +128,7 @@ def _impl(ctx):
                                 "-Wall",
                                 "-Werror",
                                 "-Wextra",
+                                "-Wshadow",
                                 "-DF_CPU=" + ctx.attr.freq,
                                 "--param=min-pagesize=0",
                                 "-O2",
