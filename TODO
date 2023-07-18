@@ -1,3 +1,9 @@
+Bazel:
+- Auto-build cross-compile toolchain.
+
+Platform:
+- Nano every implementation
+
 Firmware:
 - Add a speed ramp for rotation?
 

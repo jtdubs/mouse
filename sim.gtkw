@@ -1,19 +1,21 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sun Jul  9 18:15:40 2023
+[*] Tue Jul 18 02:02:51 2023
 [*]
-[dumpfile] "/home/jtdubs/dev/mouse/sim/sim.fst"
-[dumpfile_mtime] "Sun Jul  9 18:12:48 2023"
-[dumpfile_size] 173700
-[savefile] "/home/jtdubs/dev/mouse/sim/sim.gtkw"
-[timestart] 3423490000
+[dumpfile] "/home/jtdubs/dev/mouse/sim.fst"
+[dumpfile_mtime] "Tue Jul 18 02:01:12 2023"
+[dumpfile_size] 290640
+[savefile] "/home/jtdubs/dev/mouse/sim.gtkw"
+[timestart] 1259500000
 [size] 3371 1913
 [pos] 70 0
-*-21.643951 3437989940 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-[sst_width] 273
-[signals_width] 513
+*-25.643951 3437989940 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 545
+[signals_width] 570
 [sst_expanded] 1
-[sst_vpaned_height] 573
+[sst_vpaned_height] 467
+@22
+logic.rtc::overflow_count[31:0]
 @200
 -Interrupts
 @28
@@ -41,16 +43,10 @@ logic.RIGHT_DIR
 logic.RIGHT_CLK_A
 logic.RIGHT_B
 @200
--ADC
--Report
-@22
-logic.report_type[7:0]
-@200
 -Probes
 @28
 logic.PROBE_TICK
 logic.PROBE_PLAN
-logic.PROBE_2
 @200
 -LEDs
 @28
@@ -60,53 +56,43 @@ logic.LED_RIGHT
 logic.IR_LEDS
 @200
 -Encoders
-@8022
-logic.encoders_left[31:0]
-@100022
-logic.encoders_left_delta[7:0]
-@8022
-logic.encoders_right[31:0]
-@100022
-logic.encoders_right_delta[7:0]
+@22
+logic.encoders::left[31:0]
+logic.encoders::left_delta[7:0]
+logic.encoders::right[31:0]
+logic.encoders::right_delta[7:0]
 @200
 -Motors
-@88022
-logic.motor_power_left[15:0]
-logic.motor_power_right[15:0]
+@22
+logic.motor::power_left[15:0]
+logic.motor::power_right[15:0]
 @200
 -Speed
-@48021
-logic.speed_measured_left[31:0]
-logic.speed_measured_right[31:0]
-logic.speed_setpoint_left[31:0]
-logic.speed_setpoint_right[31:0]
+@22
+logic.speed::measured_left[31:0]
+logic.speed::measured_right[31:0]
+logic.speed::setpoint_left[31:0]
+logic.speed::setpoint_right[31:0]
 @200
 -Position
-@c8020
-logic.position_distance[31:0]
-logic.position_theta[31:0]
-@200
--Linear
-@48020
-logic.linear_start_distance[31:0]
-logic.linear_target_distance[31:0]
-@c8020
-logic.linear_wall_error[31:0]
-@200
--Rotational
 @22
-logic.rotational_direction[7:0]
-@48020
-logic.rotational_start_theta[31:0]
-logic.rotational_target_theta[31:0]
+logic.position::distance[31:0]
+logic.position::theta[31:0]
 @200
 -Sensor Cal
 @22
-logic.sensor_sample_count[15:0]
-logic.sensor_sum_forward[31:0]
-logic.sensor_sum_left[31:0]
-logic.sensor_sum_right[31:0]
-logic.sensor_threshold_left[15:0]
-logic.sensor_threshold_right[15:0]
+logic.sensor_cal::leds_prev_state[7:0]
+logic.sensor_cal::sample_count[15:0]
+logic.sensor_cal::sum_forward[31:0]
+logic.sensor_cal::sum_left[31:0]
+logic.sensor_cal::sum_right[31:0]
+logic.sensor_cal::threshold_forward[15:0]
+logic.sensor_cal::threshold_right[15:0]
+@200
+-Explore
+@22
+logic.explore::cell_offset[31:0]
+logic.explore::orientation[7:0]
+logic.explore::stopped[7:0]
 [pattern_trace] 1
 [pattern_trace] 0
