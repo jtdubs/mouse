@@ -5,18 +5,18 @@
 namespace report {
 
 // report_type_t identifies the type of a given report.
-typedef enum : uint8_t {
-  PLATFORM,
-  CONTROL,
-  MAZE,
-  EXPLORE,
-} report_type_t;
+enum class Type : uint8_t {
+  Platform,
+  Control,
+  Maze,
+  Explore,
+};
 
 // report_header_t represents a mouse report header.
 #pragma pack(push, 1)
 typedef struct {
-  report_type_t type;
-  uint32_t      rtc_micros;
+  Type     type;
+  uint32_t rtc_micros;
 } report_header_t;
 #pragma pack(pop)
 

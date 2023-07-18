@@ -15,7 +15,7 @@ plan_t current_plan;
 
 // init initializes the plan module.
 void init() {
-  current_plan.type = TYPE_IDLE;
+  current_plan.type = Type::Idle;
   set_state(State::Scheduled);
 }
 
@@ -30,7 +30,7 @@ void submit(plan_t plan) {
 // wait waits for the current plan to be implemented.
 void wait() {
   pin::clear(pin::PROBE_PLAN);
-  volatile state_t *state = &current_plan.state;
+  volatile State *state = &current_plan.state;
   while (*state != State::Implemented) {}
   pin::set(pin::PROBE_PLAN);
 }
@@ -45,7 +45,7 @@ void submit_and_wait(plan_t plan) {
 // set_state sets the current plan state.
 void set_state(State state) {
   current_plan.state = state;
-  sim_watch_plan(state);
+  sim_watch_plan((uint8_t)state);
 }
 
 // current gets the current plan.

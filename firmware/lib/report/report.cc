@@ -33,13 +33,13 @@ void send() {
   uint8_t len              = 0;
   report.header.rtc_micros = rtc::micros();
   if ((len = explore::report(report.data, sizeof(report.data))) > 0) {
-    report.header.type = EXPLORE;
+    report.header.type = Type::Explore;
   } else if ((len = maze::report(report.data, sizeof(report.data))) > 0) {
-    report.header.type = MAZE;
+    report.header.type = Type::Maze;
   } else if ((len = control::report(report.data, sizeof(report.data))) > 0) {
-    report.header.type = CONTROL;
+    report.header.type = Type::Control;
   } else if ((len = platform::report(report.data, sizeof(report.data))) > 0) {
-    report.header.type = PLATFORM;
+    report.header.type = Type::Platform;
   }
 
   if (len == 0) {

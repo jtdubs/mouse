@@ -11,7 +11,7 @@ namespace plan {
 void init();
 
 // set_state sets the current plan state.
-void set_state(state_t state);
+void set_state(State state);
 
 // current gets the current plan.
 plan_t current();

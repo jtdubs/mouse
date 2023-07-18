@@ -35,7 +35,7 @@ void tick() {
   plan::plan_t plan = plan::current();
 
   switch (plan.type) {
-    case plan::TYPE_IDLE:
+    case plan::Type::Idle:
       if (plan.state == plan::State::Scheduled) {
         plan::set_state(plan::State::Underway);
         motor::set(0, 0);
@@ -46,7 +46,7 @@ void tick() {
         plan::set_state(plan::State::Implemented);
       }
       break;
-    case plan::TYPE_LEDS:
+    case plan::Type::LEDs:
       if (plan.state == plan::State::Scheduled) {
         plan::set_state(plan::State::Underway);
         pin::set2(pin::LED_LEFT, plan.data.leds.left);
@@ -55,28 +55,28 @@ void tick() {
         plan::set_state(plan::State::Implemented);
       }
       break;
-    case plan::TYPE_IR:
+    case plan::Type::IR:
       if (plan.state == plan::State::Scheduled) {
         plan::set_state(plan::State::Underway);
         pin::set2(pin::IR_LEDS, plan.data.ir.on);
         plan::set_state(plan::State::Implemented);
       }
       break;
-    case plan::TYPE_FIXED_POWER:
+    case plan::Type::FixedPower:
       if (plan.state == plan::State::Scheduled) {
         plan::set_state(plan::State::Underway);
         motor::set(plan.data.power.left, plan.data.power.right);
         plan::set_state(plan::State::Implemented);
       }
       break;
-    case plan::TYPE_FIXED_SPEED:
+    case plan::Type::FixedSpeed:
       if (plan.state == plan::State::Scheduled) {
         plan::set_state(plan::State::Underway);
         speed::set(plan.data.speed.left, plan.data.speed.right);
         plan::set_state(plan::State::Implemented);
       }
       break;
-    case plan::TYPE_LINEAR_MOTION:
+    case plan::Type::LinearMotion:
       switch (plan.state) {
         case plan::State::Scheduled:
           linear::start(plan.data.linear.position, plan.data.linear.stop);
@@ -91,7 +91,7 @@ void tick() {
           break;
       }
       break;
-    case plan::TYPE_ROTATIONAL_MOTION:
+    case plan::Type::RotationalMotion:
       switch (plan.state) {
         case plan::State::Scheduled:
           rotational::start(plan.data.rotational.d_theta);
@@ -106,7 +106,7 @@ void tick() {
           break;
       }
       break;
-    case plan::TYPE_SENSOR_CAL:
+    case plan::Type::SensorCal:
       switch (plan.state) {
         case plan::State::Scheduled:
           sensor_cal::start();
@@ -135,9 +135,9 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   assert(assert::CONTROL + 1, buffer != NULL);
   assert(assert::CONTROL + 2, len >= sizeof(report_t));
 
-  static plan::state_t previous_plan_state = plan::State::Scheduled;
-  static plan::type_t  previous_plan_type  = plan::TYPE_IDLE;
-  static uint8_t       counter             = 0;
+  static plan::State previous_plan_state = plan::State::Scheduled;
+  static plan::Type  previous_plan_type  = plan::Type::Idle;
+  static uint8_t     counter             = 0;
 
   plan::plan_t plan = plan::current();
 
@@ -162,15 +162,15 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
   speed::read_setpoints(report->speed.setpoint_left, report->speed.setpoint_right);
   position::read(report->position.distance, report->position.theta);
   switch (report->plan.type) {
-    case plan::TYPE_SENSOR_CAL:
+    case plan::Type::SensorCal:
       sensor_cal::read(report->plan_data.sensor_cal.left,   //
                        report->plan_data.sensor_cal.right,  //
                        report->plan_data.sensor_cal.forward);
       break;
-    case plan::TYPE_ROTATIONAL_MOTION:
+    case plan::Type::RotationalMotion:
       rotational::read(report->plan_data.rotation);
       break;
-    case plan::TYPE_LINEAR_MOTION:
+    case plan::Type::LinearMotion:
       linear::read(report->plan_data.linear);
       break;
     default:

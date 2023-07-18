@@ -77,7 +77,7 @@ void start(float position /* mm */, bool stop) {
 }
 
 bool tick() {
-  uint16_t forward = adc::read(adc::SENSOR_FORWARD);
+  uint16_t forward = adc::read(adc::Channel::SensorForward);
 
   float speed_measured_left, speed_measured_right;
   speed::read(speed_measured_left, speed_measured_right);

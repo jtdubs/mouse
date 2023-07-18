@@ -5,12 +5,13 @@
 namespace adc {
 
 // next_channel defines the sequence in which channels are read.
-constexpr channel_t NEXT_CHANNEL[CHANNEL_COUNT] = {
-    SENSOR_FORWARD, SENSOR_LEFT, SELECTOR, SENSOR_RIGHT, SENSOR_RIGHT, SENSOR_RIGHT, BATTERY_VOLTAGE, SENSOR_RIGHT,
+constexpr Channel NEXT_CHANNEL[8] = {
+    Channel::SensorForward, Channel::SensorLeft,  Channel::Selector,       Channel::SensorRight,
+    Channel::SensorRight,   Channel::SensorRight, Channel::BatteryVoltage, Channel::SensorRight,
 };
 
 // first_channel is the first channel to be read.
-constexpr channel_t FIRST_CHANNEL = SENSOR_RIGHT;
+constexpr Channel FIRST_CHANNEL = Channel::SensorRight;
 
 void init();
 

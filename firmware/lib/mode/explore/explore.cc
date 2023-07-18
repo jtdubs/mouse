@@ -18,7 +18,7 @@
 namespace explore {
 
 namespace {
-orientation_t                           orientation;  // The current orientation of the mouse.
+Orientation                             orientation;  // The current orientation of the mouse.
 float                                   cell_offset;  // The offset into the current cell.
 bool                                    stopped;      // Whether or not the mouse has stopped.
 dequeue::dequeue<maze::location_t, 256> path;         // The breadcrumb trail.
@@ -27,25 +27,27 @@ dequeue::dequeue<dequeue_update_t, 16>  updates;      // The queue of updates to
 }  // namespace
 
 void explore() {
-  path.register_callback([](dequeue::event_type_t event, maze::location_t value) {
+  path.register_callback([](dequeue::Event event, maze::location_t value) {
     if (!updates.full()) {
-      updates.push_back((dequeue_update_t){.dequeue_id = DEQUEUE_PATH, .event = event, .value = value});
+      updates.push_back((dequeue_update_t){.dequeue_id = DequeueID::Path, .event = event, .value = value});
     }
   });
-  next.register_callback([](dequeue::event_type_t event, maze::location_t value) {
+  next.register_callback([](dequeue::Event event, maze::location_t value) {
     if (!updates.full()) {
-      updates.push_back((dequeue_update_t){.dequeue_id = DEQUEUE_NEXT, .event = event, .value = value});
+      updates.push_back((dequeue_update_t){.dequeue_id = DequeueID::Next, .event = event, .value = value});
     }
   });
 
   // Idle the mouse and turn on the IR LEDs.
-  plan::submit_and_wait((plan::plan_t){.type = plan::TYPE_IDLE, .state = plan::STATE_SCHEDULED, .data = {.idle = {}}});
-  plan::submit_and_wait((plan::plan_t){.type = plan::TYPE_IR, .state = plan::STATE_SCHEDULED, .data = {.ir = {true}}});
+  plan::submit_and_wait(
+      (plan::plan_t){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  plan::submit_and_wait(
+      (plan::plan_t){.type = plan::Type::IR, .state = plan::State::Scheduled, .data = {.ir = {true}}});
 
   // Assumption:
   // We start centered along the back wall of the starting square, with our back touching the wall.
   // Therefore our "position", measured by the center of the axle is AXLE_OFFSET from the wall.
-  orientation = NORTH;
+  orientation = Orientation::North;
   cell_offset = AXLE_OFFSET;
   stopped     = true;
 
@@ -70,10 +72,10 @@ void explore() {
     maze::location_t prev_loc;
 
     // Determine which direction to drive to reach the cell (if it is adjancent).
-    orientation_t next_orientation = adjacent(curr_loc, next_loc);
+    Orientation next_orientation = adjacent(curr_loc, next_loc);
 
     // If we are adjacent to the next cell
-    if (next_orientation != INVALID) {
+    if (next_orientation != Orientation::Invalid) {
       next.pop_back();          // Remove the cell from the "next" stack.
       face(next_orientation);   // Turn to face the cell.
       advance(next_loc, true);  // Advance into it, updating the breadcrumb trail.
@@ -100,10 +102,11 @@ void explore() {
 
   // Stop in the middle of the last square, facing north.
   stop();
-  face(NORTH);
+  face(Orientation::North);
 
   // Ensure the control system is idling (no motor activity).
-  plan::submit_and_wait((plan::plan_t){.type = plan::TYPE_IDLE, .state = plan::STATE_SCHEDULED, .data = {.idle = {}}});
+  plan::submit_and_wait(
+      (plan::plan_t){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
 
   // Deregister dequeue callbacks.
   path.register_callback(NULL);
@@ -132,7 +135,7 @@ uint8_t report(uint8_t *buffer, uint8_t len) {
 }
 
 // adjacent determines the orientation needed to drive between two adjacent cells.
-orientation_t adjacent(maze::location_t a, maze::location_t b) {
+Orientation adjacent(maze::location_t a, maze::location_t b) {
   uint8_t ax = maze::x(a);
   uint8_t ay = maze::y(a);
   uint8_t bx = maze::x(b);
@@ -141,43 +144,43 @@ orientation_t adjacent(maze::location_t a, maze::location_t b) {
   if (ax == bx) {
     if (ay + 1 == by) {
       if (maze::read(a).wall_north) {
-        return INVALID;
+        return Orientation::Invalid;
       } else {
-        return NORTH;
+        return Orientation::North;
       }
     } else if (ay - 1 == by) {
       if (maze::read(a).wall_south) {
-        return INVALID;
+        return Orientation::Invalid;
       } else {
-        return SOUTH;
+        return Orientation::South;
       }
     } else {
-      return INVALID;
+      return Orientation::Invalid;
     }
   } else if (ay == by) {
     if (ax + 1 == bx) {
       if (maze::read(a).wall_east) {
-        return INVALID;
+        return Orientation::Invalid;
       } else {
-        return EAST;
+        return Orientation::East;
       }
     } else if (ax - 1 == bx) {
       if (maze::read(a).wall_west) {
-        return INVALID;
+        return Orientation::Invalid;
       } else {
-        return WEST;
+        return Orientation::West;
       }
     } else {
-      return INVALID;
+      return Orientation::Invalid;
     }
   } else {
-    return INVALID;
+    return Orientation::Invalid;
   }
 }
 
 // face positions the mouse in the middle of the current cell, facing the given orientation.
-void face(orientation_t new_orientation) {
-  assert(assert::EXPLORE + 2, new_orientation != INVALID);
+void face(Orientation new_orientation) {
+  assert(assert::EXPLORE + 2, new_orientation != Orientation::Invalid);
 
   if (new_orientation == orientation) {
     return;
@@ -188,7 +191,7 @@ void face(orientation_t new_orientation) {
 
   // determine the delta between the current orientation and the desired orientation
   // Note: The (+4) and (&3) is to ensure the result is in [0,3] without using an expensive % operator.
-  uint8_t delta  = (new_orientation + 4) - orientation;
+  uint8_t delta  = (((uint8_t)new_orientation) + 4) - ((uint8_t)orientation);
   delta         &= 3;
 
   switch (delta) {
@@ -196,24 +199,24 @@ void face(orientation_t new_orientation) {
       break;
     case 1:
       plan::submit_and_wait(  //
-          (plan::plan_t){.type  = plan::TYPE_ROTATIONAL_MOTION,
-                         .state = plan::STATE_SCHEDULED,
+          (plan::plan_t){.type  = plan::Type::RotationalMotion,
+                         .state = plan::State::Scheduled,
                          .data  = {.rotational = {
                                        .d_theta = -M_PI_2,
                                   }}});
       break;
     case 2:
       plan::submit_and_wait(  //
-          (plan::plan_t){.type  = plan::TYPE_ROTATIONAL_MOTION,
-                         .state = plan::STATE_SCHEDULED,
+          (plan::plan_t){.type  = plan::Type::RotationalMotion,
+                         .state = plan::State::Scheduled,
                          .data  = {.rotational = {
                                        .d_theta = M_PI,
                                   }}});
       break;
     case 3:
       plan::submit_and_wait(  //
-          (plan::plan_t){.type  = plan::TYPE_ROTATIONAL_MOTION,
-                         .state = plan::STATE_SCHEDULED,
+          (plan::plan_t){.type  = plan::Type::RotationalMotion,
+                         .state = plan::State::Scheduled,
                          .data  = {.rotational = {
                                        .d_theta = M_PI_2,
                                   }}});
@@ -235,8 +238,8 @@ void advance(maze::location_t loc, bool update_path) {
   update_location();
 
   plan::submit_and_wait(  //
-      (plan::plan_t){.type  = plan::TYPE_LINEAR_MOTION,
-                     .state = plan::STATE_SCHEDULED,
+      (plan::plan_t){.type  = plan::Type::LinearMotion,
+                     .state = plan::State::Scheduled,
                      .data  = {.linear = {
                                    .position = CELL_SIZE - (cell_offset - ENTRY_OFFSET),
                                    .stop     = false,
@@ -261,8 +264,8 @@ void stop() {
 
   // stop at the center of the cell
   plan::submit_and_wait(                                 //
-      (plan::plan_t){.type  = plan::TYPE_LINEAR_MOTION,  //
-                     .state = plan::STATE_SCHEDULED,     //
+      (plan::plan_t){.type  = plan::Type::LinearMotion,  //
+                     .state = plan::State::Scheduled,    //
                      .data  = {.linear = {
                                    .position = CELL_SIZE_2 - cell_offset,
                                    .stop     = true  //
@@ -292,7 +295,7 @@ void queue_unvisited(maze::location_t loc) {
 
 // classify updates the state of a cell, and adds unvisited neighbors to the "next" stack.
 void classify(maze::location_t loc) {
-  assert(assert::EXPLORE + 4, orientation != INVALID);
+  assert(assert::EXPLORE + 4, orientation != Orientation::Invalid);
 
   bool wall_forward, wall_left, wall_right;
   walls::present(wall_left, wall_right, wall_forward);
@@ -308,7 +311,7 @@ void classify(maze::location_t loc) {
       .distance   = 0xFF,
   };
   switch (orientation) {
-    case NORTH:
+    case Orientation::North:
       if (wall_right) {
         cell.wall_east = wall_right;
       } else {
@@ -325,7 +328,7 @@ void classify(maze::location_t loc) {
         queue_unvisited(loc + maze::location(0, 1));
       }
       break;
-    case EAST:
+    case Orientation::East:
       if (wall_right) {
         cell.wall_south = wall_right;
       } else {
@@ -342,7 +345,7 @@ void classify(maze::location_t loc) {
         queue_unvisited(loc + maze::location(1, 0));
       }
       break;
-    case SOUTH:
+    case Orientation::South:
       if (wall_right) {
         cell.wall_west = wall_right;
       } else {
@@ -359,7 +362,7 @@ void classify(maze::location_t loc) {
         queue_unvisited(loc - maze::location(0, 1));
       }
       break;
-    case WEST:
+    case Orientation::West:
       if (wall_right) {
         cell.wall_north = wall_right;
       } else {
@@ -376,7 +379,7 @@ void classify(maze::location_t loc) {
         queue_unvisited(loc - maze::location(1, 0));
       }
       break;
-    case INVALID:
+    case Orientation::Invalid:
       break;
   }
 
@@ -508,7 +511,8 @@ void solve() {
   stop();
 
   // Ensure the control system is idling (no motor activity).
-  plan::submit_and_wait((plan::plan_t){.type = plan::TYPE_IDLE, .state = plan::STATE_SCHEDULED, .data = {.idle = {}}});
+  plan::submit_and_wait(
+      (plan::plan_t){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
 }
 
 }  // namespace explore

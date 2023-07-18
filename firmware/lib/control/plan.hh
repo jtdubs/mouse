@@ -25,28 +25,28 @@ enum class State : uint8_t {
   Implemented,
 };
 
-typedef enum : uint8_t {
+enum class Type : uint8_t {
   // Plan is "implemented" as soon as the board is put into an idle state.
-  TYPE_IDLE,
+  Idle,
   // Plan is "implemented" once the led states are set.
-  TYPE_LEDS,
+  LEDs,
   // Plan is "implemented" once the IR led states are set.
-  TYPE_IR,
+  IR,
   // Plan is "implemented" as soon as the fixed power mode is set.
-  TYPE_FIXED_POWER,
+  FixedPower,
   // Plan is "implemented" as soon as the fixed speed mode is set.
-  TYPE_FIXED_SPEED,
+  FixedSpeed,
   // Plan is "implemented" once the linear motion has been completed.
-  TYPE_LINEAR_MOTION,
+  LinearMotion,
   // Plan is "implemented" once the rotational motion has been completed.
-  TYPE_ROTATIONAL_MOTION,
+  RotationalMotion,
   // Plan is "implemented" once the calibration is complete.
-  TYPE_SENSOR_CAL,
-} type_t;
+  SensorCal,
+};
 
 typedef struct {
-  type_t type;
-  State  state;
+  Type  type;
+  State state;
   union {
     // TYPE_IDLE
     struct {

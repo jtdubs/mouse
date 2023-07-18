@@ -7,16 +7,16 @@
 
 namespace dequeue {
 
-typedef enum : uint8_t {
-  EVENT_PUSH_FRONT,
-  EVENT_POP_FRONT,
-  EVENT_PUSH_BACK,
-  EVENT_POP_BACK,
-} event_type_t;
+enum class Event : uint8_t {
+  PushFront,
+  PopFront,
+  PushBack,
+  PopBack,
+};
 
 template <typename T, size_t CAPACITY>
 class dequeue {
-  typedef void (*callback_t)(event_type_t, T);
+  typedef void (*callback_t)(Event, T);
 
  private:
   T          buffer[CAPACITY];
@@ -117,7 +117,7 @@ T dequeue<T, CAPACITY>::pop_front() {
     result = buffer[front];
   }
   if (callback) {
-    callback(EVENT_POP_FRONT, result);
+    callback(Event::PopFront, result);
   }
   return result;
 }
@@ -135,7 +135,7 @@ T dequeue<T, CAPACITY>::pop_back() {
     result = buffer[back];
   }
   if (callback) {
-    callback(EVENT_POP_BACK, result);
+    callback(Event::PopBack, result);
   }
   return result;
 }
@@ -152,7 +152,7 @@ void dequeue<T, CAPACITY>::push_front(T val) {
     }
   }
   if (callback) {
-    callback(EVENT_PUSH_FRONT, val);
+    callback(Event::PushFront, val);
   }
 }
 
@@ -168,7 +168,7 @@ void dequeue<T, CAPACITY>::push_back(T val) {
     }
   }
   if (callback) {
-    callback(EVENT_PUSH_BACK, val);
+    callback(Event::PushBack, val);
   }
 }
 

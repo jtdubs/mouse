@@ -23,27 +23,27 @@
 namespace remote::command {
 
 // type_t identifies the type of a given command.
-typedef enum : uint8_t {
-  RESET,
-  EXPLORE,
-  SOLVE,
-  SEND_MAZE,
-  TUNE_PID,
-  PLAN_ENQUEUE,
-  PLAN_EXECUTE,
-} type_t;
+enum class Type : uint8_t {
+  Reset,
+  Explore,
+  Solve,
+  SendMaze,
+  TunePID,
+  PlanEnqueue,
+  PlanExecute,
+};
 
 // pid_id_t identifies the PID to tune.
-typedef enum : uint8_t {
-  PID_SPEED,
-  PID_WALL,
-  PID_ANGLE,
-} pid_id_t;
+enum class PidID : uint8_t {
+  Speed,
+  Wall,
+  Angle,
+};
 
 #pragma pack(push, 1)
 // command_t represents a command that can be processed by the mouse.
 typedef struct {
-  type_t type;
+  Type type;
   union {
     struct {
       bool left;
@@ -52,11 +52,11 @@ typedef struct {
       bool ir;
     } leds;
     struct {
-      pid_id_t id;
-      float    kp;
-      float    ki;
-      float    kd;
-      float    alpha;
+      PidID id;
+      float kp;
+      float ki;
+      float kd;
+      float alpha;
     } pid;
     plan::plan_t plan;
   } data;

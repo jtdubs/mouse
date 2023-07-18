@@ -22,7 +22,8 @@ dequeue::dequeue<plan::plan_t, 16> plans;
 // remote is a mode that allows the robot to be controlled remotely.
 void remote() {
   command::init();
-  plan::submit_and_wait((plan::plan_t){.type = plan::TYPE_IDLE, .state = plan::STATE_SCHEDULED, .data = {.idle = {}}});
+  plan::submit_and_wait(
+      (plan::plan_t){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
 
   for (;;) {
     // wait until there's a command to process.
@@ -30,35 +31,35 @@ void remote() {
     while (!command::next(command)) {}
 
     switch (command.type) {
-      case command::RESET:
+      case command::Type::Reset:
         // Just turn off interrupts and wait for the watchdog to reset us.
         cli();
         _delay_ms(60000.0);
         break;
-      case command::EXPLORE:
+      case command::Type::Explore:
         explore::explore();
         break;
-      case command::SOLVE:
+      case command::Type::Solve:
         explore::solve();
         break;
-      case command::SEND_MAZE:
+      case command::Type::SendMaze:
         maze::send();
         break;
-      case command::TUNE_PID:
+      case command::Type::TunePID:
         switch (command.data.pid.id) {
-          case command::PID_SPEED:
+          case command::PidID::Speed:
             speed::tune(command.data.pid.kp,  //
                         command.data.pid.ki,  //
                         command.data.pid.kd,  //
                         command.data.pid.alpha);
             break;
-          case command::PID_WALL:
+          case command::PidID::Wall:
             linear::wall_tune(command.data.pid.kp,  //
                               command.data.pid.ki,  //
                               command.data.pid.kd,  //
                               command.data.pid.alpha);
             break;
-          case command::PID_ANGLE:
+          case command::PidID::Angle:
             linear::angle_tune(command.data.pid.kp,  //
                                command.data.pid.ki,  //
                                command.data.pid.kd,  //
@@ -66,10 +67,10 @@ void remote() {
             break;
         }
         break;
-      case command::PLAN_ENQUEUE:
+      case command::Type::PlanEnqueue:
         plans.push_back(command.data.plan);
         break;
-      case command::PLAN_EXECUTE:
+      case command::Type::PlanExecute:
         while (!plans.empty()) {
           plan::submit_and_wait(plans.pop_front());
         }
