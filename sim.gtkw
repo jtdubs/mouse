@@ -1,20 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Tue Jul 18 02:02:51 2023
+[*] Wed Jul 19 20:59:27 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/sim.fst"
-[dumpfile_mtime] "Tue Jul 18 02:01:12 2023"
-[dumpfile_size] 290640
+[dumpfile_mtime] "Wed Jul 19 20:57:23 2023"
+[dumpfile_size] 254750
 [savefile] "/home/jtdubs/dev/mouse/sim.gtkw"
-[timestart] 1259500000
+[timestart] 0
 [size] 3371 1913
 [pos] 70 0
-*-25.643951 3437989940 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-29.643951 2430200870 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 545
 [signals_width] 570
 [sst_expanded] 1
-[sst_vpaned_height] 467
-@22
+[sst_vpaned_height] 422
+@8023
 logic.rtc::overflow_count[31:0]
 @200
 -Interrupts
@@ -28,54 +28,38 @@ logic.ADC
 logic.RTC
 @200
 -Left Motor
-@88022
-logic.LEFT_PWM[7:0]
 @28
-logic.LEFT_DIR
 logic.LEFT_CLK_A
 logic.LEFT_B
 @200
 -Right Motor
-@8022
-logic.RIGHT_PWM[7:0]
 @28
-logic.RIGHT_DIR
 logic.RIGHT_CLK_A
 logic.RIGHT_B
 @200
 -Probes
-@28
-logic.PROBE_TICK
-logic.PROBE_PLAN
-@200
 -LEDs
-@28
-logic.LED_LEFT
-logic.LED_ONBOARD
-logic.LED_RIGHT
-logic.IR_LEDS
-@200
 -Encoders
-@22
+@8420
 logic.encoders::left[31:0]
 logic.encoders::left_delta[7:0]
 logic.encoders::right[31:0]
 logic.encoders::right_delta[7:0]
 @200
 -Motors
-@22
+@8420
 logic.motor::power_left[15:0]
 logic.motor::power_right[15:0]
 @200
 -Speed
-@22
+@48020
 logic.speed::measured_left[31:0]
 logic.speed::measured_right[31:0]
 logic.speed::setpoint_left[31:0]
 logic.speed::setpoint_right[31:0]
 @200
 -Position
-@22
+@48020
 logic.position::distance[31:0]
 logic.position::theta[31:0]
 @200
