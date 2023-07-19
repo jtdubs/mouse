@@ -31,6 +31,9 @@ void Start(float dtheta /* radians */) {
 }
 
 bool Tick() {
+  float speed_measured_left, speed_measured_right;
+  speed::Read(speed_measured_left, speed_measured_right);
+
   float speed_setpoint_left, speed_setpoint_right;
   speed::ReadSetpoints(speed_setpoint_left, speed_setpoint_right);
 
@@ -45,10 +48,13 @@ bool Tick() {
   float dtheta = s.target_theta - position_theta;
   s.direction  = dtheta > 0;
 
-  // If we are there, then we are done.
+  // If we are in the right range...
   if (fabsf(dtheta) <= (kCountTheta * 18.0)) {
+    // Stop the motors.
     speed::Set(0, 0);
-    return true;
+    // We are done when the measured speed < 0.1mm/s
+    return (fabsf(RPMToSpeed(speed_measured_left)) < 0.1) &&  //
+           (fabsf(RPMToSpeed(speed_measured_right)) < 0.1);
   }
 
   float current_setpoint = RPMToSpeed(fabsf(speed_setpoint_left));  // mm/s
