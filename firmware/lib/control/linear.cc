@@ -98,7 +98,13 @@ bool Tick() {
     float rpm = SpeedToRPM(s.target_speed);
     pin::Set(pin::kIRLEDs, s.leds_prev_state);
     speed::Set(rpm, rpm);
-    return true;
+    if (s.target_speed == 0.0f) {
+      // We are done when the measured speed < 0.1mm/s
+      return (RPMToSpeed(speed_measured_left) < 0.1) &&  //
+             (RPMToSpeed(speed_measured_right) < 0.1);
+    } else {
+      return true;
+    }
   }
 
   float current_speed    = RPMToSpeed((speed_measured_left + speed_measured_right) / 2.0f);  // mm/s
