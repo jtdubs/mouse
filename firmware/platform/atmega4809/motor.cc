@@ -16,6 +16,7 @@ int16_t power_right;
 
 // Init initializes the motors.
 void Init() {
+  // TODO(justindubs): 4809 impl
   TCCR1A = _BV(COM1A1)   // Clear OC1A when up-counting, set when down-counting
          | _BV(COM1B1);  // Clear OCBA when up-counting, set when down-counting
   TCCR1B = _BV(WGM13)    // Phase and frequency correct PWM
@@ -44,6 +45,7 @@ void Set(int16_t left, int16_t right) {
     pin::Set(pin::kRightDir, right >= 0);
 
     // set the PWM duty cycle for each motor
+    // TODO(justindubs): 4809 impl
     OCR1A = math::abs16(left);
     OCR1B = math::abs16(right);
   }

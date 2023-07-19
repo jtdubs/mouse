@@ -6,7 +6,9 @@
 namespace usart0 {
 
 // Init initializes USART0.
-void Init() {
+void Init(
+  // TODO(justindubs): 4809 impl
+ {
 #if defined(DEBUG)
   // avrsim doesn't recognize support double speed mode.
   uint16_t baud = (F_CPU / 16 / 115200) - 1;  // 115.2k

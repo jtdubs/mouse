@@ -54,14 +54,13 @@ void ReadSensors(uint16_t& left, uint16_t& right, uint16_t& forward) {
 
 ISR(ADC0_RESRDY_vect, ISR_BLOCK) {
   // Check which channel was just read, and which channel should be read next.
-  size_t  index = ADC0_MUXPOS;
-  Channel next  = kNextChannel[index];
+  size_t index = ADC0_MUXPOS;
 
   // Store the ADC result.
   values[index] = ADC0_RES;
 
   // Select the next ADC channel
-  ADC0_MUXPOS = next;
+  ADC0_MUXPOS = kNextChannel[index];
 
   // Start the next conversion, unless we are at the end of the sampling round.
   if (next != kFirstChannel) {

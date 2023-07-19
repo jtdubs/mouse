@@ -20,6 +20,7 @@ uint8_t         read_checksum;
 
 // DisableReceiver disables the USART0 receiver.
 void DisableReceiver() {
+  // TODO(justindubs): 4809 impl
   UCSR0B &= ~_BV(RXEN0);
 }
 
@@ -27,6 +28,7 @@ void DisableReceiver() {
 void EnableReceiver() {
   assert(assert::USART0_READ + 0, read_callback != NULL);
 
+  // TODO(justindubs): 4809 impl
   UCSR0B |= _BV(RXEN0);
 }
 
@@ -40,6 +42,7 @@ void SetReadCallback(read_callback_t callback) {
 }
 
 // The USART0 Receive Complete Interrupt.
+// TODO(justindubs): 4809 impl
 ISR(USART_RX_vect, ISR_BLOCK) {
   uint8_t value = UDR0;
 

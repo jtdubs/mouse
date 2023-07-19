@@ -38,12 +38,14 @@ void Write(uint8_t *buffer, uint8_t length) {
   }
 
   // Initiate the write by enabling the Data Register Empty Interrupt.
+  // TODO(justindubs): 4809 impl
   UCSR0B |= 1 << UDRIE0;
 }
 
 uint8_t byte;
 
 // The USART0 Data Register Empty Interrupt.
+// TODO(justindubs): 4809 impl
 ISR(USART_UDRE_vect, ISR_BLOCK) {
   switch (write_state) {
     case WriteState::Start:

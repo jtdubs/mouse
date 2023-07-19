@@ -28,6 +28,7 @@ void AddCallback(callback_t callback) {
 
 // Init initializes timer.
 void Init() {
+  // TODO(justindubs): 4809 impl
   TCCR0A = _BV(WGM01);                      // Clear timer on OCRA match
   TCCR0B = _BV(CS02) | _BV(CS00);           // Use clk/1024 prescaler (15.625kHz)
   OCR0A  = (F_CPU / 1024 / (200 + 1)) + 1;  // 200Hz = 5ms
@@ -41,6 +42,7 @@ void Init() {
 }
 
 ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
+  // TODO(justindubs): 4809 impl
   wdt_reset();
   NONATOMIC_BLOCK(NONATOMIC_RESTORESTATE) {
     for (uint8_t i = 0; i < callback_count; i++) {
@@ -50,6 +52,7 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
 }
 
 ISR(TIMER0_COMPB_vect, ISR_BLOCK) {
+  // TODO(justindubs): 4809 impl
   adc::Sample();
 }
 

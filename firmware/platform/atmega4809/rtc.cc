@@ -12,6 +12,7 @@ uint32_t overflow_count;
 
 // Init initializes the real-time clock.
 void Init() {
+  // TODO(justindubs): 4809 impl
   TCCR2A = 0;                      // Normal port operation
   TCCR2B = _BV(CS21) | _BV(CS20);  // use clk/32 prescaler (500kHz)
   TIMSK2 = _BV(TOIE2);             // enable overflow interrupt
@@ -27,6 +28,7 @@ uint32_t Micros() {
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     uint8_t low = TCNT2;
+    // TODO(justindubs): 4809 impl
     if (TIFR2 & _BV(TOV2)) {
       // overflow flag is set, but the interrupt hasn't run, so deal with it manually.
       overflow_count++;
@@ -40,6 +42,7 @@ uint32_t Micros() {
   return result;
 }
 
+// TODO(justindubs): 4809 impl
 ISR(TIMER2_OVF_vect, ISR_BLOCK) {
   overflow_count++;
 }
