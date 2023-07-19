@@ -4,13 +4,6 @@ Platform:
 Bazel:
 - Auto-build cross-compile toolchain.
 
-Rotation:
-- Add a speed ramp for rotation?
-- Double-check rotation accuracy.
-
-Centering:
-- Seems to be wobbily after a turn in particular, maybe it's not centered after?
-
 Sim and Remote:
 - Both probably need a re-write.
 
