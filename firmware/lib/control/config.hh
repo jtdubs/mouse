@@ -42,7 +42,7 @@ constexpr float kRightMotorM = 2.695;  // RPM/power
 constexpr float kRightMotorB = -57.7;  // RPM
 
 // Software parameters
-constexpr float kControlPeriod = 0.005;  // s
+constexpr float kControlPeriod = 0.010;  // s
 
 // Delicious fudge
 constexpr float kWheelBias = 0.000;  // dimensionless
@@ -61,6 +61,7 @@ constexpr float kMaxSpeed      = 1000;             // mm/s
 constexpr float kAccel1G       = 9810;             // mm/s^2
 constexpr float kAccelDefault  = 0.15 * kAccel1G;  // mm/s^2
 constexpr float kSpeedCruise   = 500;              // mm/s
+constexpr float kSpeedRotation = 200;              // mm/s
 
 // Pre-tuned PIDs
 // #define ALLOW_SPEED_PID_TUNING
