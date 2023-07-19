@@ -3,15 +3,15 @@
 
 #include "config.hh"
 #include "firmware/lib/utils/math.hh"
-#include "position.hh"
+#include "position_impl.hh"
 #include "rotational_impl.hh"
-#include "speed.hh"
+#include "speed_impl.hh"
 
 namespace rotational {
 
 namespace {
 State state;
-}
+}  // namespace
 
 void Init() {}
 
@@ -31,29 +31,66 @@ void Start(float dtheta /* radians */) {
 }
 
 bool Tick() {
-  float distance, theta;
-  position::Read(distance, theta);
+  float speed_setpoint_left, speed_setpoint_right;
+  speed::ReadSetpoints(speed_setpoint_left, speed_setpoint_right);
+
+  float position_distance, position_theta;
+  position::Read(position_distance, position_theta);
 
   State s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     s = state;
   }
 
+  float dtheta = s.target_theta - position_theta;
+  s.direction  = dtheta > 0;
+
   // If we are there, then we are done.
-  if (fabsf(theta - s.target_theta) < kMMTheta) {
+  if (fabsf(dtheta) <= (kCountTheta * 18.0)) {
     speed::Set(0, 0);
     return true;
   }
 
-  // Otherwise, calculate fixed speeds including the wheel bias.
-  float rpm         = kMinMotorRPM * 1.5;
-  float left_speed  = rpm;
-  float right_speed = rpm * ((1.0 + kWheelBias) / (1.0 - kWheelBias));
+  float current_setpoint = RPMToSpeed(fabsf(speed_setpoint_left));  // mm/s
+
+  // Compute the braking distance.
+  float dV            = -current_setpoint;                                             // mm/s
+  float dX            = fabsf(s.target_theta - position_theta) * (kWheelBase / 2.0f);  // mm
+  float braking_accel = ((2.0f * current_setpoint * dV) + (dV * dV)) / (2.0f * dX);    // mm/s^2
+
+  // Determine the acceleration.
+  float accel = 0;  // mm/s^2
+  if (braking_accel < -kAccelDefault) {
+    accel = braking_accel;
+  } else if (current_setpoint < kSpeedRotation) {
+    accel = kAccelDefault;
+  }
+
+  // Calculate the new setpoint.
+  // Starting with the current setpoint.
+  float left_speed  = current_setpoint;
+  float right_speed = current_setpoint;
+
+  // Add the acceleration.
+  left_speed  += (accel * kControlPeriod);  // mm/s
+  right_speed += (accel * kControlPeriod);  // mm/s
+
+  // Adjust for the wheel bias.
+  left_speed  *= (1.0 - kWheelBias);
+  right_speed *= (1.0 + kWheelBias);
+
+  // Convert to RPMs.
+  left_speed  = ClampRPM(SpeedToRPM(left_speed));
+  right_speed = ClampRPM(SpeedToRPM(right_speed));
 
   if (s.direction) {
     speed::Set(-left_speed, right_speed);
   } else {
     speed::Set(left_speed, -right_speed);
+  }
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    state = s;
   }
 
   return false;
