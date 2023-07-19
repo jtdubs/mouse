@@ -42,7 +42,7 @@ constexpr float kRightMotorM = 2.695;  // RPM/power
 constexpr float kRightMotorB = -57.7;  // RPM
 
 // Software parameters
-constexpr float kControlPeriod = 0.010;  // s
+constexpr float kControlPeriod = 0.005;  // s
 
 // Delicious fudge
 constexpr float kWheelBias = 0.000;  // dimensionless
