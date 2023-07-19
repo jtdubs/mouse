@@ -49,7 +49,7 @@ bool Tick() {
   s.direction  = dtheta > 0;
 
   // If we are in the right range...
-  if (fabsf(dtheta) <= (kCountTheta * 18.0)) {
+  if (fabsf(dtheta) <= (kCountTheta * 12.0)) {
     // Stop the motors.
     speed::Set(0, 0);
     // We are done when the measured speed < 0.1mm/s
