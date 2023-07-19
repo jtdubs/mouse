@@ -22,10 +22,9 @@ int8_t right_delta;
 
 // Init initializes the encoders.
 void Init() {
-  EICRA = _BV(ISC00)   // Trigger INT0 on any logical change
-        | _BV(ISC10);  // Trigger INT1 on any logical change
-  EIMSK = _BV(INT0)    // Enable INT0
-        | _BV(INT1);   // Enable INT1
+  PORTA_PIN0CTRL = PORT_ISC_BOTHEDGES_gc;  // INT0
+  PORTA_PIN1CTRL = PORT_ISC_BOTHEDGES_gc;  // INT1
+  PORTA_DIRCLR   = _BV(0) | _BV(1);        // Set as input
 }
 
 // update applies changes since the last update.
@@ -53,43 +52,44 @@ void ReadDeltas(int32_t& left, int32_t& right) {
 }
 
 // Left Encoder Clock
-ISR(INT0_vect, ISR_BLOCK) {
-  static uint8_t left_last_b = 0;
+ISR(PORTA_PORT_vect, ISR_BLOCK) {
+  if (PORTA_INTFLAGS & _BV(0)) {
+    static uint8_t left_last_b = 0;
 
-  // Read the encoder pins (b and clk) and calculate a.
-  uint8_t d   = PIND;
-  uint8_t b   = (d >> 4) & 1;
-  uint8_t clk = ((d >> 2) & 1);
-  uint8_t a   = clk ^ b;
+    // Read the encoder pins (b and clk) and calculate a.
+    uint8_t d   = PIND;
+    uint8_t b   = (d >> 4) & 1;
+    uint8_t clk = ((d >> 2) & 1);
+    uint8_t a   = clk ^ b;
 
-  // Update the encoder count based on rotation direction.
-  if (a == left_last_b) {
-    left_delta++;
-  } else {
-    left_delta--;
+    // Update the encoder count based on rotation direction.
+    if (a == left_last_b) {
+      left_delta++;
+    } else {
+      left_delta--;
+    }
+
+    left_last_b = b;
   }
+  if (PORTA_INTFLAGS & _BV(1)) {
+    static uint8_t right_last_b = 0;
 
-  left_last_b = b;
-}
+    // Read the encoder pins (b and clk) and calculate a.
+    uint8_t d   = PIND;
+    uint8_t b   = (d >> 5) & 1;
+    uint8_t clk = ((d >> 3) & 1);
+    uint8_t a   = clk ^ b;
 
-// Right Encoder Clock
-ISR(INT1_vect, ISR_BLOCK) {
-  static uint8_t right_last_b = 0;
+    // Update the encoder count based on rotation direction.
+    if (a == right_last_b) {
+      right_delta--;
+    } else {
+      right_delta++;
+    }
 
-  // Read the encoder pins (b and clk) and calculate a.
-  uint8_t d   = PIND;
-  uint8_t b   = (d >> 5) & 1;
-  uint8_t clk = ((d >> 3) & 1);
-  uint8_t a   = clk ^ b;
-
-  // Update the encoder count based on rotation direction.
-  if (a == right_last_b) {
-    right_delta--;
-  } else {
-    right_delta++;
+    right_last_b = b;
   }
-
-  right_last_b = b;
+  PORTA_INTFLAGS = 3;
 }
 
 }  // namespace encoders

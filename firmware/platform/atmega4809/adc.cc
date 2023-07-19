@@ -16,18 +16,24 @@ uint16_t values[8];
 
 // Init initializes the ADC.
 void Init() {
-  ADMUX  = _BV(REFS0);                             // AVCC with external capacitor at AREF pin
-  ADCSRA = _BV(ADIE)                               // Enable ADC interrupt
-         | _BV(ADPS0) | _BV(ADPS1) | _BV(ADPS2);   // Prescaler 128 (slow but accurate ADC readings)
-  ADCSRB  = 0;                                     // Free running mode
-  DIDR0   = _BV(ADC0D) | _BV(ADC1D) | _BV(ADC2D);  // Disable digital input buffer on ADC2
-  ADMUX  |= kFirstChannel;                         // Select the first channel.
-  ADCSRA |= _BV(ADEN);                             // Enable ADC
+  ADC0_CTRLA = ADC_RESSEL_10BIT_gc;  // 10 bit readings
+  ADC0_CTRLB = 0;                    // no accumulation
+  ADC0_CTRLC = ADC_SAMPCAP_bm        // reduced sampling cap
+             | ADC_REFSEL_VDDREF_gc  // VDD reference
+             | ADC_PRESC_DIV128_gc;  // Prescaler 128
+  ADC0_CTRLD = ADC_INITDLY_DLY16_gc  // Delay 16 before first sample
+             | ADC_ASDV_ASVOFF_gc    // No auto sample variation
+             | 3;                    // Delay 3 between samples
+  ADC0_CTRLE     = 0;                // No window comparator
+  ADC0_SAMPCTRL  = 0;                // No extra sampling time
+  ADC0_MUXPOS    = kFirstChannel;    // Select first channel
+  ADC0_INTCTRL   = ADC_RESRDY_bm;    // Enable result ready interrupt
+  ADC0_CTRLA    |= ADC_ENABLE_bm;    // Enable ADC
 }
 
 // sample samples the ADC channels.
 void Sample() {
-  ADCSRA |= _BV(ADSC);
+  ADC0_COMMAND = ADC_STCONV_bm;  // Start conversion
 }
 
 uint16_t Read(Channel channel) {
@@ -46,20 +52,20 @@ void ReadSensors(uint16_t& left, uint16_t& right, uint16_t& forward) {
   }
 }
 
-ISR(ADC_vect, ISR_BLOCK) {
+ISR(ADC0_RESRDY_vect, ISR_BLOCK) {
   // Check which channel was just read, and which channel should be read next.
-  size_t  index = (ADMUX & 0x0F);
+  size_t  index = ADC0_MUXPOS;
   Channel next  = kNextChannel[index];
 
   // Store the ADC result.
-  values[index] = ADC;
+  values[index] = ADC0_RES;
 
   // Select the next ADC channel
-  ADMUX = (ADMUX & 0xF0) | next;
+  ADC0_MUXPOS = next;
 
   // Start the next conversion, unless we are at the end of the sampling round.
   if (next != kFirstChannel) {
-    ADCSRA |= _BV(ADSC);
+    ADC0_COMMAND = ADC_STCONV_bm;  // Start conversion
   }
 }
 
