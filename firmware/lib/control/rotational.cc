@@ -16,12 +16,14 @@ State state;
 void Init() {}
 
 void Start(float dtheta /* radians */) {
-  State s;
-  float distance;
-  position::Read(distance, s.start_theta);
+  float distance, theta;
+  position::Read(distance, theta);
 
-  s.target_theta = s.start_theta + dtheta;
-  s.direction    = dtheta > 0;
+  State s = {
+      .start_theta  = theta,
+      .target_theta = theta + dtheta,
+      .direction    = dtheta > 0,
+  };
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     state = s;
@@ -38,7 +40,7 @@ bool Tick() {
   }
 
   // If we are there, then we are done.
-  if (fabsf(theta - s.target_theta) < (kMMTheta * 2.0f)) {
+  if (fabsf(theta - s.target_theta) < kMMTheta) {
     speed::Set(0, 0);
     return true;
   }
