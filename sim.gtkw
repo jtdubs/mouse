@@ -1,20 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Wed Jul 19 20:59:27 2023
+[*] Thu Jul 20 13:23:37 2023
 [*]
 [dumpfile] "/home/jtdubs/dev/mouse/sim.fst"
-[dumpfile_mtime] "Wed Jul 19 20:57:23 2023"
-[dumpfile_size] 254750
+[dumpfile_mtime] "Thu Jul 20 13:20:48 2023"
+[dumpfile_size] 1326425
 [savefile] "/home/jtdubs/dev/mouse/sim.gtkw"
 [timestart] 0
-[size] 3371 1913
+[size] 3770 2096
 [pos] 70 0
-*-29.643951 2430200870 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-31.643951 9975717570 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 545
 [signals_width] 570
 [sst_expanded] 1
-[sst_vpaned_height] 422
-@8023
+[sst_vpaned_height] 468
+@8022
 logic.rtc::overflow_count[31:0]
 @200
 -Interrupts
@@ -38,6 +38,10 @@ logic.RIGHT_CLK_A
 logic.RIGHT_B
 @200
 -Probes
+@28
+logic.kProbePlan
+logic.kProbeTick
+@200
 -LEDs
 -Encoders
 @8420
@@ -56,6 +60,7 @@ logic.motor::power_right[15:0]
 logic.speed::measured_left[31:0]
 logic.speed::measured_right[31:0]
 logic.speed::setpoint_left[31:0]
+@48021
 logic.speed::setpoint_right[31:0]
 @200
 -Position
