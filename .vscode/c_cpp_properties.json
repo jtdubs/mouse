@@ -5,6 +5,9 @@
       "includePath": [
         "/opt/avr-toolchain/avr/include",
         "/usr/local/include/simavr",
+        "/usr/local/include/simavr/parts",
+        "/usr/local/include",
+        "/usr/include",
         "${workspaceFolder}/"
       ],
       "defines": [
@@ -15,7 +18,8 @@
       "compilerPath": "/opt/avr-toolchain/bin/avr-gcc",
       "cStandard": "c23",
       "cppStandard": "c++23",
-      "intelliSenseMode": "linux-gcc-x64"
+      "intelliSenseMode": "linux-gcc-x64",
+      "compileCommands": "${workspaceFolder}/compile_commands.json"
     }
   ],
   "version": 4

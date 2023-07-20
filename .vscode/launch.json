@@ -39,6 +39,21 @@
         "--port",
         "/tmp/simavr-uart0"
       ],
-    }
+    },
+    {
+      "name": "Debug Sim2",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bazel-bin/tools/sim2/sim2",
+      "cwd": "${workspaceFolder}",
+      "externalConsole": false,
+      "stopAtEntry": true,
+      "stopAtConnect": true,
+      "MIMode": "gdb",
+      "args": [
+        "--firmware",
+        "${workspaceFolder}/bazel-out/k8-dbg/bin/firmware/mouse",
+      ],
+    },
   ]
 }

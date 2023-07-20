@@ -2,6 +2,7 @@
 
 #include "firmware/lib/control/control.hh"
 #include "firmware/lib/maze/maze.hh"
+#include "firmware/lib/mode/explore/explore.hh"
 #include "firmware/lib/mode/remote/remote.hh"
 #include "firmware/lib/report/report.hh"
 #include "firmware/lib/utils/assert.hh"
@@ -17,7 +18,7 @@ int main() {
   sei();
 
   // remote control mode (never returns)
-  remote::Run();
+  explore::Explore();
 
   // seriously... it should never return.
   assert::failed(assert::MAIN + 0);

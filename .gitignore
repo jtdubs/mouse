@@ -6,3 +6,4 @@ build/
 bazel-*
 /remote
 /sim
+compile_commands.json

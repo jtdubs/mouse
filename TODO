@@ -1,19 +1,19 @@
+Sim:
+- Add C++ formatters to firmware structs and use them in the symbol view
+
 Platform:
 - Nano every implementation
 
-Sim and Remote:
-- Both probably need a re-write.
+Remote:
+- Port to C++ as well
 
 Bazel:
 - Auto-build cross-compile toolchain.
+- Vendor all dependencies.
 
 Exploration mode:
 - There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.
-- Can also skip visiting cells if we've learned about all it's walls from other vantage points.
-
-Hardware:
-- Consider smaller wheels for more control at the expense of speed?
-- How hard are we driving the motors currently?
+- Can skip visiting cells if we've learned about all it's walls from other vantage points.
 
 Board improvements:
 - Center of mass too far back due to battery, makes it prone to "bucking" under heavy acceleration.
