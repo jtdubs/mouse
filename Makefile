@@ -22,7 +22,7 @@ sim: $(SIM_SOURCES)
 upload:
 	avrdude -v -c arduino -P /dev/ttyNano -b 115200 -p atmega328p -D -U flash:w:bazel-out/k8-opt/bin/firmware/mouse.hex:i
 
-run: sim remote
+run: all
 	./sim --firmware bazel-out/k8-dbg/bin/firmware/mouse 2>&1 | tee sim.log &
 	./remote --port /tmp/simavr-uart0 2>&1 | tee remote.log &
 
