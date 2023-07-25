@@ -1,11 +1,11 @@
 .PHONY: all clean size upload run monitor bind remote-wave sim-wave
 
 REMOTE_SOURCES=$(shell find ./tools/remote -name "*.go")
-SIM_SOURCES=$(shell find ./tools/sim -name "*.go")
 
-all: remote sim
+all: remote
 	bazel build //firmware/... --platforms=//bazel/platforms:arduino_nano -c opt
 	bazel build //firmware/... --platforms=//bazel/platforms:arduino_nano -c dbg
+	bazel build //tools/sim -c opt
 
 clean:
 	bazel clean
@@ -16,14 +16,11 @@ size:
 remote: $(REMOTE_SOURCES)
 	go build ./tools/remote
 
-sim: $(SIM_SOURCES)
-	go build ./tools/sim
-
 upload:
 	avrdude -v -c arduino -P /dev/ttyNano -b 115200 -p atmega328p -D -U flash:w:bazel-out/k8-opt/bin/firmware/mouse.hex:i
 
 run: all
-	./sim --firmware bazel-out/k8-dbg/bin/firmware/mouse 2>&1 | tee sim.log &
+	bazel run --run_under="cd $(PWD) &&" -c opt //tools/sim -- --firmware bazel-out/k8-dbg/bin/firmware/mouse 2>&1 | tee sim.log &
 	./remote --port /tmp/simavr-uart0 2>&1 | tee remote.log &
 
 monitor:

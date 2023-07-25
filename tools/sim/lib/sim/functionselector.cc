@@ -1,4 +1,4 @@
-#include "function_selector.hh"
+#include "functionselector.hh"
 
 #include <simavr/avr_adc.h>
 #include <simavr/sim_vcd_file.h>

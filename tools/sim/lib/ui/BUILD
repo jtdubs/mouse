@@ -14,7 +14,7 @@ cc_library(
         "-lz",
     ],
     deps = [
-        "//tools/sim2/sim",
+        "//tools/sim/lib/sim",
         "@gl//:lib",
         "@glfw3//:lib",
         "@imgui",

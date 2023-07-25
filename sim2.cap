@@ -5,7 +5,7 @@
         "commandLine": "-f ./bazel-bin/firmware/mouse",
         "environment": [
         ],
-        "executable": "/home/jtdubs/dev/mouse/bazel-bin/tools/sim2/sim2",
+        "executable": "/home/jtdubs/dev/mouse/bazel-bin/tools/sim/sim2",
         "inject": false,
         "numQueuedFrames": 0,
         "options": {

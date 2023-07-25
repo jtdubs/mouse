@@ -9,7 +9,7 @@ cc_library(
 )
 
 cc_binary(
-    name = "sim2",
+    name = "sim",
     srcs = glob([
         "*.cc",
         "*.hh",
@@ -19,8 +19,8 @@ cc_binary(
     ],
     deps = [
         ":cli11",
-        "//tools/sim2/sim",
-        "//tools/sim2/ui",
+        "//tools/sim/lib/sim",
+        "//tools/sim/lib/ui",
         "@simavr//:lib",
         "@simavrparts//:lib",
     ],

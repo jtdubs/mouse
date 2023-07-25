@@ -1,7 +1,7 @@
 #include "args.hh"
-#include "tools/sim2/sim/sim.hh"
-#include "tools/sim2/sim/symbols.hh"
-#include "tools/sim2/ui/ui.hh"
+#include "tools/sim/lib/sim/sim.hh"
+#include "tools/sim/lib/sim/symbols.hh"
+#include "tools/sim/lib/ui/ui.hh"
 
 int main(int argc, char** argv) {
   auto args = ParseArgs(argc, argv);

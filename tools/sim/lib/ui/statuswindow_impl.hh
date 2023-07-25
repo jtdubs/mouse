@@ -1,13 +1,13 @@
 #pragma once
 
-#include "tools/sim2/sim/sim.hh"
+#include "tools/sim/lib/sim/sim.hh"
 #include "window_impl.hh"
 
 namespace ui {
 
-class ControlsWindow : public Window {
+class StatusWindow : public Window {
  public:
-  ControlsWindow(sim::Sim *sim);
+  StatusWindow(sim::Sim *sim);
 
   virtual void Render();
 

@@ -23,8 +23,8 @@ Motor::Motor(bool left)  //
       dir_irq_(nullptr),
       b_irq_(nullptr),
       avr_(nullptr),
-      encoder_callback_(nullptr),
-      rpm_(0) {}
+      rpm_(0),
+      encoder_callback_(nullptr) {}
 
 void Motor::Init(avr_t *avr) {
   avr_ = avr;

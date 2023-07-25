@@ -3,7 +3,7 @@
 #include <simavr/sim_avr.h>
 
 #include "battery.hh"
-#include "function_selector.hh"
+#include "functionselector.hh"
 #include "leds.hh"
 #include "motor.hh"
 #include "sensor.hh"

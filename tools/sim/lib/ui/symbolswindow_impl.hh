@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tools/sim2/sim/sim.hh"
+#include "tools/sim/lib/sim/sim.hh"
 #include "window_impl.hh"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
