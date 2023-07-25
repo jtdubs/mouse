@@ -92,18 +92,18 @@ void ToolbarWindow::RenderToolbar() {
 
   ImGui::SameLine(0, 20);
 
-  auto nanos     = sim_->GetNanos();
-  auto nanosText = std::format("{}:{:02d}:{:02d}:{:02d}.{:03d},{:03d},{:03d}",  //
-                               (nanos / 3600000000000),                         //
-                               (nanos / 60000000000) % 60,                      //
-                               (nanos / 1000000000) % 60,                       //
-                               (nanos / 1000000) % 1000,                        //
-                               (nanos / 1000) % 1000,                           //
-                               nanos % 1000,                                    //
-                               nanos);
+  auto nanos      = sim_->GetNanos();
+  auto nanos_text = std::format("{}:{:02d}:{:02d}:{:02d}.{:03d},{:03d},{:03d}",  //
+                                (nanos / 3600000000000),                         //
+                                (nanos / 60000000000) % 60,                      //
+                                (nanos / 1000000000) % 60,                       //
+                                (nanos / 1000000) % 1000,                        //
+                                (nanos / 1000) % 1000,                           //
+                                nanos % 1000,                                    //
+                                nanos);
 
-  ImGui::SetCursorPosY((48 - ImGui::CalcTextSize(nanosText.c_str()).y) / 2);
-  ImGui::TextUnformatted(nanosText.c_str());
+  ImGui::SetCursorPosY((48 - ImGui::CalcTextSize(nanos_text.c_str()).y) / 2);
+  ImGui::TextUnformatted(nanos_text.c_str());
 }
 
 bool ToolbarWindow::Button(std::string name, std::string icon) {

@@ -6,13 +6,13 @@ namespace sim {
 
 class IRBeam {
  public:
-  IRBeam(Position start, Position end, float distance, float wallAngle);
+  IRBeam(Position start, Position end, float distance, float wall_angle);
 
  public:
-  Position Start;
-  Position End;
-  float    Distance;
-  float    WallAngle;
+  Position start;
+  Position end;
+  float    distance;
+  float    wall_angle;
 };
 
 }  // namespace sim

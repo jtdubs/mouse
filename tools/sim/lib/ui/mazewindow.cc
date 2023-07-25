@@ -119,12 +119,12 @@ void MazeWindow::RenderMaze() {
   };
 
   // Calculate mouse bounds
-  float minX = INFINITY, minY = INFINITY, maxX = -INFINITY, maxY = -INFINITY;
+  float min_x = INFINITY, min_y = INFINITY, max_x = -INFINITY, max_y = -INFINITY;
   for (auto v : outline) {
-    minX = fminf(minX, v.x);
-    minY = fminf(minY, v.y);
-    maxX = fmaxf(maxX, v.x);
-    maxY = fmaxf(maxY, v.y);
+    min_x = fminf(min_x, v.x);
+    min_y = fminf(min_y, v.y);
+    max_x = fmaxf(max_x, v.x);
+    max_y = fmaxf(max_y, v.y);
   }
 
   // Draw the mouse
@@ -138,9 +138,9 @@ void MazeWindow::RenderMaze() {
   if (dragging_) {
     ImGui::SetCursorScreenPos(drag_button_pos_);
   } else {
-    ImGui::SetCursorScreenPos(ImVec2(minX, minY));
+    ImGui::SetCursorScreenPos(ImVec2(min_x, min_y));
   }
-  ImGui::InvisibleButton("#Mouse", ImVec2(maxX - minX, maxY - minY));
+  ImGui::InvisibleButton("#Mouse", ImVec2(max_x - min_x, max_y - min_y));
   if (ImGui::IsItemHovered()) {
     auto wheel = ImGui::GetIO().MouseWheel;
     if (wheel != 0) {
@@ -154,7 +154,7 @@ void MazeWindow::RenderMaze() {
   if (ImGui::IsItemActive()) {
     if (!dragging_) {
       drag_start_pos_  = ImVec2(x, y);
-      drag_button_pos_ = ImVec2(minX, minY);
+      drag_button_pos_ = ImVec2(min_x, min_y);
       dragging_        = true;
     } else {
       auto delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left, 5.0) * (1.0 / mm_size_px);
@@ -170,8 +170,8 @@ void MazeWindow::RenderMaze() {
   }
 
   for (auto hit : sim_->GetIRBeams()) {
-    auto start_px = maze_origin_px + (hit.Start * ImVec2(mm_size_px, -mm_size_px));
-    auto end_px   = maze_origin_px + (hit.End * ImVec2(mm_size_px, -mm_size_px));
+    auto start_px = maze_origin_px + (hit.start * ImVec2(mm_size_px, -mm_size_px));
+    auto end_px   = maze_origin_px + (hit.end * ImVec2(mm_size_px, -mm_size_px));
     draw_list->AddLine(start_px, end_px, ImGui::ColorConvertFloat4ToU32(ImVec4(1, 0, 0, 1)), 1.0f);
     draw_list->AddCircleFilled(end_px, 4, ImGui::ColorConvertFloat4ToU32(ImVec4(1, 0, 0, 1)));
   }

@@ -239,8 +239,8 @@ Position Sim::Project(Position mousePosition) const {
   auto [x, y] = mousePosition;
 
   return Position(  //
-      mouse_pos_.X + (x * cosf(mouse_theta_) - y * sinf(mouse_theta_)),
-      mouse_pos_.Y + (x * sinf(mouse_theta_) + y * cosf(mouse_theta_)));
+      mouse_pos_.x + (x * cosf(mouse_theta_) - y * sinf(mouse_theta_)),
+      mouse_pos_.y + (x * sinf(mouse_theta_) + y * cosf(mouse_theta_)));
 }
 
 std::vector<IRBeam> Sim::GetIRBeams() {
@@ -259,13 +259,13 @@ std::vector<IRBeam> Sim::GetIRBeams() {
   }
 
   auto ir_beams = std::vector<IRBeam>();
-  if (auto beam = GetIRBeam(mouse_.GetLeftSensor()); beam.Distance != INFINITY) {
+  if (auto beam = GetIRBeam(mouse_.GetLeftSensor()); beam.distance != INFINITY) {
     ir_beams.push_back(beam);
   }
-  if (auto beam = GetIRBeam(mouse_.GetForwardSensor()); beam.Distance != INFINITY) {
+  if (auto beam = GetIRBeam(mouse_.GetForwardSensor()); beam.distance != INFINITY) {
     ir_beams.push_back(beam);
   }
-  if (auto beam = GetIRBeam(mouse_.GetRightSensor()); beam.Distance != INFINITY) {
+  if (auto beam = GetIRBeam(mouse_.GetRightSensor()); beam.distance != INFINITY) {
     ir_beams.push_back(beam);
   }
   ir_beams_ = ir_beams;
@@ -276,64 +276,64 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
   int width, height;
   maze_->GetSize(width, height);
 
-  auto bestBeam = IRBeam(Position(0, 0), Position(0, 0), INFINITY, 0);
-  auto origin   = Project(sensor.GetPosition());
-  auto theta    = mouse_theta_ + sensor.GetTheta();
+  auto best_beam = IRBeam(Position(0, 0), Position(0, 0), INFINITY, 0);
+  auto origin    = Project(sensor.GetPosition());
+  auto theta     = mouse_theta_ + sensor.GetTheta();
 
-  auto tanTheta = tanf(theta);
-  auto sinSign  = signbit(sinf(theta));
-  auto cosSign  = signbit(cosf(theta));
+  auto tan_theta = tanf(theta);
+  auto sin_sign  = signbit(sinf(theta));
+  auto cos_sign  = signbit(cosf(theta));
 
   for (int y = 0; y < height; y++) {
-    auto wallY = y * 180.0;
-    auto dy    = wallY - origin.Y;
-    auto dx    = 0.0f;
-    if (tanTheta != 0.0) {
-      dx = dy / tanTheta;
+    auto wall_y = y * 180.0;
+    auto dy     = wall_y - origin.y;
+    auto dx     = 0.0f;
+    if (tan_theta != 0.0) {
+      dx = dy / tan_theta;
     }
-    if (signbit(dx) != cosSign) {
+    if (signbit(dx) != cos_sign) {
       continue;
     }
-    auto x = origin.X + dx;
+    auto x = origin.x + dx;
     if (x < 0 || x > (width * 180.0)) {
       continue;
     }
     if ((*maze_)(x / 180, y).east) {
       auto dist = sqrtf(dx * dx + dy * dy);
-      if (dist < bestBeam.Distance) {
-        bestBeam = IRBeam(origin, Position(x, wallY), dist, 0);
+      if (dist < best_beam.distance) {
+        best_beam = IRBeam(origin, Position(x, wall_y), dist, 0);
       }
     }
   }
 
   for (int x = 0; x < width; x++) {
-    auto wallX = x * 180.0;
-    auto dx    = wallX - origin.X;
-    auto dy    = dx * tanTheta;
-    if (signbit(dy) != sinSign) {
+    auto wall_x = x * 180.0;
+    auto dx     = wall_x - origin.x;
+    auto dy     = dx * tan_theta;
+    if (signbit(dy) != sin_sign) {
       continue;
     }
-    auto y = origin.Y + dy;
+    auto y = origin.y + dy;
     if (y < 0 || y > (height * 180.0)) {
       continue;
     }
     if ((*maze_)(x, y / 180).north) {
       auto dist = sqrtf(dx * dx + dy * dy);
-      if (dist < bestBeam.Distance) {
-        bestBeam = IRBeam(origin, Position(wallX, y), dist, M_PI_2);
+      if (dist < best_beam.distance) {
+        best_beam = IRBeam(origin, Position(wall_x, y), dist, M_PI_2);
       }
     }
   }
 
-  if (bestBeam.Distance == INFINITY) {
+  if (best_beam.distance == INFINITY) {
     sensor.SetVoltage(0);
   } else {
-    auto angleScale = fabsf(sinf(bestBeam.WallAngle - theta));
-    auto voltage    = angleScale * fminf(5000.0, 1200000.0 / powf(bestBeam.Distance, 1000.0 / 583.0));
+    auto scale   = fabsf(sinf(best_beam.wall_angle - theta));
+    auto voltage = scale * fminf(5000.0, 1200000.0 / powf(best_beam.distance, 1000.0 / 583.0));
     sensor.SetVoltage(voltage);
   }
 
-  return bestBeam;
+  return best_beam;
 }
 
 void Sim::OnSensorRead() {

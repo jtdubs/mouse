@@ -14,8 +14,8 @@ class Position {
   operator ImVec2() const;
 
  public:
-  float X;
-  float Y;
+  float x;
+  float y;
 };
 
 }  // namespace sim

@@ -32,9 +32,9 @@ void LoadIcons() {
 }
 
 ImTextureID LoadIcon(std::string path) {
-  int  width, height, numChannels;
+  int  width, height, num_channels;
   auto data = std::unique_ptr<unsigned char, decltype(&stbi_image_free)>(
-      stbi_load(path.c_str(), &width, &height, &numChannels, 4), &stbi_image_free);
+      stbi_load(path.c_str(), &width, &height, &num_channels, 4), &stbi_image_free);
   if (data == nullptr) {
     return 0;
   }
