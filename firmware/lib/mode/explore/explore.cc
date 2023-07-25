@@ -473,22 +473,22 @@ void Solve() {
 
     auto next = curr;
 
-    if (curr.X() < (kMazeHeight - 1) && !maze::Read(curr).wall_north && maze::Read(north).distance < distance) {
+    if (curr.Y() < (kMazeHeight - 1) && !maze::Read(curr).wall_north && maze::Read(north).distance < distance) {
       next     = north;
       distance = maze::Read(north).distance;
     }
 
-    if (curr.Y() < (kMazeWidth - 1) && !maze::Read(curr).wall_east && maze::Read(east).distance < distance) {
+    if (curr.X() < (kMazeWidth - 1) && !maze::Read(curr).wall_east && maze::Read(east).distance < distance) {
       next     = east;
       distance = maze::Read(east).distance;
     }
 
-    if (curr.X() > 0 && !maze::Read(curr).wall_south && maze::Read(south).distance < distance) {
+    if (curr.Y() > 0 && !maze::Read(curr).wall_south && maze::Read(south).distance < distance) {
       next     = south;
       distance = maze::Read(south).distance;
     }
 
-    if (curr.Y() > 0 && !maze::Read(curr).wall_west && maze::Read(west).distance < distance) {
+    if (curr.X() > 0 && !maze::Read(curr).wall_west && maze::Read(west).distance < distance) {
       next     = west;
       distance = maze::Read(west).distance;
     }
