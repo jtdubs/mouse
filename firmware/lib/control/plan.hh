@@ -16,6 +16,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#if not defined(__AVR__)
+#include <ostream>
+#endif
+
 namespace plan {
 
 // State is the state of the current plan.
@@ -94,5 +98,113 @@ void Wait();
 
 // SubmitAndWait submits a new plan, and wait for it to be implemented.
 void SubmitAndWait(Plan plan);
+
+#if not defined(__AVR__)
+std::ostream &operator<<(std::ostream &o, const State state) {
+  switch (state) {
+    case State::Scheduled:
+      o << "Scheduled";
+      break;
+    case State::Underway:
+      o << "Underway";
+      break;
+    case State::Implemented:
+      o << "Implemented";
+      break;
+    default:
+      o << "Unknown";
+      break;
+  }
+  return o;
+}
+
+std::ostream &operator<<(std::ostream &o, const Type t) {
+  switch (t) {
+    case Type::Idle:
+      o << "Idle";
+      break;
+    case Type::LEDs:
+      o << "LEDs";
+      break;
+    case Type::IR:
+      o << "IR";
+      break;
+    case Type::FixedPower:
+      o << "FixedPower";
+      break;
+    case Type::FixedSpeed:
+      o << "FixedSpeed";
+      break;
+    case Type::LinearMotion:
+      o << "LinearMotion";
+      break;
+    case Type::RotationalMotion:
+      o << "RotationalMotion";
+      break;
+    case Type::SensorCal:
+      o << "SensorCal";
+      break;
+    default:
+      o << "Unknown";
+      break;
+  }
+  return o;
+}
+
+std::ostream &operator<<(std::ostream &o, const Plan *plan) {
+  o << "plan::Plan{" << std::endl;
+  o << "  type: " << plan->type << std::endl;
+  o << "  state: " << plan->state << std::endl;
+  o << "  data: {" << std::endl;
+  switch (plan->type) {
+    case Type::Idle:
+      o << "    idle: {}" << std::endl;
+      break;
+    case Type::LEDs:
+      o << "    leds: {" << std::endl;
+      o << "      left: " << plan->data.leds.left << std::endl;
+      o << "      right: " << plan->data.leds.right << std::endl;
+      o << "      onboard: " << plan->data.leds.onboard << std::endl;
+      o << "    }" << std::endl;
+      break;
+    case Type::IR:
+      o << "    ir: {" << std::endl;
+      o << "      on: " << plan->data.ir.on << std::endl;
+      o << "    }" << std::endl;
+      break;
+    case Type::FixedPower:
+      o << "    power: {" << std::endl;
+      o << "      left: " << plan->data.power.left << std::endl;
+      o << "      right: " << plan->data.power.right << std::endl;
+      o << "    }" << std::endl;
+      break;
+    case Type::FixedSpeed:
+      o << "    speed: {" << std::endl;
+      o << "      left: " << plan->data.speed.left << std::endl;
+      o << "      right: " << plan->data.speed.right << std::endl;
+      o << "    }" << std::endl;
+      break;
+    case Type::LinearMotion:
+      o << "    linear: {" << std::endl;
+      o << "      position: " << plan->data.linear.position << std::endl;
+      o << "      stop: " << plan->data.linear.stop << std::endl;
+      o << "    }" << std::endl;
+      break;
+    case Type::RotationalMotion:
+      o << "    rotational: {" << std::endl;
+      o << "      d_theta: " << plan->data.rotational.d_theta << std::endl;
+      o << "    }" << std::endl;
+      break;
+    case Type::SensorCal:
+      o << "    sensor_cal: {}" << std::endl;
+      break;
+    default:
+      break;
+  }
+  o << "  }" << std::endl;
+  o << "}";
+  return o;
+}
+#endif
 
 }  // namespace plan

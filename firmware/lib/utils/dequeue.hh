@@ -5,6 +5,10 @@
 
 #include "assert.hh"
 
+#if not defined(__AVR__)
+#include <ostream>
+#endif
+
 namespace dequeue {
 
 enum class Event : uint8_t {
@@ -171,5 +175,24 @@ void Dequeue<T, CAPACITY>::PushBack(T val) {
     callback(Event::PushBack, val);
   }
 }
+
+#if not defined(__AVR__)
+std::ostream &operator<<(std::ostream &o, const Event event) {
+  switch (event) {
+    case Event::PushFront:
+      o << "Event::PushFront";
+      break;
+    case Event::PopFront:
+      o << "Event::PopFront";
+      break;
+    case Event::PushBack:
+      o << "Event::PushBack";
+      break;
+    case Event::PopBack:
+      o << "Event::PopBack";
+      break;
+  }
+}
+#endif
 
 }  // namespace dequeue

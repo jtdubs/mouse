@@ -20,6 +20,10 @@
 
 #include "firmware/lib/control/plan.hh"
 
+#if not defined(__AVR__)
+#include <ostream>
+#endif
+
 namespace remote::command {
 
 // type_t identifies the type of a given command.
@@ -71,5 +75,79 @@ void Processed();
 
 // next gets the next command, if one is available.
 bool Next(Command &command);
+
+#if not defined(__AVR__)
+std::ostream &operator<<(std::ostream &o, const Type type) {
+  switch (type) {
+    case Type::Reset:
+      o << "Reset";
+      break;
+    case Type::Explore:
+      o << "Explore";
+      break;
+    case Type::Solve:
+      o << "Solve";
+      break;
+    case Type::SendMaze:
+      o << "SendMaze";
+      break;
+    case Type::TunePID:
+      o << "TunePID";
+      break;
+    case Type::PlanEnqueue:
+      o << "PlanEnqueue";
+      break;
+    case Type::PlanExecute:
+      o << "PlanExecute";
+      break;
+  }
+}
+
+std::ostream &operator<<(std::ostream &o, const PidID id) {
+  switch (id) {
+    case PidID::Speed:
+      o << "Speed";
+      break;
+    case PidID::Wall:
+      o << "Wall";
+      break;
+    case PidID::Angle:
+      o << "Angle";
+      break;
+  }
+}
+
+std::ostream &operator<<(std::ostream &o, const Command *command) {
+  o << "remote::command::Command{" << std::endl;
+  o << "  type: " << command->type << std::endl;
+  o << "  data: {" << std::endl;
+  switch (command->type) {
+    case Type::Reset:
+      break;
+    case Type::Explore:
+      break;
+    case Type::Solve:
+      break;
+    case Type::SendMaze:
+      break;
+    case Type::TunePID:
+      o << "    pid: {" << std::endl;
+      o << "      id: " << command->data.pid.id << std::endl;
+      o << "      kp: " << command->data.pid.kp << std::endl;
+      o << "      ki: " << command->data.pid.ki << std::endl;
+      o << "      kd: " << command->data.pid.kd << std::endl;
+      o << "      alpha: " << command->data.pid.alpha << std::endl;
+      o << "    }" << std::endl;
+      break;
+    case Type::PlanEnqueue:
+      o << "    plan: " << command->data.plan << std::endl;
+      break;
+    case Type::PlanExecute:
+      break;
+    default:
+      break;
+  }
+}
+#endif
 
 }  // namespace remote::command

@@ -4,6 +4,10 @@
 #include "firmware/lib/maze/maze.hh"
 #include "firmware/lib/utils/dequeue.hh"
 
+#if not defined(__AVR__)
+#include <ostream>
+#endif
+
 namespace explore {
 
 // orientation_t represents a cardinal direction.
@@ -51,5 +55,27 @@ void UpdateLocation();
 
 // Floodfill calculates the shortest path to the goal.
 void Floodfill();
+
+#if not defined(__AVR__)
+std::ostream &operator<<(std::ostream &o, const DequeueID id) {
+  switch (id) {
+    case DequeueID::Path:
+      o << "Path";
+      break;
+    case DequeueID::Next:
+      o << "Next";
+      break;
+  }
+}
+
+std::ostream &operator<<(std::ostream &o, const DequeueUpdate *update) {
+  o << "explore::DequeueUpdate{" << std::endl;
+  o << "  dequeue_id: " << update->dequeue_id << std::endl;
+  o << "  event: " << update->event << std::endl;
+  o << "  value: " << update->value << std::endl;
+  o << "}";
+  return o;
+}
+#endif
 
 }  // namespace explore

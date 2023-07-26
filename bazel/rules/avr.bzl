@@ -36,10 +36,11 @@ def avr_binary(name, srcs = None, platform = None, **kwargs):
         src = ":" + name,
     )
 
-def avr_library(srcs = None, hdrs = None, platform = None, **kwargs):
+def avr_library(name, srcs = None, hdrs = None, platform = None, **kwargs):
     """Create an AVR-compatible library.
 
     Args:
+      name: The name of the library.
       srcs: The source files to compile. If not specified, all .cc and _impl.hh
           files in the current directory will be used.
       hdrs: The header files to include. If not specified, all .hh files in the
@@ -63,7 +64,12 @@ def avr_library(srcs = None, hdrs = None, platform = None, **kwargs):
             "//conditions:default": ["@platforms//:incompatible"],
         })
     native.cc_library(
+        name = name,
         srcs = srcs,
         hdrs = hdrs,
         **kwargs
+    )
+    native.cc_library(
+        name = name + "_headers",
+        hdrs = native.glob(["*.h", "*.hh"]),
     )

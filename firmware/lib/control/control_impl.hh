@@ -5,6 +5,10 @@
 #include "plan_impl.hh"
 #include "rotational_impl.hh"
 
+#if not defined(__AVR__)
+#include <ostream>
+#endif
+
 namespace control {
 
 #pragma pack(push, 1)
@@ -35,5 +39,37 @@ struct Report {
 
 // Tick executes one Tick of the control module.
 void Tick();
+
+#if not defined(__AVR__)
+std::ostream &operator<<(std::ostream &o, const Report *report) {
+  o << "control::Report{" << std::endl;
+  o << "  plan: " << report->plan << std::endl;
+  o << "  speed: {" << std::endl;
+  o << "    measured_left: " << report->speed.measured_left << std::endl;
+  o << "    measured_right: " << report->speed.measured_right << std::endl;
+  o << "    setpoint_left: " << report->speed.setpoint_left << std::endl;
+  o << "    setpoint_right: " << report->speed.setpoint_right << std::endl;
+  o << "  }" << std::endl;
+  o << "  position: {" << std::endl;
+  o << "    distance: " << report->position.distance << std::endl;
+  o << "    theta: " << report->position.theta << std::endl;
+  o << "  }" << std::endl;
+  o << "  plan_data: {" << std::endl;
+  if (report->plan == plan::Plan::Rotational) {
+    o << "    rotation: " << report->plan_data.rotation << std::endl;
+  } else if (report->plan == plan::Plan::Linear) {
+    o << "    linear: " << report->plan_data.linear << std::endl;
+  } else if (report->plan == plan::Plan::SensorCal) {
+    o << "    sensor_cal: {" << std::endl;
+    o << "      left: " << report->plan_data.sensor_cal.left << std::endl;
+    o << "      right: " << report->plan_data.sensor_cal.right << std::endl;
+    o << "      forward: " << report->plan_data.sensor_cal.forward << std::endl;
+    o << "    }" << std::endl;
+  }
+  o << "  }" << std::endl;
+  o << "}";
+  return o;
+}
+#endif
 
 }  // namespace control

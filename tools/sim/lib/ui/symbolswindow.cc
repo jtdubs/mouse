@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 
+#include "firmware/lib/control/linear_impl.hh"
 #include "symbolswindow_impl.hh"
 #include "textures_impl.hh"
 
@@ -43,60 +44,66 @@ void SymbolsWindow::Render() {
     auto symbol = symbols.at(name);
 
     Row(symbol.name);
-    switch (symbol.size) {
-      case 1:
-        if (hex_) {
-          ImGui::TextUnformatted(std::format("0x{:02x}", *static_cast<uint8_t *>(symbol.data)).c_str());
-        } else {
-          ImGui::TextUnformatted(std::format("{:d}", *static_cast<uint8_t *>(symbol.data)).c_str());
-        }
-        break;
-      case 2:
-        if (hex_) {
-          ImGui::TextUnformatted(std::format("0x{:04x}", *static_cast<uint16_t *>(symbol.data)).c_str());
-        } else {
-          ImGui::TextUnformatted(std::format("{:d}", *static_cast<uint16_t *>(symbol.data)).c_str());
-        }
-        break;
-      case 4:
-        if (symbol.name.find("theta") != std::string::npos) {
-          ImGui::TextUnformatted(
-              std::format("{:8.2f}", (*static_cast<float *>(symbol.data)) * 180.0f / std::numbers::pi).c_str());
-        } else if (symbol.name.find("speed::") != std::string::npos) {
-          ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
-        } else if (symbol.name.find("position::") != std::string::npos) {
-          ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
-        } else if (symbol.name.find("linear::") != std::string::npos) {
-          ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
-        } else if (symbol.name.find("explore::cell_offset") != std::string::npos) {
-          ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
-        } else if (symbol.name.find("rotational::") != std::string::npos) {
-          ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
-        } else {
+    if (symbol.name == "linear::state") {
+      std::ostringstream os;
+      os << reinterpret_cast<linear::State *>(symbol.data);
+      ImGui::TextUnformatted(os.str().c_str());
+    } else {
+      switch (symbol.size) {
+        case 1:
           if (hex_) {
-            ImGui::TextUnformatted(std::format("0x{:08x}", *static_cast<uint32_t *>(symbol.data)).c_str());
+            ImGui::TextUnformatted(std::format("0x{:02x}", *static_cast<uint8_t *>(symbol.data)).c_str());
           } else {
-            ImGui::TextUnformatted(std::format("{:d}", *static_cast<uint32_t *>(symbol.data)).c_str());
+            ImGui::TextUnformatted(std::format("{:d}", *static_cast<uint8_t *>(symbol.data)).c_str());
           }
-        }
-        break;
-      default: {
-        auto data = static_cast<uint8_t *>(symbol.data);
+          break;
+        case 2:
+          if (hex_) {
+            ImGui::TextUnformatted(std::format("0x{:04x}", *static_cast<uint16_t *>(symbol.data)).c_str());
+          } else {
+            ImGui::TextUnformatted(std::format("{:d}", *static_cast<uint16_t *>(symbol.data)).c_str());
+          }
+          break;
+        case 4:
+          if (symbol.name.find("theta") != std::string::npos) {
+            ImGui::TextUnformatted(
+                std::format("{:8.2f}", (*static_cast<float *>(symbol.data)) * 180.0f / std::numbers::pi).c_str());
+          } else if (symbol.name.find("speed::") != std::string::npos) {
+            ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
+          } else if (symbol.name.find("position::") != std::string::npos) {
+            ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
+          } else if (symbol.name.find("linear::") != std::string::npos) {
+            ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
+          } else if (symbol.name.find("explore::cell_offset") != std::string::npos) {
+            ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
+          } else if (symbol.name.find("rotational::") != std::string::npos) {
+            ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
+          } else {
+            if (hex_) {
+              ImGui::TextUnformatted(std::format("0x{:08x}", *static_cast<uint32_t *>(symbol.data)).c_str());
+            } else {
+              ImGui::TextUnformatted(std::format("{:d}", *static_cast<uint32_t *>(symbol.data)).c_str());
+            }
+          }
+          break;
+        default: {
+          auto data = static_cast<uint8_t *>(symbol.data);
 
-        std::stringbuf buffer;
-        std::ostream   os(&buffer);
-        for (uint64_t i = 0; i < symbol.size; i++) {
-          if (i % 8 == 0 && i != 0) {
-            os << std::endl;
+          std::stringbuf buffer;
+          std::ostream   os(&buffer);
+          for (uint64_t i = 0; i < symbol.size; i++) {
+            if (i % 8 == 0 && i != 0) {
+              os << std::endl;
+            }
+            if (i % 8 == 0) {
+              os << std::format("{:04x}:", i);
+            }
+            os << std::format(" {:02x}", data[i]);
           }
-          if (i % 8 == 0) {
-            os << std::format("{:04x}:", i);
-          }
-          os << std::format(" {:02x}", data[i]);
-        }
-        os << std::endl;
-        ImGui::TextUnformatted(buffer.str().c_str());
-      } break;
+          os << std::endl;
+          ImGui::TextUnformatted(buffer.str().c_str());
+        } break;
+      }
     }
   }
 

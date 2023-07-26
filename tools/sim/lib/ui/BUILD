@@ -14,6 +14,7 @@ cc_library(
         "-lz",
     ],
     deps = [
+        "//firmware/lib/control:control_headers",
         "//tools/sim/lib/sim",
         "@gl//:lib",
         "@glfw3//:lib",

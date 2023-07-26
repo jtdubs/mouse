@@ -11,6 +11,10 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#if not defined(__AVR__)
+#include <ostream>
+#endif
+
 namespace maze {
 
 // Cell represents a single cell in the maze.
@@ -84,5 +88,27 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len);
 
 // send triggers retransmission of the maze.
 void Send();
+
+#if not defined(__AVR__)
+std::ostream &operator<<(std::ostream &o, const Location *location) {
+  o << "maze::Location{" << std::endl;
+  o << "  x: " << location->X() << std::endl;
+  o << "  y: " << location->Y() << std::endl;
+  o << "}";
+  return o;
+}
+
+std::ostream &operator<<(std::ostream &o, const Cell *cell) {
+  o << "maze::Cell{" << std::endl;
+  o << "  wall_north: " << cell->wall_north << std::endl;
+  o << "  wall_east: " << cell->wall_east << std::endl;
+  o << "  wall_south: " << cell->wall_south << std::endl;
+  o << "  wall_west: " << cell->wall_west << std::endl;
+  o << "  visited: " << cell->visited << std::endl;
+  o << "  distance: " << cell->distance << std::endl;
+  o << "}";
+  return o;
+}
+#endif
 
 }  // namespace maze

@@ -4,6 +4,10 @@
 
 #include "linear.hh"
 
+#if not defined(__AVR__)
+#include <ostream>
+#endif
+
 namespace linear {
 
 #pragma pack(push, 1)
@@ -27,5 +31,17 @@ bool Tick();
 
 // state reads the current linear state.
 void Read(State &s);
+
+#if not defined(__AVR__)
+std::ostream &operator<<(std::ostream &o, const State *state) {
+  o << "linear::State{" << std::endl;
+  o << "  target_position: " << state->target_position << std::endl;
+  o << "  target_speed: " << state->target_speed << std::endl;
+  o << "  wall_error: " << state->wall_error << std::endl;
+  o << "  leds_prev_state: " << state->leds_prev_state << std::endl;
+  o << "}";
+  return o;
+}
+#endif
 
 }  // namespace linear
