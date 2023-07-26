@@ -5,6 +5,8 @@
 #include "firmware/lib/control/linear_impl.hh"
 #include "firmware/lib/control/plan_impl.hh"
 #include "firmware/lib/control/rotational_impl.hh"
+#include "firmware/lib/control/walls_impl.hh"
+#include "firmware/lib/mode/explore/explore_impl.hh"
 #include "firmware/lib/utils/pid.hh"
 #include "symbolswindow_impl.hh"
 #include "textures_impl.hh"
@@ -46,14 +48,17 @@ void SymbolsWindow::Render() {
 
     auto symbol = symbols.at(name);
 
+    if (symbol.name == "explore::updates") {
+      continue;
+    }
+    if (symbol.name == "maze::updates") {
+      continue;
+    }
+    if (symbol.name == "report::report") {
+      continue;
+    }
+
     Row(symbol.name);
-    // TODO: explore::next
-    // TODO: explore::path
-    // TODO: explore::updates
-    // TODO: explore::orientation
-    // TODO: maze::updates
-    // TODO: report::report
-    // TODO: walls::state
     if (symbol.name == "linear::state") {
       std::ostringstream os;
       os << reinterpret_cast<linear::State *>(symbol.data);
@@ -65,6 +70,22 @@ void SymbolsWindow::Render() {
     } else if (symbol.name == "plan::current_plan") {
       std::ostringstream os;
       os << reinterpret_cast<plan::Plan *>(symbol.data);
+      ImGui::TextUnformatted(os.str().c_str());
+    } else if (symbol.name == "explore::next") {
+      std::ostringstream os;
+      os << reinterpret_cast<dequeue::Dequeue<maze::Location, 256> *>(symbol.data);
+      ImGui::TextUnformatted(os.str().c_str());
+    } else if (symbol.name == "explore::path") {
+      std::ostringstream os;
+      os << reinterpret_cast<dequeue::Dequeue<maze::Location, 256> *>(symbol.data);
+      ImGui::TextUnformatted(os.str().c_str());
+    } else if (symbol.name == "explore::orientation") {
+      std::ostringstream os;
+      os << *reinterpret_cast<explore::Orientation *>(symbol.data);
+      ImGui::TextUnformatted(os.str().c_str());
+    } else if (symbol.name == "walls::state") {
+      std::ostringstream os;
+      os << reinterpret_cast<walls::State *>(symbol.data);
       ImGui::TextUnformatted(os.str().c_str());
     } else if (symbol.name == "linear::wall_error_pid" ||  //
                symbol.name == "speed::pid_left" ||         //

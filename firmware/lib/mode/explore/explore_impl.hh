@@ -57,7 +57,7 @@ void UpdateLocation();
 void Floodfill();
 
 #if not defined(__AVR__)
-std::ostream &operator<<(std::ostream &o, const DequeueID id) {
+std::ostream &operator<<(std::ostream &o, DequeueID id) {
   switch (id) {
     case DequeueID::Path:
       o << "Path";
@@ -66,6 +66,28 @@ std::ostream &operator<<(std::ostream &o, const DequeueID id) {
       o << "Next";
       break;
   }
+  return o;
+}
+
+std::ostream &operator<<(std::ostream &o, Orientation orientation) {
+  switch (orientation) {
+    case Orientation::North:
+      o << "North";
+      break;
+    case Orientation::East:
+      o << "East";
+      break;
+    case Orientation::South:
+      o << "South";
+      break;
+    case Orientation::West:
+      o << "West";
+      break;
+    case Orientation::Invalid:
+      o << "Invalid";
+      break;
+  }
+  return o;
 }
 
 std::ostream &operator<<(std::ostream &o, const DequeueUpdate *update) {

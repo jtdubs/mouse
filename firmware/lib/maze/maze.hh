@@ -90,11 +90,8 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len);
 void Send();
 
 #if not defined(__AVR__)
-std::ostream &operator<<(std::ostream &o, const Location *location) {
-  o << "maze::Location{" << std::endl;
-  o << "  x: " << location->X() << std::endl;
-  o << "  y: " << location->Y() << std::endl;
-  o << "}";
+std::ostream &operator<<(std::ostream &o, Location location) {
+  o << "maze::Location{" << static_cast<int>(location.X()) << ", " << static_cast<int>(location.Y()) << "}";
   return o;
 }
 

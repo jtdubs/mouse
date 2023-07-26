@@ -36,6 +36,7 @@ std::ostream &operator<<(std::ostream &o, const State *state) {
   o << "  forward_present: " << state->forward_present << std::endl;
   o << "  error_left: " << state->error_left << std::endl;
   o << "  error_right: " << state->error_right << std::endl;
+  o << "}";
   return o;
 }
 #endif

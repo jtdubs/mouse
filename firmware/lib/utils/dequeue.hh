@@ -1,9 +1,11 @@
 #pragma once
 
+#if defined(__AVR__)
 #include <stddef.h>
 #include <util/atomic.h>
 
 #include "assert.hh"
+#endif
 
 #if not defined(__AVR__)
 #include <ostream>
@@ -42,8 +44,13 @@ class Dequeue {
   T    PopBack();
   void PushFront(T val);
   void PushBack(T val);
+
+#if not defined(__AVR__)
+  friend std::ostream &operator<< <>(std::ostream &o, const Dequeue<T, CAPACITY> *dequeue);
+#endif
 };
 
+#if defined(__AVR__)
 template <typename T, size_t CAPACITY>
 Dequeue<T, CAPACITY>::Dequeue() : front(CAPACITY - 1), back(0) {}
 
@@ -175,8 +182,21 @@ void Dequeue<T, CAPACITY>::PushBack(T val) {
     callback(Event::PushBack, val);
   }
 }
+#endif
 
 #if not defined(__AVR__)
+template <typename T, size_t CAPACITY>
+std::ostream &operator<<(std::ostream &o, const Dequeue<T, CAPACITY> *dequeue) {
+  o << "Dequeue{" << std::endl;
+  size_t index = (dequeue->front + 1) % CAPACITY;
+  while (index != dequeue->back) {
+    o << "  " << dequeue->buffer[index] << std::endl;
+    index = (index + 1) % CAPACITY;
+  }
+  o << "}";
+  return o;
+}
+
 std::ostream &operator<<(std::ostream &o, const Event event) {
   switch (event) {
     case Event::PushFront:
@@ -192,6 +212,7 @@ std::ostream &operator<<(std::ostream &o, const Event event) {
       o << "Event::PopBack";
       break;
   }
+  return o;
 }
 #endif
 
