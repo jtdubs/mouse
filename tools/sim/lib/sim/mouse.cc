@@ -1,7 +1,8 @@
 #include "mouse.hh"
 
-#include <math.h>
 #include <simavr/avr_adc.h>
+
+#include <numbers>
 
 namespace sim {
 
@@ -9,9 +10,9 @@ Mouse::Mouse()
     : avr_(nullptr),
       leds_(),
       battery_(ADC_IRQ_ADC6),
-      left_sensor_("SENSOR_LEFT", ADC_IRQ_ADC2, Position(50, 40), M_PI / 3.0),
+      left_sensor_("SENSOR_LEFT", ADC_IRQ_ADC2, Position(50, 40), std::numbers::pi / 3.0),
       forward_sensor_("SENSOR_FORWARD", ADC_IRQ_ADC1, Position(65, 0), 0),
-      right_sensor_("SENSOR_RIGHT", ADC_IRQ_ADC0, Position(50, -40), -M_PI / 3.0),
+      right_sensor_("SENSOR_RIGHT", ADC_IRQ_ADC0, Position(50, -40), -std::numbers::pi / 3.0),
       selector_(ADC_IRQ_ADC6),
       left_motor_(true),
       right_motor_(false) {}

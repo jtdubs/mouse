@@ -1,5 +1,3 @@
-#include <math.h>
-
 #include <algorithm>
 #include <format>
 
@@ -69,11 +67,11 @@ void MazeWindow::RenderMaze() {
   if (ImGui::BeginPopupContextItem("Maze Context Menu")) {
     if (ImGui::Selectable("Start Position")) {
       sim_->SetMousePos(ImVec2(90.0, 36.0));
-      sim_->SetMouseTheta(M_PI_2);
+      sim_->SetMouseTheta(std::numbers::pi / 2.0f);
     }
     if (ImGui::Selectable("Calibration Position")) {
       sim_->SetMousePos(ImVec2(90.0, 164.0));
-      sim_->SetMouseTheta(-M_PI_2);
+      sim_->SetMouseTheta(-std::numbers::pi / 2.0f);
     }
     if (ImGui::Selectable("Center in Cell")) {
       auto [x, y] = sim_->GetMousePos();
@@ -145,10 +143,10 @@ void MazeWindow::RenderMaze() {
   if (ImGui::IsItemHovered()) {
     auto wheel = ImGui::GetIO().MouseWheel;
     if (wheel != 0) {
-      auto angle  = theta * 180.0 / M_PI;
+      auto angle  = theta * 180.0 / std::numbers::pi;
       angle       = roundf(angle / 5.0) * 5.0;
       angle      += 5.0 * wheel;
-      theta       = angle * M_PI / 180.0;
+      theta       = angle * std::numbers::pi / 180.0;
       sim_->SetMouseTheta(theta);
     }
   }

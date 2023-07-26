@@ -60,7 +60,8 @@ void SymbolsWindow::Render() {
         break;
       case 4:
         if (symbol.name.find("theta") != std::string::npos) {
-          ImGui::TextUnformatted(std::format("{:8.2f}", (*static_cast<float *>(symbol.data)) * 180.0f / M_PI).c_str());
+          ImGui::TextUnformatted(
+              std::format("{:8.2f}", (*static_cast<float *>(symbol.data)) * 180.0f / std::numbers::pi).c_str());
         } else if (symbol.name.find("speed::") != std::string::npos) {
           ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
         } else if (symbol.name.find("position::") != std::string::npos) {

@@ -1,13 +1,15 @@
 #include "sim.hh"
 
 #include <assert.h>
-#include <math.h>
 #include <simavr/avr_adc.h>
 #include <simavr/avr_ioport.h>
 #include <simavr/avr_timer.h>
 #include <simavr/sim_avr.h>
 #include <simavr/sim_io.h>
 #include <simavr/sim_vcd_file.h>
+
+#include <cmath>
+#include <numbers>
 
 #include "symbols.hh"
 
@@ -24,11 +26,11 @@ constexpr float kWheelBase               = 72.48;  // mm
 constexpr float kWheelDiameter           = 32.5;   // mm
 constexpr int   kEncoderTicksPerRotation = 240;    // dimensionless
 
-constexpr float kWheelCircumference     = M_PI * kWheelDiameter;                                               // mm
+constexpr float kWheelCircumference     = std::numbers::pi * kWheelDiameter;                                   // mm
 constexpr float kDistancePerEncoderTick = kWheelCircumference / static_cast<float>(kEncoderTicksPerRotation);  // mm
-constexpr float kEncoderTickDTheta      = kDistancePerEncoderTick / kWheelBase;                   // radians
-constexpr float kEncoderTickDx          = (kWheelBase / 2.0) * sinf(kEncoderTickDTheta);          // mm
-constexpr float kEncoderTickDy          = (kWheelBase / 2.0) * (1.0 - cosf(kEncoderTickDTheta));  // mm
+constexpr float kEncoderTickDTheta      = kDistancePerEncoderTick / kWheelBase;                       // radians
+constexpr float kEncoderTickDx          = (kWheelBase / 2.0) * std::sin(kEncoderTickDTheta);          // mm
+constexpr float kEncoderTickDy          = (kWheelBase / 2.0) * (1.0 - std::cos(kEncoderTickDTheta));  // mm
 }  // namespace
 
 Sim::Sim()
@@ -44,7 +46,7 @@ Sim::Sim()
       symbols_(),
       maze_(),
       mouse_pos_(90, 36),
-      mouse_theta_(M_PI_2),
+      mouse_theta_(std::numbers::pi / 2.0f),
       ir_beams_(),
       ir_mutex_() {}
 
@@ -239,8 +241,8 @@ Position Sim::Project(Position mousePosition) const {
   auto [x, y] = mousePosition;
 
   return Position(  //
-      mouse_pos_.x + (x * cosf(mouse_theta_) - y * sinf(mouse_theta_)),
-      mouse_pos_.y + (x * sinf(mouse_theta_) + y * cosf(mouse_theta_)));
+      mouse_pos_.x + (x * std::cos(mouse_theta_) - y * std::sin(mouse_theta_)),
+      mouse_pos_.y + (x * std::sin(mouse_theta_) + y * std::cos(mouse_theta_)));
 }
 
 std::vector<IRBeam> Sim::GetIRBeams() {
@@ -281,8 +283,8 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
   auto theta     = mouse_theta_ + sensor.GetTheta();
 
   auto tan_theta = tanf(theta);
-  auto sin_sign  = signbit(sinf(theta));
-  auto cos_sign  = signbit(cosf(theta));
+  auto sin_sign  = signbit(std::sin(theta));
+  auto cos_sign  = signbit(std::cos(theta));
 
   for (int y = 0; y < height; y++) {
     auto wall_y = y * 180.0;
@@ -320,7 +322,7 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
     if ((*maze_)(x, y / 180).north) {
       auto dist = sqrtf(dx * dx + dy * dy);
       if (dist < best_beam.distance) {
-        best_beam = IRBeam(origin, Position(wall_x, y), dist, M_PI_2);
+        best_beam = IRBeam(origin, Position(wall_x, y), dist, std::numbers::pi / 2.0f);
       }
     }
   }
@@ -347,12 +349,12 @@ void Sim::OnEncoderClock(bool left, bool clockwise) {
   float dy = left ? -kEncoderTickDy : kEncoderTickDy;
   float dt = (left ^ forward) ? kEncoderTickDTheta : -kEncoderTickDTheta;
 
-  auto delta = ImVec2(                                    //
-      dx * cosf(mouse_theta_) - dy * sinf(mouse_theta_),  //
-      dx * sinf(mouse_theta_) + dy * cosf(mouse_theta_));
+  auto delta = ImVec2(                                            //
+      dx * std::cos(mouse_theta_) - dy * std::sin(mouse_theta_),  //
+      dx * std::sin(mouse_theta_) + dy * std::cos(mouse_theta_));
 
   SetMousePos(static_cast<ImVec2>(GetMousePos()) + delta);
-  SetMouseTheta(fmodf(GetMouseTheta() + dt, 2.0f * M_PI));
+  SetMouseTheta(fmodf(GetMouseTheta() + dt, 2.0f * std::numbers::pi));
 }
 
 }  // namespace sim
