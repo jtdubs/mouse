@@ -301,7 +301,7 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
       continue;
     }
     if ((*maze_)(x / 180, y).east) {
-      auto dist = sqrtf(dx * dx + dy * dy);
+      auto dist = std::sqrt(dx * dx + dy * dy);
       if (dist < best_beam.distance) {
         best_beam = IRBeam(origin, Position(x, wall_y), dist, 0);
       }
@@ -320,7 +320,7 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
       continue;
     }
     if ((*maze_)(x, y / 180).north) {
-      auto dist = sqrtf(dx * dx + dy * dy);
+      auto dist = std::sqrt(dx * dx + dy * dy);
       if (dist < best_beam.distance) {
         best_beam = IRBeam(origin, Position(wall_x, y), dist, std::numbers::pi / 2.0f);
       }
@@ -330,7 +330,7 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
   if (best_beam.distance == INFINITY) {
     sensor.SetVoltage(0);
   } else {
-    auto scale   = fabsf(sinf(best_beam.wall_angle - theta));
+    auto scale   = std::abs(std::sin(best_beam.wall_angle - theta));
     auto voltage = scale * std::min(5000.0, 1200000.0 / powf(best_beam.distance, 1000.0 / 583.0));
     sensor.SetVoltage(voltage);
   }
@@ -354,7 +354,7 @@ void Sim::OnEncoderClock(bool left, bool clockwise) {
       dx * std::sin(mouse_theta_) + dy * std::cos(mouse_theta_));
 
   SetMousePos(static_cast<ImVec2>(GetMousePos()) + delta);
-  SetMouseTheta(fmodf(GetMouseTheta() + dt, 2.0f * std::numbers::pi));
+  SetMouseTheta(std::fmod(GetMouseTheta() + dt, 2.0f * std::numbers::pi));
 }
 
 }  // namespace sim

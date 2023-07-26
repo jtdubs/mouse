@@ -75,9 +75,9 @@ void MazeWindow::RenderMaze() {
     }
     if (ImGui::Selectable("Center in Cell")) {
       auto [x, y] = sim_->GetMousePos();
-      sim_->SetMousePos(                            //
-          ImVec2((floor(x / 180.0) + 0.5) * 180.0,  //
-                 (floor(y / 180.0) + 0.5) * 180.0));
+      sim_->SetMousePos(                                 //
+          ImVec2((std::floor(x / 180.0) + 0.5) * 180.0,  //
+                 (std::floor(y / 180.0) + 0.5) * 180.0));
     }
     ImGui::EndPopup();
   }
