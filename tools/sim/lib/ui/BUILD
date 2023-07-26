@@ -15,6 +15,7 @@ cc_library(
     ],
     deps = [
         "//firmware/lib/control:control_headers",
+        "//firmware/lib/utils:utils_headers",
         "//tools/sim/lib/sim",
         "@gl//:lib",
         "@glfw3//:lib",

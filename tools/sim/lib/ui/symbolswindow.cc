@@ -3,6 +3,9 @@
 #include <string>
 
 #include "firmware/lib/control/linear_impl.hh"
+#include "firmware/lib/control/plan_impl.hh"
+#include "firmware/lib/control/rotational_impl.hh"
+#include "firmware/lib/utils/pid.hh"
 #include "symbolswindow_impl.hh"
 #include "textures_impl.hh"
 
@@ -44,9 +47,30 @@ void SymbolsWindow::Render() {
     auto symbol = symbols.at(name);
 
     Row(symbol.name);
+    // TODO: explore::next
+    // TODO: explore::path
+    // TODO: explore::updates
+    // TODO: explore::orientation
+    // TODO: maze::updates
+    // TODO: report::report
+    // TODO: walls::state
     if (symbol.name == "linear::state") {
       std::ostringstream os;
       os << reinterpret_cast<linear::State *>(symbol.data);
+      ImGui::TextUnformatted(os.str().c_str());
+    } else if (symbol.name == "rotational::state") {
+      std::ostringstream os;
+      os << reinterpret_cast<rotational::State *>(symbol.data);
+      ImGui::TextUnformatted(os.str().c_str());
+    } else if (symbol.name == "plan::current_plan") {
+      std::ostringstream os;
+      os << reinterpret_cast<plan::Plan *>(symbol.data);
+      ImGui::TextUnformatted(os.str().c_str());
+    } else if (symbol.name == "linear::wall_error_pid" ||  //
+               symbol.name == "speed::pid_left" ||         //
+               symbol.name == "speed::pid_right") {
+      std::ostringstream os;
+      os << reinterpret_cast<pid::PIController *>(symbol.data);
       ImGui::TextUnformatted(os.str().c_str());
     } else {
       switch (symbol.size) {

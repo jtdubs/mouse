@@ -11,6 +11,10 @@
 
 #include "math.hh"
 
+#if not defined(__AVR__)
+#include <ostream>
+#endif
+
 namespace pid {
 
 // PID controller for a process variable.
@@ -27,6 +31,10 @@ class PIDController {
   void         Reset();
   void         Tune(float kp, float ki, float kd);
   void         SetRange(float min, float max);
+
+#if not defined(__AVR__)
+  friend std::ostream &operator<<(std::ostream &o, const PIDController *pid);
+#endif
 };
 
 // PI controller for a process variable.
@@ -42,6 +50,10 @@ class PIController {
   void         Reset();
   void         Tune(float kp, float ki, float kd);
   void         SetRange(float min, float max);
+
+#if not defined(__AVR__)
+  friend std::ostream &operator<<(std::ostream &o, const PIController *pid);
+#endif
 };
 
 // PD controller for a process variable.
@@ -57,6 +69,10 @@ class PDController {
   void         Reset();
   void         Tune(float kp, float ki, float kd);
   void         SetRange(float min, float max);
+
+#if not defined(__AVR__)
+  friend std::ostream &operator<<(std::ostream &o, const PDController *pid);
+#endif
 };
 
 // P controller for a process variable.
@@ -71,6 +87,10 @@ class PController {
   void         Reset();
   void         Tune(float kp, float ki, float kd);
   void         SetRange(float min, float max);
+
+#if not defined(__AVR__)
+  friend std::ostream &operator<<(std::ostream &o, const PController *pid);
+#endif
 };
 
 // update determines the manipulated value, given a setpoint and process variable.
@@ -140,5 +160,51 @@ inline float PController::Update(float sp /* setpoint */, float pv /* process va
 
   return math::clampf(out, min, max);
 }
+
+#if not defined(__AVR__)
+std::ostream &operator<<(std::ostream &o, const PIDController *pid) {
+  o << "pid::PIDController{" << std::endl;
+  o << "  min: " << pid->min << std::endl;
+  o << "  max: " << pid->max << std::endl;
+  o << "  kp: " << pid->kp << std::endl;
+  o << "  ki: " << pid->ki << std::endl;
+  o << "  kd: " << pid->kd << std::endl;
+  o << "  i: " << pid->i << std::endl;
+  o << "  last_pv: " << pid->last_pv << std::endl;
+  o << "}";
+  return o;
+}
+
+std::ostream &operator<<(std::ostream &o, const PIController *pid) {
+  o << "pid::PIController{" << std::endl;
+  o << "  min: " << pid->min << std::endl;
+  o << "  max: " << pid->max << std::endl;
+  o << "  kp: " << pid->kp << std::endl;
+  o << "  ki: " << pid->ki << std::endl;
+  o << "  i: " << pid->i << std::endl;
+  o << "}";
+  return o;
+}
+
+std::ostream &operator<<(std::ostream &o, const PDController *pid) {
+  o << "pid::PDController{" << std::endl;
+  o << "  min: " << pid->min << std::endl;
+  o << "  max: " << pid->max << std::endl;
+  o << "  kp: " << pid->kp << std::endl;
+  o << "  kd: " << pid->kd << std::endl;
+  o << "  last_pv: " << pid->last_pv << std::endl;
+  o << "}";
+  return o;
+}
+
+std::ostream &operator<<(std::ostream &o, const PController *pid) {
+  o << "pid::PController{" << std::endl;
+  o << "  min: " << pid->min << std::endl;
+  o << "  max: " << pid->max << std::endl;
+  o << "  kp: " << pid->kp << std::endl;
+  o << "}";
+  return o;
+}
+#endif
 
 }  // namespace pid
