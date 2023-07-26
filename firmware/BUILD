@@ -1,5 +1,4 @@
-load("//bazel/rules:objcopy.bzl", "objcopy")
-load("//bazel/rules:objdump.bzl", "objdump")
+load("//bazel/rules:avr.bzl", "avr_binary")
 
 platform_library = select(
     {
@@ -9,14 +8,8 @@ platform_library = select(
     },
 )
 
-cc_binary(
+avr_binary(
     name = "mouse",
-    srcs = glob(["*.cc"]),
-    linkstatic = True,
-    target_compatible_with = select({
-        "//bazel/platforms/avr:yes": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
     deps = [
         "//firmware/lib/control",
         "//firmware/lib/mode/explore",
@@ -25,14 +18,4 @@ cc_binary(
         "//firmware/lib/utils",
         "//firmware/platform",
     ] + platform_library,
-)
-
-objcopy(
-    name = "mouse_hex",
-    src = ":mouse",
-)
-
-objdump(
-    name = "mouse_s",
-    src = ":mouse",
 )

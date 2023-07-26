@@ -1,15 +1,10 @@
+load("//bazel/rules:avr.bzl", "avr_library")
+
 package(default_visibility = ["//visibility:public"])
 
-cc_library(
+avr_library(
     name = "atmega4809",
-    srcs = glob([
-        "*.cc",
-        "*.hh",
-    ]),
-    target_compatible_with = select({
-        "//bazel/platforms/cpu:atmega4809": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
+    platform = "//bazel/platforms/cpu:atmega4809",
     deps = [
         "//firmware/lib/utils",
         "//firmware/platform",

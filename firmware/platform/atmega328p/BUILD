@@ -1,15 +1,10 @@
+load("//bazel/rules:avr.bzl", "avr_library")
+
 package(default_visibility = ["//visibility:public"])
 
-cc_library(
+avr_library(
     name = "atmega328p",
-    srcs = glob([
-        "*.cc",
-        "*.hh",
-    ]),
-    target_compatible_with = select({
-        "//bazel/platforms/cpu:atmega328p": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
+    platform = "//bazel/platforms/cpu:atmega328p",
     deps = [
         "//firmware/lib/utils",
         "//firmware/platform",

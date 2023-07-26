@@ -1,6 +1,5 @@
+load("//bazel/rules:avr.bzl", "avr_library")
+
 package(default_visibility = ["//visibility:public"])
 
-cc_library(
-    name = "platform",
-    hdrs = glob(["*.hh"]),
-)
+avr_library(name = "platform")
