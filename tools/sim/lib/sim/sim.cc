@@ -45,7 +45,7 @@ Sim::Sim()
       mouse_(),
       symbols_(),
       maze_(),
-      mouse_pos_(90, 36),
+      mouse_pos_{90, 36},
       mouse_theta_(std::numbers::pi / 2.0f),
       ir_beams_(),
       ir_mutex_() {}
@@ -240,9 +240,8 @@ void Sim::SetMouseTheta(float theta) {
 Position Sim::Project(Position mousePosition) const {
   auto [x, y] = mousePosition;
 
-  return Position(  //
-      mouse_pos_.x + (x * std::cos(mouse_theta_) - y * std::sin(mouse_theta_)),
-      mouse_pos_.y + (x * std::sin(mouse_theta_) + y * std::cos(mouse_theta_)));
+  return {mouse_pos_.x + (x * std::cos(mouse_theta_) - y * std::sin(mouse_theta_)),
+          mouse_pos_.y + (x * std::sin(mouse_theta_) + y * std::cos(mouse_theta_))};
 }
 
 std::vector<IRBeam> Sim::GetIRBeams() {
@@ -278,51 +277,51 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
   int width, height;
   maze_->GetSize(width, height);
 
-  auto best_beam = IRBeam(Position(0, 0), Position(0, 0), INFINITY, 0);
-  auto origin    = Project(sensor.GetPosition());
-  auto theta     = mouse_theta_ + sensor.GetTheta();
+  auto  best_beam = IRBeam({0, 0}, {0, 0}, INFINITY, 0);
+  auto  origin    = Project(sensor.GetPosition());
+  float theta     = mouse_theta_ + sensor.GetTheta();
 
-  auto tan_theta = tanf(theta);
-  auto sin_sign  = signbit(std::sin(theta));
-  auto cos_sign  = signbit(std::cos(theta));
+  float tan_theta = tanf(theta);
+  int   sin_sign  = signbit(std::sin(theta));
+  int   cos_sign  = signbit(std::cos(theta));
 
   for (int y = 0; y < height; y++) {
-    auto wall_y = y * 180.0;
-    auto dy     = wall_y - origin.y;
-    auto dx     = 0.0f;
+    float wall_y = y * 180.0f;
+    float dy     = wall_y - origin.y;
+    float dx     = 0.0f;
     if (tan_theta != 0.0) {
       dx = dy / tan_theta;
     }
     if (signbit(dx) != cos_sign) {
       continue;
     }
-    auto x = origin.x + dx;
-    if (x < 0 || x > (width * 180.0)) {
+    float x = origin.x + dx;
+    if (x < 0.0f || x > (width * 180.0f)) {
       continue;
     }
     if ((*maze_)(x / 180, y).east) {
-      auto dist = std::sqrt(dx * dx + dy * dy);
+      float dist = std::sqrt(dx * dx + dy * dy);
       if (dist < best_beam.distance) {
-        best_beam = IRBeam(origin, Position(x, wall_y), dist, 0);
+        best_beam = IRBeam(origin, {x, wall_y}, dist, 0);
       }
     }
   }
 
   for (int x = 0; x < width; x++) {
-    auto wall_x = x * 180.0;
-    auto dx     = wall_x - origin.x;
-    auto dy     = dx * tan_theta;
+    float wall_x = x * 180.0f;
+    float dx     = wall_x - origin.x;
+    float dy     = dx * tan_theta;
     if (signbit(dy) != sin_sign) {
       continue;
     }
-    auto y = origin.y + dy;
-    if (y < 0 || y > (height * 180.0)) {
+    float y = origin.y + dy;
+    if (y < 0.0f || y > (height * 180.0f)) {
       continue;
     }
     if ((*maze_)(x, y / 180).north) {
-      auto dist = std::sqrt(dx * dx + dy * dy);
+      float dist = std::sqrt(dx * dx + dy * dy);
       if (dist < best_beam.distance) {
-        best_beam = IRBeam(origin, Position(wall_x, y), dist, std::numbers::pi / 2.0f);
+        best_beam = IRBeam(origin, {wall_x, y}, dist, std::numbers::pi / 2.0f);
       }
     }
   }
@@ -330,8 +329,8 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
   if (best_beam.distance == INFINITY) {
     sensor.SetVoltage(0);
   } else {
-    auto scale   = std::abs(std::sin(best_beam.wall_angle - theta));
-    auto voltage = scale * std::min(5000.0, 1200000.0 / powf(best_beam.distance, 1000.0 / 583.0));
+    float scale   = std::abs(std::sin(best_beam.wall_angle - theta));
+    float voltage = scale * std::min(5000.0, 1200000.0 / powf(best_beam.distance, 1000.0 / 583.0));
     sensor.SetVoltage(voltage);
   }
 

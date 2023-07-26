@@ -2,12 +2,11 @@
 
 namespace sim {
 
-Position::Position(float x, float y) : x(x), y(y) {}
-
-Position::Position(ImVec2 v) : x(v.x), y(v.y) {}
-
 Position::operator ImVec2() const {
   return ImVec2(x, y);
 }
+
+Position::Position(std::initializer_list<float> l) : x(*l.begin()), y(*(l.begin() + 1)) {}
+Position::Position(ImVec2 v) : x(v.x), y(v.y) {}
 
 }  // namespace sim
