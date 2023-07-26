@@ -277,7 +277,7 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
   int width, height;
   maze_->GetSize(width, height);
 
-  auto  best_beam = IRBeam({0, 0}, {0, 0}, INFINITY, 0);
+  auto  best_beam = IRBeam{{0, 0}, {0, 0}, INFINITY, 0};
   auto  origin    = Project(sensor.GetPosition());
   float theta     = mouse_theta_ + sensor.GetTheta();
 
@@ -302,7 +302,7 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
     if ((*maze_)(x / 180, y).east) {
       float dist = std::sqrt(dx * dx + dy * dy);
       if (dist < best_beam.distance) {
-        best_beam = IRBeam(origin, {x, wall_y}, dist, 0);
+        best_beam = IRBeam{origin, {x, wall_y}, dist, 0};
       }
     }
   }
@@ -321,7 +321,7 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
     if ((*maze_)(x, y / 180).north) {
       float dist = std::sqrt(dx * dx + dy * dy);
       if (dist < best_beam.distance) {
-        best_beam = IRBeam(origin, {wall_x, y}, dist, std::numbers::pi / 2.0f);
+        best_beam = IRBeam{origin, {wall_x, y}, dist, std::numbers::pi / 2.0f};
       }
     }
   }

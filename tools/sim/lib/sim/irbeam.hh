@@ -4,11 +4,7 @@
 
 namespace sim {
 
-class IRBeam {
- public:
-  IRBeam(Position start, Position end, float distance, float wall_angle);
-
- public:
+struct IRBeam {
   Position start;
   Position end;
   float    distance;
