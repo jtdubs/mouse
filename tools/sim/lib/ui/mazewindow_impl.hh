@@ -12,7 +12,7 @@ class MazeWindow : public Window {
  public:
   MazeWindow(sim::Sim *sim);
 
-  virtual void Render();
+  virtual void Render() override;
 
  private:
   void RenderMaze();

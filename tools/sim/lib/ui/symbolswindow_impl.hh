@@ -13,7 +13,7 @@ class SymbolsWindow : public Window {
  public:
   SymbolsWindow(sim::Sim *sim);
 
-  virtual void Render();
+  virtual void Render() override;
 
  private:
   sim::Sim                *sim_;

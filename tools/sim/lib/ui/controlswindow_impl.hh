@@ -9,7 +9,7 @@ class ControlsWindow : public Window {
  public:
   ControlsWindow(sim::Sim *sim);
 
-  virtual void Render();
+  virtual void Render() override;
 
  private:
   sim::Sim *sim_;

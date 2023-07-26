@@ -8,7 +8,7 @@ class Viewport : public Window {
  public:
   Viewport();
 
-  virtual void Render();
+  virtual void Render() override;
 };
 
 }  // namespace ui

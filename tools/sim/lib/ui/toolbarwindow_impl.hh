@@ -9,7 +9,7 @@ class ToolbarWindow : public Window {
  public:
   ToolbarWindow(sim::Sim *sim);
 
-  virtual void Render();
+  virtual void Render() override;
 
  private:
   void RenderToolbar();

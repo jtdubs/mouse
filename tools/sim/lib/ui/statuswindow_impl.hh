@@ -9,7 +9,7 @@ class StatusWindow : public Window {
  public:
   StatusWindow(sim::Sim *sim);
 
-  virtual void Render();
+  virtual void Render() override;
 
  private:
   sim::Sim *sim_;
