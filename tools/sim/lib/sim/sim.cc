@@ -329,7 +329,7 @@ IRBeam Sim::GetIRBeam(Sensor& sensor) {
     sensor.SetVoltage(0);
   } else {
     auto scale   = fabsf(sinf(best_beam.wall_angle - theta));
-    auto voltage = scale * fminf(5000.0, 1200000.0 / powf(best_beam.distance, 1000.0 / 583.0));
+    auto voltage = scale * std::min(5000.0, 1200000.0 / powf(best_beam.distance, 1000.0 / 583.0));
     sensor.SetVoltage(voltage);
   }
 

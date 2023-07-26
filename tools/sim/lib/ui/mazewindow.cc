@@ -1,5 +1,6 @@
 #include <math.h>
 
+#include <algorithm>
 #include <format>
 
 #include "mazewindow_impl.hh"
@@ -58,7 +59,7 @@ void MazeWindow::RenderMaze() {
   auto grid_dim = post_dim - ImVec2(1, 1);
 
   auto canvas_size    = ImGui::GetContentRegionAvail();
-  auto cell_size_px   = fminf(canvas_size.x / grid_dim.x, canvas_size.y / grid_dim.y);
+  auto cell_size_px   = std::min(canvas_size.x / grid_dim.x, canvas_size.y / grid_dim.y);
   auto maze_size_px   = grid_dim * cell_size_px;
   auto mm_size_px     = cell_size_px / 180.0;
   auto margin_px      = (canvas_size - maze_size_px) / 2.0f;
@@ -121,10 +122,10 @@ void MazeWindow::RenderMaze() {
   // Calculate mouse bounds
   float min_x = INFINITY, min_y = INFINITY, max_x = -INFINITY, max_y = -INFINITY;
   for (auto v : outline) {
-    min_x = fminf(min_x, v.x);
-    min_y = fminf(min_y, v.y);
-    max_x = fmaxf(max_x, v.x);
-    max_y = fmaxf(max_y, v.y);
+    min_x = std::min(min_x, v.x);
+    min_y = std::min(min_y, v.y);
+    max_x = std::max(max_x, v.x);
+    max_y = std::max(max_y, v.y);
   }
 
   // Draw the mouse
@@ -163,9 +164,9 @@ void MazeWindow::RenderMaze() {
   } else {
     if (dragging_) {
       dragging_ = false;
-      sim_->SetMousePos(                                  //
-          ImVec2(fminf(fmaxf(x, 0), grid_dim.x * 180.0),  //
-                 fminf(fmaxf(y, 0), grid_dim.y * 180.0)));
+      sim_->SetMousePos(                                            //
+          ImVec2(std::min(std::max(x, 0.0f), grid_dim.x * 180.0f),  //
+                 std::min(std::max(y, 0.0f), grid_dim.y * 180.0f)));
     }
   }
 
