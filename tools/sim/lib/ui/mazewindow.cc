@@ -162,9 +162,9 @@ void MazeWindow::RenderMaze() {
   } else {
     if (dragging_) {
       dragging_ = false;
-      sim_->SetMousePos(                                            //
-          ImVec2(std::min(std::max(x, 0.0f), grid_dim.x * 180.0f),  //
-                 std::min(std::max(y, 0.0f), grid_dim.y * 180.0f)));
+      sim_->SetMousePos(                                    //
+          ImVec2(std::clamp(x, 0.0f, grid_dim.x * 180.0f),  //
+                 std::clamp(y, 0.0f, grid_dim.y * 180.0f)));
     }
   }
 
