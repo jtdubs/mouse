@@ -7,3 +7,4 @@ bazel-*
 /remote
 /sim
 compile_commands.json
+imgui.ini
