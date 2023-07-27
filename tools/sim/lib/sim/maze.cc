@@ -35,7 +35,7 @@ const std::map<wchar_t, Post> kPostLookup = {
 std::vector<std::string> Maze::List() {
   std::vector<std::string> result;
 
-  std::filesystem::path folder = "tools/mazes";
+  std::filesystem::path folder = "tools/common/mazes";
   if (!std::filesystem::exists(folder)) {
     return result;
   }
@@ -52,7 +52,7 @@ std::vector<std::string> Maze::List() {
 }
 
 std::unique_ptr<Maze> Maze::Load(std::string name) {
-  auto file  = std::filesystem::path("tools/mazes/");
+  auto file  = std::filesystem::path("tools/common/mazes/");
   file      /= std::filesystem::path(name + ".txt");
 
   std::wifstream in(file);

@@ -44,7 +44,7 @@ func New(mouse *mouse.Mouse) *UI {
 	backend.CreateWindow("Mouse Remote", 1240, 700, imgui.GLFWWindowFlags(0))
 	backend.SetTargetFPS(60)
 
-	imgui.CurrentIO().Fonts().AddFontFromFileTTF("tools/fonts/DroidSansMono.ttf", 24)
+	imgui.CurrentIO().Fonts().AddFontFromFileTTF("tools/common/fonts/DroidSansMono.ttf", 24)
 	imgui.CurrentIO().SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 	imgui.StyleColorsClassic()
 
@@ -54,7 +54,7 @@ func New(mouse *mouse.Mouse) *UI {
 func (ui *UI) Init() {
 	imgui.PlotCreateContext()
 
-	files, _ := filepath.Glob("tools/icons/*.png")
+	files, _ := filepath.Glob("tools/common/icons/*.png")
 	for _, file := range files {
 		name := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
 		Textures[name] = mustLoad(file)

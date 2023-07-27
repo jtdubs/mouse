@@ -53,7 +53,7 @@ void UI::Run() {
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-  io.Fonts->AddFontFromFileTTF("tools/fonts/DroidSansMono.ttf", 24.0f);
+  io.Fonts->AddFontFromFileTTF("tools/common/fonts/DroidSansMono.ttf", 24.0f);
 
   ImGui::StyleColorsDark();
   ImGui_ImplGlfw_InitForOpenGL(window, true);
