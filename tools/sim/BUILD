@@ -29,5 +29,5 @@ cc_binary(
 compilation_database(
     name = "compdb",
     output_base = OUTPUT_BASE,
-    targets = [":sim2"],
+    targets = [":sim"],
 )

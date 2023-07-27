@@ -38,7 +38,7 @@ void UI::Run() {
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-  auto window = glfwCreateWindow(1280, 720, "sim2", nullptr, nullptr);
+  auto window = glfwCreateWindow(1280, 720, "sim", nullptr, nullptr);
   if (window == nullptr) {
     fprintf(stderr, "glfwCreateWindow failed\n");
     return;
