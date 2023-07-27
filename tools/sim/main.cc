@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
 
   auto sim = sim::Sim();
   if (!sim.Init(args.firmware_path, args.enable_gdb)) {
-    fprintf(stderr, "Sim::Load failed\n");
+    fprintf(stderr, "Sim::Init failed\n");
     return 1;
   }
 
