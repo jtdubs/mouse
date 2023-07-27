@@ -8,6 +8,8 @@
     "files.associations": {
       "*.psl": "verilog",
       "*.h": "c",
+      "*.hh": "cpp",
+      "*.cc": "cpp",
       "cstdint": "cpp",
       "*.def": "cpp",
       "*.isa": "cpp",
@@ -132,7 +134,8 @@
       "remote.*": true,
       "sim.*": true,
       "remote": true,
-      "sim": true,
+      "imgui.ini": true,
+      "compile_commands.json": true,
     }
   },
 }
