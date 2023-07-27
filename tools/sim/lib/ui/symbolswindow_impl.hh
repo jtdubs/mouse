@@ -1,11 +1,8 @@
 #pragma once
 
+#include "imgui_internal.h"
 #include "tools/sim/lib/sim/sim.hh"
 #include "window_impl.hh"
-
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui.h"
-#include "imgui_internal.h"
 
 namespace ui {
 

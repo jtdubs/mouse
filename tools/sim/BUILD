@@ -14,6 +14,9 @@ cc_binary(
         "*.cc",
         "*.hh",
     ]),
+    copts = [
+        "-DIMGUI_DEFINE_MATH_OPERATORS",
+    ],
     linkopts = [
         "-L/usr/local/lib",
     ],

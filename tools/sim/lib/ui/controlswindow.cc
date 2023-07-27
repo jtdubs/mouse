@@ -1,11 +1,8 @@
 #include <format>
 
 #include "controlswindow_impl.hh"
-#include "textures_impl.hh"
-
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui.h"
 #include "imgui_internal.h"
+#include "textures_impl.hh"
 
 namespace ui {
 

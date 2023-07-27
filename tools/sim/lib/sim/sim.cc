@@ -11,11 +11,8 @@
 #include <cmath>
 #include <numbers>
 
-#include "symbols.hh"
-
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui.h"
 #include "imgui_internal.h"
+#include "symbols.hh"
 
 namespace sim {
 

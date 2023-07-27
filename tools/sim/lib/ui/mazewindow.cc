@@ -1,12 +1,9 @@
 #include <algorithm>
 #include <format>
 
+#include "imgui_internal.h"
 #include "mazewindow_impl.hh"
 #include "textures_impl.hh"
-
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui.h"
-#include "imgui_internal.h"
 
 namespace ui {
 

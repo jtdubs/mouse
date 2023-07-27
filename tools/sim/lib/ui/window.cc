@@ -1,9 +1,6 @@
+#include "imgui_internal.h"
 #include "textures_impl.hh"
 #include "window_impl.hh"
-
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui.h"
-#include "imgui_internal.h"
 
 namespace ui {
 

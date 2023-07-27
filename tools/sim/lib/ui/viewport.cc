@@ -1,8 +1,5 @@
-#include "viewport_impl.hh"
-
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui.h"
 #include "imgui_internal.h"
+#include "viewport_impl.hh"
 
 namespace ui {
 
