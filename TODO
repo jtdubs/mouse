@@ -1,6 +1,3 @@
-Sim:
-- Add C++ formatters to firmware structs and use them in the symbol view
-
 Platform:
 - Nano every implementation
 
