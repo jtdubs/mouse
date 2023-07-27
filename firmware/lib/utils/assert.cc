@@ -10,28 +10,26 @@
 namespace assert {
 
 namespace {
-const char hex_table[16] = {
+const char kHexTable[16] = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
 };
 }
 
 // failed is called when an assertion fails.
-void failed(uint32_t error_code) {
+void Failed(Module m, uint8_t n) {
   // disable interrupts and the watchdog (we are here forever!)
   cli();
   wdt_disable();
 
+  uint16_t error_code = static_cast<uint8_t>(m) << 8 | n;
+
   // print the error code to the console (if in the simulator)
   SIM_CONSOLE_REG = static_cast<uint8_t>('A');
   SIM_CONSOLE_REG = static_cast<uint8_t>(':');
-  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 28 & 0xF]);
-  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 24 & 0xF]);
-  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 20 & 0xF]);
-  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 16 & 0xF]);
-  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 12 & 0xF]);
-  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 8 & 0xF]);
-  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 4 & 0xF]);
-  SIM_CONSOLE_REG = static_cast<uint8_t>(hex_table[error_code >> 0 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(kHexTable[error_code >> 12 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(kHexTable[error_code >> 8 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(kHexTable[error_code >> 4 & 0xF]);
+  SIM_CONSOLE_REG = static_cast<uint8_t>(kHexTable[error_code >> 0 & 0xF]);
   SIM_CONSOLE_REG = static_cast<uint8_t>('\n');
 
   // disable all peripherals
@@ -43,8 +41,8 @@ void failed(uint32_t error_code) {
 
   for (;;) {
     // blink out each bit in the error code
-    for (uint8_t bit_index = 0; bit_index < 32; bit_index++) {
-      bool bit = (error_code >> (31 - bit_index)) & 1;
+    for (uint8_t bit_index = 0; bit_index < 16; bit_index++) {
+      bool bit = (error_code >> (15 - bit_index)) & 1;
 
       // on for 20ms, off for 230ms (determined by visual inspection)
       pin::Set(bit ? pin::kLEDLeft : pin::kLEDRight);

@@ -30,8 +30,8 @@ void Init() {
 }
 
 uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
-  assert(assert::PLATFORM + 0, buffer != NULL);
-  assert(assert::PLATFORM + 1, len >= sizeof(Report));
+  assert(assert::Module::Platform, 0, buffer != NULL);
+  assert(assert::Module::Platform, 1, len >= sizeof(Report));
 
   uint16_t left, right, forward;
   adc::ReadSensors(left, right, forward);

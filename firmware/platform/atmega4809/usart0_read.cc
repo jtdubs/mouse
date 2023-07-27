@@ -26,7 +26,7 @@ void DisableReceiver() {
 
 // EnableReceiver enables the USART0 receiver.
 void EnableReceiver() {
-  assert(assert::USART0_READ + 0, read_callback != NULL);
+  assert(assert::Module::Usart0Read, 0, read_callback != NULL);
 
   // TODO(justindubs): 4809 impl
   UCSR0B |= _BV(RXEN0);
@@ -34,7 +34,7 @@ void EnableReceiver() {
 
 // SetReadCallback sets the read callback for USART0.
 void SetReadCallback(read_callback_t callback) {
-  assert(assert::USART0_READ + 1, callback != NULL);
+  assert(assert::Module::Usart0Read, 1, callback != NULL);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     read_callback = callback;

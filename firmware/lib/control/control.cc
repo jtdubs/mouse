@@ -120,7 +120,7 @@ void Tick() {
       break;
     default:
       // This should never happen.
-      assert(assert::CONTROL + 0, false);
+      assert(assert::Module::Control, 0, false);
       break;
   }
 
@@ -129,8 +129,8 @@ void Tick() {
 }
 
 uint8_t GetReport(uint8_t *buffer, uint8_t len) {
-  assert(assert::CONTROL + 1, buffer != NULL);
-  assert(assert::CONTROL + 2, len >= sizeof(Report));
+  assert(assert::Module::Control, 1, buffer != NULL);
+  assert(assert::Module::Control, 2, len >= sizeof(Report));
 
   static auto    previous_plan_state = plan::State::Scheduled;
   static auto    previous_plan_type  = plan::Type::Idle;

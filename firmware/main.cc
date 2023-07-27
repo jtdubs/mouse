@@ -20,7 +20,7 @@ int main() {
   remote::Run();
 
   // seriously... it should never return.
-  assert::failed(assert::MAIN + 0);
+  assert::Failed(assert::Module::Main, 0);
 
   return 0;
 }

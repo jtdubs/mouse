@@ -14,7 +14,7 @@ Command *command;
 
 // on_received is the USART0 callback for when a command is received.
 void on_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
-  assert(assert::COMMAND + 0, command == NULL);
+  assert(assert::Module::Command, 0, command == NULL);
 
   command = (Command *)buffer;
 }

@@ -91,7 +91,7 @@ template <typename T, size_t CAPACITY>
 T Dequeue<T, CAPACITY>::PeekFront() const {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 0, !Empty());
+    assert(assert::Module::Dequeue, 0, !Empty());
     if (front == (CAPACITY - 1)) {
       result = buffer[0];
     } else {
@@ -105,7 +105,7 @@ template <typename T, size_t CAPACITY>
 T Dequeue<T, CAPACITY>::PeekBack() const {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 1, !Empty());
+    assert(assert::Module::Dequeue, 1, !Empty());
     if (back == 0) {
       result = buffer[CAPACITY - 1];
     } else {
@@ -119,7 +119,7 @@ template <typename T, size_t CAPACITY>
 T Dequeue<T, CAPACITY>::PopFront() {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 2, !Empty());
+    assert(assert::Module::Dequeue, 2, !Empty());
     if (front == (CAPACITY - 1)) {
       front = 0;
     } else {
@@ -137,7 +137,7 @@ template <typename T, size_t CAPACITY>
 T Dequeue<T, CAPACITY>::PopBack() {
   T result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 3, !Empty());
+    assert(assert::Module::Dequeue, 3, !Empty());
     if (back == 0) {
       back = CAPACITY - 1;
     } else {
@@ -154,7 +154,7 @@ T Dequeue<T, CAPACITY>::PopBack() {
 template <typename T, size_t CAPACITY>
 void Dequeue<T, CAPACITY>::PushFront(T val) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 4, !Full());
+    assert(assert::Module::Dequeue, 4, !Full());
     buffer[front] = val;
     if (front == 0) {
       front = CAPACITY - 1;
@@ -170,7 +170,7 @@ void Dequeue<T, CAPACITY>::PushFront(T val) {
 template <typename T, size_t CAPACITY>
 void Dequeue<T, CAPACITY>::PushBack(T val) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    assert(assert::DEQUEUE + 5, !Full());
+    assert(assert::Module::Dequeue, 5, !Full());
     buffer[back] = val;
     if (back == (CAPACITY - 1)) {
       back = 0;

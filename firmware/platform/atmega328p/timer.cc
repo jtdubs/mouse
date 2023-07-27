@@ -18,8 +18,8 @@ uint8_t    callback_count = 0;
 }  // namespace
 
 void AddCallback(callback_t callback) {
-  assert(assert::TIMER + 0, callback != NULL);
-  assert(assert::TIMER + 1, callback_count < 4);
+  assert(assert::Module::Timer, 0, callback != NULL);
+  assert(assert::Module::Timer, 1, callback_count < 4);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     callbacks[callback_count++] = callback;

@@ -33,8 +33,8 @@ void Init() {
 
 // set sets the direction of the motors.
 void Set(int16_t left, int16_t right) {
-  assert(assert::MOTOR + 0, left > -512 && left < 512);
-  assert(assert::MOTOR + 1, right > -512 && right < 512);
+  assert(assert::Module::Motor, 0, left > -512 && left < 512);
+  assert(assert::Module::Motor, 1, right > -512 && right < 512);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     power_left  = left;

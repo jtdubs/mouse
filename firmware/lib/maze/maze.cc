@@ -45,8 +45,8 @@ void Send() {
 }
 
 uint8_t GetReport(uint8_t *buffer, uint8_t len) {
-  assert(assert::MAZE + 0, buffer != NULL);
-  assert(assert::MAZE + 1, len >= (sizeof(Update) * kMazeWidth));
+  assert(assert::Module::Maze, 0, buffer != NULL);
+  assert(assert::Module::Maze, 1, len >= (sizeof(Update) * kMazeWidth));
 
   auto *update_array = (Update *)buffer;
 
@@ -75,15 +75,15 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
 }
 
 Cell Read(Location loc) {
-  assert(assert::MAZE + 2, loc.X() < kMazeWidth);
-  assert(assert::MAZE + 3, loc.Y() < kMazeHeight);
+  assert(assert::Module::Maze, 2, loc.X() < kMazeWidth);
+  assert(assert::Module::Maze, 3, loc.Y() < kMazeHeight);
 
   return maze.cells[loc];
 }
 
 void Write(Location loc, Cell cell) {
-  assert(assert::MAZE + 4, loc.X() < kMazeWidth);
-  assert(assert::MAZE + 5, loc.Y() < kMazeHeight);
+  assert(assert::Module::Maze, 4, loc.X() < kMazeWidth);
+  assert(assert::Module::Maze, 5, loc.Y() < kMazeHeight);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     maze.cells[loc] = cell;

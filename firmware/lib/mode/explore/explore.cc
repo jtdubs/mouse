@@ -115,8 +115,8 @@ void Explore() {
 
 // GetReport() is the report handler for the explore mode.
 uint8_t GetReport(uint8_t *buffer, uint8_t len) {
-  assert(assert::EXPLORE + 0, buffer != NULL);
-  assert(assert::EXPLORE + 1, len >= (sizeof(DequeueUpdate) * 16));
+  assert(assert::Module::Explore, 0, buffer != NULL);
+  assert(assert::Module::Explore, 1, len >= (sizeof(DequeueUpdate) * 16));
 
   uint8_t i          = 0;
   uint8_t report_len = 0;
@@ -176,7 +176,7 @@ Orientation Adjacent(maze::Location a, maze::Location b) {
 
 // face positions the mouse in the middle of the current cell, facing the given orientation.
 void Face(Orientation new_orientation) {
-  assert(assert::EXPLORE + 2, new_orientation != Orientation::Invalid);
+  assert(assert::Module::Explore, 2, new_orientation != Orientation::Invalid);
 
   if (new_orientation == orientation) {
     return;
@@ -256,7 +256,7 @@ void Stop() {
   UpdateLocation();
 
   // we should never decide to stop once we have already passed the center of a cell.
-  assert(assert::EXPLORE + 3, cell_offset <= kCellSize2);
+  assert(assert::Module::Explore, 3, cell_offset <= kCellSize2);
 
   // stop at the center of the cell
   plan::SubmitAndWait(                                 //
@@ -291,7 +291,7 @@ void queue_unvisited(maze::Location loc) {
 
 // classify updates the state of a cell, and adds unvisited neighbors to the "next" stack.
 void Classify(maze::Location loc) {
-  assert(assert::EXPLORE + 4, orientation != Orientation::Invalid);
+  assert(assert::Module::Explore, 4, orientation != Orientation::Invalid);
 
   bool wall_forward, wall_left, wall_right;
   walls::Present(wall_left, wall_right, wall_forward);

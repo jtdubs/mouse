@@ -24,9 +24,9 @@ bool WriteReady() {
 
 // write begins an asynchronous write to USART0.
 void Write(uint8_t *buffer, uint8_t length) {
-  assert(assert::USART0_WRITE + 0, buffer != NULL);
-  assert(assert::USART0_WRITE + 1, length > 0);
-  assert(assert::USART0_WRITE + 2, WriteReady());
+  assert(assert::Module::Usart0Write, 0, buffer != NULL);
+  assert(assert::Module::Usart0Write, 1, length > 0);
+  assert(assert::Module::Usart0Write, 2, WriteReady());
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     // Setup the initial write state.
