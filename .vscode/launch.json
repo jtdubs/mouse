@@ -44,7 +44,7 @@
       "name": "Debug Sim2",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/bazel-bin/tools/sim/sim2",
+      "program": "${workspaceFolder}/bazel-bin/tools/sim/sim",
       "cwd": "${workspaceFolder}",
       "externalConsole": false,
       "stopAtEntry": true,
