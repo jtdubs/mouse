@@ -1,4 +1,4 @@
-.PHONY: all clean size upload run monitor bind remote-wave sim-wave
+.PHONY: all clean size upload run monitor bind remote-wave sim-wave db
 
 REMOTE_SOURCES=$(shell find ./tools/remote -name "*.go")
 
@@ -35,6 +35,9 @@ remote-wave: remote.fst
 
 sim-wave: sim.fst
 	gtkwave sim.gtkw
+
+db:
+	bazel-compdb -q //tools/...
 
 %.fst: %.vcd
 	vcd2fst $< $@
