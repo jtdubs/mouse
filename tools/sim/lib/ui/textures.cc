@@ -14,7 +14,7 @@ std::map<std::string, ImTextureID> textures;
 }
 
 void LoadIcons() {
-  std::filesystem::path folder = "tools/common/icons";
+  std::filesystem::path folder = "data/icons";
   if (!std::filesystem::exists(folder)) {
     return;
   }
