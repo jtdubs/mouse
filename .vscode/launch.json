@@ -35,7 +35,7 @@
       "name": "Debug Remote",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/bazel-bin/tools/remote2/remote2",
+      "program": "${workspaceFolder}/bazel-bin/tools/remote/remote",
       "cwd": "${workspaceFolder}",
       "externalConsole": false,
       "stopAtEntry": true,

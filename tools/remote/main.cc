@@ -1,8 +1,8 @@
 #include <iostream>
 
 #include "args.hh"
-#include "tools/remote2/lib/remote/remote.hh"
-#include "tools/remote2/lib/ui/ui.hh"
+#include "tools/remote/lib/remote/remote.hh"
+#include "tools/remote/lib/ui/ui.hh"
 
 int main(int argc, char** argv) {
   auto args = ParseArgs(argc, argv);

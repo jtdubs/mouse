@@ -1,7 +1,7 @@
 #pragma once
 
 #include "firmware/lib/mode/remote/command.hh"
-#include "tools/remote2/lib/remote/remote.hh"
+#include "tools/remote/lib/remote/remote.hh"
 #include "window_impl.hh"
 
 namespace ui {

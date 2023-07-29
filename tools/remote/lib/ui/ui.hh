@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "tools/remote2/lib/remote/remote.hh"
+#include "tools/remote/lib/remote/remote.hh"
 #include "window_impl.hh"
 
 namespace ui {

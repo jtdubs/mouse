@@ -9,7 +9,7 @@ cc_library(
 )
 
 cc_binary(
-    name = "remote2",
+    name = "remote",
     srcs = glob([
         "*.cc",
         "*.hh",
@@ -19,8 +19,8 @@ cc_binary(
     ],
     deps = [
         ":cli11",
-        "//tools/remote2/lib/remote",
-        "//tools/remote2/lib/ui",
+        "//tools/remote/lib/remote",
+        "//tools/remote/lib/ui",
         "@simavr//:lib",
         "@simavrparts//:lib",
     ],
@@ -29,5 +29,5 @@ cc_binary(
 compilation_database(
     name = "compdb",
     output_base = OUTPUT_BASE,
-    targets = [":remote2"],
+    targets = [":remote"],
 )

@@ -23,7 +23,7 @@ cc_library(
         "//firmware/lib/mode/remote:remote_headers",
         "//firmware/lib/utils:utils_headers",
         "//firmware/platform:platform_headers",
-        "//tools/remote2/lib/remote",
+        "//tools/remote/lib/remote",
         "@gl//:lib",
         "@glfw3//:lib",
         "@imgui",
