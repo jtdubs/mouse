@@ -88,17 +88,17 @@ func (w *mazeWindow) draw() {
 		}
 	}
 
-	// pathStack, nextStack := w.mouse.Explore.Read()
-	// for _, cell := range nextStack {
-	// 	x, y := cell>>4, cell&0x0F
-	// 	cellOriginPx := mazeOriginPx.Add(imgui.NewVec2(float32(x)*cellSizePx, -float32(y)*cellSizePx))
-	// 	drawList.AddCircleFilled(cellOriginPx.Add(imgui.NewVec2(cellSizePx/2, -cellSizePx/2)), cellSizePx/4, imgui.ColorConvertFloat4ToU32(imgui.NewVec4(0.3, 0.1, 0.1, 1)))
-	// }
-	// for _, cell := range pathStack {
-	// 	x, y := cell>>4, cell&0x0F
-	// 	cellOriginPx := mazeOriginPx.Add(imgui.NewVec2(float32(x)*cellSizePx, -float32(y)*cellSizePx))
-	// 	drawList.AddCircleFilled(cellOriginPx.Add(imgui.NewVec2(cellSizePx/2, -cellSizePx/2)), cellSizePx/8, imgui.ColorConvertFloat4ToU32(imgui.NewVec4(0.0, 0.0, 0.0, 1)))
-	// }
+	pathStack, nextStack := w.mouse.Explore.Read()
+	for _, cell := range nextStack {
+		x, y := cell>>4, cell&0x0F
+		cellOriginPx := mazeOriginPx.Add(imgui.NewVec2(float32(x)*cellSizePx, -float32(y)*cellSizePx))
+		drawList.AddCircleFilled(cellOriginPx.Add(imgui.NewVec2(cellSizePx/2, -cellSizePx/2)), cellSizePx/4, imgui.ColorConvertFloat4ToU32(imgui.NewVec4(0.3, 0.1, 0.1, 1)))
+	}
+	for _, cell := range pathStack {
+		x, y := cell>>4, cell&0x0F
+		cellOriginPx := mazeOriginPx.Add(imgui.NewVec2(float32(x)*cellSizePx, -float32(y)*cellSizePx))
+		drawList.AddCircleFilled(cellOriginPx.Add(imgui.NewVec2(cellSizePx/2, -cellSizePx/2)), cellSizePx/8, imgui.ColorConvertFloat4ToU32(imgui.NewVec4(0.0, 0.0, 0.0, 1)))
+	}
 
 	imgui.End()
 }

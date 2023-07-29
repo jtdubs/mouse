@@ -3,9 +3,17 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 
+#include <format>
+#include <iostream>
+#include <mutex>
+
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "commandwindow_impl.hh"
+#include "controlwindow_impl.hh"
 #include "imgui_internal.h"
+#include "mazewindow_impl.hh"
+#include "platformwindow_impl.hh"
 #include "textures_impl.hh"
 #include "toolbarwindow_impl.hh"
 #include "viewport_impl.hh"
@@ -13,18 +21,22 @@
 namespace ui {
 
 void glfw_error_callback(int error, const char* description) {
-  fprintf(stderr, "GLFW error %d: %s\n", error, description);
+  std::cerr << std::format("GLFW error {}: {}", error, description) << std::endl;
 }
 
 UI::UI(remote::Remote* remote) : windows_(), remote_(remote) {
   windows_.push_back(std::unique_ptr<Window>(new Viewport()));
   windows_.push_back(std::unique_ptr<Window>(new ToolbarWindow(remote_)));
+  windows_.push_back(std::unique_ptr<Window>(new PlatformWindow(remote_)));
+  windows_.push_back(std::unique_ptr<Window>(new ControlWindow(remote_)));
+  windows_.push_back(std::unique_ptr<Window>(new MazeWindow(remote_)));
+  windows_.push_back(std::unique_ptr<Window>(new CommandWindow(remote_)));
 }
 
 void UI::Run() {
   glfwSetErrorCallback(glfw_error_callback);
   if (!glfwInit()) {
-    fprintf(stderr, "glfwInit failed\n");
+    std::cerr << "glfwInit failed" << std::endl;
     return;
   }
 
@@ -32,7 +44,7 @@ void UI::Run() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
   auto window = glfwCreateWindow(1280, 720, "remote", nullptr, nullptr);
   if (window == nullptr) {
-    fprintf(stderr, "glfwCreateWindow failed\n");
+    std::cerr << "glfwCreateWindow failed" << std::endl;
     return;
   }
 
@@ -60,8 +72,11 @@ void UI::Run() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    for (auto& window : windows_) {
-      window->Render();
+    {
+      auto lock = std::lock_guard<std::mutex>(remote_->GetMutex());
+      for (auto& w : windows_) {
+        w->Render();
+      }
     }
 
     ImGui::Render();

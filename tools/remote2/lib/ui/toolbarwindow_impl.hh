@@ -1,5 +1,6 @@
 #pragma once
 
+#include "firmware/lib/mode/remote/command.hh"
 #include "tools/remote2/lib/remote/remote.hh"
 #include "window_impl.hh"
 
@@ -13,10 +14,12 @@ class ToolbarWindow : public Window {
 
  private:
   void RenderToolbar();
-  bool Button(std::string name, std::string icon);
 
  private:
-  remote::Remote *remote_;
+  remote::Remote          *remote_;
+  remote::command::Command reset_command_;
+  remote::command::Command explore_command_;
+  remote::command::Command solve_command_;
 };
 
 }  // namespace ui

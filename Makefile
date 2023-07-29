@@ -6,6 +6,7 @@ all: remote
 	bazel build //firmware/... --platforms=//bazel/platforms:arduino_nano -c opt
 	bazel build //firmware/... --platforms=//bazel/platforms:arduino_nano -c dbg
 	bazel build //tools/sim -c opt
+	bazel build //tools/remote2 -c dbg
 
 clean:
 	bazel clean
@@ -21,7 +22,7 @@ upload:
 
 run: all
 	bazel run --run_under="cd $(PWD) &&" -c opt //tools/sim -- --firmware bazel-out/k8-dbg/bin/firmware/mouse 2>&1 | tee sim.log &
-	./remote --port /tmp/simavr-uart0 2>&1 | tee remote.log &
+	bazel run --run_under="cd $(PWD) &&" -c opt //tools/remote2 -- --port /tmp/simavr-uart0 2>&1 | tee remote.log &
 
 monitor:
 	./remote --port /dev/rfcomm0 2>&1 | tee remote.log &

@@ -6,7 +6,12 @@
 
 namespace ui {
 
-ToolbarWindow::ToolbarWindow(remote::Remote *remote) : Window(), remote_(remote) {}
+ToolbarWindow::ToolbarWindow(remote::Remote *remote)  //
+    : Window(), remote_(remote), reset_command_(), explore_command_(), solve_command_() {
+  reset_command_.type   = remote::command::Type::Reset;
+  explore_command_.type = remote::command::Type::Explore;
+  solve_command_.type   = remote::command::Type::Solve;
+}
 
 void ToolbarWindow::Render() {
   auto flags = ImGuiWindowFlags_NoDocking    //
@@ -24,22 +29,55 @@ void ToolbarWindow::Render() {
   if (ImGui::Begin("Toolbar", nullptr, flags)) {
     ImGui::PopStyleVar();
     RenderToolbar();
-    ImGui::End();
   } else {
     ImGui::PopStyleVar();
   }
+  ImGui::End();
 }
 
-void ToolbarWindow::RenderToolbar() {}
+void ToolbarWindow::RenderToolbar() {
+  bool connected = remote_->IsConnected();
 
-bool ToolbarWindow::Button(std::string name, std::string icon) {
-  return ImGui::ImageButton(name.c_str(),        //
-                            ui::Icon(icon),      //
-                            ImVec2(24, 24),      //
-                            ImVec2(0, 0),        //
-                            ImVec2(1, 1),        //
-                            ImVec4(0, 0, 0, 0),  //
-                            ImVec4(1, 1, 1, 1));
+  ImGui::BeginDisabled(!connected);
+
+  if (IconButton("Reset", "restart")) {
+    remote_->Send(reset_command_);
+  }
+  if (ImGui::IsItemHovered()) {
+    ImGui::SetTooltip("Reset Mouse");
+  }
+
+  ImGui::SameLine();
+
+  if (IconButton("Explore", "navigation")) {
+    remote_->Send(explore_command_);
+  }
+  if (ImGui::IsItemHovered()) {
+    ImGui::SetTooltip("Explore");
+  }
+
+  ImGui::SameLine();
+
+  if (IconButton("Solve", "flag-checkered")) {
+    remote_->Send(solve_command_);
+  }
+  if (ImGui::IsItemHovered()) {
+    ImGui::SetTooltip("Solve");
+  }
+
+  ImGui::EndDisabled();
+
+  ImGui::SameLine(0, 20);
+
+  if (IconButton("VCDRecord", "video-outline-black")) {
+    // TODO
+  }
+
+  ImGui::SameLine();
+
+  if (IconButton("VCDStop", "video-off-outline-black")) {
+    // TODO
+  }
 }
 
 }  // namespace ui

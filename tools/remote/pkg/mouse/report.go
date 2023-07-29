@@ -44,6 +44,7 @@ func (r Report) Key() ReportKey {
 type ReportHeader struct {
 	Type      ReportType
 	RTCMicros uint32
+	Len       uint8
 }
 
 type ReportBody interface {

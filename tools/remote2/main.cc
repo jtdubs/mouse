@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "args.hh"
 #include "tools/remote2/lib/remote/remote.hh"
 #include "tools/remote2/lib/ui/ui.hh"
@@ -7,7 +9,7 @@ int main(int argc, char** argv) {
 
   auto remote = remote::Remote();
   if (!remote.Init(args.port)) {
-    fprintf(stderr, "Remote::Init failed\n");
+    std::cerr << "Remote::Init failed" << std::endl;
     return 1;
   }
 

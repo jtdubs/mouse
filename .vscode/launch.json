@@ -17,31 +17,7 @@
       "postDebugTask": "Kill Simulator"
     },
     {
-      "name": "Debug Simulator",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/sim",
-      "cwd": "${workspaceFolder}/sim",
-      "args": [
-        "--firmware",
-        "${workspaceFolder}/fw/build/debug/mouse.elf"
-      ]
-    },
-    {
-      "name": "Debug Remote",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/remote",
-      "cwd": "${workspaceFolder}/remote",
-      "args": [
-        "--port",
-        "/tmp/simavr-uart0"
-      ],
-    },
-    {
-      "name": "Debug Sim2",
+      "name": "Debug Sim",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bazel-bin/tools/sim/sim",
@@ -53,6 +29,21 @@
       "args": [
         "--firmware",
         "${workspaceFolder}/bazel-out/k8-dbg/bin/firmware/mouse",
+      ],
+    },
+    {
+      "name": "Debug Remote",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bazel-bin/tools/remote2/remote2",
+      "cwd": "${workspaceFolder}",
+      "externalConsole": false,
+      "stopAtEntry": true,
+      "stopAtConnect": true,
+      "MIMode": "gdb",
+      "args": [
+        "--port",
+        "/tmp/simavr-uart0",
       ],
     },
   ]
