@@ -1,9 +1,6 @@
 Platform:
 - Nano every implementation
 
-Remote:
-- Port to C++ as well
-
 Maze:
 - Smaller to represent as 256-bit bitmasks for each wall & visited status.
 
