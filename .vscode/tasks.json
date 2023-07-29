@@ -2,11 +2,15 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Build Firmware",
-      "command": "/usr/bin/make",
+      "label": "Build Firmware (opt)",
+      "command": "bazel",
       "type": "shell",
       "args": [
-        "all"
+        "build",
+        "//firmware:mouse",
+        "--platforms=//bazel/platforms:arduino_nano",
+        "-c",
+        "opt"
       ],
       "problemMatcher": [
         "$gcc"
@@ -19,16 +23,20 @@
         "clear": true,
       },
       "options": {
-        "cwd": "${workspaceFolder}/fw"
+        "cwd": "${workspaceFolder}"
       },
       "group": "none",
     },
     {
-      "label": "Clean",
-      "command": "/usr/bin/make",
+      "label": "Build Firmware (dbg)",
+      "command": "bazel",
       "type": "shell",
       "args": [
-        "clean"
+        "build",
+        "//firmware:mouse",
+        "--platforms=//bazel/platforms:arduino_nano",
+        "-c",
+        "dbg"
       ],
       "problemMatcher": [
         "$gcc"
@@ -41,25 +49,123 @@
         "clear": true,
       },
       "options": {
-        "cwd": "${workspaceFolder}/fw"
+        "cwd": "${workspaceFolder}"
       },
-      "group": "none"
+      "group": "none",
+    },
+    {
+      "label": "Build Simulator (dbg)",
+      "command": "bazel",
+      "type": "shell",
+      "args": [
+        "build",
+        "//tools/sim",
+        "-c",
+        "dbg"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "none",
+    },
+    {
+      "label": "Build Simulator (opt)",
+      "command": "bazel",
+      "type": "shell",
+      "args": [
+        "build",
+        "//tools/sim",
+        "-c",
+        "opt"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "none",
+    },
+    {
+      "label": "Build Remote (dbg)",
+      "command": "bazel",
+      "type": "shell",
+      "args": [
+        "build",
+        "//tools/remote",
+        "-c",
+        "dbg"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "none",
+    },
+    {
+      "label": "Build Remote (opt)",
+      "command": "bazel",
+      "type": "shell",
+      "args": [
+        "build",
+        "//tools/remote",
+        "-c",
+        "opt"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "none",
     },
     {
       "label": "Run Simulator",
-      "command": "/usr/local/go/bin/go",
+      "command": "./bazel-out/k8-opt/bin/tools/sim/sim",
       "options": {
-        "cwd": "${workspaceFolder}/sim"
+        "cwd": "${workspaceFolder}"
       },
       "args": [
-        "run",
-        ".",
-        "--gdb",
         "--firmware",
-        "${workspaceFolder}/fw/build/debug/mouse.elf"
+        "${workspaceFolder}/bazel-out/k8-dbg/bin/firmware/mouse"
       ],
       "dependsOn": [
-        "Build"
+        "Build Simulator (opt)",
+        "Build Firmware (dbg)",
       ],
       "type": "shell",
       "isBackground": true,
@@ -89,37 +195,37 @@
       "group": "none"
     },
     {
-      "label": "Kill Simulator",
-      "command": "/usr/bin/killall",
-      "type": "shell",
-      "args": [
-        "-e",
-        "sim",
-      ],
-      "problemMatcher": [
-        "$gcc"
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "dedicated",
-        "clear": true,
+      "label": "Run Simulator (gdb)",
+      "command": "./bazel-out/k8-opt/bin/tools/sim/sim",
+      "options": {
+        "cwd": "${workspaceFolder}"
       },
-      "group": "none"
-    },
-    {
-      "label": "Upload",
-      "command": "/usr/bin/make",
-      "type": "shell",
       "args": [
-        "upload"
+        "--gdb",
+        "--firmware",
+        "${workspaceFolder}/bazel-out/k8-dbg/bin/firmware/mouse"
       ],
       "dependsOn": [
-        "Build"
+        "Build Simulator (opt)",
+        "Build Firmware (dbg)",
       ],
+      "type": "shell",
+      "isBackground": true,
       "problemMatcher": [
-        "$gcc"
+        {
+          "background": {
+            "beginsPattern": ".",
+            "endsPattern": ".",
+          },
+          "pattern": [
+            {
+              "regexp": "$gcc",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ]
+        }
       ],
       "presentation": {
         "echo": true,
@@ -127,27 +233,25 @@
         "focus": false,
         "panel": "dedicated",
         "clear": true,
-      },
-      "options": {
-        "cwd": "${workspaceFolder}/fw"
       },
       "group": "none"
     },
     {
       "label": "Run Remote (Board)",
-      "command": "/usr/local/go/bin/go",
+      "command": "./bazel-out/k8-opt/bin/tools/remote/remote",
       "type": "shell",
       "options": {
-        "cwd": "${workspaceFolder}/remote"
+        "cwd": "${workspaceFolder}"
       },
       "args": [
-        "run",
-        ".",
         "--port",
-        "/dev/ttyNano"
+        "/dev/rfcomm0"
       ],
       "problemMatcher": [
         "$gcc"
+      ],
+      "dependsOn": [
+        "Build Remote (opt)",
       ],
       "presentation": {
         "echo": true,
@@ -160,16 +264,17 @@
     },
     {
       "label": "Run Remote (Sim)",
-      "command": "/usr/local/go/bin/go",
+      "command": "./bazel-out/k8-opt/bin/tools/remote/remote",
       "type": "shell",
       "options": {
-        "cwd": "${workspaceFolder}/remote"
+        "cwd": "${workspaceFolder}"
       },
       "args": [
-        "run",
-        ".",
         "--port",
         "/tmp/simavr-uart0"
+      ],
+      "dependsOn": [
+        "Build Remote (opt)",
       ],
       "problemMatcher": [
         "$gcc"
