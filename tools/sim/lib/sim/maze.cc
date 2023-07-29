@@ -13,22 +13,22 @@ namespace sim {
 
 namespace {
 const std::map<wchar_t, Post> kPostLookup = {
-    {L'╹', {.north = true}},
-    {L'╺', {.east = true}},
-    {L'╻', {.south = true}},
-    {L'╸', {.west = true}},
-    {L'┃', {.north = true, .south = true}},
-    {L'━', {.east = true, .west = true}},
-    {L'┏', {.south = true, .east = true}},
-    {L'┓', {.south = true, .west = true}},
-    {L'┛', {.north = true, .west = true}},
-    {L'┗', {.north = true, .east = true}},
-    {L'┳', {.south = true, .east = true, .west = true}},
-    {L'┣', {.north = true, .south = true, .east = true}},
-    {L'┻', {.north = true, .east = true, .west = true}},
-    {L'┫', {.north = true, .south = true, .west = true}},
-    {L'╋', {.north = true, .south = true, .east = true, .west = true}},
-    {L' ', {}},
+    {L'╹', {.north = true, .east = false, .south = false, .west = false}},
+    {L'╺', {.north = false, .east = true, .south = false, .west = false}},
+    {L'╻', {.north = false, .east = false, .south = true, .west = false}},
+    {L'╸', {.north = false, .east = false, .south = false, .west = true}},
+    {L'┃', {.north = true, .east = false, .south = true, .west = false}},
+    {L'━', {.north = false, .east = true, .south = false, .west = true}},
+    {L'┏', {.north = false, .east = true, .south = true, .west = false}},
+    {L'┓', {.north = false, .east = false, .south = true, .west = true}},
+    {L'┛', {.north = true, .east = false, .south = false, .west = true}},
+    {L'┗', {.north = true, .east = true, .south = false, .west = false}},
+    {L'┳', {.north = false, .east = true, .south = true, .west = true}},
+    {L'┣', {.north = true, .east = true, .south = true, .west = false}},
+    {L'┻', {.north = true, .east = true, .south = false, .west = true}},
+    {L'┫', {.north = true, .east = false, .south = true, .west = true}},
+    {L'╋', {.north = true, .east = true, .south = true, .west = true}},
+    {L' ', {.north = false, .east = false, .south = false, .west = false}},
 };
 }
 
@@ -88,7 +88,7 @@ std::unique_ptr<Maze> Maze::Load(std::string name) {
   return make_unique<Maze>(maze);
 }
 
-const void Maze::GetSize(int &width, int &height) const {
+void Maze::GetSize(int &width, int &height) const {
   height = posts_.size();
   width  = posts_[0].size();
   return;

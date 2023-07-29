@@ -48,7 +48,7 @@ float Sensor::GetTheta() const {
   return theta_;
 }
 
-void Sensor::OnIRQ(avr_irq_t *irq, uint32_t value, void *param) {
+void Sensor::OnIRQ([[maybe_unused]] avr_irq_t *irq, [[maybe_unused]] uint32_t value, [[maybe_unused]] void *param) {
   if (read_callback_) {
     read_callback_();
   }

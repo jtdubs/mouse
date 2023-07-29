@@ -13,7 +13,6 @@ class ToolbarWindow : public Window {
 
  private:
   void RenderToolbar();
-  bool Button(std::string name, std::string icon);
 
  private:
   sim::Sim *sim_;

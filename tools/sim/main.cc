@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "args.hh"
 #include "tools/sim/lib/sim/sim.hh"
 #include "tools/sim/lib/sim/symbols.hh"
@@ -8,7 +10,7 @@ int main(int argc, char** argv) {
 
   auto sim = sim::Sim();
   if (!sim.Init(args.firmware_path, args.enable_gdb)) {
-    fprintf(stderr, "Sim::Init failed\n");
+    std::cerr << "Sim::Init failed" << std::endl;
     return 1;
   }
 

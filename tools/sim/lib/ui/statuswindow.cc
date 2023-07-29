@@ -10,6 +10,7 @@ StatusWindow::StatusWindow(sim::Sim *sim) : Window(), sim_(sim) {}
 
 void StatusWindow::Render() {
   if (!ImGui::Begin("Status")) {
+    ImGui::End();
     return;
   }
 

@@ -3,6 +3,9 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 
+#include <format>
+#include <iostream>
+
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "controlswindow_impl.hh"
@@ -17,7 +20,7 @@
 namespace ui {
 
 void glfw_error_callback(int error, const char* description) {
-  fprintf(stderr, "GLFW error %d: %s\n", error, description);
+  std::cerr << std::format("GLFW error {}: {}", error, description) << std::endl;
 }
 
 UI::UI(sim::Sim* sim) : windows_(), sim_(sim) {
@@ -32,7 +35,7 @@ UI::UI(sim::Sim* sim) : windows_(), sim_(sim) {
 void UI::Run() {
   glfwSetErrorCallback(glfw_error_callback);
   if (!glfwInit()) {
-    fprintf(stderr, "glfwInit failed\n");
+    std::cerr << "glfwInit failed" << std::endl;
     return;
   }
 
@@ -40,7 +43,7 @@ void UI::Run() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
   auto window = glfwCreateWindow(1280, 720, "sim", nullptr, nullptr);
   if (window == nullptr) {
-    fprintf(stderr, "glfwCreateWindow failed\n");
+    std::cerr << "glfwCreateWindow failed" << std::endl;
     return;
   }
 
@@ -68,8 +71,8 @@ void UI::Run() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    for (auto& window : windows_) {
-      window->Render();
+    for (auto& w : windows_) {
+      w->Render();
     }
 
     ImGui::Render();

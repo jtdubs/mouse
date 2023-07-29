@@ -7,7 +7,7 @@
 namespace sim {
 
 struct Post {
-  bool north, south, east, west;
+  bool north, east, south, west;
 };
 
 class Maze {
@@ -18,7 +18,7 @@ class Maze {
  public:
   Maze(std::vector<std::vector<Post>> posts);
 
-  const void  GetSize(int &width, int &height) const;
+  void        GetSize(int &width, int &height) const;
   const Post &operator()(int x, int y) const;
 
  private:

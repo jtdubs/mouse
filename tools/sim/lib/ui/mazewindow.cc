@@ -12,6 +12,7 @@ MazeWindow::MazeWindow(sim::Sim *sim)
 
 void MazeWindow::Render() {
   if (!ImGui::Begin("Maze")) {
+    ImGui::End();
     return;
   }
 

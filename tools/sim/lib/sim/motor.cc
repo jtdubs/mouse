@@ -64,7 +64,7 @@ void Motor::SetEncoderCallback(std::function<void(bool, bool)> callback) {
   encoder_callback_ = callback;
 }
 
-void Motor::OnPWMIRQ(avr_irq_t *irq, uint32_t value, void *param) {
+void Motor::OnPWMIRQ([[maybe_unused]] avr_irq_t *irq, uint32_t value, [[maybe_unused]] void *param) {
   if ((left_ && value < 35) || (!left_ && value < 30)) {
     // Not enough power to start the motor turning.
     desired_period_ = 0;
@@ -80,18 +80,18 @@ void Motor::OnPWMIRQ(avr_irq_t *irq, uint32_t value, void *param) {
     avr_cycle_timer_register(
         avr_,  //
         desired_period_,
-        [](avr_t *avr, avr_cycle_count_t when, void *param) -> avr_cycle_count_t {
-          return static_cast<Motor *>(param)->OnCycle(avr, when, param);
+        [](avr_t *avr, avr_cycle_count_t when, void *p) -> avr_cycle_count_t {
+          return static_cast<Motor *>(p)->OnCycle(avr, when, p);
         },
         this);
   }
 }
 
-void Motor::OnDirIRQ(avr_irq_t *irq, uint32_t value, void *param) {
+void Motor::OnDirIRQ([[maybe_unused]] avr_irq_t *irq, uint32_t value, [[maybe_unused]] void *param) {
   clockwise_ = (value != 0);
 }
 
-avr_cycle_count_t Motor::OnCycle(avr_t *avr, avr_cycle_count_t when, void *param) {
+avr_cycle_count_t Motor::OnCycle([[maybe_unused]] avr_t *avr, avr_cycle_count_t when, [[maybe_unused]] void *param) {
   if (actual_period_ > 0) {
     pulse_index_ = (pulse_index_ + (clockwise_ ? 1 : 3)) % 4;
     if (encoder_callback_) {

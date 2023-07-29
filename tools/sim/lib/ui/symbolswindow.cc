@@ -2,11 +2,11 @@
 #include <sstream>
 #include <string>
 
-#include "firmware/lib/control/linear_impl.hh"
-#include "firmware/lib/control/plan_impl.hh"
-#include "firmware/lib/control/rotational_impl.hh"
-#include "firmware/lib/control/walls_impl.hh"
-#include "firmware/lib/mode/explore/explore_impl.hh"
+#include "firmware/lib/control/linear.hh"
+#include "firmware/lib/control/plan.hh"
+#include "firmware/lib/control/rotational.hh"
+#include "firmware/lib/control/walls.hh"
+#include "firmware/lib/mode/explore/explore.hh"
 #include "firmware/lib/utils/pid.hh"
 #include "symbolswindow_impl.hh"
 #include "textures_impl.hh"
@@ -17,6 +17,7 @@ SymbolsWindow::SymbolsWindow(sim::Sim *sim) : Window(), sim_(sim), filter_(), he
 
 void SymbolsWindow::Render() {
   if (!ImGui::Begin("Symbols")) {
+    ImGui::End();
     return;
   }
 

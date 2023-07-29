@@ -11,6 +11,7 @@ class Window {
  protected:
   void Row(std::string label);
   void Icon(std::string name);
+  bool IconButton(std::string name, std::string icon);
 };
 
 }  // namespace ui

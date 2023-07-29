@@ -29,7 +29,7 @@ void Battery::SetVoltage(uint32_t voltage) {
   voltage_ = voltage;
 }
 
-void Battery::OnIRQ(avr_irq_t *irq, uint32_t value, void *param) {
+void Battery::OnIRQ([[maybe_unused]] avr_irq_t *irq, [[maybe_unused]] uint32_t value, [[maybe_unused]] void *param) {
   avr_raise_irq(value_irq_, voltage_ >> 1);
 }
 

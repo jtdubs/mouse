@@ -24,10 +24,10 @@ void ToolbarWindow::Render() {
   if (ImGui::Begin("Toolbar", nullptr, flags)) {
     ImGui::PopStyleVar();
     RenderToolbar();
-    ImGui::End();
   } else {
     ImGui::PopStyleVar();
   }
+  ImGui::End();
 }
 
 void ToolbarWindow::RenderToolbar() {
@@ -41,31 +41,31 @@ void ToolbarWindow::RenderToolbar() {
   }
 
   if (sim_->GetState() == sim::State::Running) {
-    if (Button("SimPause", "pause-black")) {
+    if (IconButton("SimPause", "pause-black")) {
       sim_->Pause();
     }
   } else {
-    if (Button("SimPlay", "play-black")) {
+    if (IconButton("SimPlay", "play-black")) {
       sim_->Run();
     }
   }
   ImGui::SameLine();
   ImGui::BeginDisabled(sim_->GetState() == sim::State::Running);
-  if (Button("SimStep10ms", "step-forward-black")) {
+  if (IconButton("SimStep10ms", "step-forward-black")) {
     sim_->RunNearest(10 * 1000 * 1000);
   }
   if (ImGui::IsItemHovered()) {
     ImGui::SetTooltip("10ms");
   }
   ImGui::SameLine();
-  if (Button("SimStep1s", "step-forward-2-black")) {
+  if (IconButton("SimStep1s", "step-forward-2-black")) {
     sim_->RunNearest(1000 * 1000 * 1000);
   }
   if (ImGui::IsItemHovered()) {
     ImGui::SetTooltip("1s");
   }
   ImGui::SameLine();
-  if (Button("SimSkip", "skip-forward")) {
+  if (IconButton("SimSkip", "skip-forward")) {
     // TODO: skip to next plan change
   }
   if (ImGui::IsItemHovered()) {
@@ -76,13 +76,13 @@ void ToolbarWindow::RenderToolbar() {
   ImGui::SameLine(0, 20);
 
   ImGui::BeginDisabled(sim_->IsRecording());
-  if (Button("SimRecord", "video-outline-black")) {
+  if (IconButton("SimRecord", "video-outline-black")) {
     sim_->SetRecording(true);
   }
   ImGui::EndDisabled();
   ImGui::SameLine();
   ImGui::BeginDisabled(!sim_->IsRecording());
-  if (Button("SimRecord", "video-off-outline-black")) {
+  if (IconButton("SimRecord", "video-off-outline-black")) {
     sim_->SetRecording(false);
   }
   ImGui::EndDisabled();
@@ -101,16 +101,6 @@ void ToolbarWindow::RenderToolbar() {
 
   ImGui::SetCursorPosY((48 - ImGui::CalcTextSize(nanos_text.c_str()).y) / 2);
   ImGui::TextUnformatted(nanos_text.c_str());
-}
-
-bool ToolbarWindow::Button(std::string name, std::string icon) {
-  return ImGui::ImageButton(name.c_str(),        //
-                            ui::Icon(icon),      //
-                            ImVec2(24, 24),      //
-                            ImVec2(0, 0),        //
-                            ImVec2(1, 1),        //
-                            ImVec4(0, 0, 0, 0),  //
-                            ImVec4(1, 1, 1, 1));
 }
 
 }  // namespace ui

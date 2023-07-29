@@ -14,6 +14,7 @@ ControlsWindow::ControlsWindow(sim::Sim *sim) : Window(), sim_(sim) {}
 
 void ControlsWindow::Render() {
   if (!ImGui::Begin("Controls")) {
+    ImGui::End();
     return;
   }
 

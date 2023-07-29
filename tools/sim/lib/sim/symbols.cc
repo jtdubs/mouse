@@ -3,6 +3,7 @@
 #include <cxxabi.h>
 
 #include <elfio/elfio.hpp>
+#include <iostream>
 
 namespace sim {
 
@@ -11,7 +12,7 @@ std::vector<Symbol> ReadSymbols(avr_t* avr, std::string firmware_path) {
 
   ELFIO::elfio reader;
   if (!reader.load(firmware_path)) {
-    fprintf(stderr, "elfio::load failed\n");
+    std::cerr << "elfio::load failed" << std::endl;
     return result;
   }
 
@@ -47,7 +48,7 @@ std::vector<Symbol> ReadSymbols(avr_t* avr, std::string firmware_path) {
 
       char* demangled = __cxxabiv1::__cxa_demangle(name.c_str(), nullptr, nullptr, nullptr);
       if (demangled == nullptr) {
-        result.push_back(Symbol{name, value, size});
+        result.push_back(Symbol{name, value - 0x800000, size, &avr->data[value - 0x800000]});
       } else {
         std::string d(demangled);
         if (size_t idx = d.find("::(anonymous namespace)"); idx != std::string::npos) {

@@ -9,6 +9,8 @@
 #include <simavr/sim_vcd_file.h>
 
 #include <cmath>
+#include <format>
+#include <iostream>
 #include <numbers>
 
 #include "imgui_internal.h"
@@ -32,8 +34,8 @@ constexpr float kEncoderTickDy          = (kWheelBase / 2.0) * (1.0 - std::cos(k
 
 Sim::Sim()
     : avr_{nullptr},  //
-      pty_{0},
-      firmware_{0},
+      pty_{},
+      firmware_{},
       state_(State::Paused),
       thread_(),
       stop_(),
@@ -55,18 +57,18 @@ bool Sim::Init(std::string firmware_path, bool enable_gdb) {
   int rc = 0;
 
   if ((rc = elf_read_firmware(firmware_path.c_str(), &firmware_)) != 0) {
-    fprintf(stderr, "elf_read_firmware failed: %d\n", rc);
+    std::cerr << std::format("elf_read_firmware failed: {}", rc) << std::endl;
     return false;
   }
 
   avr_ = avr_make_mcu_by_name(firmware_.mmcu);
   if (avr_ == nullptr) {
-    fprintf(stderr, "avr_make_mcu_by_name failed\n");
+    std::cerr << "avr_make_mcu_by_name failed" << std::endl;
     return false;
   }
 
   if ((rc = avr_init(avr_)) != 0) {
-    fprintf(stderr, "avr_init failed: %d\n", rc);
+    std::cerr << std::format("avr_init failed: {}", rc) << std::endl;
     return false;
   }
 
@@ -77,7 +79,7 @@ bool Sim::Init(std::string firmware_path, bool enable_gdb) {
     avr_->gdb_port = 1234;
     avr_->state    = cpu_Stopped;
     if ((rc = avr_gdb_init(avr_)) != 0) {
-      fprintf(stderr, "avr_gdb_init failed: %d\n", rc);
+      std::cerr << std::format("avr_gdb_init failed: {}", rc) << std::endl;
       return false;
     }
   }
