@@ -1,25 +1,24 @@
 #pragma once
 
 #include "firmware/lib/mode/remote/command.hh"
+#include "lib/ui/toolbarwindow.hh"
+#include "lib/ui/window.hh"
 #include "tools/remote/lib/remote/remote.hh"
-#include "window_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-class ToolbarWindow : public Window {
+class ToolbarWindow : public ::ui::ToolbarWindow {
  public:
-  ToolbarWindow(remote::Remote *remote);
+  ToolbarWindow(app::remote::Remote *remote);
 
-  virtual void Render() override;
-
- private:
-  void RenderToolbar();
+ protected:
+  virtual void RenderToolbar() override;
 
  private:
-  remote::Remote          *remote_;
-  remote::command::Command reset_command_;
-  remote::command::Command explore_command_;
-  remote::command::Command solve_command_;
+  app::remote::Remote       *remote_;
+  ::remote::command::Command reset_command_;
+  ::remote::command::Command explore_command_;
+  ::remote::command::Command solve_command_;
 };
 
-}  // namespace ui
+}  // namespace app::ui

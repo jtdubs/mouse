@@ -14,7 +14,7 @@
 #include "firmware/lib/utils/dequeue.hh"
 #include "firmware/platform/platform.hh"
 
-namespace remote {
+namespace app::remote {
 
 class Remote {
  public:
@@ -25,7 +25,7 @@ class Remote {
 
   bool IsConnected() const;
 
-  void Send(const remote::command::Command &command);
+  void Send(const ::remote::command::Command &command);
 
   std::mutex &GetMutex();
 
@@ -55,4 +55,4 @@ class Remote {
   std::vector<std::vector<uint8_t>> outbox_;
 };
 
-}  // namespace remote
+}  // namespace app::remote

@@ -1,22 +1,12 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 
+#include "lib/ui/ui.hh"
 #include "tools/remote/lib/remote/remote.hh"
-#include "window_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-class UI {
- public:
-  UI(remote::Remote* remote);
+std::unique_ptr<::ui::UI> New(app::remote::Remote* remote);
 
-  void Run();
-
- private:
-  std::vector<std::unique_ptr<Window>> windows_;
-  remote::Remote*                      remote_;
-};
-
-}  // namespace ui
+}  // namespace app::ui

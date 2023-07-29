@@ -5,9 +5,9 @@
 #include "firmware/platform/platform.hh"
 #include "imgui_internal.h"
 
-namespace ui {
+namespace app::ui {
 
-ControlWindow::ControlWindow(remote::Remote *remote) : Window(), remote_(remote) {}
+ControlWindow::ControlWindow(app::remote::Remote *remote) : Window(), remote_(remote) {}
 
 void ControlWindow::Render() {
   if (!ImGui::Begin("Control")) {
@@ -24,4 +24,4 @@ void ControlWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace ui
+}  // namespace app::ui

@@ -1,38 +1,16 @@
 #include <format>
 
 #include "imgui_internal.h"
-#include "textures_impl.hh"
+#include "lib/ui/textures.hh"
 #include "toolbarwindow_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-ToolbarWindow::ToolbarWindow(remote::Remote *remote)  //
-    : Window(), remote_(remote), reset_command_(), explore_command_(), solve_command_() {
-  reset_command_.type   = remote::command::Type::Reset;
-  explore_command_.type = remote::command::Type::Explore;
-  solve_command_.type   = remote::command::Type::Solve;
-}
-
-void ToolbarWindow::Render() {
-  auto flags = ImGuiWindowFlags_NoDocking    //
-             | ImGuiWindowFlags_NoTitleBar   //
-             | ImGuiWindowFlags_NoResize     //
-             | ImGuiWindowFlags_NoMove       //
-             | ImGuiWindowFlags_NoScrollbar  //
-             | ImGuiWindowFlags_NoSavedSettings;
-
-  auto vp = ImGui::GetMainViewport();
-  ImGui::SetNextWindowPos(vp->Pos);
-  ImGui::SetNextWindowSize(ImVec2(vp->Size.x, 48));
-  ImGui::SetNextWindowViewport(vp->ID);
-  ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-  if (ImGui::Begin("Toolbar", nullptr, flags)) {
-    ImGui::PopStyleVar();
-    RenderToolbar();
-  } else {
-    ImGui::PopStyleVar();
-  }
-  ImGui::End();
+ToolbarWindow::ToolbarWindow(app::remote::Remote *remote)  //
+    : ::ui::ToolbarWindow(), remote_(remote), reset_command_(), explore_command_(), solve_command_() {
+  reset_command_.type   = ::remote::command::Type::Reset;
+  explore_command_.type = ::remote::command::Type::Explore;
+  solve_command_.type   = ::remote::command::Type::Solve;
 }
 
 void ToolbarWindow::RenderToolbar() {
@@ -80,4 +58,4 @@ void ToolbarWindow::RenderToolbar() {
   }
 }
 
-}  // namespace ui
+}  // namespace app::ui

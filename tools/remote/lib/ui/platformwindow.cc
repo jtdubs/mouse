@@ -5,9 +5,9 @@
 #include "imgui_internal.h"
 #include "platformwindow_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-PlatformWindow::PlatformWindow(remote::Remote *remote) : Window(), remote_(remote) {}
+PlatformWindow::PlatformWindow(app::remote::Remote *remote) : Window(), remote_(remote) {}
 
 void PlatformWindow::Render() {
   if (!ImGui::Begin("Platform")) {
@@ -24,4 +24,4 @@ void PlatformWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace ui
+}  // namespace app::ui

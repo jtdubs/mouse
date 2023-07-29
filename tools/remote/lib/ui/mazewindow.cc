@@ -5,9 +5,9 @@
 #include "imgui_internal.h"
 #include "mazewindow_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-MazeWindow::MazeWindow(remote::Remote *remote) : Window(), remote_(remote) {}
+MazeWindow::MazeWindow(app::remote::Remote *remote) : Window(), remote_(remote) {}
 
 void MazeWindow::Render() {
   if (!ImGui::Begin("Maze")) {
@@ -27,7 +27,7 @@ void MazeWindow::Render() {
   ImGui::Dummy(canvas_size_px);
   if (ImGui::BeginPopupContextItem("##MazePopup")) {
     if (ImGui::Selectable("Refresh")) {
-      remote_->Send(remote::command::Command{remote::command::Type::SendMaze, {}});
+      remote_->Send(::remote::command::Command{::remote::command::Type::SendMaze, {}});
     }
     ImGui::EndPopup();
   }
@@ -92,4 +92,4 @@ void MazeWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace ui
+}  // namespace app::ui

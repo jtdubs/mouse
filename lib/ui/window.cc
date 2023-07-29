@@ -1,6 +1,7 @@
+#include "window.hh"
+
 #include "imgui_internal.h"
 #include "textures_impl.hh"
-#include "window_impl.hh"
 
 namespace ui {
 

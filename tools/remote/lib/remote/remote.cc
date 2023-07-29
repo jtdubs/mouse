@@ -13,7 +13,7 @@
 
 #include "firmware/platform/usart0.hh"
 
-namespace remote {
+namespace app::remote {
 
 Remote::Remote()  //
     : port_(),
@@ -63,19 +63,19 @@ bool Remote::IsConnected() const {
   return connected_;
 }
 
-void Remote::Send(const remote::command::Command &command) {
-  uint8_t len = sizeof(remote::command::Type);
+void Remote::Send(const ::remote::command::Command &command) {
+  uint8_t len = sizeof(::remote::command::Type);
   switch (command.type) {
-    case remote::command::Type::Reset:
-    case remote::command::Type::Explore:
-    case remote::command::Type::Solve:
-    case remote::command::Type::SendMaze:
-    case remote::command::Type::PlanExecute:
+    case ::remote::command::Type::Reset:
+    case ::remote::command::Type::Explore:
+    case ::remote::command::Type::Solve:
+    case ::remote::command::Type::SendMaze:
+    case ::remote::command::Type::PlanExecute:
       break;
-    case remote::command::Type::TunePID:
-      len += sizeof(remote::command::PidID) + 4 * sizeof(float);
+    case ::remote::command::Type::TunePID:
+      len += sizeof(::remote::command::PidID) + 4 * sizeof(float);
       break;
-    case remote::command::Type::PlanEnqueue:
+    case ::remote::command::Type::PlanEnqueue:
       len += sizeof(plan::Plan);
       break;
   }
@@ -314,4 +314,4 @@ void Remote::OnReport(report::Report *report) {
   }
 }
 
-}  // namespace remote
+}  // namespace app::remote

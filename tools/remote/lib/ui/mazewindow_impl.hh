@@ -1,18 +1,18 @@
 #pragma once
 
+#include "lib/ui/window.hh"
 #include "tools/remote/lib/remote/remote.hh"
-#include "window_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-class MazeWindow : public Window {
+class MazeWindow : public ::ui::Window {
  public:
-  MazeWindow(remote::Remote *remote);
+  MazeWindow(app::remote::Remote *remote);
 
   virtual void Render() override;
 
  private:
-  remote::Remote *remote_;
+  app::remote::Remote *remote_;
 };
 
-}  // namespace ui
+}  // namespace app::ui

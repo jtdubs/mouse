@@ -1,9 +1,10 @@
+#include "viewport.hh"
+
 #include "imgui_internal.h"
-#include "viewport_impl.hh"
 
 namespace ui {
 
-Viewport::Viewport() : Window() {}
+Viewport::Viewport(bool toolbar, std::function<void(ImGuiID)> layout) : Window(), toolbar_(toolbar), layout_(layout) {}
 
 void Viewport::Render() {
   static bool first_run = true;
@@ -18,8 +19,13 @@ void Viewport::Render() {
 
   auto vp = ImGui::GetMainViewport();
 
-  auto viewport_pos  = vp->Pos + ImVec2(0, 48);
-  auto viewport_size = vp->Size - ImVec2(0, 48);
+  auto viewport_pos  = vp->Pos;
+  auto viewport_size = vp->Size;
+
+  if (toolbar_) {
+    viewport_pos.y  += 48;
+    viewport_size.y -= 48;
+  }
 
   ImGui::SetNextWindowPos(viewport_pos);
   ImGui::SetNextWindowSize(viewport_size);
@@ -38,13 +44,9 @@ void Viewport::Render() {
     ImGui::DockBuilderRemoveNode(dock_id);
     ImGui::DockBuilderAddNode(dock_id, ImGuiDockNodeFlags_DockSpace);
     ImGui::DockBuilderSetNodeSize(dock_id, viewport_size);
-    auto control_node  = ImGui::DockBuilderSplitNode(dock_id, ImGuiDir_Down, 0.36f, nullptr, &dock_id);
-    auto maze_node     = ImGui::DockBuilderSplitNode(dock_id, ImGuiDir_Left, 0.30f, nullptr, &dock_id);
-    auto platform_node = ImGui::DockBuilderSplitNode(control_node, ImGuiDir_Left, 0.50f, nullptr, &control_node);
-    ImGui::DockBuilderDockWindow("Control", control_node);
-    ImGui::DockBuilderDockWindow("Platform", platform_node);
-    ImGui::DockBuilderDockWindow("Maze", maze_node);
-    ImGui::DockBuilderDockWindow("Command", dock_id);
+    if (layout_) {
+      layout_(dock_id);
+    }
     ImGui::DockBuilderFinish(dock_id);
   }
 }
