@@ -3,9 +3,9 @@
 #include "lib/ui/toolbarwindow.hh"
 #include "tools/sim/lib/sim/sim.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
-class ToolbarWindow : public ::ui::ToolbarWindow {
+class ToolbarWindow : public mouse::ui::ToolbarWindow {
  public:
   ToolbarWindow(app::sim::Sim *sim);
 
@@ -16,4 +16,4 @@ class ToolbarWindow : public ::ui::ToolbarWindow {
   app::sim::Sim *sim_;
 };
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

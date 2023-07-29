@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace ui {
+namespace mouse::ui {
 
 class Window {
  public:
@@ -15,4 +15,4 @@ class Window {
   bool IconToggleButton(std::string label, std::string off_icon, std::string on_icon, bool &value);
 };
 
-}  // namespace ui
+}  // namespace mouse::ui

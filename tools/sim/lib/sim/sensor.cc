@@ -3,7 +3,7 @@
 #include <simavr/avr_adc.h>
 #include <simavr/sim_vcd_file.h>
 
-namespace app::sim {
+namespace mouse::app::sim {
 
 Sensor::Sensor(std::string name, int channel, Position pos, float theta)
     : avr_(nullptr),  //
@@ -55,4 +55,4 @@ void Sensor::OnIRQ([[maybe_unused]] avr_irq_t *irq, [[maybe_unused]] uint32_t va
   avr_raise_irq(value_irq_, voltage_);
 }
 
-}  // namespace app::sim
+}  // namespace mouse::app::sim

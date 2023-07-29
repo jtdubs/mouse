@@ -4,9 +4,9 @@
 #include "lib/ui/window.hh"
 #include "tools/remote/lib/remote/remote.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
-class CommandWindow : public ::ui::Window {
+class CommandWindow : public mouse::ui::Window {
  public:
   CommandWindow(app::remote::Remote *remote);
 
@@ -29,4 +29,4 @@ class CommandWindow : public ::ui::Window {
   bool                       link_speed_;
 };
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

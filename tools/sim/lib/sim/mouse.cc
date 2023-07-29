@@ -4,7 +4,7 @@
 
 #include <numbers>
 
-namespace app::sim {
+namespace mouse::app::sim {
 
 Mouse::Mouse()
     : avr_(nullptr),
@@ -61,4 +61,4 @@ Motor &Mouse::GetRightMotor() {
   return right_motor_;
 }
 
-}  // namespace app::sim
+}  // namespace mouse::app::sim

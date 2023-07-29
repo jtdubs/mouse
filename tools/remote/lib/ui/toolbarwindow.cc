@@ -4,10 +4,10 @@
 #include "lib/ui/textures.hh"
 #include "toolbarwindow_impl.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 ToolbarWindow::ToolbarWindow(app::remote::Remote *remote)  //
-    : ::ui::ToolbarWindow(), remote_(remote), reset_command_(), explore_command_(), solve_command_() {
+    : mouse::ui::ToolbarWindow(), remote_(remote), reset_command_(), explore_command_(), solve_command_() {
   reset_command_.type   = ::remote::command::Type::Reset;
   explore_command_.type = ::remote::command::Type::Explore;
   solve_command_.type   = ::remote::command::Type::Solve;
@@ -58,4 +58,4 @@ void ToolbarWindow::RenderToolbar() {
   }
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

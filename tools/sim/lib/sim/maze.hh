@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace app::sim {
+namespace mouse::app::sim {
 
 struct Post {
   bool north, east, south, west;
@@ -25,4 +25,4 @@ class Maze {
   std::vector<std::vector<Post>> posts_;
 };
 
-}  // namespace app::sim
+}  // namespace mouse::app::sim

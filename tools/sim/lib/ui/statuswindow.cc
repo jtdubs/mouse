@@ -3,7 +3,7 @@
 #include "imgui_internal.h"
 #include "statuswindow_impl.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 StatusWindow::StatusWindow(sim::Sim *sim) : Window(), sim_(sim) {}
 
@@ -45,4 +45,4 @@ void StatusWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

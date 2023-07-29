@@ -8,7 +8,7 @@
 #include "symbolswindow_impl.hh"
 #include "toolbarwindow_impl.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 void Layout(ImGuiID dock_id) {
   auto symbol_node  = ImGui::DockBuilderSplitNode(dock_id, ImGuiDir_Right, 0.55f, nullptr, &dock_id);
@@ -21,9 +21,9 @@ void Layout(ImGuiID dock_id) {
   ImGui::DockBuilderDockWindow("Maze", dock_id);
 }
 
-std::unique_ptr<::ui::UI> New(app::sim::Sim *sim) {
-  auto ui = std::make_unique<::ui::UI>();
-  ui->AddWindow(std::make_unique<::ui::Viewport>(true, Layout));
+std::unique_ptr<mouse::ui::UI> New(app::sim::Sim *sim) {
+  auto ui = std::make_unique<mouse::ui::UI>();
+  ui->AddWindow(std::make_unique<mouse::ui::Viewport>(true, Layout));
   ui->AddWindow(std::make_unique<ToolbarWindow>(sim));
   ui->AddWindow(std::make_unique<ControlsWindow>(sim));
   ui->AddWindow(std::make_unique<MazeWindow>(sim));
@@ -32,4 +32,4 @@ std::unique_ptr<::ui::UI> New(app::sim::Sim *sim) {
   return ui;
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

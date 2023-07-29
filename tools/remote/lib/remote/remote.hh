@@ -14,7 +14,7 @@
 #include "firmware/lib/utils/dequeue.hh"
 #include "firmware/platform/platform.hh"
 
-namespace app::remote {
+namespace mouse::app::remote {
 
 class Remote {
  public:
@@ -55,4 +55,4 @@ class Remote {
   std::vector<std::vector<uint8_t>> outbox_;
 };
 
-}  // namespace app::remote
+}  // namespace mouse::app::remote

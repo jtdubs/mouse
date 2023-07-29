@@ -3,9 +3,9 @@
 #include "lib/ui/window.hh"
 #include "tools/sim/lib/sim/sim.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
-class ControlsWindow : public ::ui::Window {
+class ControlsWindow : public mouse::ui::Window {
  public:
   ControlsWindow(sim::Sim *sim);
 
@@ -15,4 +15,4 @@ class ControlsWindow : public ::ui::Window {
   sim::Sim *sim_;
 };
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

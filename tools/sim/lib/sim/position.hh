@@ -4,7 +4,7 @@
 
 #include "imgui_internal.h"
 
-namespace app::sim {
+namespace mouse::app::sim {
 
 struct Position {
   float x;
@@ -16,4 +16,4 @@ struct Position {
   Position(ImVec2);
 };
 
-}  // namespace app::sim
+}  // namespace mouse::app::sim

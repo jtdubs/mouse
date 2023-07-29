@@ -5,7 +5,7 @@
 #include "imgui_internal.h"
 #include "mazewindow_impl.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 MazeWindow::MazeWindow(app::remote::Remote *remote) : Window(), remote_(remote) {}
 
@@ -92,4 +92,4 @@ void MazeWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

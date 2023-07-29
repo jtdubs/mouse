@@ -3,7 +3,7 @@
 #include "controlswindow_impl.hh"
 #include "imgui_internal.h"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 namespace {
 const char *kFunctions[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"};
@@ -42,4 +42,4 @@ void ControlsWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

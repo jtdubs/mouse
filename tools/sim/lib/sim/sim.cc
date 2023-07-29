@@ -16,7 +16,7 @@
 #include "imgui_internal.h"
 #include "symbols.hh"
 
-namespace app::sim {
+namespace mouse::app::sim {
 
 namespace {
 constexpr float kGridSize                = 180.0;  // mm
@@ -355,4 +355,4 @@ void Sim::OnEncoderClock(bool left, bool clockwise) {
   SetMouseTheta(std::fmod(GetMouseTheta() + dt, 2.0f * std::numbers::pi));
 }
 
-}  // namespace app::sim
+}  // namespace mouse::app::sim

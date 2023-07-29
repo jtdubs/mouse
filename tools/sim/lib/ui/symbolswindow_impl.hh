@@ -4,9 +4,9 @@
 #include "lib/ui/window.hh"
 #include "tools/sim/lib/sim/sim.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
-class SymbolsWindow : public ::ui::Window {
+class SymbolsWindow : public mouse::ui::Window {
  public:
   SymbolsWindow(sim::Sim *sim);
 
@@ -19,4 +19,4 @@ class SymbolsWindow : public ::ui::Window {
   std::vector<std::string> names_;
 };
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

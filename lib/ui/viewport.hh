@@ -5,7 +5,7 @@
 #include "imgui_internal.h"
 #include "window.hh"
 
-namespace ui {
+namespace mouse::ui {
 
 class Viewport : public Window {
  public:
@@ -18,4 +18,4 @@ class Viewport : public Window {
   std::function<void(ImGuiID)> layout_;
 };
 
-}  // namespace ui
+}  // namespace mouse::ui

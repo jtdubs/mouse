@@ -2,7 +2,7 @@
 
 #include "imgui_internal.h"
 
-namespace ui {
+namespace mouse::ui {
 
 Viewport::Viewport(bool toolbar, std::function<void(ImGuiID)> layout) : Window(), toolbar_(toolbar), layout_(layout) {}
 
@@ -51,4 +51,4 @@ void Viewport::Render() {
   }
 }
 
-}  // namespace ui
+}  // namespace mouse::ui

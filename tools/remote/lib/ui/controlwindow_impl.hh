@@ -3,9 +3,9 @@
 #include "lib/ui/window.hh"
 #include "tools/remote/lib/remote/remote.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
-class ControlWindow : public ::ui::Window {
+class ControlWindow : public mouse::ui::Window {
  public:
   ControlWindow(app::remote::Remote *remote);
 
@@ -15,4 +15,4 @@ class ControlWindow : public ::ui::Window {
   app::remote::Remote *remote_;
 };
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

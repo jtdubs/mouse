@@ -10,7 +10,7 @@
 #include "firmware/lib/utils/pid.hh"
 #include "symbolswindow_impl.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 SymbolsWindow::SymbolsWindow(sim::Sim *sim) : Window(), sim_(sim), filter_(), hex_(false), names_() {}
 
@@ -156,4 +156,4 @@ void SymbolsWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

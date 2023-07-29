@@ -4,10 +4,10 @@
 
 #include "textures.hh"
 
-namespace ui {
+namespace mouse::ui {
 
 void LoadIcons();
 
 ImTextureID LoadIcon(std::string path);
 
-}  // namespace ui
+}  // namespace mouse::ui

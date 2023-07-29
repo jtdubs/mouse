@@ -4,8 +4,8 @@
 
 #include "imgui_internal.h"
 
-namespace ui {
+namespace mouse::ui {
 
 ImTextureID Icon(std::string name);
 
-}  // namespace ui
+}  // namespace mouse::ui

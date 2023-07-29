@@ -6,9 +6,9 @@
 #include "lib/ui/window.hh"
 #include "tools/sim/lib/sim/sim.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
-class MazeWindow : public ::ui::Window {
+class MazeWindow : public mouse::ui::Window {
  public:
   MazeWindow(sim::Sim *sim);
 
@@ -26,4 +26,4 @@ class MazeWindow : public ::ui::Window {
   ImVec2                   drag_start_pos_;
 };
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

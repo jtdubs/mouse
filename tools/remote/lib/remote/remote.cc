@@ -13,7 +13,7 @@
 
 #include "firmware/platform/usart0.hh"
 
-namespace app::remote {
+namespace mouse::app::remote {
 
 Remote::Remote()  //
     : port_(),
@@ -314,4 +314,4 @@ void Remote::OnReport(report::Report *report) {
   }
 }
 
-}  // namespace app::remote
+}  // namespace mouse::app::remote

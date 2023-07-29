@@ -6,7 +6,7 @@
 #include "firmware/platform/platform.hh"
 #include "imgui_internal.h"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 CommandWindow::CommandWindow(app::remote::Remote *remote)  //
     : Window(),
@@ -221,4 +221,4 @@ void CommandWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

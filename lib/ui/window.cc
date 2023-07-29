@@ -3,7 +3,7 @@
 #include "imgui_internal.h"
 #include "textures_impl.hh"
 
-namespace ui {
+namespace mouse::ui {
 
 void Window::Row(std::string label) {
   ImGui::TableNextRow();
@@ -34,4 +34,4 @@ bool Window::IconToggleButton(std::string label, std::string off_icon, std::stri
   return result;
 }
 
-}  // namespace ui
+}  // namespace mouse::ui

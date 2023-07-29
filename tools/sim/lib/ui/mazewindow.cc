@@ -4,7 +4,7 @@
 #include "imgui_internal.h"
 #include "mazewindow_impl.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 MazeWindow::MazeWindow(sim::Sim *sim)
     : Window(), sim_(sim), mazes_(), maze_index_(0), dragging_(false), drag_button_pos_(), drag_start_pos_() {}
@@ -173,4 +173,4 @@ void MazeWindow::RenderMaze() {
   }
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

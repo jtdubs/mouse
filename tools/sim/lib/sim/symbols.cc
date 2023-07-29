@@ -5,7 +5,7 @@
 #include <elfio/elfio.hpp>
 #include <iostream>
 
-namespace app::sim {
+namespace mouse::app::sim {
 
 std::vector<Symbol> ReadSymbols(avr_t* avr, std::string firmware_path) {
   std::vector<Symbol> result;
@@ -71,4 +71,4 @@ std::vector<Symbol> ReadSymbols(avr_t* avr, std::string firmware_path) {
   return result;
 }
 
-}  // namespace app::sim
+}  // namespace mouse::app::sim

@@ -5,7 +5,7 @@
 
 #include <array>
 
-namespace app::sim {
+namespace mouse::app::sim {
 
 constexpr std::array<float, 16> kFunctionVoltages = {
     3235, 3176, 3098, 3019, 2882, 2784, 2666, 2549, 2274, 2117, 1901, 1686, 1333, 1039, 627, 215,
@@ -66,4 +66,4 @@ void FunctionSelector::OnIRQ([[maybe_unused]] avr_irq_t *irq, [[maybe_unused]] u
   avr_raise_irq(value_irq_, voltage_);
 }
 
-}  // namespace app::sim
+}  // namespace mouse::app::sim

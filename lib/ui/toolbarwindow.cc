@@ -4,7 +4,7 @@
 
 #include "imgui_internal.h"
 
-namespace ui {
+namespace mouse::ui {
 
 ToolbarWindow::ToolbarWindow() : Window() {}
 
@@ -30,4 +30,4 @@ void ToolbarWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace ui
+}  // namespace mouse::ui

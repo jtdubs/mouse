@@ -5,9 +5,9 @@
 #include "lib/ui/window.hh"
 #include "tools/remote/lib/remote/remote.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
-class ToolbarWindow : public ::ui::ToolbarWindow {
+class ToolbarWindow : public mouse::ui::ToolbarWindow {
  public:
   ToolbarWindow(app::remote::Remote *remote);
 
@@ -21,4 +21,4 @@ class ToolbarWindow : public ::ui::ToolbarWindow {
   ::remote::command::Command solve_command_;
 };
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

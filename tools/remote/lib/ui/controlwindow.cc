@@ -5,7 +5,7 @@
 #include "firmware/platform/platform.hh"
 #include "imgui_internal.h"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 ControlWindow::ControlWindow(app::remote::Remote *remote) : Window(), remote_(remote) {}
 
@@ -24,4 +24,4 @@ void ControlWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

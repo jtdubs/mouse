@@ -8,7 +8,7 @@
 #include "platformwindow_impl.hh"
 #include "toolbarwindow_impl.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 void Layout(ImGuiID dock_id) {
   auto control_node  = ImGui::DockBuilderSplitNode(dock_id, ImGuiDir_Down, 0.36f, nullptr, &dock_id);
@@ -21,10 +21,10 @@ void Layout(ImGuiID dock_id) {
   ImGui::DockBuilderDockWindow("Command", dock_id);
 }
 
-std::unique_ptr<::ui::UI> New(app::remote::Remote* remote) {
-  auto ui = std::make_unique<::ui::UI>();
+std::unique_ptr<mouse::ui::UI> New(app::remote::Remote* remote) {
+  auto ui = std::make_unique<mouse::ui::UI>();
 
-  ui->AddWindow(std::make_unique<::ui::Viewport>(true, Layout));
+  ui->AddWindow(std::make_unique<mouse::ui::Viewport>(true, Layout));
   ui->AddWindow(std::make_unique<ToolbarWindow>(remote));
   ui->AddWindow(std::make_unique<CommandWindow>(remote));
   ui->AddWindow(std::make_unique<ControlWindow>(remote));
@@ -34,4 +34,4 @@ std::unique_ptr<::ui::UI> New(app::remote::Remote* remote) {
   return ui;
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

@@ -2,7 +2,7 @@
 
 #include <cli11/CLI11.hh>
 
-namespace app {
+namespace mouse::app {
 
 Args ParseArgs(int argc, char** argv) {
   CLI::App app{"Mouse Remote"};
@@ -16,4 +16,4 @@ Args ParseArgs(int argc, char** argv) {
   return args;
 }
 
-}  // namespace app
+}  // namespace mouse::app

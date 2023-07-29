@@ -2,7 +2,7 @@
 
 #include <simavr/sim_avr.h>
 
-namespace app::sim {
+namespace mouse::app::sim {
 
 class FunctionSelector {
  public:

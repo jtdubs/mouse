@@ -2,7 +2,7 @@
 
 #include "position.hh"
 
-namespace app::sim {
+namespace mouse::app::sim {
 
 struct IRBeam {
   Position start;
@@ -11,4 +11,4 @@ struct IRBeam {
   float    wall_angle;
 };
 
-}  // namespace app::sim
+}  // namespace mouse::app::sim

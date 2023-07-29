@@ -12,7 +12,7 @@
 #include "imgui_internal.h"
 #include "textures_impl.hh"
 
-namespace ui {
+namespace mouse::ui {
 
 void glfw_error_callback(int error, const char* description) {
   std::cerr << std::format("GLFW error {}: {}", error, description) << std::endl;
@@ -90,4 +90,4 @@ void UI::Render() {
   }
 }
 
-}  // namespace ui
+}  // namespace mouse::ui

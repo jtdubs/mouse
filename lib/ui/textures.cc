@@ -7,7 +7,7 @@
 #include <map>
 #include <memory>
 
-namespace ui {
+namespace mouse::ui {
 
 namespace {
 std::map<std::string, ImTextureID> textures;
@@ -63,4 +63,4 @@ ImTextureID Icon(std::string name) {
   return 0;
 }
 
-}  // namespace ui
+}  // namespace mouse::ui

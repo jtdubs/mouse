@@ -3,9 +3,9 @@
 #include "imgui_internal.h"
 #include "toolbarwindow_impl.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
-ToolbarWindow::ToolbarWindow(app::sim::Sim *sim) : ::ui::ToolbarWindow(), sim_(sim) {}
+ToolbarWindow::ToolbarWindow(app::sim::Sim *sim) : mouse::ui::ToolbarWindow(), sim_(sim) {}
 
 void ToolbarWindow::RenderToolbar() {
   if (sim_->GetState() == sim::State::Crashed) {
@@ -80,4 +80,4 @@ void ToolbarWindow::RenderToolbar() {
   ImGui::TextUnformatted(nanos_text.c_str());
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

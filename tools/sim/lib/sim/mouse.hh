@@ -8,7 +8,7 @@
 #include "motor.hh"
 #include "sensor.hh"
 
-namespace app::sim {
+namespace mouse::app::sim {
 
 class Mouse {
  public:
@@ -36,4 +36,4 @@ class Mouse {
   Motor            left_motor_, right_motor_;
 };
 
-}  // namespace app::sim
+}  // namespace mouse::app::sim

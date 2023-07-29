@@ -5,7 +5,7 @@
 #include "imgui_internal.h"
 #include "platformwindow_impl.hh"
 
-namespace app::ui {
+namespace mouse::app::ui {
 
 PlatformWindow::PlatformWindow(app::remote::Remote *remote) : Window(), remote_(remote) {}
 
@@ -24,4 +24,4 @@ void PlatformWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace app::ui
+}  // namespace mouse::app::ui

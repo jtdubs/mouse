@@ -2,7 +2,7 @@
 
 #include "window.hh"
 
-namespace ui {
+namespace mouse::ui {
 
 class ToolbarWindow : public Window {
  public:
@@ -14,4 +14,4 @@ class ToolbarWindow : public Window {
   virtual void RenderToolbar() = 0;
 };
 
-}  // namespace ui
+}  // namespace mouse::ui

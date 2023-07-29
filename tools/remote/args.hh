@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace app {
+namespace mouse::app {
 
 struct Args {
   std::string port;
@@ -10,4 +10,4 @@ struct Args {
 
 Args ParseArgs(int argc, char **argv);
 
-}  // namespace app
+}  // namespace mouse::app

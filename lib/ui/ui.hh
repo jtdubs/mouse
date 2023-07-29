@@ -5,7 +5,7 @@
 
 #include "window.hh"
 
-namespace ui {
+namespace mouse::ui {
 
 class UI {
  public:
@@ -22,4 +22,4 @@ class UI {
   std::vector<std::unique_ptr<Window>> windows_;
 };
 
-}  // namespace ui
+}  // namespace mouse::ui
