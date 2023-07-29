@@ -1,3 +1,7 @@
+"""
+avr.bzl - Provides rules for building AVR-compatible binaries and libraries.
+"""
+
 load("//bazel/rules:objcopy.bzl", "objcopy")
 load("//bazel/rules:objdump.bzl", "objdump")
 

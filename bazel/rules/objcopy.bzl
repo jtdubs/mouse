@@ -1,3 +1,7 @@
+"""
+objcopy.bzl - Bazel rules for objcopy
+"""
+
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain", "use_cpp_toolchain")
 
 def _objcopy_impl(ctx):

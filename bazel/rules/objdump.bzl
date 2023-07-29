@@ -1,3 +1,7 @@
+"""
+objdump.bzl - Bazel rules for objdump
+"""
+
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain", "use_cpp_toolchain")
 
 def _objdump_impl(ctx):
