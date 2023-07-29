@@ -14,7 +14,7 @@ cc_library(
         "-DIMGUI_DEFINE_MATH_OPERATORS",
     ],
     deps = [
-        "@elfio",
+        "@ELFIO",
         "@imgui",
         "@simavr//:lib",
         "@simavrparts//:lib",

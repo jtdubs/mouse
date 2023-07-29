@@ -123,7 +123,8 @@
       "exception": "cpp",
       "initializer_list": "cpp",
       "new": "cpp",
-      "typeinfo": "cpp"
+      "typeinfo": "cpp",
+      "BUILD.*": "starlark"
     },
     "files.exclude": {
       "**/.git": true,

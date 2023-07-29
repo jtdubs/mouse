@@ -2,23 +2,27 @@
   "configurations": [
     {
       "name": "Linux",
-      "includePath": [
-        "/opt/avr-toolchain/avr/include",
-        "/usr/local/include/simavr",
-        "/usr/local/include/simavr/parts",
-        "/usr/local/include",
-        "/usr/include",
-        "${workspaceFolder}"
-      ],
       "defines": [
         "__AVR__",
         "__AVR_ATmega4809__",
         "F_CPU=16000000UL"
       ],
-      "compilerPath": "/opt/avr-toolchain/bin/avr-gcc",
+      "compilerPath": "/usr/bin/gcc",
       "cStandard": "c23",
       "cppStandard": "c++23",
-      "intelliSenseMode": "linux-gcc-x64"
+      "intelliSenseMode": "linux-gcc-x64",
+      "includePath": [
+        "/usr/include",
+        "/usr/local/include",
+        "${workspaceFolder}",
+        "${workspaceFolder}/third_party/CLI11/include",
+        "${workspaceFolder}/third_party/imgui",
+        "${workspaceFolder}/third_party/ELFIO",
+        "${workspaceFolder}/third_party/stb",
+        "${workspaceFolder}/third_party/libspng/spng",
+        "${workspaceFolder}/third_party/simavr",
+        "/opt/avr-toolchain/avr/include"
+      ]
     }
   ],
   "version": 4

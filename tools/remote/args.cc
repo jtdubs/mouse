@@ -1,6 +1,6 @@
 #include "args.hh"
 
-#include <cli11/CLI11.hh>
+#include <CLI/CLI.hpp>
 
 namespace mouse::app {
 

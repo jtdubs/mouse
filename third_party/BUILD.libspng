@@ -1,0 +1,7 @@
+cc_library(
+    name = "libspng",
+    srcs = glob(["spng/spng.c"]),
+    hdrs = glob(["spng/spng.h"]),
+    includes = ["."],
+    visibility = ["//visibility:public"],
+)

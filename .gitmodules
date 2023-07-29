@@ -1,0 +1,19 @@
+[submodule "third_party/imgui"]
+	path = third_party/imgui
+	url = git@github.com:ocornut/imgui.git
+	branch = docking
+[submodule "third_party/ELFIO"]
+	path = third_party/ELFIO
+	url = git@github.com:serge1/ELFIO.git
+[submodule "third_party/CLI11"]
+	path = third_party/CLI11
+	url = git@github.com:CLIUtils/CLI11.git
+[submodule "third_party/libspng"]
+	path = third_party/libspng
+	url = git@github.com:randy408/libspng.git
+[submodule "third_party/stb"]
+	path = third_party/stb
+	url = git@github.com:nothings/stb.git
+[submodule "third_party/simavr"]
+	path = third_party/simavr
+	url = git@github.com:buserror/simavr.git

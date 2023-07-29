@@ -6,4 +6,5 @@
   "go.toolsEnvVars": {
     "GOOS": "linux"
   },
+  "C_Cpp.default.compilerPath": "/usr/bin/g++-13",
 }

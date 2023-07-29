@@ -1,0 +1,19 @@
+cc_library(
+    name = "imgui",
+    srcs = glob([
+        "*.cpp",
+        "backends/imgui_impl_opengl3*",
+        "backends/imgui_impl_glfw*",
+    ]),
+    hdrs = glob([
+        "*.h",
+        "backends/imgui_impl_opengl3*.h",
+        "backends/imgui_impl_glfw*.h",
+    ]),
+    includes = ["."],
+    linkopts = [
+        "-lglfw",
+        "-lGL",
+    ],
+    visibility = ["//visibility:public"],
+)
