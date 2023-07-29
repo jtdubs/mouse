@@ -45,6 +45,7 @@ def _impl(ctx):
                         flag_group(
                             flags = [
                                 "-DNDEBUG",
+                                "-DNOASSERT",
                             ],
                         ),
                     ]),

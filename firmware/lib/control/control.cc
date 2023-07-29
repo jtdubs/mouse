@@ -131,7 +131,7 @@ void Tick() {
   pin::Clear(pin::kProbeTick);
 }
 
-uint8_t GetReport(uint8_t *buffer, uint8_t len) {
+uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   assert(assert::Module::Control, 1, buffer != NULL);
   assert(assert::Module::Control, 2, len >= sizeof(Report));
 

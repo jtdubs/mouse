@@ -162,8 +162,8 @@ void CommandWindow::Render() {
       power_command_.data.plan.data.power.right = left;
     }
   } else {
-    int power[2] = {power_command_.data.plan.data.power.left, power_command_.data.plan.data.power.right};
-    if (ImGui::InputInt2("##Power", power)) {
+    std::array<int, 2> power = {power_command_.data.plan.data.power.left, power_command_.data.plan.data.power.right};
+    if (ImGui::InputInt2("##Power", power.data())) {
       power_command_.data.plan.data.power.left  = power[0];
       power_command_.data.plan.data.power.right = power[1];
     }

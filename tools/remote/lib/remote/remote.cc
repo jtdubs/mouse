@@ -1,6 +1,5 @@
 #include "remote.hh"
 
-#include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -185,14 +184,14 @@ int Remote::TryOpen() {
 void Remote::Read(int port) {
   usart0::ReadState state = usart0::ReadState::Idle;
 
-  uint8_t report[128];
-  ssize_t report_idx = 0;
-  ssize_t report_len = 0;
-  uint8_t report_chk = 0;
-  char    buf[128];
+  std::array<uint8_t, 128> report     = {};
+  ssize_t                  report_idx = 0;
+  ssize_t                  report_len = 0;
+  uint8_t                  report_chk = 0;
 
   while (!stop_.stop_requested()) {
-    ssize_t n = read(port, buf, sizeof(buf));
+    std::array<char, 128> buf;
+    ssize_t               n = read(port, buf.data(), buf.size());
     if (n < 0) {
       std::cerr << std::format("Failed to read from serial port: {}", strerror(errno)) << std::endl;
       return;
@@ -213,14 +212,12 @@ void Remote::Read(int port) {
       for (ssize_t idx = 0; idx < n; idx++) {
         switch (state) {
           case usart0::ReadState::Idle:
-            assert(idx < n);
             if (buf[idx] == usart0::kStartByte) {
               state = usart0::ReadState::Length;
               continue;
             }
             break;
           case usart0::ReadState::Length:
-            assert(idx < n);
             report_len = buf[idx];
             report_idx = 0;
             report_chk = 0;
@@ -231,25 +228,22 @@ void Remote::Read(int port) {
             }
             break;
           case usart0::ReadState::Data: {
-            assert(idx < n);
-            auto b      = buf[idx];
-            report_chk += b;
-            assert(report_idx < (ssize_t)sizeof(report));
-            report[report_idx++] = b;
+            auto b                = buf[idx];
+            report_chk           += b;
+            report[report_idx++]  = b;
             if (report_idx == report_len) {
               state = usart0::ReadState::Checksum;
             }
             break;
           }
           case usart0::ReadState::Checksum:
-            state = usart0::ReadState::Idle;
-            assert(idx < n);
+            state       = usart0::ReadState::Idle;
             report_chk += buf[idx];
             if (report_chk != 0) {
               std::cerr << "Checksum error" << std::endl;
               break;
             }
-            OnReport(reinterpret_cast<report::Report *>(report));
+            OnReport(reinterpret_cast<report::Report *>(report.data()));
             break;
         }
       }

@@ -3,9 +3,11 @@
 #include <simavr/avr_adc.h>
 #include <simavr/sim_vcd_file.h>
 
+#include <array>
+
 namespace sim {
 
-constexpr float kFunctionVoltages[16] = {
+constexpr std::array<float, 16> kFunctionVoltages = {
     3235, 3176, 3098, 3019, 2882, 2784, 2666, 2549, 2274, 2117, 1901, 1686, 1333, 1039, 627, 215,
 };
 

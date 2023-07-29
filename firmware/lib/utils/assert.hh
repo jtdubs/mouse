@@ -10,7 +10,9 @@
 
 #include <stdint.h>
 
-#if !defined(NOASSERT)
+#if defined(NO_ASSERT)
+#define assert(m, n, e)
+#else
 // assert asserts that the expression is true, and does not return if it is false.
 #define assert(m, n, e)     \
   {                         \
@@ -18,8 +20,6 @@
       assert::Failed(m, n); \
     }                       \
   }
-#else
-#define assert(n, e)
 #endif
 
 namespace assert {

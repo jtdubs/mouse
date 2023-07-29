@@ -35,12 +35,12 @@ void StatusWindow::Render() {
   Icon(leds.GetIR() ? "led-on-red" : "led-off-white");
 
   Row("Sensors:");
-  int sensors[3] = {
+  std::array<int, 3> sensors = {
       static_cast<int>(sim_->GetMouse().GetLeftSensor().GetVoltage()),     //
       static_cast<int>(sim_->GetMouse().GetForwardSensor().GetVoltage()),  //
       static_cast<int>(sim_->GetMouse().GetRightSensor().GetVoltage())     //
   };
-  ImGui::SliderInt3("##Sensors", sensors, 0, 5000);
+  ImGui::SliderInt3("##Sensors", sensors.data(), 0, 5000);
 
   ImGui::EndTable();
   ImGui::End();
