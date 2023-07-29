@@ -22,7 +22,7 @@
   }
 #endif
 
-namespace assert {
+namespace mouse::assert {
 
 // range_t defines the ranges of assert codes available to each module.
 enum class Module : uint8_t {
@@ -50,4 +50,4 @@ enum class Module : uint8_t {
 // failed is a permanent error state.
 void Failed(Module m, uint8_t n);
 
-}  // namespace assert
+}  // namespace mouse::assert

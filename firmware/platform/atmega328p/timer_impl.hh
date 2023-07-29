@@ -2,7 +2,7 @@
 
 #include "firmware/platform/timer.hh"
 
-namespace timer {
+namespace mouse::platform::timer {
 
 void Init();
 

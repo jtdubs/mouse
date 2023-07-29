@@ -18,7 +18,7 @@
 #include <ostream>
 #endif
 
-namespace walls {
+namespace mouse::control::walls {
 
 struct State {
   bool    left_present;
@@ -48,4 +48,4 @@ void Present(bool& left, bool& right, bool& forward);
 }
 #endif
 
-}  // namespace walls
+}  // namespace mouse::control::walls

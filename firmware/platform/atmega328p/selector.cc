@@ -4,7 +4,7 @@
 #include "adc_impl.hh"
 #include "selector_impl.hh"
 
-namespace selector {
+namespace mouse::platform::selector {
 
 namespace {
 // The proposed value (from the DIP switches) and the button state.
@@ -14,7 +14,7 @@ bool    button_pressed;
 
 uint8_t Update() {
   // Read the selector voltage.
-  uint16_t raw = adc::Read(adc::Channel::Selector);
+  uint16_t raw = platform::adc::Read(platform::adc::Channel::Selector);
 
   uint8_t v = raw >> 2;
 
@@ -39,4 +39,4 @@ uint8_t Update() {
   return 0xFF;
 }
 
-}  // namespace selector
+}  // namespace mouse::platform::selector

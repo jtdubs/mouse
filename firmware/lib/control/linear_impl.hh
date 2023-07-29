@@ -4,7 +4,7 @@
 
 #include "linear.hh"
 
-namespace linear {
+namespace mouse::control::linear {
 
 // Init initializes the linear motion module.
 void Init();
@@ -19,4 +19,4 @@ bool Tick();
 // state reads the current linear state.
 void Read(State &s);
 
-}  // namespace linear
+}  // namespace mouse::control::linear

@@ -3,7 +3,7 @@
 
 #include "usart0_impl.hh"
 
-namespace usart0 {
+namespace mouse::platform::usart0 {
 
 // Init initializes USART0.
 void Init() {
@@ -22,4 +22,4 @@ void Init() {
   UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);  // 8-bit data.
 }
 
-}  // namespace usart0
+}  // namespace mouse::platform::usart0

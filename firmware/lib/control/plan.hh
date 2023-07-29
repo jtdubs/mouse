@@ -20,7 +20,7 @@
 #include <ostream>
 #endif
 
-namespace plan {
+namespace mouse::control::plan {
 
 // State is the state of the current plan.
 enum class State : uint8_t {
@@ -191,4 +191,4 @@ void SubmitAndWait(Plan plan);
 }
 #endif
 
-}  // namespace plan
+}  // namespace mouse::control::plan

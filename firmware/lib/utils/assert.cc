@@ -7,7 +7,7 @@
 #include "firmware/platform/platform.hh"
 #include "sim.h"
 
-namespace assert {
+namespace mouse::assert {
 
 namespace {
 const char kHexTable[16] = {
@@ -33,11 +33,11 @@ void Failed(Module m, uint8_t n) {
   SIM_CONSOLE_REG = static_cast<uint8_t>('\n');
 
   // disable all peripherals
-  motor::Set(0, 0);
-  pin::Clear(pin::kLEDLeft);
-  pin::Clear(pin::kLEDRight);
-  pin::Clear(pin::kLEDOnboard);
-  pin::Clear(pin::kIRLEDs);
+  platform::motor::Set(0, 0);
+  platform::pin::Clear(platform::pin::kLEDLeft);
+  platform::pin::Clear(platform::pin::kLEDRight);
+  platform::pin::Clear(platform::pin::kLEDOnboard);
+  platform::pin::Clear(platform::pin::kIRLEDs);
 
   for (;;) {
     // blink out each bit in the error code
@@ -45,9 +45,9 @@ void Failed(Module m, uint8_t n) {
       bool bit = (error_code >> (15 - bit_index)) & 1;
 
       // on for 20ms, off for 230ms (determined by visual inspection)
-      pin::Set(bit ? pin::kLEDLeft : pin::kLEDRight);
+      platform::pin::Set(bit ? platform::pin::kLEDLeft : platform::pin::kLEDRight);
       _delay_ms(20);
-      pin::Clear(bit ? pin::kLEDLeft : pin::kLEDRight);
+      platform::pin::Clear(bit ? platform::pin::kLEDLeft : platform::pin::kLEDRight);
       _delay_ms(230);
 
       if ((bit_index & 3) == 3) {
@@ -60,4 +60,4 @@ void Failed(Module m, uint8_t n) {
   }
 }
 
-}  // namespace assert
+}  // namespace mouse::assert

@@ -4,7 +4,7 @@
 
 #include "position.hh"
 
-namespace position {
+namespace mouse::control::position {
 
 // Init initializes the position module.
 void Init();
@@ -12,4 +12,4 @@ void Init();
 // update updates the position based on encoder deltas.
 void Update();
 
-}  // namespace position
+}  // namespace mouse::control::position

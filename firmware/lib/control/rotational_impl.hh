@@ -4,7 +4,7 @@
 
 #include "rotational.hh"
 
-namespace rotational {
+namespace mouse::control::rotational {
 
 // Init initializes the rotational motion module.
 void Init();
@@ -18,4 +18,4 @@ bool Tick();
 // state reads the current rotational state.
 void Read(State &state);
 
-}  // namespace rotational
+}  // namespace mouse::control::rotational

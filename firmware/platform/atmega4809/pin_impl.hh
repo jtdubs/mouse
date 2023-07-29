@@ -2,8 +2,8 @@
 
 #include "firmware/platform/pin.hh"
 
-namespace pin {
+namespace mouse::platform::pin {
 
 void Init();
 
-}  // namespace pin
+}  // namespace mouse::platform::pin

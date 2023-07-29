@@ -2,7 +2,7 @@
 
 #include "firmware/platform/encoders.hh"
 
-namespace encoders {
+namespace mouse::platform::encoders {
 
 void Init();
 

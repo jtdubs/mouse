@@ -33,7 +33,7 @@
 #include <ostream>
 #endif
 
-namespace report {
+namespace mouse::report {
 
 // Reportype_t identifies the type of a given report.
 enum class Type : uint8_t {
@@ -97,8 +97,8 @@ void Init();
       break;
     }
     case Type::Explore: {
-      auto   updates = reinterpret_cast<explore::DequeueUpdate *>(const_cast<uint8_t *>(report->data));
-      size_t n       = report->length / sizeof(explore::DequeueUpdate);
+      auto   updates = reinterpret_cast<mode::explore::DequeueUpdate *>(const_cast<uint8_t *>(report->data));
+      size_t n       = report->length / sizeof(mode::explore::DequeueUpdate);
       for (size_t i = 0; i < n; i++) {
         o << "  update: " << updates << std::endl;
       }
@@ -111,4 +111,4 @@ void Init();
 
 #endif
 
-}  // namespace report
+}  // namespace mouse::report

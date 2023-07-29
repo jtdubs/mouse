@@ -15,9 +15,9 @@
 
 #include <stdint.h>
 
-namespace rtc {
+namespace mouse::platform::rtc {
 
 // micros returns the number of microseconds since the RTC was initialized.
 uint32_t Micros();
 
-}  // namespace rtc
+}  // namespace mouse::platform::rtc

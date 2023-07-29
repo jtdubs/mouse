@@ -12,16 +12,17 @@
 #include "firmware/platform/platform.hh"
 #include "remote_impl.hh"
 
-namespace remote {
+namespace mouse::mode::remote {
 
 namespace {
-dequeue::Dequeue<plan::Plan, 16> plans;
+dequeue::Dequeue<control::plan::Plan, 16> plans;
 }
 
 // remote is a mode that allows the robot to be controlled remotely.
 void Run() {
   command::Init();
-  plan::SubmitAndWait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  control::plan::SubmitAndWait((control::plan::Plan){
+      .type = control::plan::Type::Idle, .state = control::plan::State::Scheduled, .data = {.idle = {}}});
 
   for (;;) {
     // wait until there's a command to process.
@@ -46,22 +47,22 @@ void Run() {
       case command::Type::TunePID:
         switch (command.data.pid.id) {
           case command::PidID::Speed:
-            speed::TunePID(command.data.pid.kp,  //
-                           command.data.pid.ki,  //
-                           command.data.pid.kd,  //
-                           command.data.pid.alpha);
+            control::speed::TunePID(command.data.pid.kp,  //
+                                    command.data.pid.ki,  //
+                                    command.data.pid.kd,  //
+                                    command.data.pid.alpha);
             break;
           case command::PidID::Wall:
-            linear::TuneWallPID(command.data.pid.kp,  //
-                                command.data.pid.ki,  //
-                                command.data.pid.kd,  //
-                                command.data.pid.alpha);
+            control::linear::TuneWallPID(command.data.pid.kp,  //
+                                         command.data.pid.ki,  //
+                                         command.data.pid.kd,  //
+                                         command.data.pid.alpha);
             break;
           case command::PidID::Angle:
-            linear::TuneAnglePID(command.data.pid.kp,  //
-                                 command.data.pid.ki,  //
-                                 command.data.pid.kd,  //
-                                 command.data.pid.alpha);
+            control::linear::TuneAnglePID(command.data.pid.kp,  //
+                                          command.data.pid.ki,  //
+                                          command.data.pid.kd,  //
+                                          command.data.pid.alpha);
             break;
         }
         break;
@@ -70,7 +71,7 @@ void Run() {
         break;
       case command::Type::PlanExecute:
         while (!plans.Empty()) {
-          plan::SubmitAndWait(plans.PopFront());
+          control::plan::SubmitAndWait(plans.PopFront());
         }
         break;
       default:
@@ -81,4 +82,4 @@ void Run() {
   }
 }
 
-}  // namespace remote
+}  // namespace mouse::mode::remote

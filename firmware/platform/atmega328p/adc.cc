@@ -7,7 +7,7 @@
 #include "firmware/lib/utils/assert.hh"
 #include "pin_impl.hh"
 
-namespace adc {
+namespace mouse::platform::adc {
 
 namespace {
 // Raw 10-bit readings from ADC channels.
@@ -63,4 +63,4 @@ ISR(ADC_vect, ISR_BLOCK) {
   }
 }
 
-}  // namespace adc
+}  // namespace mouse::platform::adc

@@ -6,7 +6,7 @@
 #include "firmware/platform/platform.hh"
 #include "plan_impl.hh"
 
-namespace plan {
+namespace mouse::control::plan {
 
 namespace {
 // current_plan is the current plan
@@ -29,10 +29,10 @@ void Submit(Plan plan) {
 
 // wait waits for the current plan to be implemented.
 void Wait() {
-  pin::Clear(pin::kProbePlan);
+  platform::pin::Clear(platform::pin::kProbePlan);
   volatile State *state = &current_plan.state;
   while (*state != State::Implemented) {}
-  pin::Set(pin::kProbePlan);
+  platform::pin::Set(platform::pin::kProbePlan);
 }
 
 // SubmitAndWait submits a new plan, and wait for it to be implemented.
@@ -57,4 +57,4 @@ Plan Current() {
   return result;
 }
 
-}  // namespace plan
+}  // namespace mouse::control::plan

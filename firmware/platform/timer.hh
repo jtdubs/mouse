@@ -14,11 +14,11 @@
 //
 #pragma once
 
-namespace timer {
+namespace mouse::platform::timer {
 
 typedef void (*callback_t)();
 
 // AddCallback sets the callback function to be called on each timer expiration.
 void AddCallback(callback_t callback);
 
-}  // namespace timer
+}  // namespace mouse::platform::timer

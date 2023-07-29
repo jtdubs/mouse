@@ -18,7 +18,7 @@
 
 #include <stdint.h>
 
-namespace encoders {
+namespace mouse::platform::encoders {
 
 // update applies changes since the last update.
 // NOTE: this must be called frequently so the deltas do not overflow!
@@ -30,4 +30,4 @@ void Read(int32_t& left, int32_t& right);
 // ReadDeltas reads the changes to the encoder counts since the last update.
 void ReadDeltas(int32_t& left, int32_t& right);
 
-}  // namespace encoders
+}  // namespace mouse::platform::encoders

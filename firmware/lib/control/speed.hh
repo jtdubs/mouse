@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-namespace speed {
+namespace mouse::control::speed {
 
 // set sets the motor speed setpoints.
 void Set(float left, float right);
@@ -21,4 +21,4 @@ void Set(float left, float right);
 // tune tunes the PID controllers.
 void TunePID(float kp, float ki, float kd, float alpha);
 
-}  // namespace speed
+}  // namespace mouse::control::speed

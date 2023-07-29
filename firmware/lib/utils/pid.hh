@@ -15,7 +15,7 @@
 #include <ostream>
 #endif
 
-namespace pid {
+namespace mouse::pid {
 
 #if not defined(__AVR__)
 class PIDController;
@@ -219,4 +219,4 @@ inline float PController::Update(float sp /* setpoint */, float pv /* process va
 }
 #endif
 
-}  // namespace pid
+}  // namespace mouse::pid

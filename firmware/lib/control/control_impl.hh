@@ -2,9 +2,9 @@
 
 #include "control.hh"
 
-namespace control {
+namespace mouse::control {
 
 // Tick executes one Tick of the control module.
 void Tick();
 
-}  // namespace control
+}  // namespace mouse::control

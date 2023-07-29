@@ -15,7 +15,7 @@
 #include <ostream>
 #endif
 
-namespace rotational {
+namespace mouse::control::rotational {
 
 #pragma pack(push, 1)
 struct State {
@@ -40,4 +40,4 @@ struct State {
 }
 #endif
 
-}  // namespace rotational
+}  // namespace mouse::control::rotational

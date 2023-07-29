@@ -3,7 +3,7 @@
 
 #include "rtc_impl.hh"
 
-namespace rtc {
+namespace mouse::platform::rtc {
 
 namespace {
 // overflow_count is the number of times the timer has overflowed.
@@ -44,4 +44,4 @@ ISR(TIMER2_OVF_vect, ISR_BLOCK) {
   overflow_count++;
 }
 
-}  // namespace rtc
+}  // namespace mouse::platform::rtc

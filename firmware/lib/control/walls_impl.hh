@@ -5,7 +5,7 @@
 
 #include "walls.hh"
 
-namespace walls {
+namespace mouse::control::walls {
 
 // Init initializes the walls module.
 void Init();
@@ -16,4 +16,4 @@ void Update();
 // error returns the "centering error" of the mouse, based on wall distances.
 float error();
 
-}  // namespace walls
+}  // namespace mouse::control::walls

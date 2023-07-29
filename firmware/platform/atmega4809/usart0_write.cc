@@ -6,7 +6,7 @@
 #include "firmware/lib/utils/assert.hh"
 #include "usart0_impl.hh"
 
-namespace usart0 {
+namespace mouse::platform::usart0 {
 
 namespace {
 // The write buffer and associated state.
@@ -81,4 +81,4 @@ ISR(USART_UDRE_vect, ISR_BLOCK) {
   }
 }
 
-}  // namespace usart0
+}  // namespace mouse::platform::usart0

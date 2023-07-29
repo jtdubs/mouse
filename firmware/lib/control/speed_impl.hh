@@ -4,7 +4,7 @@
 
 #include "speed.hh"
 
-namespace speed {
+namespace mouse::control::speed {
 
 // Init initializes the speed module.
 void Init();
@@ -21,4 +21,4 @@ void Read(float& left, float& right);
 // ReadSetpoints reads the motor speed setpoints.
 void ReadSetpoints(float& left, float& right);
 
-}  // namespace speed
+}  // namespace mouse::control::speed

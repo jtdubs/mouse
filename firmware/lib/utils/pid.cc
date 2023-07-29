@@ -1,6 +1,6 @@
 #include "pid.hh"
 
-namespace pid {
+namespace mouse::pid {
 
 PIDController::PIDController() {}
 
@@ -65,4 +65,4 @@ void PController::SetRange(float _min, float _max) {
   max = _max;
 }
 
-}  // namespace pid
+}  // namespace mouse::pid

@@ -5,7 +5,7 @@
 
 #include "sensor_cal.hh"
 
-namespace sensor_cal {
+namespace mouse::control::sensor_cal {
 
 // Init initializes the sensor calibration module.
 void Init();
@@ -19,4 +19,4 @@ bool Tick();
 // read reads the calibrated sensor values.
 void Read(uint16_t &left, uint16_t &right, uint16_t &forward);
 
-}  // namespace sensor_cal
+}  // namespace mouse::control::sensor_cal

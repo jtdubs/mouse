@@ -8,7 +8,7 @@
 #include "pin_impl.hh"
 #include "rtc_impl.hh"
 
-namespace encoders {
+namespace mouse::platform::encoders {
 
 namespace {
 // Encoder counts.
@@ -40,8 +40,8 @@ void Update() {
 
 void Read(int32_t& left, int32_t& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    left  = encoders::left;
-    right = encoders::right;
+    left  = platform::encoders::left;
+    right = platform::encoders::right;
   }
 }
 
@@ -92,4 +92,4 @@ ISR(INT1_vect, ISR_BLOCK) {
   right_last_b = b;
 }
 
-}  // namespace encoders
+}  // namespace mouse::platform::encoders

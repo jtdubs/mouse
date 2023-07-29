@@ -63,20 +63,20 @@ bool Remote::IsConnected() const {
   return connected_;
 }
 
-void Remote::Send(const ::remote::command::Command &command) {
-  uint8_t len = sizeof(::remote::command::Type);
+void Remote::Send(const mode::remote::command::Command &command) {
+  uint8_t len = sizeof(mode::remote::command::Type);
   switch (command.type) {
-    case ::remote::command::Type::Reset:
-    case ::remote::command::Type::Explore:
-    case ::remote::command::Type::Solve:
-    case ::remote::command::Type::SendMaze:
-    case ::remote::command::Type::PlanExecute:
+    case mode::remote::command::Type::Reset:
+    case mode::remote::command::Type::Explore:
+    case mode::remote::command::Type::Solve:
+    case mode::remote::command::Type::SendMaze:
+    case mode::remote::command::Type::PlanExecute:
       break;
-    case ::remote::command::Type::TunePID:
-      len += sizeof(::remote::command::PidID) + 4 * sizeof(float);
+    case mode::remote::command::Type::TunePID:
+      len += sizeof(mode::remote::command::PidID) + 4 * sizeof(float);
       break;
-    case ::remote::command::Type::PlanEnqueue:
-      len += sizeof(plan::Plan);
+    case mode::remote::command::Type::PlanEnqueue:
+      len += sizeof(control::plan::Plan);
       break;
   }
 
@@ -84,7 +84,7 @@ void Remote::Send(const ::remote::command::Command &command) {
   auto    c   = reinterpret_cast<const uint8_t *>(&command);
 
   std::vector<uint8_t> buf;
-  buf.push_back(usart0::kStartByte);
+  buf.push_back(platform::usart0::kStartByte);
   buf.push_back(len);
   for (size_t i = 0; i < len; i++) {
     buf.push_back(c[i]);
@@ -182,7 +182,7 @@ int Remote::TryOpen() {
 }
 
 void Remote::Read(int port) {
-  usart0::ReadState state = usart0::ReadState::Idle;
+  platform::usart0::ReadState state = platform::usart0::ReadState::Idle;
 
   std::array<uint8_t, 128> report     = {};
   ssize_t                  report_idx = 0;
@@ -211,33 +211,33 @@ void Remote::Read(int port) {
     if (n > 0) {
       for (ssize_t idx = 0; idx < n; idx++) {
         switch (state) {
-          case usart0::ReadState::Idle:
-            if (buf[idx] == usart0::kStartByte) {
-              state = usart0::ReadState::Length;
+          case platform::usart0::ReadState::Idle:
+            if (buf[idx] == platform::usart0::kStartByte) {
+              state = platform::usart0::ReadState::Length;
               continue;
             }
             break;
-          case usart0::ReadState::Length:
+          case platform::usart0::ReadState::Length:
             report_len = buf[idx];
             report_idx = 0;
             report_chk = 0;
             if (report_len == 0) {
-              state = usart0::ReadState::Idle;
+              state = platform::usart0::ReadState::Idle;
             } else {
-              state = usart0::ReadState::Data;
+              state = platform::usart0::ReadState::Data;
             }
             break;
-          case usart0::ReadState::Data: {
+          case platform::usart0::ReadState::Data: {
             auto b                = buf[idx];
             report_chk           += b;
             report[report_idx++]  = b;
             if (report_idx == report_len) {
-              state = usart0::ReadState::Checksum;
+              state = platform::usart0::ReadState::Checksum;
             }
             break;
           }
-          case usart0::ReadState::Checksum:
-            state       = usart0::ReadState::Idle;
+          case platform::usart0::ReadState::Checksum:
+            state       = platform::usart0::ReadState::Idle;
             report_chk += buf[idx];
             if (report_chk != 0) {
               std::cerr << "Checksum error" << std::endl;
@@ -270,12 +270,12 @@ void Remote::OnReport(report::Report *report) {
       break;
     }
     case report::Type::Explore: {
-      auto   updates = reinterpret_cast<explore::DequeueUpdate *>(report->data);
-      size_t n       = report->length / sizeof(explore::DequeueUpdate);
+      auto   updates = reinterpret_cast<mode::explore::DequeueUpdate *>(report->data);
+      size_t n       = report->length / sizeof(mode::explore::DequeueUpdate);
       for (size_t i = 0; i < n; i++) {
         auto update = updates[i];
         switch (update.dequeue_id) {
-          case explore::DequeueID::Next:
+          case mode::explore::DequeueID::Next:
             switch (update.event) {
               case dequeue::Event::PushFront:
                 next_dequeue_.push_front(update.value);
@@ -291,7 +291,7 @@ void Remote::OnReport(report::Report *report) {
                 break;
             }
             break;
-          case explore::DequeueID::Path:
+          case mode::explore::DequeueID::Path:
             switch (update.event) {
               case dequeue::Event::PushFront:
                 path_dequeue_.push_front(update.value);
@@ -306,7 +306,7 @@ void Remote::OnReport(report::Report *report) {
                 path_dequeue_.pop_back();
                 break;
             }
-          case explore::DequeueID::Invalid:
+          case mode::explore::DequeueID::Invalid:
             break;
         }
       }

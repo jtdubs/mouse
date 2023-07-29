@@ -6,7 +6,7 @@
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/platform/platform.hh"
 
-namespace remote::command {
+namespace mouse::mode::remote::command {
 
 namespace {
 // The encoded and decoded command, and associated state.
@@ -22,14 +22,14 @@ void on_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
 
 // Init initializes the command module.
 void Init() {
-  usart0::SetReadCallback(on_received);
-  usart0::EnableReceiver();
+  platform::usart0::SetReadCallback(on_received);
+  platform::usart0::EnableReceiver();
 }
 
 // processed indicates the command has been processed.
 void Processed() {
   command = NULL;
-  usart0::EnableReceiver();
+  platform::usart0::EnableReceiver();
 }
 
 // next gets the next command, if one is available.
@@ -46,4 +46,4 @@ bool Next(Command &c) {
   return result;
 }
 
-}  // namespace remote::command
+}  // namespace mouse::mode::remote::command

@@ -15,7 +15,7 @@
 #include <ostream>
 #endif
 
-namespace maze {
+namespace mouse::maze {
 
 // Cell represents a single cell in the maze.
 #pragma pack(push, 1)
@@ -124,4 +124,4 @@ struct Update {
 }
 #endif
 
-}  // namespace maze
+}  // namespace mouse::maze

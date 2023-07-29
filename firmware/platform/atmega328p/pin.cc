@@ -2,7 +2,7 @@
 
 #include "pin_impl.hh"
 
-namespace pin {
+namespace mouse::platform::pin {
 
 const Pin kRightDir    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)};
 const Pin kLeftPWM     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(1)};
@@ -37,4 +37,4 @@ void Init() {
   PORTD = 0;
 }
 
-}  // namespace pin
+}  // namespace mouse::platform::pin

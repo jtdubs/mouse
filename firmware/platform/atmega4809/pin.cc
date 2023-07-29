@@ -1,6 +1,6 @@
 #include "pin_impl.hh"
 
-namespace pin {
+namespace mouse::platform::pin {
 
 // TODO(justindubs): 4809 impl
 const Pin kRightDir    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)};
@@ -38,4 +38,4 @@ void Init() {
   PORTD = 0;
 }
 
-}  // namespace pin
+}  // namespace mouse::platform::pin

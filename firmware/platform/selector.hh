@@ -10,10 +10,10 @@
 
 #include <stdint.h>
 
-namespace selector {
+namespace mouse::platform::selector {
 
 // update updates the selector state, returning the selected value
 // if the button has been pressed, and 0xFF is no button press has occurred.
 uint8_t Update();
 
-}  // namespace selector
+}  // namespace mouse::platform::selector

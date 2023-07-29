@@ -27,7 +27,7 @@ void MazeWindow::Render() {
   ImGui::Dummy(canvas_size_px);
   if (ImGui::BeginPopupContextItem("##MazePopup")) {
     if (ImGui::Selectable("Refresh")) {
-      remote_->Send(::remote::command::Command{::remote::command::Type::SendMaze, {}});
+      remote_->Send(mode::remote::command::Command{mode::remote::command::Type::SendMaze, {}});
     }
     ImGui::EndPopup();
   }

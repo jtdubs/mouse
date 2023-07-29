@@ -7,7 +7,7 @@
 #include "motor_impl.hh"
 #include "pin_impl.hh"
 
-namespace motor {
+namespace mouse::platform::motor {
 
 namespace {
 int16_t power_left;
@@ -40,8 +40,8 @@ void Set(int16_t left, int16_t right) {
     power_right = right;
 
     // set the direction of the motors
-    pin::Set(pin::kLeftDir, left < 0);
-    pin::Set(pin::kRightDir, right >= 0);
+    platform::pin::Set(platform::pin::kLeftDir, left < 0);
+    platform::pin::Set(platform::pin::kRightDir, right >= 0);
 
     // set the PWM duty cycle for each motor
     OCR1A = math::abs16(left);
@@ -58,4 +58,4 @@ void Read(int16_t& left, int16_t& right) {
   }
 }
 
-}  // namespace motor
+}  // namespace mouse::platform::motor

@@ -8,19 +8,19 @@
 #include "firmware/platform/platform.hh"
 
 int main() {
-  platform::Init();  // hardware peripherals
-  control::Init();   // control planning
-  maze::Init();      // maze data structure
-  report::Init();    // serial report system
+  mouse::platform::Init();  // hardware peripherals
+  mouse::control::Init();   // control planning
+  mouse::maze::Init();      // maze data structure
+  mouse::report::Init();    // serial report system
 
   // enable interrupts
   sei();
 
   // remote control mode (never returns)
-  remote::Run();
+  mouse::mode::remote::Run();
 
   // seriously... it should never return.
-  assert::Failed(assert::Module::Main, 0);
+  mouse::assert::Failed(mouse::assert::Module::Main, 0);
 
   return 0;
 }

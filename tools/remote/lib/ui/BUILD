@@ -17,6 +17,7 @@ cc_library(
         "-lz",
     ],
     deps = [
+        "//firmware:config",
         "//firmware/lib/control:control_headers",
         "//firmware/lib/maze:maze_headers",
         "//firmware/lib/mode/explore:explore_headers",

@@ -2,9 +2,9 @@
 
 #include "report.hh"
 
-namespace report {
+namespace mouse::report {
 
 // send sends the next report.
 void Send();
 
-}  // namespace report
+}  // namespace mouse::report

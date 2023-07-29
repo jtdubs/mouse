@@ -2,7 +2,7 @@
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "config.hh"
+#include "firmware/config.hh"
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/lib/utils/math.hh"
 #include "firmware/lib/utils/pid.hh"
@@ -13,7 +13,7 @@
 #include "speed_impl.hh"
 #include "walls_impl.hh"
 
-namespace linear {
+namespace mouse::control::linear {
 
 namespace {
 State state;
@@ -34,7 +34,7 @@ pid::PIDController angle_error_pid;
 }  // namespace
 
 void Init() {
-  wall_error_pid.Tune(kWallKp, kWallKi, kWallKd);
+  wall_error_pid.Tune(config::kWallKp, config::kWallKi, config::kWallKd);
   wall_error_pid.SetRange(-100, 100);
 #if defined(ALLOW_WALL_PID_TUNING)
   wall_alpha = kWallAlpha;
@@ -52,10 +52,10 @@ void Start(float position /* mm */, bool stop) {
   position::Read(position_distance, position_theta);
 
   State s;
-  s.target_position = position;                   // mm
-  s.target_speed    = stop ? 0.0 : kSpeedCruise;  // mm/s
+  s.target_position = position;                           // mm
+  s.target_speed    = stop ? 0.0 : config::kSpeedCruise;  // mm/s
   s.wall_error      = 0;
-  s.leds_prev_state = pin::IsSet(pin::kIRLEDs);
+  s.leds_prev_state = platform::pin::IsSet(platform::pin::kIRLEDs);
 
 #if defined(ALLOW_ANGLE_PID_TUNING)
   start_theta = position_theta;  // radians
@@ -66,17 +66,17 @@ void Start(float position /* mm */, bool stop) {
     state = s;
   }
 
-  pin::Set(pin::kIRLEDs);
+  platform::pin::Set(platform::pin::kIRLEDs);
 }
 
 bool Tick() {
-  auto forward = adc::Read(adc::Channel::SensorForward);
+  auto forward = platform::adc::Read(platform::adc::Channel::SensorForward);
 
   float speed_measured_left, speed_measured_right;
-  speed::Read(speed_measured_left, speed_measured_right);
+  control::speed::Read(speed_measured_left, speed_measured_right);
 
   float speed_setpoint_left, speed_setpoint_right;
-  speed::ReadSetpoints(speed_setpoint_left, speed_setpoint_right);
+  control::speed::ReadSetpoints(speed_setpoint_left, speed_setpoint_right);
 
   float position_distance, position_theta;
   position::Read(position_distance, position_theta);
@@ -87,28 +87,28 @@ bool Tick() {
   }
 
   // Emergency stop if too close to a wall.
-  if (forward >= kSensorEmergencyStop) {
-    pin::Set(pin::kIRLEDs, s.leds_prev_state);
-    speed::Set(0, 0);
+  if (forward >= config::kSensorEmergencyStop) {
+    platform::pin::Set(platform::pin::kIRLEDs, s.leds_prev_state);
+    control::speed::Set(0, 0);
     return true;
   }
 
   // If we are there, then we are done.
   if (position_distance >= s.target_position) {
-    float rpm = SpeedToRPM(s.target_speed);
-    pin::Set(pin::kIRLEDs, s.leds_prev_state);
-    speed::Set(rpm, rpm);
+    float rpm = config::SpeedToRPM(s.target_speed);
+    platform::pin::Set(platform::pin::kIRLEDs, s.leds_prev_state);
+    control::speed::Set(rpm, rpm);
     if (s.target_speed == 0.0f) {
       // We are done when the measured speed < 0.1mm/s
-      return (RPMToSpeed(speed_measured_left) < 0.1) &&  //
-             (RPMToSpeed(speed_measured_right) < 0.1);
+      return (config::RPMToSpeed(speed_measured_left) < 0.1) &&  //
+             (config::RPMToSpeed(speed_measured_right) < 0.1);
     } else {
       return true;
     }
   }
 
-  float current_speed    = RPMToSpeed((speed_measured_left + speed_measured_right) / 2.0f);  // mm/s
-  float current_setpoint = RPMToSpeed((speed_setpoint_left + speed_setpoint_right) / 2.0f);  // mm/s
+  float current_speed    = config::RPMToSpeed((speed_measured_left + speed_measured_right) / 2.0f);  // mm/s
+  float current_setpoint = config::RPMToSpeed((speed_setpoint_left + speed_setpoint_right) / 2.0f);  // mm/s
 
   // Compute the braking distance.
   float braking_accel = 0;  // mm/s^2
@@ -120,10 +120,10 @@ bool Tick() {
 
   // Determine the acceleration.
   float accel = 0;  // mm/s^2
-  if (braking_accel <= -kAccelDefault) {
+  if (braking_accel <= -config::kAccelDefault) {
     accel = braking_accel;
-  } else if (current_speed < kSpeedCruise) {
-    accel = kAccelDefault;
+  } else if (current_speed < config::kSpeedCruise) {
+    accel = config::kAccelDefault;
   }
 
   // Calculate the new setpoint.
@@ -132,8 +132,8 @@ bool Tick() {
   float right_speed = current_setpoint;
 
   // Add the acceleration.
-  left_speed  += (accel * kControlPeriod);  // mm/s
-  right_speed += (accel * kControlPeriod);  // mm/s
+  left_speed  += (accel * config::kControlPeriod);  // mm/s
+  right_speed += (accel * config::kControlPeriod);  // mm/s
 
   // Adjust for the wall (centering) error.
 #if defined(ALLOW_WALL_PID_TUNING)
@@ -141,8 +141,8 @@ bool Tick() {
                + ((1.0f - wall_alpha) * s.wall_error);
   float wall_adjustment = wall_error_pid.Update(0.0, s.wall_error);
 #else
-  s.wall_error = (kWallAlpha * walls::error())  //
-               + ((1.0f - kWallAlpha) * s.wall_error);
+  s.wall_error = (config::kWallAlpha * walls::error())  //
+               + ((1.0f - config::kWallAlpha) * s.wall_error);
   float wall_adjustment = wall_error_pid.Update(0.0, s.wall_error);
 #endif
   left_speed  -= wall_adjustment;
@@ -158,14 +158,14 @@ bool Tick() {
 #endif
 
   // Adjust for the wheel bias.
-  left_speed  *= (1.0 - kWheelBias);
-  right_speed *= (1.0 + kWheelBias);
+  left_speed  *= (1.0 - config::kWheelBias);
+  right_speed *= (1.0 + config::kWheelBias);
 
   // Convert to RPMs.
-  left_speed  = ClampRPM(SpeedToRPM(left_speed));
-  right_speed = ClampRPM(SpeedToRPM(right_speed));
+  left_speed  = config::ClampRPM(config::SpeedToRPM(left_speed));
+  right_speed = config::ClampRPM(config::SpeedToRPM(right_speed));
 
-  speed::Set(left_speed, right_speed);
+  control::speed::Set(left_speed, right_speed);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     state = s;
@@ -201,4 +201,4 @@ void Read(State &s) {
   }
 }
 
-}  // namespace linear
+}  // namespace mouse::control::linear

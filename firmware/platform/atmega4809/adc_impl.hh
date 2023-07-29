@@ -2,7 +2,7 @@
 
 #include "firmware/platform/adc.hh"
 
-namespace adc {
+namespace mouse::platform::adc {
 
 // next_channel defines the sequence in which channels are read.
 constexpr Channel kNextChannel[8] = {
@@ -15,4 +15,4 @@ constexpr Channel kFirstChannel = Channel::SensorRight;
 
 void Init();
 
-}  // namespace adc
+}  // namespace mouse::platform::adc

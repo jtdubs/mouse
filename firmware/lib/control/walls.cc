@@ -6,7 +6,7 @@
 #include "sensor_cal_impl.hh"
 #include "walls_impl.hh"
 
-namespace walls {
+namespace mouse::control::walls {
 
 namespace {
 bool  control_leds;
@@ -23,7 +23,7 @@ void ControlLEDs(bool enabled) {
 
 void Update() {
   uint16_t left, right, forward;
-  adc::ReadSensors(left, right, forward);
+  platform::adc::ReadSensors(left, right, forward);
 
   uint16_t left_cal, right_cal, forward_cal;
   sensor_cal::Read(left_cal, right_cal, forward_cal);
@@ -40,9 +40,9 @@ void Update() {
   }
 
   if (control_leds) {
-    pin::Set(pin::kLEDLeft, s.left_present);
-    pin::Set(pin::kLEDRight, s.right_present);
-    pin::Set(pin::kLEDOnboard, s.forward_present);
+    platform::pin::Set(platform::pin::kLEDLeft, s.left_present);
+    platform::pin::Set(platform::pin::kLEDRight, s.right_present);
+    platform::pin::Set(platform::pin::kLEDOnboard, s.forward_present);
   }
 }
 
@@ -73,4 +73,4 @@ void Present(bool& left, bool& right, bool& forward) {
   }
 }
 
-}  // namespace walls
+}  // namespace mouse::control::walls

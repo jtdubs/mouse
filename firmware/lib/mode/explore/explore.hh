@@ -35,7 +35,7 @@
 #include <ostream>
 #endif
 
-namespace explore {
+namespace mouse::mode::explore {
 
 // orientation_t represents a cardinal direction.
 enum class Orientation : uint8_t { North, East, South, West, Invalid };
@@ -112,4 +112,4 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len);
 }
 #endif
 
-}  // namespace explore
+}  // namespace mouse::mode::explore

@@ -23,7 +23,7 @@
 #include <ostream>
 #endif
 
-namespace platform {
+namespace mouse::platform {
 
 // Init initializes the platform system.
 void Init();
@@ -83,4 +83,4 @@ struct Report {
 }
 #endif
 
-}  // namespace platform
+}  // namespace mouse::platform

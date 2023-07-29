@@ -4,7 +4,7 @@
 #include <util/delay.h>
 
 #include "explore_impl.hh"
-#include "firmware/lib/control/config.hh"
+#include "firmware/config.hh"
 #include "firmware/lib/control/linear.hh"
 #include "firmware/lib/control/plan.hh"
 #include "firmware/lib/control/position.hh"
@@ -14,7 +14,7 @@
 #include "firmware/lib/utils/dequeue.hh"
 #include "firmware/platform/platform.hh"
 
-namespace explore {
+namespace mouse::mode::explore {
 
 namespace {
 Orientation                           orientation;  // The current orientation of the mouse.
@@ -38,14 +38,16 @@ void Explore() {
   });
 
   // Idle the mouse and turn on the IR LEDs.
-  plan::SubmitAndWait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
-  plan::SubmitAndWait((plan::Plan){.type = plan::Type::IR, .state = plan::State::Scheduled, .data = {.ir = {true}}});
+  control::plan::SubmitAndWait((control::plan::Plan){
+      .type = control::plan::Type::Idle, .state = control::plan::State::Scheduled, .data = {.idle = {}}});
+  control::plan::SubmitAndWait((control::plan::Plan){
+      .type = control::plan::Type::IR, .state = control::plan::State::Scheduled, .data = {.ir = {true}}});
 
   // Assumption:
   // We start centered along the back wall of the starting square, with our back touching the wall.
   // Therefore our "position", measured by the center of the axle is kAxleOffset from the wall.
   orientation = Orientation::North;
-  cell_offset = kAxleOffset;
+  cell_offset = config::kAxleOffset;
   stopped     = true;
 
   // Our path so far is just the starting square, and we want to visit the square to our north.
@@ -102,7 +104,8 @@ void Explore() {
   Face(Orientation::North);
 
   // Ensure the control system is idling (no motor activity).
-  plan::SubmitAndWait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  control::plan::SubmitAndWait((control::plan::Plan){
+      .type = control::plan::Type::Idle, .state = control::plan::State::Scheduled, .data = {.idle = {}}});
 
   // Deregister dequeue callbacks.
   path.RegisterCallback(NULL);
@@ -194,37 +197,37 @@ void Face(Orientation new_orientation) {
     case 0:
       break;
     case 1:
-      plan::SubmitAndWait(  //
-          (plan::Plan){.type  = plan::Type::RotationalMotion,
-                       .state = plan::State::Scheduled,
-                       .data  = {.rotational = {
-                                     .d_theta = -M_PI_2,
-                                }}});
+      control::plan::SubmitAndWait(  //
+          (control::plan::Plan){.type  = control::plan::Type::RotationalMotion,
+                                .state = control::plan::State::Scheduled,
+                                .data  = {.rotational = {
+                                              .d_theta = -M_PI_2,
+                                         }}});
       break;
     case 2:
-      plan::SubmitAndWait(  //
-          (plan::Plan){.type  = plan::Type::RotationalMotion,
-                       .state = plan::State::Scheduled,
-                       .data  = {.rotational = {
-                                     .d_theta = M_PI,
-                                }}});
+      control::plan::SubmitAndWait(  //
+          (control::plan::Plan){.type  = control::plan::Type::RotationalMotion,
+                                .state = control::plan::State::Scheduled,
+                                .data  = {.rotational = {
+                                              .d_theta = M_PI,
+                                         }}});
       break;
     case 3:
-      plan::SubmitAndWait(  //
-          (plan::Plan){.type  = plan::Type::RotationalMotion,
-                       .state = plan::State::Scheduled,
-                       .data  = {.rotational = {
-                                     .d_theta = M_PI_2,
-                                }}});
+      control::plan::SubmitAndWait(  //
+          (control::plan::Plan){.type  = control::plan::Type::RotationalMotion,
+                                .state = control::plan::State::Scheduled,
+                                .data  = {.rotational = {
+                                              .d_theta = M_PI_2,
+                                         }}});
       break;
   }
 
   float position, theta;
-  position::Tare(position, theta);
+  control::position::Tare(position, theta);
 
   // assuming we were centered horizontally in the previous direction of travel
   // then we are now in the middle of the cell along the new direction of travel.
-  cell_offset = kCellSize2;
+  cell_offset = config::kCellSize2;
   orientation = new_orientation;
 }
 
@@ -233,13 +236,13 @@ void Face(Orientation new_orientation) {
 void Advance(maze::Location loc, bool update_path) {
   UpdateLocation();
 
-  plan::SubmitAndWait(  //
-      (plan::Plan){.type  = plan::Type::LinearMotion,
-                   .state = plan::State::Scheduled,
-                   .data  = {.linear = {
-                                 .position = kCellSize - (cell_offset - ENTRY_OFFSET),
-                                 .stop     = false,
-                            }}});
+  control::plan::SubmitAndWait(  //
+      (control::plan::Plan){.type  = control::plan::Type::LinearMotion,
+                            .state = control::plan::State::Scheduled,
+                            .data  = {.linear = {
+                                          .position = config::kCellSize - (cell_offset - kEntryOffset),
+                                          .stop     = false,
+                                     }}});
 
   if (update_path) {
     path.PushBack(loc);
@@ -256,16 +259,16 @@ void Stop() {
   UpdateLocation();
 
   // we should never decide to stop once we have already passed the center of a cell.
-  assert(assert::Module::Explore, 3, cell_offset <= kCellSize2);
+  assert(assert::Module::Explore, 3, cell_offset <= config::kCellSize2);
 
   // stop at the center of the cell
-  plan::SubmitAndWait(                                 //
-      (plan::Plan){.type  = plan::Type::LinearMotion,  //
-                   .state = plan::State::Scheduled,    //
-                   .data  = {.linear = {
-                                 .position = kCellSize2 - cell_offset,
-                                 .stop     = true  //
-                            }}});
+  control::plan::SubmitAndWait(                                          //
+      (control::plan::Plan){.type  = control::plan::Type::LinearMotion,  //
+                            .state = control::plan::State::Scheduled,    //
+                            .data  = {.linear = {
+                                          .position = config::kCellSize2 - cell_offset,
+                                          .stop     = true  //
+                                     }}});
 
   stopped = true;
 }
@@ -273,12 +276,12 @@ void Stop() {
 // UpdateLocation updates the cell index and offset based on the traveled distance.
 void UpdateLocation() {
   float position_distance, position_theta;
-  position::Tare(position_distance, position_theta);
+  control::position::Tare(position_distance, position_theta);
   cell_offset += position_distance;
 
   // this is a (% kCellSize) without using the % operator because it is expensive.
-  while (cell_offset > kCellSize) {
-    cell_offset -= kCellSize;
+  while (cell_offset > config::kCellSize) {
+    cell_offset -= config::kCellSize;
   }
 }
 
@@ -294,7 +297,7 @@ void Classify(maze::Location loc) {
   assert(assert::Module::Explore, 4, orientation != Orientation::Invalid);
 
   bool wall_forward, wall_left, wall_right;
-  walls::Present(wall_left, wall_right, wall_forward);
+  control::walls::Present(wall_left, wall_right, wall_forward);
 
   // Classify the square based on sensor readings.
   maze::Cell cell = {
@@ -386,8 +389,8 @@ void Classify(maze::Location loc) {
 void Floodfill() {
   // Step 1. Find the 2x2 square of cells with no internal walls that is the goal.
   auto goal = maze::Location(15, 15);
-  for (uint8_t x = 0; x < kMazeWidth - 1; x++) {
-    for (uint8_t y = 0; y < kMazeHeight - 1; y++) {
+  for (uint8_t x = 0; x < config::kMazeWidth - 1; x++) {
+    for (uint8_t y = 0; y < config::kMazeHeight - 1; y++) {
       auto a = maze::Read(maze::Location(x, y));
       auto b = maze::Read(maze::Location(x + 1, y + 1));
       if (a.visited && b.visited && !a.wall_east && !a.wall_north && !b.wall_west && !b.wall_south) {
@@ -473,12 +476,12 @@ void Solve() {
 
     auto next = curr;
 
-    if (curr.Y() < (kMazeHeight - 1) && !maze::Read(curr).wall_north && maze::Read(north).distance < distance) {
+    if (curr.Y() < (config::kMazeHeight - 1) && !maze::Read(curr).wall_north && maze::Read(north).distance < distance) {
       next     = north;
       distance = maze::Read(north).distance;
     }
 
-    if (curr.X() < (kMazeWidth - 1) && !maze::Read(curr).wall_east && maze::Read(east).distance < distance) {
+    if (curr.X() < (config::kMazeWidth - 1) && !maze::Read(curr).wall_east && maze::Read(east).distance < distance) {
       next     = east;
       distance = maze::Read(east).distance;
     }
@@ -507,7 +510,8 @@ void Solve() {
   Stop();
 
   // Ensure the control system is idling (no motor activity).
-  plan::SubmitAndWait((plan::Plan){.type = plan::Type::Idle, .state = plan::State::Scheduled, .data = {.idle = {}}});
+  control::plan::SubmitAndWait((control::plan::Plan){
+      .type = control::plan::Type::Idle, .state = control::plan::State::Scheduled, .data = {.idle = {}}});
 }
 
-}  // namespace explore
+}  // namespace mouse::mode::explore

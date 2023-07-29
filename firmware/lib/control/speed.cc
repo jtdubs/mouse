@@ -4,13 +4,13 @@
 #include <stdint.h>
 #include <util/atomic.h>
 
-#include "config.hh"
+#include "firmware/config.hh"
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/lib/utils/pid.hh"
 #include "firmware/platform/platform.hh"
 #include "speed_impl.hh"
 
-namespace speed {
+namespace mouse::control::speed {
 
 namespace {
 // Motor speeds in RPMs.
@@ -34,10 +34,10 @@ pid::PIController pid_right;
 
 void Init() {
   pid_left.SetRange(-200, 200);
-  pid_left.Tune(kSpeedKp, kSpeedKi, kSpeedKd);
+  pid_left.Tune(config::kSpeedKp, config::kSpeedKi, config::kSpeedKd);
 
   pid_right.SetRange(-200, 200);
-  pid_right.Tune(kSpeedKp, kSpeedKi, kSpeedKd);
+  pid_right.Tune(config::kSpeedKp, config::kSpeedKi, config::kSpeedKd);
 
 #if defined(ALLOW_SPEED_PID_TUNING)
   alpha = kSpeedAlpha;
@@ -46,29 +46,29 @@ void Init() {
 
 void Update() {
   int32_t left_delta, right_delta;
-  encoders::ReadDeltas(left_delta, right_delta);
+  platform::encoders::ReadDeltas(left_delta, right_delta);
 
   float measured_left, measured_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    measured_left  = speed::measured_left;
-    measured_right = speed::measured_right;
+    measured_left  = control::speed::measured_left;
+    measured_right = control::speed::measured_right;
   }
 
 #if defined(ALLOW_SPEED_PID_TUNING)
-  measured_left = (alpha * CountsToRPM(left_delta))  //
+  measured_left = (alpha * config::CountsToRPM(left_delta))  //
                 + ((1.0f - alpha) * measured_left);
-  measured_right = (alpha * CountsToRPM(right_delta))  //
+  measured_right = (alpha * config::CountsToRPM(right_delta))  //
                  + ((1.0f - alpha) * measured_right);
 #else
-  measured_left = (kSpeedAlpha * CountsToRPM(left_delta))  //
-                + ((1.0f - kSpeedAlpha) * measured_left);
-  measured_right = (kSpeedAlpha * CountsToRPM(right_delta))  //
-                 + ((1.0f - kSpeedAlpha) * measured_right);
+  measured_left = (config::kSpeedAlpha * config::CountsToRPM(left_delta))  //
+                + ((1.0f - config::kSpeedAlpha) * measured_left);
+  measured_right = (config::kSpeedAlpha * config::CountsToRPM(right_delta))  //
+                 + ((1.0f - config::kSpeedAlpha) * measured_right);
 #endif
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    speed::measured_left  = measured_left;
-    speed::measured_right = measured_right;
+    control::speed::measured_left  = measured_left;
+    control::speed::measured_right = measured_right;
   }
 }
 
@@ -76,16 +76,16 @@ void Tick() {
   float measured_left, measured_right;
   float setpoint_left, setpoint_right;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    measured_left  = speed::measured_left;
-    measured_right = speed::measured_right;
-    setpoint_left  = speed::setpoint_left;
-    setpoint_right = speed::setpoint_right;
+    measured_left  = control::speed::measured_left;
+    measured_right = control::speed::measured_right;
+    setpoint_left  = control::speed::setpoint_left;
+    setpoint_right = control::speed::setpoint_right;
   }
 
   float setpoint_left_mag = fabsf(setpoint_left);
-  float power_left        = LeftRPMToPower(setpoint_left_mag);
+  float power_left        = config::LeftRPMToPower(setpoint_left_mag);
 
-  if (setpoint_left_mag < kMinMotorRPM) {
+  if (setpoint_left_mag < config::kMinMotorRPM) {
     pid_left.Reset();
     power_left = 0;
   } else {
@@ -93,9 +93,9 @@ void Tick() {
   }
 
   float setpoint_right_mag = fabsf(setpoint_right);
-  float power_right        = RightRPMToPower(setpoint_right_mag);
+  float power_right        = config::RightRPMToPower(setpoint_right_mag);
 
-  if (setpoint_right_mag < kMinMotorRPM) {
+  if (setpoint_right_mag < config::kMinMotorRPM) {
     pid_right.Reset();
     power_right = 0;
   } else {
@@ -106,7 +106,7 @@ void Tick() {
   bool    forward_right = signbitf(setpoint_right) == 0;
   int16_t left          = static_cast<int16_t>(lrintf(forward_left ? power_left : -power_left));
   int16_t right         = static_cast<int16_t>(lrintf(forward_right ? power_right : -power_right));
-  motor::Set(left, right);
+  platform::motor::Set(left, right);
 }
 
 void Set(float left, float right) {
@@ -147,4 +147,4 @@ void ReadSetpoints(float& left, float& right) {
   }
 }
 
-}  // namespace speed
+}  // namespace mouse::control::speed

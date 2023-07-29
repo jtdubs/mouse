@@ -23,7 +23,7 @@
 #include <ostream>
 #endif
 
-namespace control {
+namespace mouse::control {
 
 // Init initializes the control module.
 void Init();
@@ -34,7 +34,7 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len);
 #pragma pack(push, 1)
 // control_Report is the report sent by the control module.
 struct Report {
-  plan::Plan plan;
+  control::plan::Plan plan;
   struct {
     float measured_left;   // RPMs
     float measured_right;  // RPMs
@@ -51,8 +51,8 @@ struct Report {
       uint16_t right;    // ADC reading
       uint16_t forward;  // ADC reading
     } sensor_cal;
-    rotational::State rotation;
-    linear::State     linear;
+    rotational::State      rotation;
+    control::linear::State linear;
   } plan_data;
 };
 #pragma pack(pop)
@@ -64,11 +64,11 @@ struct Report {
   o << "  speed_setpoint: {" << report->speed.setpoint_left << ", " << report->speed.setpoint_right << "}" << std::endl;
   o << "  position: {" << report->position.distance << ", " << report->position.theta << "}" << std::endl;
   o << "  plan: " << report->plan << std::endl;
-  if (report->plan.type == plan::Type::RotationalMotion) {
+  if (report->plan.type == control::plan::Type::RotationalMotion) {
     o << "  rotation: " << report->plan_data.rotation << std::endl;
-  } else if (report->plan.type == plan::Type::LinearMotion) {
+  } else if (report->plan.type == control::plan::Type::LinearMotion) {
     o << "  linear: " << report->plan_data.linear << std::endl;
-  } else if (report->plan.type == plan::Type::SensorCal) {
+  } else if (report->plan.type == control::plan::Type::SensorCal) {
     o << "  sensor_cal: {";
     o << report->plan_data.sensor_cal.left << ", ";
     o << report->plan_data.sensor_cal.forward << ", ";
@@ -83,4 +83,4 @@ struct Report {
 }
 #endif
 
-}  // namespace control
+}  // namespace mouse::control

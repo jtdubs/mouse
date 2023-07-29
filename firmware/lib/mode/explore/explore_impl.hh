@@ -2,12 +2,12 @@
 
 #include "explore.hh"
 
-namespace explore {
+namespace mouse::mode::explore {
 
-// ENTRY_OFFSET is the offset into a cell at which the mouse's left and right sensors are
+// kEntryOffset is the offset into a cell at which the mouse's left and right sensors are
 // pointed at the center of the side walls of that cell.  This is the point where the
 // sensors will be sampled for the purpose of detecting walls.
-constexpr float ENTRY_OFFSET = 16.0;  // mm
+constexpr float kEntryOffset = 16.0;  // mm
 
 // stop stops the mouse in the middle of the current cell.
 void Stop();
@@ -32,4 +32,4 @@ void UpdateLocation();
 // Floodfill calculates the shortest path to the goal.
 void Floodfill();
 
-}  // namespace explore
+}  // namespace mouse::mode::explore

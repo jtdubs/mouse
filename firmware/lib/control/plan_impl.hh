@@ -5,7 +5,7 @@
 
 #include "plan.hh"
 
-namespace plan {
+namespace mouse::control::plan {
 
 // Init initializes the plan module.
 void Init();
@@ -16,4 +16,4 @@ void SetState(State state);
 // current gets the current plan.
 Plan Current();
 
-}  // namespace plan
+}  // namespace mouse::control::plan

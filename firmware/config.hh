@@ -12,6 +12,8 @@
 
 #include "firmware/lib/utils/math.hh"
 
+namespace mouse::config {
+
 // Robot dimensions
 constexpr float kBoardWidth    = 81.25;  // mm
 constexpr float kBoardLength   = 99.00;  // mm
@@ -123,3 +125,5 @@ inline static float RightPowerToRPM(float power) {
 inline static float RightRPMToPower(float rpm) {
   return (rpm - kRightMotorB) * (1.0 / kRightMotorM);
 }
+
+}  // namespace mouse::config

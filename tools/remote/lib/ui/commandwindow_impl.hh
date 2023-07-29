@@ -13,20 +13,20 @@ class CommandWindow : public mouse::ui::Window {
   virtual void Render() override;
 
  private:
-  app::remote::Remote       *remote_;
-  ::remote::command::Command tune_speed_command_;
-  ::remote::command::Command tune_wall_command_;
-  ::remote::command::Command tune_angle_command_;
-  ::remote::command::Command led_command_;
-  ::remote::command::Command ir_command_;
-  ::remote::command::Command power_command_;
-  ::remote::command::Command speed_command_;
-  ::remote::command::Command linear_command_;
-  ::remote::command::Command rotational_command_;
-  ::remote::command::Command cal_command_;
-  ::remote::command::Command execute_command_;
-  bool                       link_power_;
-  bool                       link_speed_;
+  app::remote::Remote           *remote_;
+  mode::remote::command::Command tune_speed_command_;
+  mode::remote::command::Command tune_wall_command_;
+  mode::remote::command::Command tune_angle_command_;
+  mode::remote::command::Command led_command_;
+  mode::remote::command::Command ir_command_;
+  mode::remote::command::Command power_command_;
+  mode::remote::command::Command speed_command_;
+  mode::remote::command::Command linear_command_;
+  mode::remote::command::Command rotational_command_;
+  mode::remote::command::Command cal_command_;
+  mode::remote::command::Command execute_command_;
+  bool                           link_power_;
+  bool                           link_speed_;
 };
 
 }  // namespace mouse::app::ui

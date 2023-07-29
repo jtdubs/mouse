@@ -11,7 +11,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-namespace pin {
+namespace mouse::platform::pin {
 
 // Pin represents an output pin on the atmega328p.
 struct Pin {
@@ -66,4 +66,4 @@ inline bool IsSet(Pin pin) {
   return *pin.port & pin.mask;
 }
 
-}  // namespace pin
+}  // namespace mouse::platform::pin

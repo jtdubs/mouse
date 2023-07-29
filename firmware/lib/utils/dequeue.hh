@@ -18,7 +18,7 @@
 #define assert(a, b, c)
 #endif
 
-namespace dequeue {
+namespace mouse::dequeue {
 
 enum class Event : uint8_t {
   PushFront,
@@ -221,4 +221,4 @@ template <typename T, size_t CAPACITY>
 }
 #endif
 
-}  // namespace dequeue
+}  // namespace mouse::dequeue

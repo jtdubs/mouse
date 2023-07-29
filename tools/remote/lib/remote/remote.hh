@@ -25,7 +25,7 @@ class Remote {
 
   bool IsConnected() const;
 
-  void Send(const ::remote::command::Command &command);
+  void Send(const mode::remote::command::Command &command);
 
   std::mutex &GetMutex();
 

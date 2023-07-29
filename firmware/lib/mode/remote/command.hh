@@ -24,7 +24,7 @@
 #include <ostream>
 #endif
 
-namespace remote::command {
+namespace mouse::mode::remote::command {
 
 // type_t identifies the type of a given command.
 enum class Type : uint8_t {
@@ -62,7 +62,7 @@ struct Command {
       float kd;
       float alpha;
     } pid;
-    plan::Plan plan;
+    control::plan::Plan plan;
   } data;
 };
 #pragma pack(pop)
@@ -153,4 +153,4 @@ bool Next(Command &command);
 }
 #endif
 
-}  // namespace remote::command
+}  // namespace mouse::mode::remote::command

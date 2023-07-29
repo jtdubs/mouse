@@ -3,13 +3,13 @@
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "config.hh"
+#include "firmware/config.hh"
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/lib/utils/math.hh"
 #include "firmware/platform/platform.hh"
 #include "sensor_cal_impl.hh"
 
-namespace sensor_cal {
+namespace mouse::control::sensor_cal {
 
 namespace {
 constexpr uint16_t SamplePower = 9;                   // dimensionless
@@ -28,9 +28,9 @@ bool     leds_prev_state;
 
 void Init() {
   // These are reasonable guesses in case calibration is not performed.
-  threshold_left    = kSensorSideDefaultCal;
-  threshold_right   = kSensorSideDefaultCal;
-  threshold_forward = kSensorFrontDefaultCal;
+  threshold_left    = config::kSensorSideDefaultCal;
+  threshold_right   = config::kSensorSideDefaultCal;
+  threshold_forward = config::kSensorFrontDefaultCal;
 }
 
 void Start() {
@@ -40,13 +40,13 @@ void Start() {
     sum_forward  = 0;
     sample_count = 0;
   }
-  leds_prev_state = pin::IsSet(pin::kIRLEDs);
-  pin::Set(pin::kIRLEDs);
+  leds_prev_state = platform::pin::IsSet(platform::pin::kIRLEDs);
+  platform::pin::Set(platform::pin::kIRLEDs);
 }
 
 bool Tick() {
   if (sample_count == SampleLimit) {
-    pin::Set(pin::kIRLEDs, leds_prev_state);
+    platform::pin::Set(platform::pin::kIRLEDs, leds_prev_state);
 
     // The left and right thresholds are averaged to compensate for the mouse not being positioned
     // perfectly in the center of the corridor during calibration.
@@ -61,7 +61,7 @@ bool Tick() {
   }
 
   uint16_t left, right, forward;
-  adc::ReadSensors(left, right, forward);
+  platform::adc::ReadSensors(left, right, forward);
   sum_left    += left;
   sum_right   += right;
   sum_forward += forward;
@@ -78,4 +78,4 @@ void Read(uint16_t &left, uint16_t &right, uint16_t &forward) {
   }
 }
 
-}  // namespace sensor_cal
+}  // namespace mouse::control::sensor_cal

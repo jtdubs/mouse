@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdint.h>
 
-namespace math {
+namespace mouse::math {
 
 // min8 returns minimum of x and y.
 inline uint8_t min8(uint8_t x, uint8_t y) {
@@ -34,4 +34,4 @@ inline float clampthetaf(float theta) {
   return theta;
 }
 
-}  // namespace math
+}  // namespace mouse::math

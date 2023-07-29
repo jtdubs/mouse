@@ -2,7 +2,7 @@
 
 #include "firmware/platform/motor.hh"
 
-namespace motor {
+namespace mouse::platform::motor {
 
 void Init();
 

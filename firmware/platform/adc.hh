@@ -21,7 +21,7 @@
 
 #include <stdint.h>
 
-namespace adc {
+namespace mouse::platform::adc {
 
 enum Channel : uint8_t {
   SensorRight,
@@ -43,4 +43,4 @@ uint16_t Read(Channel channel);
 // ReadSensors reads the value of an ADC channel.
 void ReadSensors(uint16_t& left, uint16_t& right, uint16_t& forward);
 
-}  // namespace adc
+}  // namespace mouse::platform::adc

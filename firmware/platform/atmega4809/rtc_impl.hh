@@ -2,7 +2,7 @@
 
 #include "firmware/platform/rtc.hh"
 
-namespace rtc {
+namespace mouse::platform::rtc {
 
 void Init();
 

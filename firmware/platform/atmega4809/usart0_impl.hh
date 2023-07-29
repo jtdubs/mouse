@@ -4,7 +4,7 @@
 
 #include "firmware/platform/usart0.hh"
 
-namespace usart0 {
+namespace mouse::platform::usart0 {
 
 constexpr uint8_t kStartByte   = 0x02;
 constexpr uint8_t kMaxReadSize = 64;

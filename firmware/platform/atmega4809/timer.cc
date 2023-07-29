@@ -10,7 +10,7 @@
 #include "pin_impl.hh"
 #include "timer_impl.hh"
 
-namespace timer {
+namespace mouse::platform::timer {
 
 namespace {
 callback_t callbacks[4];
@@ -53,7 +53,7 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
 
 ISR(TIMER0_COMPB_vect, ISR_BLOCK) {
   // TODO(justindubs): 4809 impl
-  adc::Sample();
+  platform::adc::Sample();
 }
 
-}  // namespace timer
+}  // namespace mouse::platform::timer

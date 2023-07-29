@@ -12,7 +12,7 @@
 #include "timer_impl.hh"
 #include "usart0_impl.hh"
 
-namespace platform {
+namespace mouse::platform {
 
 void Init() {
   // Turn off unused hardware to save a few mA.
@@ -20,13 +20,13 @@ void Init() {
   power_twi_disable();
 
   // Initialize all the platform modules.
-  pin::Init();
-  usart0::Init();
-  adc::Init();
-  encoders::Init();
-  motor::Init();
-  timer::Init();
-  rtc::Init();
+  platform::pin::Init();
+  platform::usart0::Init();
+  platform::adc::Init();
+  platform::encoders::Init();
+  platform::motor::Init();
+  platform::timer::Init();
+  platform::rtc::Init();
 }
 
 uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
@@ -34,17 +34,17 @@ uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   assert(assert::Module::Platform, 1, len >= sizeof(Report));
 
   uint16_t left, right, forward;
-  adc::ReadSensors(left, right, forward);
+  platform::adc::ReadSensors(left, right, forward);
 
   Report *report = (Report *)buffer;
-  encoders::Read(report->encoders.left, report->encoders.right);
+  platform::encoders::Read(report->encoders.left, report->encoders.right);
 
-  motor::Read(report->motors.left, report->motors.right);
+  platform::motor::Read(report->motors.left, report->motors.right);
 
-  report->leds.left       = pin::IsSet(pin::kLEDLeft);
-  report->leds.right      = pin::IsSet(pin::kLEDRight);
-  report->leds.onboard    = pin::IsSet(pin::kLEDOnboard);
-  report->leds.ir         = pin::IsSet(pin::kIRLEDs);
+  report->leds.left       = platform::pin::IsSet(platform::pin::kLEDLeft);
+  report->leds.right      = platform::pin::IsSet(platform::pin::kLEDRight);
+  report->leds.onboard    = platform::pin::IsSet(platform::pin::kLEDOnboard);
+  report->leds.ir         = platform::pin::IsSet(platform::pin::kIRLEDs);
   report->sensors.left    = left;
   report->sensors.right   = right;
   report->sensors.forward = forward;
@@ -52,4 +52,4 @@ uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   return sizeof(Report);
 }
 
-}  // namespace platform
+}  // namespace mouse::platform

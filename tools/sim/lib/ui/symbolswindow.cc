@@ -59,17 +59,17 @@ void SymbolsWindow::Render() {
     }
 
     Row(symbol.name);
-    if (symbol.name == "linear::state") {
+    if (symbol.name == "control::linear::state") {
       std::ostringstream os;
-      os << reinterpret_cast<linear::State *>(symbol.data);
+      os << reinterpret_cast<control::linear::State *>(symbol.data);
       ImGui::TextUnformatted(os.str().c_str());
     } else if (symbol.name == "rotational::state") {
       std::ostringstream os;
-      os << reinterpret_cast<rotational::State *>(symbol.data);
+      os << reinterpret_cast<control::rotational::State *>(symbol.data);
       ImGui::TextUnformatted(os.str().c_str());
-    } else if (symbol.name == "plan::current_plan") {
+    } else if (symbol.name == "control::plan::current_plan") {
       std::ostringstream os;
-      os << reinterpret_cast<plan::Plan *>(symbol.data);
+      os << reinterpret_cast<control::plan::Plan *>(symbol.data);
       ImGui::TextUnformatted(os.str().c_str());
     } else if (symbol.name == "explore::next") {
       std::ostringstream os;
@@ -81,15 +81,15 @@ void SymbolsWindow::Render() {
       ImGui::TextUnformatted(os.str().c_str());
     } else if (symbol.name == "explore::orientation") {
       std::ostringstream os;
-      os << *reinterpret_cast<explore::Orientation *>(symbol.data);
+      os << *reinterpret_cast<mode::explore::Orientation *>(symbol.data);
       ImGui::TextUnformatted(os.str().c_str());
     } else if (symbol.name == "walls::state") {
       std::ostringstream os;
-      os << reinterpret_cast<walls::State *>(symbol.data);
+      os << reinterpret_cast<control::walls::State *>(symbol.data);
       ImGui::TextUnformatted(os.str().c_str());
-    } else if (symbol.name == "linear::wall_error_pid" ||  //
-               symbol.name == "speed::pid_left" ||         //
-               symbol.name == "speed::pid_right") {
+    } else if (symbol.name == "control::linear::wall_error_pid" ||  //
+               symbol.name == "control::speed::pid_left" ||         //
+               symbol.name == "control::speed::pid_right") {
       std::ostringstream os;
       os << reinterpret_cast<pid::PIController *>(symbol.data);
       ImGui::TextUnformatted(os.str().c_str());
@@ -113,11 +113,11 @@ void SymbolsWindow::Render() {
           if (symbol.name.find("theta") != std::string::npos) {
             ImGui::TextUnformatted(
                 std::format("{:8.2f}", (*static_cast<float *>(symbol.data)) * 180.0f / std::numbers::pi).c_str());
-          } else if (symbol.name.find("speed::") != std::string::npos) {
+          } else if (symbol.name.find("control::speed::") != std::string::npos) {
             ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
           } else if (symbol.name.find("position::") != std::string::npos) {
             ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
-          } else if (symbol.name.find("linear::") != std::string::npos) {
+          } else if (symbol.name.find("control::linear::") != std::string::npos) {
             ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());
           } else if (symbol.name.find("explore::cell_offset") != std::string::npos) {
             ImGui::TextUnformatted(std::format("{:8.2f}", *static_cast<float *>(symbol.data)).c_str());

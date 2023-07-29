@@ -11,7 +11,7 @@
 
 #include "pin.hh"
 
-namespace motor {
+namespace mouse::platform::motor {
 
 // set sets the power levels of the motors.
 // Range: [-511, 511]
@@ -21,4 +21,4 @@ void Set(int16_t left, int16_t right);
 // Range: [-511, 511]
 void Read(int16_t& left, int16_t& right);
 
-}  // namespace motor
+}  // namespace mouse::platform::motor

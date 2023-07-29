@@ -1,4 +1,4 @@
-load("//bazel/rules:avr.bzl", "avr_binary")
+load("//bazel/rules:avr.bzl", "avr_binary", "avr_library")
 
 platform_library = select(
     {
@@ -8,8 +8,16 @@ platform_library = select(
     },
 )
 
+cc_library(
+    name = "config",
+    srcs = [],
+    hdrs = ["config.hh"],
+    visibility = ["//visibility:public"],
+)
+
 avr_binary(
     name = "mouse",
+    srcs = ["main.cc"],
     deps = [
         "//firmware/lib/control",
         "//firmware/lib/mode/explore",

@@ -20,7 +20,7 @@
 #include <ostream>
 #endif
 
-namespace linear {
+namespace mouse::control::linear {
 
 // PID tuning functions.
 void TuneWallPID(float kp, float ki, float kd, float alpha);
@@ -37,7 +37,7 @@ struct State {
 
 #if not defined(__AVR__)
 [[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const State *state) {
-  o << "linear::State{" << std::endl;
+  o << "control::linear::State{" << std::endl;
   o << "  target_position: " << state->target_position << std::endl;
   o << "  target_speed: " << state->target_speed << std::endl;
   o << "  wall_error: " << state->wall_error << std::endl;
@@ -51,4 +51,4 @@ struct State {
 }
 #endif
 
-}  // namespace linear
+}  // namespace mouse::control::linear

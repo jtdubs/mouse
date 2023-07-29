@@ -2,7 +2,7 @@
 
 #include "firmware/platform/platform.hh"
 
-namespace platform {
+namespace mouse::platform {
 
 #pragma pack(push, 1)
 // platform_Report represents a report of the platform state.
@@ -32,4 +32,4 @@ struct Report {
 };
 #pragma pack(pop)
 
-}  // namespace platform
+}  // namespace mouse::platform

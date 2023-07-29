@@ -26,7 +26,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-namespace usart0 {
+namespace mouse::platform::usart0 {
 
 constexpr uint8_t kStartByte   = 0x02;
 constexpr uint8_t kMaxReadSize = 64;
@@ -68,4 +68,4 @@ void EnableReceiver();
 // SetReadCallback sets the read callback for USART0.
 void SetReadCallback(read_callback_t callback);
 
-}  // namespace usart0
+}  // namespace mouse::platform::usart0
