@@ -8,18 +8,17 @@
         "/usr/local/include/simavr/parts",
         "/usr/local/include",
         "/usr/include",
-        "${workspaceFolder}/"
+        "${workspaceFolder}"
       ],
       "defines": [
         "__AVR__",
         "__AVR_ATmega4809__",
-        "F_CPU=16000000UL",
+        "F_CPU=16000000UL"
       ],
       "compilerPath": "/opt/avr-toolchain/bin/avr-gcc",
       "cStandard": "c23",
       "cppStandard": "c++23",
-      "intelliSenseMode": "linux-gcc-x64",
-      "compileCommands": "${workspaceFolder}/compile_commands.json"
+      "intelliSenseMode": "linux-gcc-x64"
     }
   ],
   "version": 4

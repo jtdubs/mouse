@@ -37,7 +37,10 @@ sim-wave: sim.fst
 	gtkwave sim.gtkw
 
 db:
-	bazel-compdb -q //tools/...
+	bazel build //tools:compdb
+	bazel build //lib:compdb
+	bazel build //firmware:compdb --platforms=//bazel/platforms:arduino_nano
+	find -L bazel-bin -name "compile_commands.json" | xargs jq -s 'add' > compile_commands.json
 
 %.fst: %.vcd
 	vcd2fst $< $@

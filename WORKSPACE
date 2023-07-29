@@ -125,20 +125,6 @@ cc_library(
 """,
     remote = "git@github.com:nothings/stb.git",
 )
-# git_repository(
-#     name = "simavr",
-#     branch = "master",
-#     build_file_content = """
-# make(
-#   name = "simavr",
-#   args = ["-j", "`nproc`"],
-#   "
-# )
-# """,
-#     commit = "7003af00df0f89a38898896fe536c5f15ae4ef1a",
-#     remote = "git@github.com:buserror/simavr.git",
-# )
-#
 
 # compilation database
 

@@ -1,4 +1,8 @@
-load("//bazel/rules:avr.bzl", "avr_binary", "avr_library")
+load("@com_grail_bazel_compdb//:defs.bzl", "compilation_database")
+load("@com_grail_bazel_output_base_util//:defs.bzl", "OUTPUT_BASE")
+load("//bazel/rules:avr.bzl", "avr_binary")
+
+package(default_visibility = ["//visibility:public"])
 
 platform_library = select(
     {
@@ -12,7 +16,6 @@ cc_library(
     name = "config",
     srcs = [],
     hdrs = ["config.hh"],
-    visibility = ["//visibility:public"],
 )
 
 avr_binary(
@@ -26,4 +29,20 @@ avr_binary(
         "//firmware/lib/utils",
         "//firmware/platform",
     ] + platform_library,
+)
+
+compilation_database(
+    name = "compdb",
+    output_base = OUTPUT_BASE,
+    targets = [
+        "//firmware:mouse",
+        "//firmware/lib/control",
+        "//firmware/lib/maze",
+        "//firmware/lib/mode/explore",
+        "//firmware/lib/mode/remote",
+        "//firmware/lib/report",
+        "//firmware/lib/utils",
+        "//firmware/platform",
+        "//firmware/platform/atmega328p",
+    ],
 )
