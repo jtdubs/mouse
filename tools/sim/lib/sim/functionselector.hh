@@ -29,4 +29,4 @@ class FunctionSelector {
   bool       button_;
 };
 
-}
+}  // namespace mouse::app::sim

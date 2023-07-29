@@ -36,7 +36,7 @@ void ControlLEDs(bool enabled);
 void Present(bool& left, bool& right, bool& forward);
 
 #if not defined(__AVR__)
-[[maybe_unused]] static std::ostream &operator<<(std::ostream& o, const State* state) {
+[[maybe_unused]] static std::ostream& operator<<(std::ostream& o, const State* state) {
   o << "walls::State{" << std::endl;
   o << "  left_present: " << state->left_present << std::endl;
   o << "  right_present: " << state->right_present << std::endl;

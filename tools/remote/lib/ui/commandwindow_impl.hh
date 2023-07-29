@@ -13,7 +13,7 @@ class CommandWindow : public mouse::ui::Window {
   virtual void Render() override;
 
  private:
-  app::remote::Remote           *remote_;
+  app::remote::Remote  *remote_;
   mode::remote::Command tune_speed_command_;
   mode::remote::Command tune_wall_command_;
   mode::remote::Command tune_angle_command_;
@@ -25,8 +25,8 @@ class CommandWindow : public mouse::ui::Window {
   mode::remote::Command rotational_command_;
   mode::remote::Command cal_command_;
   mode::remote::Command execute_command_;
-  bool                           link_power_;
-  bool                           link_speed_;
+  bool                  link_power_;
+  bool                  link_speed_;
 };
 
 }  // namespace mouse::app::ui

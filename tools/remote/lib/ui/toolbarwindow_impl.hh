@@ -15,7 +15,7 @@ class ToolbarWindow : public mouse::ui::ToolbarWindow {
   virtual void RenderToolbar() override;
 
  private:
-  app::remote::Remote           *remote_;
+  app::remote::Remote  *remote_;
   mode::remote::Command reset_command_;
   mode::remote::Command explore_command_;
   mode::remote::Command solve_command_;
