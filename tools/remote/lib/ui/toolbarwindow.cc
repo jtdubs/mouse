@@ -8,9 +8,9 @@ namespace mouse::app::ui {
 
 ToolbarWindow::ToolbarWindow(app::remote::Remote *remote)  //
     : mouse::ui::ToolbarWindow(), remote_(remote), reset_command_(), explore_command_(), solve_command_() {
-  reset_command_.type   = mode::remote::command::Type::Reset;
-  explore_command_.type = mode::remote::command::Type::Explore;
-  solve_command_.type   = mode::remote::command::Type::Solve;
+  reset_command_.type   = mode::remote::Type::Reset;
+  explore_command_.type = mode::remote::Type::Explore;
+  solve_command_.type   = mode::remote::Type::Solve;
 }
 
 void ToolbarWindow::RenderToolbar() {

@@ -16,9 +16,9 @@ class ToolbarWindow : public mouse::ui::ToolbarWindow {
 
  private:
   app::remote::Remote           *remote_;
-  mode::remote::command::Command reset_command_;
-  mode::remote::command::Command explore_command_;
-  mode::remote::command::Command solve_command_;
+  mode::remote::Command reset_command_;
+  mode::remote::Command explore_command_;
+  mode::remote::Command solve_command_;
 };
 
 }  // namespace mouse::app::ui

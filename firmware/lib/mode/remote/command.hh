@@ -24,7 +24,7 @@
 #include <ostream>
 #endif
 
-namespace mouse::mode::remote::command {
+namespace mouse::mode::remote {
 
 // type_t identifies the type of a given command.
 enum class Type : uint8_t {
@@ -66,15 +66,6 @@ struct Command {
   } data;
 };
 #pragma pack(pop)
-
-// Init initializes the command module.
-void Init();
-
-// processed indicates the command has been processed.
-void Processed();
-
-// next gets the next command, if one is available.
-bool Next(Command &command);
 
 #if not defined(__AVR__)
 [[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const Type type) {
@@ -120,7 +111,7 @@ bool Next(Command &command);
 }
 
 [[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const Command *command) {
-  o << "remote::command::Command{" << std::endl;
+  o << "remote::Command{" << std::endl;
   o << "  type: " << command->type << std::endl;
   o << "  data: {" << std::endl;
   switch (command->type) {
@@ -153,4 +144,4 @@ bool Next(Command &command);
 }
 #endif
 
-}  // namespace mouse::mode::remote::command
+}  // namespace mouse::mode::remote

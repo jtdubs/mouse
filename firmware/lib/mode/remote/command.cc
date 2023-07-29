@@ -6,7 +6,7 @@
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/platform/platform.hh"
 
-namespace mouse::mode::remote::command {
+namespace mouse::mode::remote {
 
 namespace {
 // The encoded and decoded command, and associated state.
@@ -46,4 +46,4 @@ bool Next(Command &c) {
   return result;
 }
 
-}  // namespace mouse::mode::remote::command
+}  // namespace mouse::mode::remote

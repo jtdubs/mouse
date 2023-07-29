@@ -63,19 +63,19 @@ bool Remote::IsConnected() const {
   return connected_;
 }
 
-void Remote::Send(const mode::remote::command::Command &command) {
-  uint8_t len = sizeof(mode::remote::command::Type);
+void Remote::Send(const mode::remote::Command &command) {
+  uint8_t len = sizeof(mode::remote::Type);
   switch (command.type) {
-    case mode::remote::command::Type::Reset:
-    case mode::remote::command::Type::Explore:
-    case mode::remote::command::Type::Solve:
-    case mode::remote::command::Type::SendMaze:
-    case mode::remote::command::Type::PlanExecute:
+    case mode::remote::Type::Reset:
+    case mode::remote::Type::Explore:
+    case mode::remote::Type::Solve:
+    case mode::remote::Type::SendMaze:
+    case mode::remote::Type::PlanExecute:
       break;
-    case mode::remote::command::Type::TunePID:
-      len += sizeof(mode::remote::command::PidID) + 4 * sizeof(float);
+    case mode::remote::Type::TunePID:
+      len += sizeof(mode::remote::PidID) + 4 * sizeof(float);
       break;
-    case mode::remote::command::Type::PlanEnqueue:
+    case mode::remote::Type::PlanEnqueue:
       len += sizeof(control::plan::Plan);
       break;
   }

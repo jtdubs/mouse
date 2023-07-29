@@ -24,67 +24,67 @@ CommandWindow::CommandWindow(app::remote::Remote *remote)  //
       execute_command_(),
       link_power_(true),
       link_speed_(true) {
-  tune_speed_command_.type           = mode::remote::command::Type::TunePID;
-  tune_speed_command_.data.pid.id    = mode::remote::command::PidID::Speed;
+  tune_speed_command_.type           = mode::remote::Type::TunePID;
+  tune_speed_command_.data.pid.id    = mode::remote::PidID::Speed;
   tune_speed_command_.data.pid.kp    = config::kSpeedKp;
   tune_speed_command_.data.pid.ki    = config::kSpeedKi;
   tune_speed_command_.data.pid.kd    = config::kSpeedKd;
   tune_speed_command_.data.pid.alpha = config::kSpeedAlpha;
 
-  tune_wall_command_.type           = mode::remote::command::Type::TunePID;
-  tune_wall_command_.data.pid.id    = mode::remote::command::PidID::Wall;
+  tune_wall_command_.type           = mode::remote::Type::TunePID;
+  tune_wall_command_.data.pid.id    = mode::remote::PidID::Wall;
   tune_wall_command_.data.pid.kp    = config::kWallKp;
   tune_wall_command_.data.pid.ki    = config::kWallKi;
   tune_wall_command_.data.pid.kd    = config::kWallKd;
   tune_wall_command_.data.pid.alpha = config::kWallAlpha;
 
-  tune_angle_command_.type           = mode::remote::command::Type::TunePID;
-  tune_angle_command_.data.pid.id    = mode::remote::command::PidID::Angle;
+  tune_angle_command_.type           = mode::remote::Type::TunePID;
+  tune_angle_command_.data.pid.id    = mode::remote::PidID::Angle;
   tune_angle_command_.data.pid.kp    = config::kAngleKp;
   tune_angle_command_.data.pid.ki    = config::kAngleKi;
   tune_angle_command_.data.pid.kd    = config::kAngleKd;
   tune_angle_command_.data.pid.alpha = config::kAngleAlpha;
 
-  led_command_.type                        = mode::remote::command::Type::PlanEnqueue;
+  led_command_.type                        = mode::remote::Type::PlanEnqueue;
   led_command_.data.plan.type              = control::plan::Type::LEDs;
   led_command_.data.plan.state             = control::plan::State::Scheduled;
   led_command_.data.plan.data.leds.left    = false;
   led_command_.data.plan.data.leds.right   = false;
   led_command_.data.plan.data.leds.onboard = false;
 
-  ir_command_.type                 = mode::remote::command::Type::PlanEnqueue;
+  ir_command_.type                 = mode::remote::Type::PlanEnqueue;
   ir_command_.data.plan.type       = control::plan::Type::IR;
   ir_command_.data.plan.state      = control::plan::State::Scheduled;
   ir_command_.data.plan.data.ir.on = false;
 
-  power_command_.type                       = mode::remote::command::Type::PlanEnqueue;
+  power_command_.type                       = mode::remote::Type::PlanEnqueue;
   power_command_.data.plan.type             = control::plan::Type::FixedPower;
   power_command_.data.plan.state            = control::plan::State::Scheduled;
   power_command_.data.plan.data.power.left  = 0.0;
   power_command_.data.plan.data.power.right = 0.0;
 
-  speed_command_.type                       = mode::remote::command::Type::PlanEnqueue;
+  speed_command_.type                       = mode::remote::Type::PlanEnqueue;
   speed_command_.data.plan.type             = control::plan::Type::FixedSpeed;
   speed_command_.data.plan.state            = control::plan::State::Scheduled;
   speed_command_.data.plan.data.speed.left  = 0.0;
   speed_command_.data.plan.data.speed.right = 0.0;
 
-  linear_command_.type                           = mode::remote::command::Type::PlanEnqueue;
+  linear_command_.type                           = mode::remote::Type::PlanEnqueue;
   linear_command_.data.plan.type                 = control::plan::Type::LinearMotion;
   linear_command_.data.plan.state                = control::plan::State::Scheduled;
   linear_command_.data.plan.data.linear.position = 180.0;
   linear_command_.data.plan.data.linear.stop     = true;
 
-  rotational_command_.type                              = mode::remote::command::Type::PlanEnqueue;
+  rotational_command_.type                              = mode::remote::Type::PlanEnqueue;
   rotational_command_.data.plan.type                    = control::plan::Type::RotationalMotion;
   rotational_command_.data.plan.state                   = control::plan::State::Scheduled;
   rotational_command_.data.plan.data.rotational.d_theta = std::numbers::pi / 2.0f;
 
-  cal_command_.type            = mode::remote::command::Type::PlanEnqueue;
+  cal_command_.type            = mode::remote::Type::PlanEnqueue;
   cal_command_.data.plan.type  = control::plan::Type::SensorCal;
   cal_command_.data.plan.state = control::plan::State::Scheduled;
 
-  execute_command_.type = mode::remote::command::Type::PlanExecute;
+  execute_command_.type = mode::remote::Type::PlanExecute;
 }
 
 void CommandWindow::Render() {

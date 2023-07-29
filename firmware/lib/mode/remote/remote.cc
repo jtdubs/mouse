@@ -2,7 +2,7 @@
 #include <util/atomic.h>
 #include <util/delay.h>
 
-#include "command.hh"
+#include "command_impl.hh"
 #include "firmware/lib/control/linear.hh"
 #include "firmware/lib/control/plan.hh"
 #include "firmware/lib/control/speed.hh"
@@ -20,45 +20,45 @@ dequeue::Dequeue<control::plan::Plan, 16> plans;
 
 // remote is a mode that allows the robot to be controlled remotely.
 void Run() {
-  command::Init();
+  Init();
   control::plan::SubmitAndWait((control::plan::Plan){
       .type = control::plan::Type::Idle, .state = control::plan::State::Scheduled, .data = {.idle = {}}});
 
   for (;;) {
     // wait until there's a command to process.
-    command::Command command;
-    while (!command::Next(command)) {}
+    Command command;
+    while (!Next(command)) {}
 
     switch (command.type) {
-      case command::Type::Reset:
+      case Type::Reset:
         // Just turn off interrupts and wait for the watchdog to reset us.
         cli();
         _delay_ms(60000.0);
         break;
-      case command::Type::Explore:
+      case Type::Explore:
         explore::Explore();
         break;
-      case command::Type::Solve:
+      case Type::Solve:
         explore::Solve();
         break;
-      case command::Type::SendMaze:
+      case Type::SendMaze:
         maze::Send();
         break;
-      case command::Type::TunePID:
+      case Type::TunePID:
         switch (command.data.pid.id) {
-          case command::PidID::Speed:
+          case PidID::Speed:
             control::speed::TunePID(command.data.pid.kp,  //
                                     command.data.pid.ki,  //
                                     command.data.pid.kd,  //
                                     command.data.pid.alpha);
             break;
-          case command::PidID::Wall:
+          case PidID::Wall:
             control::linear::TuneWallPID(command.data.pid.kp,  //
                                          command.data.pid.ki,  //
                                          command.data.pid.kd,  //
                                          command.data.pid.alpha);
             break;
-          case command::PidID::Angle:
+          case PidID::Angle:
             control::linear::TuneAnglePID(command.data.pid.kp,  //
                                           command.data.pid.ki,  //
                                           command.data.pid.kd,  //
@@ -66,10 +66,10 @@ void Run() {
             break;
         }
         break;
-      case command::Type::PlanEnqueue:
+      case Type::PlanEnqueue:
         plans.PushBack(command.data.plan);
         break;
-      case command::Type::PlanExecute:
+      case Type::PlanExecute:
         while (!plans.Empty()) {
           control::plan::SubmitAndWait(plans.PopFront());
         }
@@ -78,7 +78,7 @@ void Run() {
         break;
     }
 
-    command::Processed();
+    Processed();
   }
 }
 
