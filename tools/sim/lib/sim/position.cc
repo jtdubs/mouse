@@ -1,6 +1,6 @@
 #include "position.hh"
 
-namespace sim {
+namespace app::sim {
 
 Position::operator ImVec2() const {
   return ImVec2(x, y);
@@ -9,4 +9,4 @@ Position::operator ImVec2() const {
 Position::Position(std::initializer_list<float> l) : x(*l.begin()), y(*(l.begin() + 1)) {}
 Position::Position(ImVec2 v) : x(v.x), y(v.y) {}
 
-}  // namespace sim
+}  // namespace app::sim

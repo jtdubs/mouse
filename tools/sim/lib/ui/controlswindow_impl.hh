@@ -1,11 +1,11 @@
 #pragma once
 
+#include "lib/ui/window.hh"
 #include "tools/sim/lib/sim/sim.hh"
-#include "window_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-class ControlsWindow : public Window {
+class ControlsWindow : public ::ui::Window {
  public:
   ControlsWindow(sim::Sim *sim);
 
@@ -15,4 +15,4 @@ class ControlsWindow : public Window {
   sim::Sim *sim_;
 };
 
-}  // namespace ui
+}  // namespace app::ui

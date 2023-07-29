@@ -3,12 +3,12 @@
 #include <string>
 #include <vector>
 
+#include "lib/ui/window.hh"
 #include "tools/sim/lib/sim/sim.hh"
-#include "window_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-class MazeWindow : public Window {
+class MazeWindow : public ::ui::Window {
  public:
   MazeWindow(sim::Sim *sim);
 
@@ -26,4 +26,4 @@ class MazeWindow : public Window {
   ImVec2                   drag_start_pos_;
 };
 
-}  // namespace ui
+}  // namespace app::ui

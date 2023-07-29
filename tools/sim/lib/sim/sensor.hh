@@ -7,7 +7,7 @@
 
 #include "position.hh"
 
-namespace sim {
+namespace app::sim {
 
 class Sensor {
  public:
@@ -37,4 +37,4 @@ class Sensor {
   std::string           name_;
 };
 
-}  // namespace sim
+}  // namespace app::sim

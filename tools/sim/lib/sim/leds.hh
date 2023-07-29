@@ -2,7 +2,7 @@
 
 #include <simavr/sim_avr.h>
 
-namespace sim {
+namespace app::sim {
 
 class LEDs {
  public:
@@ -23,4 +23,4 @@ class LEDs {
   bool   right_, left_, ir_, onboard_;
 };
 
-}  // namespace sim
+}  // namespace app::sim

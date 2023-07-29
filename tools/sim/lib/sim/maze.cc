@@ -9,7 +9,7 @@
 #include <sstream>
 #include <string>
 
-namespace sim {
+namespace app::sim {
 
 namespace {
 const std::map<wchar_t, Post> kPostLookup = {
@@ -100,4 +100,4 @@ const Post &Maze::operator()(int x, int y) const {
 
 Maze::Maze(std::vector<std::vector<Post>> posts) : posts_(posts) {}
 
-}  // namespace sim
+}  // namespace app::sim

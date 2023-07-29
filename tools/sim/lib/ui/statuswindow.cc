@@ -2,9 +2,8 @@
 
 #include "imgui_internal.h"
 #include "statuswindow_impl.hh"
-#include "textures_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
 StatusWindow::StatusWindow(sim::Sim *sim) : Window(), sim_(sim) {}
 
@@ -46,4 +45,4 @@ void StatusWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace ui
+}  // namespace app::ui

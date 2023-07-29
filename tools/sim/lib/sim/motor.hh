@@ -4,7 +4,7 @@
 
 #include <functional>
 
-namespace sim {
+namespace app::sim {
 
 class Motor {
  public:
@@ -36,4 +36,4 @@ class Motor {
   std::function<void(bool, bool)> encoder_callback_;
 };
 
-}  // namespace sim
+}  // namespace app::sim

@@ -1,6 +1,6 @@
 #include "leds.hh"
 
-namespace sim {
+namespace app::sim {
 
 LEDs::LEDs() : avr_(nullptr), right_(false), left_(false), ir_(false), onboard_(false) {}
 
@@ -51,4 +51,4 @@ bool LEDs::GetIR() const {
   return ir_;
 }
 
-}  // namespace sim
+}  // namespace app::sim

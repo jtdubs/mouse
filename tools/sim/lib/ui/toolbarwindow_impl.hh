@@ -1,21 +1,19 @@
 #pragma once
 
+#include "lib/ui/toolbarwindow.hh"
 #include "tools/sim/lib/sim/sim.hh"
-#include "window_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-class ToolbarWindow : public Window {
+class ToolbarWindow : public ::ui::ToolbarWindow {
  public:
-  ToolbarWindow(sim::Sim *sim);
+  ToolbarWindow(app::sim::Sim *sim);
 
-  virtual void Render() override;
-
- private:
-  void RenderToolbar();
+ protected:
+  virtual void RenderToolbar() override;
 
  private:
-  sim::Sim *sim_;
+  app::sim::Sim *sim_;
 };
 
-}  // namespace ui
+}  // namespace app::ui

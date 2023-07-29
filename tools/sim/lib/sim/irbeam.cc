@@ -1,3 +1,3 @@
 #include "irbeam.hh"
 
-namespace sim {}  // namespace sim
+namespace app::sim {}  // namespace app::sim

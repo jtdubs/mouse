@@ -24,7 +24,7 @@ extern "C" {
 #include "position.hh"
 #include "symbols.hh"
 
-namespace sim {
+namespace app::sim {
 
 enum class State {
   Paused,
@@ -96,4 +96,4 @@ class Sim {
   std::mutex                    ir_mutex_;
 };
 
-}  // namespace sim
+}  // namespace app::sim

@@ -2,6 +2,8 @@
 
 #include <cli11/CLI11.hh>
 
+namespace app {
+
 Args ParseArgs(int argc, char** argv) {
   CLI::App app{"Mouse Simulator"};
   Args     args = {.firmware_path = "", .enable_gdb = false};
@@ -14,3 +16,5 @@ Args ParseArgs(int argc, char** argv) {
   }
   return args;
 }
+
+}  // namespace app

@@ -1,34 +1,11 @@
 #include <format>
 
 #include "imgui_internal.h"
-#include "textures_impl.hh"
 #include "toolbarwindow_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-ToolbarWindow::ToolbarWindow(sim::Sim *sim) : Window(), sim_(sim) {}
-
-void ToolbarWindow::Render() {
-  auto flags = ImGuiWindowFlags_NoDocking    //
-             | ImGuiWindowFlags_NoTitleBar   //
-             | ImGuiWindowFlags_NoResize     //
-             | ImGuiWindowFlags_NoMove       //
-             | ImGuiWindowFlags_NoScrollbar  //
-             | ImGuiWindowFlags_NoSavedSettings;
-
-  auto vp = ImGui::GetMainViewport();
-  ImGui::SetNextWindowPos(vp->Pos);
-  ImGui::SetNextWindowSize(ImVec2(vp->Size.x, 48));
-  ImGui::SetNextWindowViewport(vp->ID);
-  ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-  if (ImGui::Begin("Toolbar", nullptr, flags)) {
-    ImGui::PopStyleVar();
-    RenderToolbar();
-  } else {
-    ImGui::PopStyleVar();
-  }
-  ImGui::End();
-}
+ToolbarWindow::ToolbarWindow(app::sim::Sim *sim) : ::ui::ToolbarWindow(), sim_(sim) {}
 
 void ToolbarWindow::RenderToolbar() {
   if (sim_->GetState() == sim::State::Crashed) {
@@ -103,4 +80,4 @@ void ToolbarWindow::RenderToolbar() {
   ImGui::TextUnformatted(nanos_text.c_str());
 }
 
-}  // namespace ui
+}  // namespace app::ui

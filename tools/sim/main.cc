@@ -6,16 +6,16 @@
 #include "tools/sim/lib/ui/ui.hh"
 
 int main(int argc, char** argv) {
-  auto args = ParseArgs(argc, argv);
+  auto args = app::ParseArgs(argc, argv);
 
-  auto sim = sim::Sim();
+  auto sim = app::sim::Sim();
   if (!sim.Init(args.firmware_path, args.enable_gdb)) {
     std::cerr << "Sim::Init failed" << std::endl;
     return 1;
   }
 
-  auto ui = ui::UI(&sim);
-  ui.Run();
+  auto ui = app::ui::New(&sim);
+  ui->Run();
 
   return 0;
 }

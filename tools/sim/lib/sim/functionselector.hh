@@ -2,7 +2,7 @@
 
 #include <simavr/sim_avr.h>
 
-namespace sim {
+namespace app::sim {
 
 class FunctionSelector {
  public:

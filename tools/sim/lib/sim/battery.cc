@@ -3,7 +3,7 @@
 #include <simavr/avr_adc.h>
 #include <simavr/sim_vcd_file.h>
 
-namespace sim {
+namespace app::sim {
 
 Battery::Battery(int channel)
     : avr_(nullptr), value_irq_(nullptr), read_irq_(nullptr), voltage_(9000), channel_(channel) {}
@@ -33,4 +33,4 @@ void Battery::OnIRQ([[maybe_unused]] avr_irq_t *irq, [[maybe_unused]] uint32_t v
   avr_raise_irq(value_irq_, voltage_ >> 1);
 }
 
-}  // namespace sim
+}  // namespace app::sim

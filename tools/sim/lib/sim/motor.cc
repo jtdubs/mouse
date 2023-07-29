@@ -3,7 +3,7 @@
 #include <simavr/avr_ioport.h>
 #include <simavr/avr_timer.h>
 
-namespace sim {
+namespace app::sim {
 
 namespace {
 constexpr float kLeftMotorM  = 2.760;
@@ -110,4 +110,4 @@ avr_cycle_count_t Motor::OnCycle([[maybe_unused]] avr_t *avr, avr_cycle_count_t 
   return when + actual_period_;
 }
 
-}  // namespace sim
+}  // namespace app::sim

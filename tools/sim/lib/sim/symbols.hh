@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace sim {
+namespace app::sim {
 
 struct Symbol {
   std::string name;
@@ -17,4 +17,4 @@ struct Symbol {
 
 std::vector<Symbol> ReadSymbols(avr_t *avr, std::string firmware_path);
 
-}  // namespace sim
+}  // namespace app::sim

@@ -9,9 +9,8 @@
 #include "firmware/lib/mode/explore/explore.hh"
 #include "firmware/lib/utils/pid.hh"
 #include "symbolswindow_impl.hh"
-#include "textures_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
 SymbolsWindow::SymbolsWindow(sim::Sim *sim) : Window(), sim_(sim), filter_(), hex_(false), names_() {}
 
@@ -157,4 +156,4 @@ void SymbolsWindow::Render() {
   ImGui::End();
 }
 
-}  // namespace ui
+}  // namespace app::ui

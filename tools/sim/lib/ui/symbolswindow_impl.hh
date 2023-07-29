@@ -1,12 +1,12 @@
 #pragma once
 
 #include "imgui_internal.h"
+#include "lib/ui/window.hh"
 #include "tools/sim/lib/sim/sim.hh"
-#include "window_impl.hh"
 
-namespace ui {
+namespace app::ui {
 
-class SymbolsWindow : public Window {
+class SymbolsWindow : public ::ui::Window {
  public:
   SymbolsWindow(sim::Sim *sim);
 
@@ -19,4 +19,4 @@ class SymbolsWindow : public Window {
   std::vector<std::string> names_;
 };
 
-}  // namespace ui
+}  // namespace app::ui
