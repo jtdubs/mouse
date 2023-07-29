@@ -48,6 +48,7 @@ enum class Type : uint8_t {
   SensorCal,
 };
 
+#pragma pack(push, 1)
 struct Plan {
   Type  type;
   State state;
@@ -89,6 +90,7 @@ struct Plan {
     } sensor_cal;
   } data;
 };
+#pragma pack(pop)
 
 // submit submits a new plan to be implemented.
 void Submit(Plan plan);
@@ -100,7 +102,7 @@ void Wait();
 void SubmitAndWait(Plan plan);
 
 #if not defined(__AVR__)
-std::ostream &operator<<(std::ostream &o, const State state) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const State state) {
   switch (state) {
     case State::Scheduled:
       o << "Scheduled";
@@ -118,7 +120,7 @@ std::ostream &operator<<(std::ostream &o, const State state) {
   return o;
 }
 
-std::ostream &operator<<(std::ostream &o, const Type t) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const Type t) {
   switch (t) {
     case Type::Idle:
       o << "Idle";
@@ -151,58 +153,40 @@ std::ostream &operator<<(std::ostream &o, const Type t) {
   return o;
 }
 
-std::ostream &operator<<(std::ostream &o, const Plan *plan) {
-  o << "plan::Plan{" << std::endl;
-  o << "  type: " << plan->type << std::endl;
-  o << "  state: " << plan->state << std::endl;
-  o << "  data: {" << std::endl;
-  switch (plan->type) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const Plan plan) {
+  o << plan.state << " ";
+  switch (plan.type) {
     case Type::Idle:
-      o << "    idle: {}" << std::endl;
+      o << "idle: {}";
       break;
     case Type::LEDs:
-      o << "    leds: {" << std::endl;
-      o << "      left: " << plan->data.leds.left << std::endl;
-      o << "      right: " << plan->data.leds.right << std::endl;
-      o << "      onboard: " << plan->data.leds.onboard << std::endl;
-      o << "    }" << std::endl;
+      o << "leds: { ";
+      o << plan.data.leds.left << ", ";
+      o << plan.data.leds.right << ", ";
+      o << plan.data.leds.onboard << "}";
       break;
     case Type::IR:
-      o << "    ir: {" << std::endl;
-      o << "      on: " << plan->data.ir.on << std::endl;
-      o << "    }" << std::endl;
+      o << "ir: " << plan.data.ir.on;
       break;
     case Type::FixedPower:
-      o << "    power: {" << std::endl;
-      o << "      left: " << plan->data.power.left << std::endl;
-      o << "      right: " << plan->data.power.right << std::endl;
-      o << "    }" << std::endl;
+      o << "power: {" << plan.data.power.left << ", " << plan.data.power.right << "}";
       break;
     case Type::FixedSpeed:
-      o << "    speed: {" << std::endl;
-      o << "      left: " << plan->data.speed.left << std::endl;
-      o << "      right: " << plan->data.speed.right << std::endl;
-      o << "    }" << std::endl;
+      o << "speed: {" << plan.data.speed.left << ", " << plan.data.speed.right << "}";
       break;
     case Type::LinearMotion:
-      o << "    linear: {" << std::endl;
-      o << "      position: " << plan->data.linear.position << std::endl;
-      o << "      stop: " << plan->data.linear.stop << std::endl;
-      o << "    }" << std::endl;
+      o << "linear: {" << plan.data.linear.position << ", " << plan.data.linear.stop << "}";
       break;
     case Type::RotationalMotion:
-      o << "    rotational: {" << std::endl;
-      o << "      d_theta: " << plan->data.rotational.d_theta << std::endl;
-      o << "    }" << std::endl;
+      o << "rotational: {" << plan.data.rotational.d_theta << " }";
       break;
     case Type::SensorCal:
-      o << "    sensor_cal: {}" << std::endl;
+      o << "sensor_cal: {}";
       break;
     default:
       break;
   }
-  o << "  }" << std::endl;
-  o << "}";
+  // o << "}";
   return o;
 }
 #endif

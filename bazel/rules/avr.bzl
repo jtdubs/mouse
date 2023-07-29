@@ -71,5 +71,8 @@ def avr_library(name, srcs = None, hdrs = None, platform = None, **kwargs):
     )
     native.cc_library(
         name = name + "_headers",
-        hdrs = native.glob(["*.h", "*.hh"]),
+        hdrs = native.glob(
+            include = ["*.h", "*.hh"],
+            exclude = ["*_impl.h", "*_impl.hh"],
+        ),
     )

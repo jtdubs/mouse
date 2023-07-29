@@ -2,11 +2,7 @@
 #include <stdint.h>
 #include <util/atomic.h>
 
-#include "firmware/lib/control/control.hh"
-#include "firmware/lib/maze/maze.hh"
-#include "firmware/lib/mode/explore/explore.hh"
 #include "firmware/lib/utils/assert.hh"
-#include "firmware/platform/platform.hh"
 #include "report_impl.hh"
 
 namespace report {
@@ -27,23 +23,29 @@ void Send() {
     return;
   }
 
-  uint8_t len              = 0;
-  report.header.rtc_micros = rtc::Micros();
-  if ((len = explore::GetReport(report.data, sizeof(report.data))) > 0) {
-    report.header.type = Type::Explore;
-  } else if ((len = maze::GetReport(report.data, sizeof(report.data))) > 0) {
-    report.header.type = Type::Maze;
-  } else if ((len = control::GetReport(report.data, sizeof(report.data))) > 0) {
-    report.header.type = Type::Control;
-  } else if ((len = platform::GetReport(report.data, sizeof(report.data))) > 0) {
-    report.header.type = Type::Platform;
+  uint8_t len;
+
+  report.rtc_micros = rtc::Micros();
+  report.length     = 0;
+  if (len = explore::GetReport(report.data, sizeof(report.data)); len > 0) {
+    report.type   = Type::Explore;
+    report.length = len;
+  } else if (len = maze::GetReport(report.data, sizeof(report.data)); len > 0) {
+    report.type   = Type::Maze;
+    report.length = len;
+  } else if (len = control::GetReport(report.data, sizeof(report.data)); len > 0) {
+    report.type   = Type::Control;
+    report.length = len;
+  } else if (len = platform::GetReport(report.data, sizeof(report.data)); len > 0) {
+    report.type   = Type::Platform;
+    report.length = len;
   }
 
-  if (len == 0) {
+  if (report.length == 0) {
     return;
   }
 
-  usart0::Write((uint8_t*)&report, sizeof(ReportHeader) + len);
+  usart0::Write((uint8_t*)&report, report.length + 6);
 }
 
 }  // namespace report

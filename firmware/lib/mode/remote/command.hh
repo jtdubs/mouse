@@ -77,7 +77,7 @@ void Processed();
 bool Next(Command &command);
 
 #if not defined(__AVR__)
-std::ostream &operator<<(std::ostream &o, const Type type) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const Type type) {
   switch (type) {
     case Type::Reset:
       o << "Reset";
@@ -101,9 +101,10 @@ std::ostream &operator<<(std::ostream &o, const Type type) {
       o << "PlanExecute";
       break;
   }
+  return o;
 }
 
-std::ostream &operator<<(std::ostream &o, const PidID id) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const PidID id) {
   switch (id) {
     case PidID::Speed:
       o << "Speed";
@@ -115,9 +116,10 @@ std::ostream &operator<<(std::ostream &o, const PidID id) {
       o << "Angle";
       break;
   }
+  return o;
 }
 
-std::ostream &operator<<(std::ostream &o, const Command *command) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const Command *command) {
   o << "remote::command::Command{" << std::endl;
   o << "  type: " << command->type << std::endl;
   o << "  data: {" << std::endl;
@@ -147,6 +149,7 @@ std::ostream &operator<<(std::ostream &o, const Command *command) {
     default:
       break;
   }
+  return o;
 }
 #endif
 

@@ -8,7 +8,14 @@
 #endif
 
 #if not defined(__AVR__)
+#define ATOMIC_RESTORESTATE true
+#define ATOMIC_BLOCK(x) if (x)
 #include <ostream>
+
+#if defined(assert)
+#undef assert
+#endif
+#define assert(a, b, c)
 #endif
 
 namespace dequeue {
@@ -50,7 +57,6 @@ class Dequeue {
 #endif
 };
 
-#if defined(__AVR__)
 template <typename T, size_t CAPACITY>
 Dequeue<T, CAPACITY>::Dequeue() : front(CAPACITY - 1), back(0) {}
 
@@ -182,11 +188,10 @@ void Dequeue<T, CAPACITY>::PushBack(T val) {
     callback(Event::PushBack, val);
   }
 }
-#endif
 
 #if not defined(__AVR__)
 template <typename T, size_t CAPACITY>
-std::ostream &operator<<(std::ostream &o, const Dequeue<T, CAPACITY> *dequeue) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const Dequeue<T, CAPACITY> *dequeue) {
   o << "Dequeue{" << std::endl;
   size_t index = (dequeue->front + 1) % CAPACITY;
   while (index != dequeue->back) {
@@ -197,7 +202,7 @@ std::ostream &operator<<(std::ostream &o, const Dequeue<T, CAPACITY> *dequeue) {
   return o;
 }
 
-std::ostream &operator<<(std::ostream &o, const Event event) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const Event event) {
   switch (event) {
     case Event::PushFront:
       o << "Event::PushFront";

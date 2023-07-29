@@ -1,7 +1,8 @@
+#include "command.hh"
+
 #include <stddef.h>
 #include <util/atomic.h>
 
-#include "command_impl.hh"
 #include "firmware/lib/utils/assert.hh"
 #include "firmware/platform/platform.hh"
 

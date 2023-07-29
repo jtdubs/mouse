@@ -17,6 +17,18 @@
 
 namespace pid {
 
+#if not defined(__AVR__)
+class PIDController;
+class PIController;
+class PDController;
+class PController;
+
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const PIDController *pid);
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const PIController *pid);
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const PDController *pid);
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const PController *pid);
+#endif
+
 // PID controller for a process variable.
 class PIDController {
  private:
@@ -162,7 +174,7 @@ inline float PController::Update(float sp /* setpoint */, float pv /* process va
 }
 
 #if not defined(__AVR__)
-std::ostream &operator<<(std::ostream &o, const PIDController *pid) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const PIDController *pid) {
   o << "pid::PIDController{" << std::endl;
   o << "  min: " << pid->min << std::endl;
   o << "  max: " << pid->max << std::endl;
@@ -175,7 +187,7 @@ std::ostream &operator<<(std::ostream &o, const PIDController *pid) {
   return o;
 }
 
-std::ostream &operator<<(std::ostream &o, const PIController *pid) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const PIController *pid) {
   o << "pid::PIController{" << std::endl;
   o << "  min: " << pid->min << std::endl;
   o << "  max: " << pid->max << std::endl;
@@ -186,7 +198,7 @@ std::ostream &operator<<(std::ostream &o, const PIController *pid) {
   return o;
 }
 
-std::ostream &operator<<(std::ostream &o, const PDController *pid) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const PDController *pid) {
   o << "pid::PDController{" << std::endl;
   o << "  min: " << pid->min << std::endl;
   o << "  max: " << pid->max << std::endl;
@@ -197,7 +209,7 @@ std::ostream &operator<<(std::ostream &o, const PDController *pid) {
   return o;
 }
 
-std::ostream &operator<<(std::ostream &o, const PController *pid) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const PController *pid) {
   o << "pid::PController{" << std::endl;
   o << "  min: " << pid->min << std::endl;
   o << "  max: " << pid->max << std::endl;

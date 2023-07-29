@@ -89,20 +89,36 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len);
 // send triggers retransmission of the maze.
 void Send();
 
+// Update is a single update to the maze.
+#pragma pack(push, 1)
+struct Update {
+  Location location;
+  Cell     cell;
+};
+#pragma pack(pop)
+
 #if not defined(__AVR__)
-std::ostream &operator<<(std::ostream &o, Location location) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, Location location) {
   o << "maze::Location{" << static_cast<int>(location.X()) << ", " << static_cast<int>(location.Y()) << "}";
   return o;
 }
 
-std::ostream &operator<<(std::ostream &o, const Cell *cell) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, Cell cell) {
   o << "maze::Cell{" << std::endl;
-  o << "  wall_north: " << cell->wall_north << std::endl;
-  o << "  wall_east: " << cell->wall_east << std::endl;
-  o << "  wall_south: " << cell->wall_south << std::endl;
-  o << "  wall_west: " << cell->wall_west << std::endl;
-  o << "  visited: " << cell->visited << std::endl;
-  o << "  distance: " << cell->distance << std::endl;
+  o << "  wall_north: " << cell.wall_north << std::endl;
+  o << "  wall_east: " << cell.wall_east << std::endl;
+  o << "  wall_south: " << cell.wall_south << std::endl;
+  o << "  wall_west: " << cell.wall_west << std::endl;
+  o << "  visited: " << cell.visited << std::endl;
+  o << "  distance: " << cell.distance << std::endl;
+  o << "}";
+  return o;
+}
+
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, const Update update) {
+  o << "maze::Update{" << std::endl;
+  o << "  location: " << update.location << std::endl;
+  o << "  cell: " << update.cell << std::endl;
   o << "}";
   return o;
 }

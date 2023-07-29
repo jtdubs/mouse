@@ -2,7 +2,7 @@
 #include <util/atomic.h>
 #include <util/delay.h>
 
-#include "command_impl.hh"
+#include "command.hh"
 #include "firmware/lib/control/linear.hh"
 #include "firmware/lib/control/plan.hh"
 #include "firmware/lib/control/speed.hh"

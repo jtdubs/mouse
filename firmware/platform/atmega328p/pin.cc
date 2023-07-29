@@ -1,3 +1,5 @@
+#include <avr/io.h>
+
 #include "pin_impl.hh"
 
 namespace pin {

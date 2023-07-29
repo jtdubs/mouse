@@ -28,7 +28,27 @@
 
 namespace usart0 {
 
-typedef void (*read_callback_t)(uint8_t* buffer, uint8_t length);
+constexpr uint8_t kStartByte   = 0x02;
+constexpr uint8_t kMaxReadSize = 64;
+
+// Write states
+enum class WriteState : uint8_t {
+  Idle,
+  Start,
+  Length,
+  Data,
+  Checksum,
+};
+
+// Read states
+enum class ReadState : uint8_t {
+  Idle,
+  Length,
+  Data,
+  Checksum,
+};
+
+typedef void (*read_callback_t)(uint8_t *buffer, uint8_t length);
 
 // Init initializes USART0.
 void Init();
@@ -37,7 +57,7 @@ void Init();
 bool WriteReady();
 
 // write begins an asynchronous write to USART0.
-void Write(uint8_t* buffer, uint8_t length);
+void Write(uint8_t *buffer, uint8_t length);
 
 // DisableReceiver disables the USART0 receiver.
 void DisableReceiver();
