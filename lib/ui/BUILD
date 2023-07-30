@@ -13,11 +13,7 @@ cc_library(
     copts = [
         "-DIMGUI_DEFINE_MATH_OPERATORS",
     ],
-    linkopts = [
-        "-lz",
-    ],
     deps = [
-        "@gl//:lib",
         "@glfw",
         "@imgui",
         "@stb",

@@ -16,8 +16,6 @@ http_archive(
 
 load("@bazel_pkg_config//:pkg_config.bzl", "pkg_config")
 
-pkg_config(name = "gl")
-
 # foreign libraries
 
 http_archive(

@@ -13,9 +13,6 @@ cc_library(
     copts = [
         "-DIMGUI_DEFINE_MATH_OPERATORS",
     ],
-    linkopts = [
-        "-lz",
-    ],
     deps = [
         "//firmware/lib/control:control_headers",
         "//firmware/lib/maze:maze_headers",
@@ -23,7 +20,6 @@ cc_library(
         "//firmware/lib/utils:utils_headers",
         "//lib/ui",
         "//tools/sim/lib/sim",
-        "@gl//:lib",
         "@glfw",
         "@imgui",
         "@stb",

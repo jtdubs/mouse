@@ -13,9 +13,6 @@ cc_library(
     copts = [
         "-DIMGUI_DEFINE_MATH_OPERATORS",
     ],
-    linkopts = [
-        "-lz",
-    ],
     deps = [
         "//firmware:config",
         "//firmware/lib/control:control_headers",
@@ -26,7 +23,6 @@ cc_library(
         "//firmware/platform:platform_headers",
         "//lib/ui",
         "//tools/remote/lib/remote",
-        "@gl//:lib",
         "@glfw",
         "@imgui",
         "@stb",
