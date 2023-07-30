@@ -12,11 +12,11 @@ cc_binary(
     linkopts = [
         "-L/usr/local/lib",
     ],
+    linkstatic = True,
     deps = [
         "//tools/sim/lib/sim",
         "//tools/sim/lib/ui",
         "@CLI11",
-        "@simavr//:lib",
-        "@simavrparts//:lib",
+        "@simavr",
     ],
 )

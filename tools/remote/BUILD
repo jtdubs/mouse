@@ -13,7 +13,7 @@ cc_binary(
         "//tools/remote/lib/remote",
         "//tools/remote/lib/ui",
         "@CLI11",
-        "@simavr//:lib",
-        "@simavrparts//:lib",
+        "@simavr",
+        "@simavr//:simavrparts",
     ],
 )

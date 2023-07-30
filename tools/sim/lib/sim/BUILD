@@ -16,7 +16,7 @@ cc_library(
     deps = [
         "@ELFIO",
         "@imgui",
-        "@simavr//:lib",
-        "@simavrparts//:lib",
+        "@simavr",
+        "@simavr//:simavrparts",
     ],
 )

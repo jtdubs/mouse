@@ -20,7 +20,6 @@
         "${workspaceFolder}/third_party/ELFIO",
         "${workspaceFolder}/third_party/stb",
         "${workspaceFolder}/third_party/libspng/spng",
-        "${workspaceFolder}/third_party/simavr",
         "/opt/avr-toolchain/avr/include"
       ]
     }

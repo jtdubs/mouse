@@ -4,5 +4,8 @@ package(default_visibility = ["//visibility:public"])
 
 avr_library(
     name = "utils",
-    deps = ["//firmware/platform"],
+    deps = [
+        "//firmware/platform",
+        "@simavr//:headers",
+    ],
 )

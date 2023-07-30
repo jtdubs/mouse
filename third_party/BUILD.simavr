@@ -1,0 +1,55 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "make")
+
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "all",
+    srcs = glob(["**/*"]),
+)
+
+make(
+    name = "simavr",
+    args = [
+        "RELEASE=1",
+        "DESTDIR=\"$$INSTALLDIR$$\"",
+    ],
+    copts = [
+        "-Wno-maybe-uninitialized",
+    ],
+    lib_name = "libsimavr",
+    lib_source = ":all",
+    linkopts = [
+        "-lGL",
+    ],
+    targets = [
+        "build-simavr",
+        "install-simavr",
+    ],
+)
+
+make(
+    name = "simavrparts",
+    args = [
+        "RELEASE=1",
+        "DESTDIR=\"$$INSTALLDIR$$\"",
+    ],
+    copts = [
+        "-Wno-maybe-uninitialized",
+    ],
+    includes = ["simavr"],
+    lib_name = "libsimavrparts",
+    lib_source = ":all",
+    linkopts = [
+        "-lGL",
+    ],
+)
+
+cc_library(
+    name = "headers",
+    srcs = [],
+    hdrs = glob([
+        "simavr/sim/*.h",
+        "simavr/sim/avr/*.h",
+    ]),
+    includes = ["simavr/sim"],
+)

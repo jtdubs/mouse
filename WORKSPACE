@@ -16,10 +16,6 @@ http_archive(
 
 load("@bazel_pkg_config//:pkg_config.bzl", "pkg_config")
 
-pkg_config(name = "simavr")
-
-pkg_config(name = "simavrparts")
-
 pkg_config(name = "glfw3")
 
 pkg_config(name = "gl")
@@ -67,4 +63,10 @@ new_local_repository(
     name = "stb",
     build_file = "third_party/BUILD.stb",
     path = "third_party/stb",
+)
+
+new_local_repository(
+    name = "simavr",
+    build_file = "third_party/BUILD.simavr",
+    path = "third_party/simavr",
 )
