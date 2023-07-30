@@ -24,7 +24,7 @@ cc_library(
         "//lib/ui",
         "//tools/sim/lib/sim",
         "@gl//:lib",
-        "@glfw3//:lib",
+        "@glfw",
         "@imgui",
         "@stb",
     ],

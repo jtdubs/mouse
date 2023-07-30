@@ -18,7 +18,7 @@ cc_library(
     ],
     deps = [
         "@gl//:lib",
-        "@glfw3//:lib",
+        "@glfw",
         "@imgui",
         "@stb",
     ],

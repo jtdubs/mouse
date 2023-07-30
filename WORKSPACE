@@ -16,8 +16,6 @@ http_archive(
 
 load("@bazel_pkg_config//:pkg_config.bzl", "pkg_config")
 
-pkg_config(name = "glfw3")
-
 pkg_config(name = "gl")
 
 # foreign libraries
@@ -69,4 +67,10 @@ new_local_repository(
     name = "simavr",
     build_file = "third_party/BUILD.simavr",
     path = "third_party/simavr",
+)
+
+new_local_repository(
+    name = "glfw",
+    build_file = "third_party/BUILD.glfw",
+    path = "third_party/glfw",
 )

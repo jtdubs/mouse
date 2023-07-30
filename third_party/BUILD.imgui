@@ -11,9 +11,8 @@ cc_library(
         "backends/imgui_impl_glfw*.h",
     ]),
     includes = ["."],
-    linkopts = [
-        "-lglfw",
-        "-lGL",
-    ],
     visibility = ["//visibility:public"],
+    deps = [
+        "@glfw",
+    ],
 )

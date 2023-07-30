@@ -1,0 +1,18 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "all",
+    srcs = glob(["**/*"]),
+)
+
+cmake(
+    name = "glfw",
+    lib_name = "libglfw3",
+    lib_source = ":all",
+    linkopts = [
+        "-lGL",
+        "-lX11",
+    ],
+)

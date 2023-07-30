@@ -27,7 +27,7 @@ cc_library(
         "//lib/ui",
         "//tools/remote/lib/remote",
         "@gl//:lib",
-        "@glfw3//:lib",
+        "@glfw",
         "@imgui",
         "@stb",
     ],

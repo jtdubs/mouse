@@ -142,6 +142,7 @@
       "third_party/libspng": true,
       "third_party/simavr": true,
       "third_party/stb": true,
+      "third_party/glfw": true,
     }
   },
 }

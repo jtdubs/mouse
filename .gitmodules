@@ -17,3 +17,6 @@
 [submodule "third_party/simavr"]
 	path = third_party/simavr
 	url = git@github.com:buserror/simavr.git
+[submodule "third_party/glfw"]
+	path = third_party/glfw
+	url = git@github.com:glfw/glfw.git
