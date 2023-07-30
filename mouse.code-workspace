@@ -136,7 +136,12 @@
       "sim.*": true,
       "remote": true,
       "imgui.ini": true,
-      "compile_commands.json": true,
+      "third_party/CLI11": true,
+      "third_party/ELFIO": true,
+      "third_party/imgui": true,
+      "third_party/libspng": true,
+      "third_party/simavr": true,
+      "third_party/stb": true,
     }
   },
 }
