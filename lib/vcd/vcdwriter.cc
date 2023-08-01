@@ -129,10 +129,20 @@ std::tuple<std::string, std::string> VCDWriter::GetNameAndID(const std::string& 
   }
   full_name.append(name);
 
-  if (ids_.count(full_name) == 0) {
-    ids_[full_name] = ids_.size();
+  switch (state_) {
+    case State::Empty:
+      assert(false);
+      break;
+    case State::Header:
+      if (ids_.count(full_name) == 0) {
+        ids_[full_name] = ids_.size();
+      }
+      break;
+    case State::Data:
+      break;
   }
 
+  assert(ids_.count(full_name) == 1);
   return {full_name, cache_[ids_.at(full_name)]};
 }
 
@@ -146,7 +156,11 @@ void VCDWriter::WriteValue(const std::string& name, size_t width, std::string va
       assert(false);
       break;
     case State::Header:
-      *out_ << "$var wire " << width << " " << id << " " << full_name << " $end" << std::endl;
+      *out_ << "$var wire " << width << " " << id << " " << full_name;
+      if (width > 1) {
+        *out_ << "[" << width - 1 << ":0]";
+      }
+      *out_ << " $end" << std::endl;
       buffer_ << value << id << std::endl;
       break;
     case State::Data:
@@ -168,15 +182,15 @@ void VCDWriter::Value(const std::string& name, uint32_t value) {
 }
 
 void VCDWriter::Value(const std::string& name, int8_t value) {
-  WriteValue(name, 8, std::format("{}", value));
+  WriteValue(name, 8, std::format("{}", static_cast<uint8_t>(value)));
 }
 
 void VCDWriter::Value(const std::string& name, int16_t value) {
-  WriteValue(name, 16, std::format("{}", value));
+  WriteValue(name, 16, std::format("{}", static_cast<uint16_t>(value)));
 }
 
 void VCDWriter::Value(const std::string& name, int32_t value) {
-  WriteValue(name, 32, std::format("{}", value));
+  WriteValue(name, 32, std::format("{}", static_cast<uint32_t>(value)));
 }
 
 void VCDWriter::Value(const std::string& name, float value) {
