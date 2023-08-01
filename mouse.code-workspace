@@ -125,7 +125,8 @@
       "new": "cpp",
       "typeinfo": "cpp",
       "BUILD.*": "starlark",
-      "local_atomic": "cpp"
+      "local_atomic": "cpp",
+      "variadic-alias4.C": "cpp"
     },
     "files.exclude": {
       "**/.git": true,

@@ -1,20 +1,18 @@
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
 # AVR Toolchain
 register_toolchains(
     "//bazel/toolchain:atmega328p_toolchain",
     "//bazel/toolchain:atmega4809_toolchain",
 )
 
-# pkg-config support
-
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+# google test framework
 
 http_archive(
-    name = "bazel_pkg_config",
-    strip_prefix = "bazel_pkg_config-master",
-    urls = ["https://github.com/cherrry/bazel_pkg_config/archive/master.zip"],
+    name = "com_google_googletest",
+    strip_prefix = "googletest-1.13.0",
+    urls = ["https://github.com/google/googletest/archive/refs/tags/v1.13.0.tar.gz"],
 )
-
-load("@bazel_pkg_config//:pkg_config.bzl", "pkg_config")
 
 # foreign libraries
 

@@ -39,67 +39,93 @@ constexpr std::array<std::string, 16384> BuildCache() {
 }  // namespace
 
 VCDWriter::VCDWriter()  //
-    : out_(),           //
+    : out_(nullptr),    //
       scope_(),
       ids_(),
       cache_(BuildCache()),
       buffer_(),
-      time_(std::numeric_limits<uint64_t>::max()),
-      header_closed_(false) {}
+      time_(0),
+      state_(State::Empty) {}
+
+VCDWriter::VCDWriter(std::shared_ptr<std::ostream> out)  //
+    : out_(std::move(out)),                              //
+      scope_(),
+      ids_(),
+      cache_(BuildCache()),
+      buffer_(),
+      time_(0),
+      state_(State::Empty) {}
 
 void VCDWriter::Open(const std::string& filename) {
-  assert(!out_.is_open());
-  out_.open(filename);
+  assert(out_ == nullptr);
+  auto file = std::make_shared<std::ofstream>();
+  file->open(filename);
+  out_ = std::move(file);
 }
 
 void VCDWriter::Time(uint64_t time) {
   assert(scope_.empty());
   assert(time_ <= time);
 
-  if (!header_closed_) {
-    if (ids_.empty()) {
-      // first Time() call, start the header.
-      out_ << "$version mouse::vcd::VCDWriter $end" << std::endl;
-      out_ << "$timescale 1ns $end" << std::endl;
-      out_ << "$scope module top $end" << std::endl;
+  switch (state_) {
+    case State::Empty:
+      *out_ << "$version mouse::vcd::VCDWriter $end" << std::endl;
+      *out_ << "$timescale 1ns $end" << std::endl;
+      *out_ << "$scope module top $end" << std::endl;
       time_ = time;
-      return;
-    }
+      buffer_ << "#" << time_ << std::endl;
+      state_ = State::Header;
+      break;
 
-    // Second Time() call, close the header, and flush the buffer.
-    out_ << "$upscope $end" << std::endl;
-    out_ << "$enddefinitions $end" << std::endl;
-    header_closed_ = true;
-    out_ << buffer_.str();
-    buffer_.clear();
+    case State::Header:
+      *out_ << "$upscope $end" << std::endl;
+      *out_ << "$enddefinitions $end" << std::endl;
+      state_ = State::Data;
+      *out_ << buffer_.str();
+      buffer_.clear();
+      [[fallthrough]];
+
+    case State::Data:
+      if (time_ == time) {
+        return;
+      }
+      time_ = time;
+      *out_ << "#" << time_ << std::endl;
+      break;
   }
-
-  if (time_ == time) {
-    return;
-  }
-
-  time_ = time;
-  out_ << "#" << time_ << std::endl;
 }
 
 void VCDWriter::BeginScope(const std::string& name) {
+  assert(state_ != State::Empty);
+
   std::ostringstream oss;
   for (const auto& s : scope_) {
     oss << s << ".";
   }
   oss << name;
   scope_.push_back(oss.str());
+
+  if (state_ == State::Header) {
+    *out_ << "$scope module " << name << " $end" << std::endl;
+  }
 }
 
 void VCDWriter::EndScope() {
+  assert(state_ != State::Empty);
   assert(!scope_.empty());
+
   scope_.pop_back();
+
+  if (state_ == State::Header) {
+    *out_ << "$upscope $end" << std::endl;
+  }
 }
 
 std::tuple<std::string, std::string> VCDWriter::GetNameAndID(const std::string& name) {
   std::string full_name;
   if (!scope_.empty()) {
     full_name.append(scope_.back());
+    full_name.append(".");
   }
   full_name.append(name);
 
@@ -111,13 +137,21 @@ std::tuple<std::string, std::string> VCDWriter::GetNameAndID(const std::string& 
 }
 
 void VCDWriter::WriteValue(const std::string& name, size_t width, std::string value) {
+  assert(state_ != State::Empty);
+
   auto [full_name, id] = GetNameAndID(name);
 
-  if (!header_closed_) {
-    out_ << "$var wire " << width << " " << id << " " << full_name << " $end" << std::endl;
-    out_ << value << id << std::endl;
-  } else {
-    buffer_ << value << id << std::endl;
+  switch (state_) {
+    case State::Empty:
+      assert(false);
+      break;
+    case State::Header:
+      *out_ << "$var wire " << width << " " << id << " " << full_name << " $end" << std::endl;
+      buffer_ << value << id << std::endl;
+      break;
+    case State::Data:
+      *out_ << value << id << std::endl;
+      break;
   }
 }
 

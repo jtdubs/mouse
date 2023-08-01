@@ -5,6 +5,7 @@
 #include <array>
 #include <fstream>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <tuple>
@@ -12,9 +13,12 @@
 
 namespace mouse::vcd {
 
+enum class State { Empty, Header, Data };
+
 class VCDWriter {
  public:
   VCDWriter();
+  VCDWriter(std::shared_ptr<std::ostream> out);
 
   void Open(const std::string& filename);
 
@@ -36,13 +40,13 @@ class VCDWriter {
   void                                 WriteValue(const std::string& name, size_t width, std::string value);
 
  private:
-  std::ofstream                   out_;
+  std::shared_ptr<std::ostream>   out_;
   std::vector<std::string>        scope_;
   std::map<std::string, uint16_t> ids_;
   std::array<std::string, 16384>  cache_;
   std::ostringstream              buffer_;
   uint64_t                        time_;
-  bool                            header_closed_;
+  State                           state_;
 };
 
 }  // namespace mouse::vcd
