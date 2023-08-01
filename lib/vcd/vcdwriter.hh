@@ -25,6 +25,8 @@ class VCDWriter {
   void Time(uint64_t time);
 
   void BeginScope(const std::string& name);
+  void EndScope();
+
   void Value(const std::string& name, uint8_t value);
   void Value(const std::string& name, uint16_t value);
   void Value(const std::string& name, uint32_t value);
@@ -33,7 +35,6 @@ class VCDWriter {
   void Value(const std::string& name, int32_t value);
   void Value(const std::string& name, float value);
   void Value(const std::string& name, bool value);
-  void EndScope();
 
  private:
   std::tuple<std::string, std::string> GetNameAndID(const std::string& name);

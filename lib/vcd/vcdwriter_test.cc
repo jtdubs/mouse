@@ -332,3 +332,60 @@ $enddefinitions $end
 3c
 )");
 }
+
+TEST(VCDTest, TimeDuringNonEmptyScope) {
+  auto out = std::make_shared<std::ostringstream>();
+
+  mouse::vcd::VCDWriter writer(out);
+
+  writer.Time(0);
+  writer.BeginScope("foo");
+  EXPECT_DEATH({ writer.Time(1); }, "Assertion .* failed.");
+}
+
+TEST(VCDTest, TimeReversal) {
+  auto out = std::make_shared<std::ostringstream>();
+
+  mouse::vcd::VCDWriter writer(out);
+
+  writer.Time(1);
+  EXPECT_DEATH({ writer.Time(0); }, "Assertion .* failed.");
+}
+
+TEST(VCDTest, ScopeBeforeTime) {
+  auto out = std::make_shared<std::ostringstream>();
+
+  mouse::vcd::VCDWriter writer(out);
+
+  EXPECT_DEATH({ writer.BeginScope("foo"); }, "Assertion .* failed.");
+}
+
+TEST(VCDTest, ExtraEndScope) {
+  auto out = std::make_shared<std::ostringstream>();
+
+  mouse::vcd::VCDWriter writer(out);
+
+  writer.BeginScope("foo");
+  writer.EndScope();
+  EXPECT_DEATH({ writer.EndScope(); }, "Assertion .* failed.");
+}
+
+TEST(VCDTest, ValueBeforeTime) {
+  auto out = std::make_shared<std::ostringstream>();
+
+  mouse::vcd::VCDWriter writer(out);
+
+  EXPECT_DEATH({ writer.Value("foo", uint8_t{0}); }, "Assertion .* failed.");
+}
+
+TEST(VCDTest, NewValueAfterHeaderClosed) {
+  auto out = std::make_shared<std::ostringstream>();
+
+  mouse::vcd::VCDWriter writer(out);
+  writer.Time(0);
+  writer.Value("foo", uint8_t{0});
+
+  writer.Time(0);
+  writer.Value("foo", uint8_t{1});
+  EXPECT_DEATH({ writer.Value("bar", uint8_t{1}); }, "Assertion .* failed.");
+}
