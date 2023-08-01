@@ -20,6 +20,7 @@
         "${workspaceFolder}/third_party/ELFIO",
         "${workspaceFolder}/third_party/stb",
         "${workspaceFolder}/third_party/libspng/spng",
+        "${workspaceFolder}/bazel-mouse/external/com_google_googletest/googletest/include",
         "/opt/avr-toolchain/avr/include"
       ]
     }
