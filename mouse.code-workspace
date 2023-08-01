@@ -124,7 +124,8 @@
       "initializer_list": "cpp",
       "new": "cpp",
       "typeinfo": "cpp",
-      "BUILD.*": "starlark"
+      "BUILD.*": "starlark",
+      "local_atomic": "cpp"
     },
     "files.exclude": {
       "**/.git": true,
