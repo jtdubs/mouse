@@ -21,21 +21,21 @@ Board improvements:
 RAM usage:
 
   mode/explore:
-  explore:    550 bytes -> 278 bytes
+  explore:    278 bytes
   maze:       523 bytes
   ---------------------
-             1073 bytes -> 801 bytes
+              801 bytes
 
   mode/remote:
-  remote:     160 bytes -> 40 bytes
+  remote:      40 bytes
   command:      2 bytes
   ---------------------
-              162 bytes -> 42 bytes
+               42 bytes
 
   report:
-  report:      70 bytes -> 56 bytes
+  report:      56 bytes
   ---------------------
-               70 bytes -> 56 bytes
+               56 bytes
 
   platform:
   adc:         16 bytes
@@ -44,19 +44,19 @@ RAM usage:
   rtc:          4 bytes
   selector:     2 bytes
   timer:        9 bytes
-  usart0_read: 70 bytes -> 30 bytes
+  usart0_read: 30 bytes
   usart0_write: 6 bytes
   ---------------------
-              121 bytes -> 91 bytes
+               91 bytes
 
   control:
   control:      3 bytes
-  linear:      33 bytes
   plan:        10 bytes
   position:     8 bytes
+  speed:       56 bytes
+  linear:      33 bytes
   rotation:     9 bytes
   sensor_cal:  21 bytes
-  speed:       56 bytes
   walls:        8 bytes
   ---------------------
               158 bytes
