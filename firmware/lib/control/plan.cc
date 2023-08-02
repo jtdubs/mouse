@@ -10,19 +10,19 @@ namespace mouse::control::plan {
 
 namespace {
 // current_plan is the current plan
-Plan current_plan;
+Plan plan_;
 }  // namespace
 
 // Init initializes the plan module.
 void Init() {
-  current_plan.type = Type::Idle;
+  plan_.type = Type::Idle;
   SetState(State::Scheduled);
 }
 
 // submit submits a new plan to be implemented.
 void Submit(Plan plan) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    current_plan = plan;
+    plan_ = plan;
     SetState(State::Scheduled);
   }
 }
@@ -30,7 +30,7 @@ void Submit(Plan plan) {
 // wait waits for the current plan to be implemented.
 void Wait() {
   platform::pin::Clear(platform::pin::kProbePlan);
-  volatile State *state = &current_plan.state;
+  volatile State *state = &plan_.state;
   while (*state != State::Implemented) {}
   platform::pin::Set(platform::pin::kProbePlan);
 }
@@ -44,7 +44,7 @@ void SubmitAndWait(Plan plan) {
 
 // SetState sets the current plan state.
 void SetState(State state) {
-  current_plan.state = state;
+  plan_.state = state;
   sim_watch_plan(static_cast<uint8_t>(state));
 }
 
@@ -52,7 +52,7 @@ void SetState(State state) {
 Plan Current() {
   Plan result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    result = current_plan;
+    result = plan_;
   }
   return result;
 }

@@ -10,16 +10,16 @@ namespace mouse::platform::usart0 {
 
 namespace {
 // The write buffer and associated state.
-uint8_t   *write_buffer;
-uint8_t    write_length;
-uint8_t    write_index;
-WriteState write_state;
-uint8_t    write_checksum;
+uint8_t   *write_buffer_;
+uint8_t    write_length_;
+uint8_t    write_index_;
+WriteState write_state_;
+uint8_t    write_checksum_;
 }  // namespace
 
 // write_ready determines if a write request can be initiated.
 bool WriteReady() {
-  return write_state == WriteState::Idle;
+  return write_state_ == WriteState::Idle;
 }
 
 // write begins an asynchronous write to USART0.
@@ -30,11 +30,11 @@ void Write(uint8_t *buffer, uint8_t length) {
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     // Setup the initial write state.
-    write_buffer   = buffer;
-    write_length   = length;
-    write_index    = 0;
-    write_state    = WriteState::Start;
-    write_checksum = 0;
+    write_buffer_   = buffer;
+    write_length_   = length;
+    write_index_    = 0;
+    write_state_    = WriteState::Start;
+    write_checksum_ = 0;
   }
 
   // Initiate the write by enabling the Data Register Empty Interrupt.
@@ -45,31 +45,31 @@ uint8_t byte;
 
 // The USART0 Data Register Empty Interrupt.
 ISR(USART_UDRE_vect, ISR_BLOCK) {
-  switch (write_state) {
+  switch (write_state_) {
     case WriteState::Start:
       // Write the start byte and transition to the next state.
-      UDR0        = kStartByte;
-      write_state = WriteState::Length;
+      UDR0         = kStartByte;
+      write_state_ = WriteState::Length;
       break;
     case WriteState::Length:
       // Write the length byte and transition to the next state.
-      UDR0        = write_length;
-      write_state = WriteState::Data;
+      UDR0         = write_length_;
+      write_state_ = WriteState::Data;
       break;
     case WriteState::Data:
       // Write the next byte, update the checksum, and transition after all bytes are written.
-      byte            = write_buffer[write_index++];
-      UDR0            = byte;
-      write_checksum += byte;
-      if (write_index == write_length) {
-        write_state = WriteState::Checksum;
+      byte             = write_buffer_[write_index_++];
+      UDR0             = byte;
+      write_checksum_ += byte;
+      if (write_index_ == write_length_) {
+        write_state_ = WriteState::Checksum;
       }
       break;
     case WriteState::Checksum:
       // Write the checksum, disable the interrupt (nothing left to send), and transition to the next state.
-      UDR0         = -write_checksum;
-      write_state  = WriteState::Idle;
-      UCSR0B      &= ~_BV(UDRIE0);
+      UDR0          = -write_checksum_;
+      write_state_  = WriteState::Idle;
+      UCSR0B       &= ~_BV(UDRIE0);
       break;
     case WriteState::Idle:
       // Should never happens, as the CHECKSUM state disables the interrupt.

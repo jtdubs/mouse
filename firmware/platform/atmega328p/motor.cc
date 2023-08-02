@@ -10,8 +10,8 @@
 namespace mouse::platform::motor {
 
 namespace {
-int16_t power_left;
-int16_t power_right;
+int16_t power_left_;
+int16_t power_right_;
 }  // namespace
 
 // Init initializes the motors.
@@ -36,8 +36,8 @@ void Set(int16_t left, int16_t right) {
   assert(assert::Module::Motor, 1, right > -512 && right < 512);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    power_left  = left;
-    power_right = right;
+    power_left_  = left;
+    power_right_ = right;
 
     // set the direction of the motors
     platform::pin::Set(platform::pin::kLeftDir, left < 0);
@@ -53,8 +53,8 @@ void Set(int16_t left, int16_t right) {
 // Range: [-511, 511]
 void Read(int16_t& left, int16_t& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    left  = power_left;
-    right = power_right;
+    left  = power_left_;
+    right = power_right_;
   }
 }
 

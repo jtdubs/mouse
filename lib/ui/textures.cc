@@ -10,7 +10,7 @@
 namespace mouse::ui {
 
 namespace {
-std::map<std::string, ImTextureID> textures;
+std::map<std::string, ImTextureID> textures_;
 }
 
 void LoadIcons() {
@@ -26,7 +26,7 @@ void LoadIcons() {
 
     auto path = entry.path().string();
     if (path.ends_with(".png")) {
-      textures[entry.path().stem()] = LoadIcon(path);
+      textures_[entry.path().stem()] = LoadIcon(path);
     }
   }
 }
@@ -56,8 +56,8 @@ ImTextureID LoadIcon(std::string path) {
 }
 
 ImTextureID Icon(std::string name) {
-  if (textures.count(name) > 0) {
-    return textures[name];
+  if (textures_.count(name) > 0) {
+    return textures_[name];
   }
 
   return 0;

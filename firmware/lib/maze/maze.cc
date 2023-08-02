@@ -11,12 +11,12 @@ namespace mouse::maze {
 
 namespace {
 Maze                                maze_;
-uint8_t                             report_row;
-dequeue::Dequeue<PackedLocation, 6> updates;
+uint8_t                             report_row_;
+dequeue::Dequeue<PackedLocation, 6> updates_;
 }  // namespace
 
 void Init() {
-  report_row = config::kMazeHeight;
+  report_row_ = config::kMazeHeight;
 
   // Distances default to 0xFF, which is the maximum possible distance.
   for (uint16_t xy = 0; xy < 256; xy++) {
@@ -39,7 +39,7 @@ void Init() {
 }
 
 void Send() {
-  report_row = 0;
+  report_row_ = 0;
 }
 
 Cell Read(Location loc) {
@@ -61,22 +61,22 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   auto *update_array = (Update *)buffer;
 
   // if we have full rows to transmit, then send the next one.
-  if (report_row < config::kMazeHeight) {
+  if (report_row_ < config::kMazeHeight) {
     for (int i = 0; i < config::kMazeWidth; i++) {
       update_array[i] = (Update){
-          .location = Location(i, report_row),
-          .cell     = Read(Location(i, report_row)),
+          .location = Location(i, report_row_),
+          .cell     = Read(Location(i, report_row_)),
       };
     }
-    report_row++;
+    report_row_++;
     return config::kMazeWidth * sizeof(Update);
   }
 
   // otherwise, send any pending updates.
   uint8_t report_len = 0;
   uint8_t i          = 0;
-  while (!updates.Empty()) {
-    Location loc       = updates.PopFront();
+  while (!updates_.Empty()) {
+    Location loc       = updates_.PopFront();
     update_array[i++]  = (Update){.location = loc, .cell = Read(loc)};
     report_len        += sizeof(Update);
   }
@@ -133,10 +133,10 @@ void SetDistance(Location loc, uint8_t distance) {
 }
 
 void Updated(Location loc) {
-  if (updates.Full()) {
+  if (updates_.Full()) {
     Send();
   } else {
-    updates.PushBack(loc);
+    updates_.PushBack(loc);
   }
 }
 }  // namespace mouse::maze

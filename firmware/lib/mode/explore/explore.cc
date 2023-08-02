@@ -17,24 +17,24 @@
 namespace mouse::mode::explore {
 
 namespace {
-Orientation                                 orientation;  // The current orientation of the mouse.
-float                                       cell_offset;  // The offset into the current cell.
-bool                                        stopped;      // Whether or not the mouse has stopped.
-dequeue::Dequeue<maze::PackedLocation, 256> stacks;       // Front is the breadcrumb trail, Back are unvisited cells.
-dequeue::Dequeue<DequeueUpdate, 8>          updates;      // The queue of updates to send to the host.
+Orientation                                 orientation_;  // The current orientation of the mouse.
+float                                       cell_offset_;  // The offset into the current cell.
+bool                                        stopped_;      // Whether or not the mouse has stopped.
+dequeue::Dequeue<maze::PackedLocation, 256> stacks_;       // Front is the breadcrumb trail, Back are unvisited cells.
+dequeue::Dequeue<DequeueUpdate, 8>          updates_;      // The queue of updates to send to the host.
 }  // namespace
 
 void Explore() {
-  stacks.RegisterCallback([](dequeue::Event event, maze::PackedLocation value) {
-    assert(assert::Module::Explore, 8, !updates.Full());
+  stacks_.RegisterCallback([](dequeue::Event event, maze::PackedLocation value) {
+    assert(assert::Module::Explore, 8, !updates_.Full());
     switch (event) {
       case dequeue::Event::PushFront:
       case dequeue::Event::PopFront:
-        updates.PushBack((DequeueUpdate){.dequeue_id = DequeueID::Path, .event = event, .value = value});
+        updates_.PushBack((DequeueUpdate){.dequeue_id = DequeueID::Path, .event = event, .value = value});
         break;
       case dequeue::Event::PushBack:
       case dequeue::Event::PopBack:
-        updates.PushBack((DequeueUpdate){.dequeue_id = DequeueID::Next, .event = event, .value = value});
+        updates_.PushBack((DequeueUpdate){.dequeue_id = DequeueID::Next, .event = event, .value = value});
         break;
     }
   });
@@ -48,18 +48,18 @@ void Explore() {
   // Assumption:
   // We start centered along the back wall of the starting square, with our back touching the wall.
   // Therefore our "position", measured by the center of the axle is kAxleOffset from the wall.
-  orientation = Orientation::North;
-  cell_offset = config::kAxleOffset;
-  stopped     = true;
+  orientation_ = Orientation::North;
+  cell_offset_ = config::kAxleOffset;
+  stopped_     = true;
 
   // Our path so far is just the starting square, and we want to visit the square to our north.
-  stacks.PushFront(maze::Location(0, 0));
-  stacks.PushBack(maze::Location(0, 1));
+  stacks_.PushFront(maze::Location(0, 0));
+  stacks_.PushBack(maze::Location(0, 1));
 
   // While we have squares to visit...
-  while (stacks.PeekBack() != maze::Location(0, 0)) {
-    auto curr_loc = stacks.PeekFront();
-    auto next_loc = stacks.PeekBack();
+  while (stacks_.PeekBack() != maze::Location(0, 0)) {
+    auto curr_loc = stacks_.PeekFront();
+    auto next_loc = stacks_.PeekBack();
     auto prev_loc = maze::Location(0, 0);
 
     // Determine which direction to drive to reach the cell (if it is adjancent).
@@ -67,7 +67,7 @@ void Explore() {
 
     // If we are adjacent to the next cell
     if (next_orientation != Orientation::Invalid) {
-      stacks.PopBack();  // Remove the cell from the "next" stack.
+      stacks_.PopBack();  // Remove the cell from the "next" stack.
       // If we've visited the cell since it was added to the queue, then skip it.
       if (maze::Visited(next_loc)) {
         continue;
@@ -77,18 +77,18 @@ void Explore() {
       Classify(next_loc);       // Update our maze representation, and note any new cells to visit.
     } else {
       // Otherwise, backtrack a square.
-      stacks.PopFront();                   // Remove the current cell from the breadcrumb trail.
-      prev_loc = stacks.PeekFront();       // Check which cell we came from.
+      stacks_.PopFront();                  // Remove the current cell from the breadcrumb trail.
+      prev_loc = stacks_.PeekFront();      // Check which cell we came from.
       Face(Adjacent(curr_loc, prev_loc));  // Turn to face it.
       Advance(prev_loc, false);            // Advance into it, but do NOT update the breadcrumb trail.
     }
   }
 
   // Now that exploration is complete, we return to the starting cell.
-  if (!stacks.Empty()) {
-    auto curr = stacks.PopFront();
-    while (!stacks.Empty()) {
-      auto prev = stacks.PopFront();
+  if (!stacks_.Empty()) {
+    auto curr = stacks_.PopFront();
+    while (!stacks_.Empty()) {
+      auto prev = stacks_.PopFront();
       Face(Adjacent(curr, prev));
       Advance(prev, false);
       curr = prev;
@@ -104,7 +104,7 @@ void Explore() {
       .type = control::plan::Type::Idle, .state = control::plan::State::Scheduled, .data = {.idle = {}}});
 
   // Deregister dequeue callbacks.
-  stacks.RegisterCallback(NULL);
+  stacks_.RegisterCallback(NULL);
 
   // Solve the maze, and tramit the new maze data to the host.
   Floodfill();
@@ -120,8 +120,8 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   uint8_t report_len = 0;
 
   auto *updates_buffer = (DequeueUpdate *)buffer;
-  while (!updates.Empty()) {
-    updates_buffer[i++]  = updates.PopFront();
+  while (!updates_.Empty()) {
+    updates_buffer[i++]  = updates_.PopFront();
     report_len          += sizeof(DequeueUpdate);
   }
 
@@ -176,7 +176,7 @@ Orientation Adjacent(maze::Location a, maze::Location b) {
 void Face(Orientation new_orientation) {
   assert(assert::Module::Explore, 2, new_orientation != Orientation::Invalid);
 
-  if (new_orientation == orientation) {
+  if (new_orientation == orientation_) {
     return;
   }
 
@@ -185,7 +185,7 @@ void Face(Orientation new_orientation) {
 
   // determine the delta between the current orientation and the desired orientation
   // Note: The (+4) and (&3) is to ensure the result is in [0,3] without using an expensive % operator.
-  uint8_t delta  = (static_cast<uint8_t>(new_orientation) + 4) - static_cast<uint8_t>(orientation);
+  uint8_t delta  = (static_cast<uint8_t>(new_orientation) + 4) - static_cast<uint8_t>(orientation_);
   delta         &= 3;
 
   switch (delta) {
@@ -222,8 +222,8 @@ void Face(Orientation new_orientation) {
 
   // assuming we were centered horizontally in the previous direction of travel
   // then we are now in the middle of the cell along the new direction of travel.
-  cell_offset = config::kCellSize2;
-  orientation = new_orientation;
+  cell_offset_ = config::kCellSize2;
+  orientation_ = new_orientation;
 }
 
 // advance moves 1 square in the current direction, leaving the mouse
@@ -235,67 +235,67 @@ void Advance(maze::Location loc, bool update_path) {
       (control::plan::Plan){.type  = control::plan::Type::LinearMotion,
                             .state = control::plan::State::Scheduled,
                             .data  = {.linear = {
-                                          .position = config::kCellSize - (cell_offset - kEntryOffset),
+                                          .position = config::kCellSize - (cell_offset_ - kEntryOffset),
                                           .stop     = false,
                                      }}});
 
   if (update_path) {
-    stacks.PushFront(loc);
+    stacks_.PushFront(loc);
   }
-  stopped = false;
+  stopped_ = false;
 }
 
 // stop stops the mouse in the middle of the current cell.
 void Stop() {
-  if (stopped) {
+  if (stopped_) {
     return;
   }
 
   UpdateLocation();
 
   // we should never decide to stop once we have already passed the center of a cell.
-  assert(assert::Module::Explore, 3, cell_offset <= config::kCellSize2);
+  assert(assert::Module::Explore, 3, cell_offset_ <= config::kCellSize2);
 
   // stop at the center of the cell
   control::plan::SubmitAndWait(                                          //
       (control::plan::Plan){.type  = control::plan::Type::LinearMotion,  //
                             .state = control::plan::State::Scheduled,    //
                             .data  = {.linear = {
-                                          .position = config::kCellSize2 - cell_offset,
+                                          .position = config::kCellSize2 - cell_offset_,
                                           .stop     = true  //
                                      }}});
 
-  stopped = true;
+  stopped_ = true;
 }
 
 // UpdateLocation updates the cell index and offset based on the traveled distance.
 void UpdateLocation() {
   float position_distance, position_theta;
   control::position::Tare(position_distance, position_theta);
-  cell_offset += position_distance;
+  cell_offset_ += position_distance;
 
   // this is a (% kCellSize) without using the % operator because it is expensive.
-  while (cell_offset > config::kCellSize) {
-    cell_offset -= config::kCellSize;
+  while (cell_offset_ > config::kCellSize) {
+    cell_offset_ -= config::kCellSize;
   }
 }
 
 // queue_unvisited adds a cell to the "next" stack if it has not already been visited.
 void queue_unvisited(maze::Location loc) {
   if (!maze::Visited(loc)) {
-    stacks.PushBack(loc);
+    stacks_.PushBack(loc);
   }
 }
 
 // classify updates the state of a cell, and adds unvisited neighbors to the "next" stack.
 void Classify(maze::Location loc) {
-  assert(assert::Module::Explore, 4, orientation != Orientation::Invalid);
+  assert(assert::Module::Explore, 4, orientation_ != Orientation::Invalid);
 
   bool wall_forward, wall_left, wall_right;
   control::walls::Present(wall_left, wall_right, wall_forward);
   maze::SetVisited(loc);
 
-  switch (orientation) {
+  switch (orientation_) {
     case Orientation::North:
       if (wall_right) {
         maze::SetWallEast(loc);
@@ -404,37 +404,37 @@ void Floodfill() {
   }
 
   // Step 3. Floodfill outwards from the goal cell.
-  stacks.Clear();
+  stacks_.Clear();
   maze::SetDistance(goal, 0);
-  stacks.PushBack(goal);
-  while (!stacks.Empty()) {
-    maze::Location loc = stacks.PopFront();
+  stacks_.PushBack(goal);
+  while (!stacks_.Empty()) {
+    maze::Location loc = stacks_.PopFront();
     if (!maze::WallNorth(loc)) {
       auto next = loc + maze::Location(0, 1);
       if (maze::Distance(next) == 0xFF) {
         maze::SetDistance(next, maze::Distance(loc) + 1);
-        stacks.PushBack(next);
+        stacks_.PushBack(next);
       }
     }
     if (!maze::WallEast(loc)) {
       auto next = loc + maze::Location(1, 0);
       if (maze::Distance(next) == 0xFF) {
         maze::SetDistance(next, maze::Distance(loc) + 1);
-        stacks.PushBack(next);
+        stacks_.PushBack(next);
       }
     }
     if (!maze::WallSouth(loc)) {
       auto next = loc - maze::Location(0, 1);
       if (maze::Distance(next) == 0xFF) {
         maze::SetDistance(next, maze::Distance(loc) + 1);
-        stacks.PushBack(next);
+        stacks_.PushBack(next);
       }
     }
     if (!maze::WallWest(loc)) {
       auto next = loc - maze::Location(1, 0);
       if (maze::Distance(next) == 0xFF) {
         maze::SetDistance(next, maze::Distance(loc) + 1);
-        stacks.PushBack(next);
+        stacks_.PushBack(next);
       }
     }
   }

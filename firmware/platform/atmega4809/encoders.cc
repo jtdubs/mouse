@@ -12,12 +12,12 @@ namespace mouse::platform::encoders {
 
 namespace {
 // Encoder counts.
-int32_t left;
-int32_t right;
+int32_t left_;
+int32_t right_;
 
 // Changes to encoder counts since the last update.
-int8_t left_delta;
-int8_t right_delta;
+int8_t left_delta_;
+int8_t right_delta_;
 }  // namespace
 
 // Init initializes the encoders.
@@ -30,24 +30,24 @@ void Init() {
 // update applies changes since the last update.
 void Update() {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    left        += static_cast<int32_t>(left_delta);
-    right       += static_cast<int32_t>(right_delta);
-    left_delta   = 0;
-    right_delta  = 0;
+    left_        += static_cast<int32_t>(left_delta_);
+    right_       += static_cast<int32_t>(right_delta_);
+    left_delta_   = 0;
+    right_delta_  = 0;
   }
 }
 
 void Read(int32_t& left, int32_t& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    left  = platform::encoders::left;
-    right = platform::encoders::right;
+    left  = left_;
+    right = right_;
   }
 }
 
 void ReadDeltas(int32_t& left, int32_t& right) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    left  = left_delta;
-    right = right_delta;
+    left  = left_delta_;
+    right = right_delta_;
   }
 }
 
@@ -64,9 +64,9 @@ ISR(PORTA_PORT_vect, ISR_BLOCK) {
 
     // Update the encoder count based on rotation direction.
     if (a == left_last_b) {
-      left_delta++;
+      left_delta_++;
     } else {
-      left_delta--;
+      left_delta_--;
     }
 
     left_last_b = b;
@@ -82,9 +82,9 @@ ISR(PORTA_PORT_vect, ISR_BLOCK) {
 
     // Update the encoder count based on rotation direction.
     if (a == right_last_b) {
-      right_delta--;
+      right_delta_--;
     } else {
-      right_delta++;
+      right_delta_++;
     }
 
     right_last_b = b;

@@ -15,7 +15,7 @@
 namespace mouse::mode::remote {
 
 namespace {
-dequeue::Dequeue<control::plan::Plan, 4> plans;
+dequeue::Dequeue<control::plan::Plan, 4> plans_;
 }
 
 // remote is a mode that allows the robot to be controlled remotely.
@@ -67,11 +67,11 @@ void Run() {
         }
         break;
       case Type::PlanEnqueue:
-        plans.PushBack(command.data.plan);
+        plans_.PushBack(command.data.plan);
         break;
       case Type::PlanExecute:
-        while (!plans.Empty()) {
-          control::plan::SubmitAndWait(plans.PopFront());
+        while (!plans_.Empty()) {
+          control::plan::SubmitAndWait(plans_.PopFront());
         }
         break;
       default:

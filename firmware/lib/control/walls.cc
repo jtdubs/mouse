@@ -9,16 +9,16 @@
 namespace mouse::control::walls {
 
 namespace {
-bool  control_leds;
-State state;
+bool  control_leds_;
+State state_;
 }  // namespace
 
 void Init() {
-  control_leds = true;
+  control_leds_ = true;
 }
 
 void ControlLEDs(bool enabled) {
-  control_leds = enabled;
+  control_leds_ = enabled;
 }
 
 void Update() {
@@ -36,10 +36,10 @@ void Update() {
   s.error_right     = right_cal - right;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    state = s;
+    state_ = s;
   }
 
-  if (control_leds) {
+  if (control_leds_) {
     platform::pin::Set(platform::pin::kLEDLeft, s.left_present);
     platform::pin::Set(platform::pin::kLEDRight, s.right_present);
     platform::pin::Set(platform::pin::kLEDOnboard, s.forward_present);
@@ -50,7 +50,7 @@ void Update() {
 float error() {
   State s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    s = state;
+    s = state_;
   }
 
   if (!s.left_present && !s.right_present) {
@@ -67,9 +67,9 @@ float error() {
 // present returns the presence of walls on each side of the mouse.
 void Present(bool& left, bool& right, bool& forward) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    left    = state.left_present;
-    right   = state.right_present;
-    forward = state.forward_present;
+    left    = state_.left_present;
+    right   = state_.right_present;
+    forward = state_.forward_present;
   }
 }
 

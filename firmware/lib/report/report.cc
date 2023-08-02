@@ -9,7 +9,7 @@ namespace mouse::report {
 
 namespace {
 // The report to be sent.
-Report report;
+Report report_;
 }  // namespace
 
 // Init initializes the report module.
@@ -25,27 +25,27 @@ void Send() {
 
   uint8_t len;
 
-  report.rtc_micros = platform::rtc::Micros();
-  report.length     = 0;
-  if (len = mode::explore::GetReport(report.data, sizeof(report.data)); len > 0) {
-    report.type   = Type::Explore;
-    report.length = len;
-  } else if (len = maze::GetReport(report.data, sizeof(report.data)); len > 0) {
-    report.type   = Type::Maze;
-    report.length = len;
-  } else if (len = control::GetReport(report.data, sizeof(report.data)); len > 0) {
-    report.type   = Type::Control;
-    report.length = len;
-  } else if (len = platform::GetReport(report.data, sizeof(report.data)); len > 0) {
-    report.type   = Type::Platform;
-    report.length = len;
+  report_.rtc_micros = platform::rtc::Micros();
+  report_.length     = 0;
+  if (len = mode::explore::GetReport(report_.data, sizeof(report_.data)); len > 0) {
+    report_.type   = Type::Explore;
+    report_.length = len;
+  } else if (len = maze::GetReport(report_.data, sizeof(report_.data)); len > 0) {
+    report_.type   = Type::Maze;
+    report_.length = len;
+  } else if (len = control::GetReport(report_.data, sizeof(report_.data)); len > 0) {
+    report_.type   = Type::Control;
+    report_.length = len;
+  } else if (len = platform::GetReport(report_.data, sizeof(report_.data)); len > 0) {
+    report_.type   = Type::Platform;
+    report_.length = len;
   }
 
-  if (report.length == 0) {
+  if (report_.length == 0) {
     return;
   }
 
-  platform::usart0::Write((uint8_t*)&report, report.length + 6);
+  platform::usart0::Write((uint8_t*)&report_, report_.length + 6);
 }
 
 }  // namespace mouse::report

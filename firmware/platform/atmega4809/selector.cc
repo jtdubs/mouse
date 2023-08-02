@@ -8,8 +8,8 @@ namespace mouse::platform::selector {
 
 namespace {
 // The proposed value (from the DIP switches) and the button state.
-uint8_t value;
-bool    button_pressed;
+uint8_t value_;
+bool    button_pressed_;
 }  // namespace
 
 uint8_t Update() {
@@ -20,16 +20,16 @@ uint8_t Update() {
 
   if (v > 180) {
     // If the button was just pressed, return the selected value.
-    if (!button_pressed) {
-      button_pressed = true;
-      return value;
+    if (!button_pressed_) {
+      button_pressed_ = true;
+      return value_;
     }
   } else {
     // Otherwise, decode the selector voltage.
-    button_pressed = false;
+    button_pressed_ = false;
     for (int i = 0; i < 16; i++) {
       if (v < SelectorThresholds[i]) {
-        value = 15 - i;
+        value_ = 15 - i;
         break;
       }
     }

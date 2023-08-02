@@ -10,7 +10,7 @@
 namespace mouse::control::rotational {
 
 namespace {
-State state;
+State state_;
 }  // namespace
 
 void Init() {}
@@ -26,7 +26,7 @@ void Start(float dtheta /* radians */) {
   };
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    state = s;
+    state_ = s;
   }
 }
 
@@ -42,7 +42,7 @@ bool Tick() {
 
   State s;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    s = state;
+    s = state_;
   }
 
   float dtheta = s.target_theta - position_theta;
@@ -96,7 +96,7 @@ bool Tick() {
   }
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    state = s;
+    state_ = s;
   }
 
   return false;
@@ -104,7 +104,7 @@ bool Tick() {
 
 void Read(State &s) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    s = state;
+    s = state_;
   }
 }
 

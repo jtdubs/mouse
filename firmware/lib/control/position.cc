@@ -11,8 +11,8 @@
 namespace mouse::control::position {
 
 namespace {
-float distance;  // in mms
-float theta;     // in radians
+float distance_;  // in mms
+float theta_;     // in radians
 }  // namespace
 
 void Init() {}
@@ -32,32 +32,32 @@ void Update() {
 
   float distance, theta;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    distance = position::distance;
-    theta    = position::theta;
+    distance = distance_;
+    theta    = theta_;
   }
 
   distance += forward;
   theta    += rotation;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    position::distance = distance;
-    position::theta    = theta;
+    distance_ = distance;
+    theta_    = theta;
   }
 }
 
 void Read(float& distance, float& theta) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    distance = position::distance;
-    theta    = position::theta;
+    distance = distance_;
+    theta    = theta_;
   }
 }
 
 void Tare(float& distance, float& theta) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    distance           = position::distance;
-    theta              = position::theta;
-    position::distance = 0;
-    position::theta    = 0;
+    distance  = distance_;
+    theta     = theta_;
+    distance_ = 0;
+    theta_    = 0;
   }
 }
 

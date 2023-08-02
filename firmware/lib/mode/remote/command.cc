@@ -10,14 +10,14 @@ namespace mouse::mode::remote {
 
 namespace {
 // The encoded and decoded command, and associated state.
-Command *command;
+Command *command_;
 }  // namespace
 
 // on_received is the USART0 callback for when a command is received.
 void on_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
-  assert(assert::Module::Command, 0, command == NULL);
+  assert(assert::Module::Command, 0, command_ == NULL);
 
-  command = (Command *)buffer;
+  command_ = (Command *)buffer;
 }
 
 // Init initializes the command module.
@@ -31,7 +31,7 @@ void Init() {
 
 // processed indicates the command has been processed.
 void Processed() {
-  command = NULL;
+  command_ = NULL;
   platform::usart0::EnableReceiver();
 }
 
@@ -40,8 +40,8 @@ bool Next(Command &c) {
   bool result = false;
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    if (command != NULL) {
-      c      = *command;
+    if (command_ != NULL) {
+      c      = *command_;
       result = true;
     }
   }

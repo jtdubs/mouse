@@ -11,7 +11,7 @@ namespace mouse::platform::adc {
 
 namespace {
 // Raw 10-bit readings from ADC channels.
-uint16_t values[8];
+uint16_t values_[8];
 }  // namespace
 
 // Init initializes the ADC.
@@ -33,16 +33,16 @@ void Sample() {
 uint16_t Read(Channel channel) {
   uint16_t result;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    result = values[channel];
+    result = values_[channel];
   }
   return result;
 }
 
 void ReadSensors(uint16_t& left, uint16_t& right, uint16_t& forward) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    left    = values[Channel::SensorLeft];
-    right   = values[Channel::SensorRight];
-    forward = values[Channel::SensorForward];
+    left    = values_[Channel::SensorLeft];
+    right   = values_[Channel::SensorRight];
+    forward = values_[Channel::SensorForward];
   }
 }
 
@@ -52,7 +52,7 @@ ISR(ADC_vect, ISR_BLOCK) {
   Channel next  = kNextChannel[index];
 
   // Store the ADC result.
-  values[index] = ADC;
+  values_[index] = ADC;
 
   // Select the next ADC channel
   ADMUX = (ADMUX & 0xF0) | next;

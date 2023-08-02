@@ -13,16 +13,16 @@
 namespace mouse::platform::timer {
 
 namespace {
-callback_t callbacks[4];
-uint8_t    callback_count = 0;
+callback_t callbacks_[4];
+uint8_t    callback_count_ = 0;
 }  // namespace
 
 void AddCallback(callback_t callback) {
   assert(assert::Module::Timer, 0, callback != NULL);
-  assert(assert::Module::Timer, 1, callback_count < 4);
+  assert(assert::Module::Timer, 1, callback_count_ < 4);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    callbacks[callback_count++] = callback;
+    callbacks_[callback_count_++] = callback;
   }
 }
 
@@ -43,8 +43,8 @@ void Init() {
 ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
   wdt_reset();
   NONATOMIC_BLOCK(NONATOMIC_RESTORESTATE) {
-    for (uint8_t i = 0; i < callback_count; i++) {
-      callbacks[i]();
+    for (uint8_t i = 0; i < callback_count_; i++) {
+      callbacks_[i]();
     }
   }
 }

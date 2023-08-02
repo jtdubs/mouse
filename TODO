@@ -1,12 +1,8 @@
-Firmware:
-- Change locals in anonymous namespaces to have a _ suffix?
-
 Platform:
 - Nano every implementation
 
 Bazel:
 - Auto-build cross-compile toolchain.
-- Vendor all dependencies.
 
 Exploration mode:
 - There are definitely opportunities to speed up "unwinding" when a shortcut presents itself.
