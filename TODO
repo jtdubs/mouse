@@ -22,9 +22,9 @@ RAM usage:
 
   mode/explore:
   explore:    278 bytes
-  maze:       523 bytes
+  maze:       429 bytes
   ---------------------
-              801 bytes
+              707 bytes
 
   mode/remote:
   remote:      40 bytes
@@ -60,8 +60,3 @@ RAM usage:
   walls:        8 bytes
   ---------------------
               158 bytes
-
-  utils:
-  assert:      16 bytes
-  ---------------------
-               16 bytes
