@@ -21,10 +21,10 @@ Board improvements:
 RAM usage:
 
   mode/explore:
-  explore:    550 bytes -> 294 bytes
+  explore:    550 bytes -> 278 bytes
   maze:       523 bytes
   ---------------------
-             1073 bytes -> 817 bytes
+             1073 bytes -> 801 bytes
 
   mode/remote:
   remote:     160 bytes -> 40 bytes

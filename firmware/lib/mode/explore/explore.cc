@@ -21,7 +21,7 @@ Orientation                           orientation;  // The current orientation o
 float                                 cell_offset;  // The offset into the current cell.
 bool                                  stopped;      // Whether or not the mouse has stopped.
 dequeue::Dequeue<maze::Location, 256> stacks;       // Front is the breadcrumb trail, Back are unvisited cells.
-dequeue::Dequeue<DequeueUpdate, 16>   updates;      // The queue of updates to send to the host.
+dequeue::Dequeue<DequeueUpdate, 8>    updates;      // The queue of updates to send to the host.
 }  // namespace
 
 void Explore() {
@@ -58,16 +58,6 @@ void Explore() {
 
   // While we have squares to visit...
   while (stacks.PeekBack() != maze::Location(0, 0)) {
-    // Skips cells we already visited since they were added to the stack.
-    while (stacks.PeekBack() != maze::Location(0, 0) && maze::Read(stacks.PeekBack()).visited) {
-      stacks.PopBack();
-    }
-
-    // If we have no more cells to visit, then we are done.
-    if (stacks.PeekBack() == maze::Location(0, 0)) {
-      break;
-    }
-
     auto curr_loc = stacks.PeekFront();
     auto next_loc = stacks.PeekBack();
     auto prev_loc = maze::Location(0, 0);
@@ -77,7 +67,11 @@ void Explore() {
 
     // If we are adjacent to the next cell
     if (next_orientation != Orientation::Invalid) {
-      stacks.PopBack();         // Remove the cell from the "next" stack.
+      stacks.PopBack();  // Remove the cell from the "next" stack.
+      // If we've visited the cell since it was added to the queue, then skip it.
+      if (maze::Read(next_loc).visited) {
+        continue;
+      }
       Face(next_orientation);   // Turn to face the cell.
       Advance(next_loc, true);  // Advance into it, updating the breadcrumb trail.
       Classify(next_loc);       // Update our maze representation, and note any new cells to visit.
