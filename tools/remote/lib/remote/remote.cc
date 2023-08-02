@@ -28,22 +28,11 @@ Remote::Remote()  //
       mutex_(),
       connected_(false),
       outbox_() {
-  for (size_t x = 0; x < 16; x++) {
-    for (size_t y = 0; y < 16; y++) {
-      maze::Location loc(x, y);
-      if (x == 0) {
-        maze_.cells[loc].wall_west = true;
-      }
-      if (x == 15) {
-        maze_.cells[loc].wall_east = true;
-      }
-      if (y == 0) {
-        maze_.cells[loc].wall_south = true;
-      }
-      if (y == 15) {
-        maze_.cells[loc].wall_north = true;
-      }
-    }
+  maze_.walls_south[0]  = 0b1111'1111'1111'1111;
+  maze_.walls_north[15] = 0b1111'1111'1111'1111;
+  for (uint8_t y = 0; y < 16; y++) {
+    maze_.walls_west[y] = 0b0000'0000'0000'0001;
+    maze_.walls_east[y] = 0b1000'0000'0000'0000;
   }
 }
 
@@ -265,8 +254,44 @@ void Remote::OnReport(report::Report *report) {
     case report::Type::Maze: {
       auto   updates = reinterpret_cast<maze::Update *>(report->data);
       size_t n       = report->length / sizeof(maze::Update);
+
       for (size_t i = 0; i < n; i++) {
-        maze_.cells[updates[i].location] = updates[i].cell;
+        maze::Location loc  = updates[i].location;
+        maze::Cell     cell = updates[i].cell;
+        uint8_t        x    = loc.X();
+        uint8_t        y    = loc.Y();
+
+        if (cell.wall_north) {
+          maze_.walls_north[y] |= (1 << x);
+        } else {
+          maze_.walls_north[y] &= ~(1 << x);
+        }
+
+        if (cell.wall_east) {
+          maze_.walls_east[y] |= (1 << x);
+        } else {
+          maze_.walls_east[y] &= ~(1 << x);
+        }
+
+        if (cell.wall_south) {
+          maze_.walls_south[y] |= (1 << x);
+        } else {
+          maze_.walls_south[y] &= ~(1 << x);
+        }
+
+        if (cell.wall_west) {
+          maze_.walls_west[y] |= (1 << x);
+        } else {
+          maze_.walls_west[y] &= ~(1 << x);
+        }
+
+        if (cell.visited) {
+          maze_.visited[y] |= (1 << x);
+        } else {
+          maze_.visited[y] &= ~(1 << x);
+        }
+
+        maze_.distances[loc] = cell.distance;
       }
       break;
     }

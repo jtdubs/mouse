@@ -25,14 +25,24 @@ struct Cell {
   bool    wall_south : 1;
   bool    wall_west  : 1;
   bool    visited    : 1;
-  uint8_t padding    : 3;
-  uint8_t distance   : 8;  // Distance from the center of the maze.
+  bool    padding    : 3;
+  uint8_t distance;  // Distance from the center of the maze.
 };
 #pragma pack(pop)
 
+// A bitfield is a 16x16 array of bits, organized as follows:
+// - Each row is a 16-bit word.
+// - Each cell in that row is a bit, in LSB order.
+typedef uint16_t Bitfield[16];
+
 // Maze represents the entire maze at it's maximum allowed size.
 struct Maze {
-  Cell cells[256];
+  Bitfield walls_north;
+  Bitfield walls_east;
+  Bitfield walls_south;
+  Bitfield walls_west;
+  Bitfield visited;
+  uint8_t  distances[256];
 };
 
 class Location {

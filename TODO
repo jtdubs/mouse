@@ -1,3 +1,6 @@
+Firmware:
+- Change locals in anonymous namespaces to have a _ suffix?
+
 Platform:
 - Nano every implementation
 

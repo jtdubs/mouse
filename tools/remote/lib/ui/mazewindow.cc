@@ -40,9 +40,18 @@ void MazeWindow::Render() {
   for (ssize_t x = 0; x < grid_dim.x; x++) {
     for (ssize_t y = 0; y < grid_dim.y; y++) {
       auto loc            = maze::Location(x, y);
-      auto cell           = maze.cells[loc];
       auto cell_origin_px = maze_origin_px + (ImVec2(x, -y) * cell_size_px);
       auto cell_corner_px = cell_origin_px + (ImVec2(1, -1) * cell_size_px);
+
+      maze::Cell cell = {
+          .wall_north = (((maze.walls_north[y] >> x) & 1) == 1),
+          .wall_east  = (((maze.walls_east[y] >> x) & 1) == 1),
+          .wall_south = (((maze.walls_south[y] >> x) & 1) == 1),
+          .wall_west  = (((maze.walls_west[y] >> x) & 1) == 1),
+          .visited    = (((maze.visited[y] >> x) & 1) == 1),
+          .padding    = 0,
+          .distance   = maze.distances[loc],
+      };
 
       if (cell.visited) {
         draw_list->AddRectFilled(cell_origin_px, cell_corner_px, IM_COL32(50, 50, 50, 255));
