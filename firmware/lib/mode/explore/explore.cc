@@ -20,20 +20,22 @@ namespace {
 Orientation                           orientation;  // The current orientation of the mouse.
 float                                 cell_offset;  // The offset into the current cell.
 bool                                  stopped;      // Whether or not the mouse has stopped.
-dequeue::Dequeue<maze::Location, 256> path;         // The breadcrumb trail.
-dequeue::Dequeue<maze::Location, 256> next;         // The stack of unvisited cells.
+dequeue::Dequeue<maze::Location, 256> stacks;       // Front is the breadcrumb trail, Back are unvisited cells.
 dequeue::Dequeue<DequeueUpdate, 16>   updates;      // The queue of updates to send to the host.
 }  // namespace
 
 void Explore() {
-  path.RegisterCallback([](dequeue::Event event, maze::Location value) {
-    if (!updates.Full()) {
-      updates.PushBack((DequeueUpdate){.dequeue_id = DequeueID::Path, .event = event, .value = value});
-    }
-  });
-  next.RegisterCallback([](dequeue::Event event, maze::Location value) {
-    if (!updates.Full()) {
-      updates.PushBack((DequeueUpdate){.dequeue_id = DequeueID::Next, .event = event, .value = value});
+  stacks.RegisterCallback([](dequeue::Event event, maze::Location value) {
+    assert(assert::Module::Explore, 8, !updates.Full());
+    switch (event) {
+      case dequeue::Event::PushFront:
+      case dequeue::Event::PopFront:
+        updates.PushBack((DequeueUpdate){.dequeue_id = DequeueID::Path, .event = event, .value = value});
+        break;
+      case dequeue::Event::PushBack:
+      case dequeue::Event::PopBack:
+        updates.PushBack((DequeueUpdate){.dequeue_id = DequeueID::Next, .event = event, .value = value});
+        break;
     }
   });
 
@@ -51,23 +53,23 @@ void Explore() {
   stopped     = true;
 
   // Our path so far is just the starting square, and we want to visit the square to our north.
-  path.PushBack(maze::Location(0, 0));
-  next.PushBack(maze::Location(0, 1));
+  stacks.PushFront(maze::Location(0, 0));
+  stacks.PushBack(maze::Location(0, 1));
 
   // While we have squares to visit...
-  while (!next.Empty()) {
+  while (stacks.PeekBack() != maze::Location(0, 0)) {
     // Skips cells we already visited since they were added to the stack.
-    while (!next.Empty() && maze::Read(next.PeekBack()).visited) {
-      next.PopBack();
+    while (stacks.PeekBack() != maze::Location(0, 0) && maze::Read(stacks.PeekBack()).visited) {
+      stacks.PopBack();
     }
 
     // If we have no more cells to visit, then we are done.
-    if (next.Empty()) {
+    if (stacks.PeekBack() == maze::Location(0, 0)) {
       break;
     }
 
-    auto curr_loc = path.PeekBack();
-    auto next_loc = next.PeekBack();
+    auto curr_loc = stacks.PeekFront();
+    auto next_loc = stacks.PeekBack();
     auto prev_loc = maze::Location(0, 0);
 
     // Determine which direction to drive to reach the cell (if it is adjancent).
@@ -75,24 +77,24 @@ void Explore() {
 
     // If we are adjacent to the next cell
     if (next_orientation != Orientation::Invalid) {
-      next.PopBack();           // Remove the cell from the "next" stack.
+      stacks.PopBack();         // Remove the cell from the "next" stack.
       Face(next_orientation);   // Turn to face the cell.
       Advance(next_loc, true);  // Advance into it, updating the breadcrumb trail.
       Classify(next_loc);       // Update our maze representation, and note any new cells to visit.
     } else {
       // Otherwise, backtrack a square.
-      path.PopBack();                      // Remove the current cell from the breadcrumb trail.
-      prev_loc = path.PeekBack();          // Check which cell we came from.
+      stacks.PopFront();                   // Remove the current cell from the breadcrumb trail.
+      prev_loc = stacks.PeekFront();       // Check which cell we came from.
       Face(Adjacent(curr_loc, prev_loc));  // Turn to face it.
       Advance(prev_loc, false);            // Advance into it, but do NOT update the breadcrumb trail.
     }
   }
 
   // Now that exploration is complete, we return to the starting cell.
-  if (!path.Empty()) {
-    auto curr = path.PopBack();
-    while (!path.Empty()) {
-      auto prev = path.PopBack();
+  if (!stacks.Empty()) {
+    auto curr = stacks.PopFront();
+    while (!stacks.Empty()) {
+      auto prev = stacks.PopFront();
       Face(Adjacent(curr, prev));
       Advance(prev, false);
       curr = prev;
@@ -108,8 +110,7 @@ void Explore() {
       .type = control::plan::Type::Idle, .state = control::plan::State::Scheduled, .data = {.idle = {}}});
 
   // Deregister dequeue callbacks.
-  path.RegisterCallback(NULL);
-  next.RegisterCallback(NULL);
+  stacks.RegisterCallback(NULL);
 
   // Solve the maze, and tramit the new maze data to the host.
   Floodfill();
@@ -245,7 +246,7 @@ void Advance(maze::Location loc, bool update_path) {
                                      }}});
 
   if (update_path) {
-    path.PushBack(loc);
+    stacks.PushFront(loc);
   }
   stopped = false;
 }
@@ -288,7 +289,7 @@ void UpdateLocation() {
 // queue_unvisited adds a cell to the "next" stack if it has not already been visited.
 void queue_unvisited(maze::Location loc) {
   if (!maze::Read(loc).visited) {
-    next.PushBack(loc);
+    stacks.PushBack(loc);
   }
 }
 
@@ -416,13 +417,13 @@ void Floodfill() {
   }
 
   // Step 3. Floodfill outwards from the goal cell.
-  path.Clear();
+  stacks.Clear();
   auto goal_cell     = maze::Read(goal);
   goal_cell.distance = 0;
   maze::Write(goal, goal_cell);
-  path.PushBack(goal);
-  while (!path.Empty()) {
-    auto loc  = path.PopFront();
+  stacks.PushBack(goal);
+  while (!stacks.Empty()) {
+    auto loc  = stacks.PopFront();
     auto cell = maze::Read(loc);
     if (!cell.wall_north) {
       auto next      = loc + maze::Location(0, 1);
@@ -430,7 +431,7 @@ void Floodfill() {
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::Write(next, next_cell);
-        path.PushBack(next);
+        stacks.PushBack(next);
       }
     }
     if (!cell.wall_east) {
@@ -439,7 +440,7 @@ void Floodfill() {
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::Write(next, next_cell);
-        path.PushBack(next);
+        stacks.PushBack(next);
       }
     }
     if (!cell.wall_south) {
@@ -448,7 +449,7 @@ void Floodfill() {
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::Write(next, next_cell);
-        path.PushBack(next);
+        stacks.PushBack(next);
       }
     }
     if (!cell.wall_west) {
@@ -457,7 +458,7 @@ void Floodfill() {
       if (next_cell.distance == 0xFF) {
         next_cell.distance = cell.distance + 1;
         maze::Write(next, next_cell);
-        path.PushBack(next);
+        stacks.PushBack(next);
       }
     }
   }
