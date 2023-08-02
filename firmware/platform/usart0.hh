@@ -29,7 +29,7 @@
 namespace mouse::platform::usart0 {
 
 constexpr uint8_t kStartByte   = 0x02;
-constexpr uint8_t kMaxReadSize = 64;
+constexpr uint8_t kMaxReadSize = 24;
 
 // Write states
 enum class WriteState : uint8_t {

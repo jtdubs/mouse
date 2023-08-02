@@ -22,6 +22,9 @@ void on_received(uint8_t *buffer, [[maybe_unused]] uint8_t size) {
 
 // Init initializes the command module.
 void Init() {
+  static_assert(platform::usart0::kMaxReadSize >= sizeof(Command) + 3,
+                "usart0::kMaxReadSize must be at least sizeof(Command)");
+
   platform::usart0::SetReadCallback(on_received);
   platform::usart0::EnableReceiver();
 }

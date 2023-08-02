@@ -15,7 +15,7 @@
 namespace mouse::mode::remote {
 
 namespace {
-dequeue::Dequeue<control::plan::Plan, 16> plans;
+dequeue::Dequeue<control::plan::Plan, 4> plans;
 }
 
 // remote is a mode that allows the robot to be controlled remotely.

@@ -49,7 +49,7 @@ struct Report {
   Type     type;
   uint32_t rtc_micros;
   uint8_t  length;
-  uint8_t  data[64];  // the format of the data is defined by the report type
+  uint8_t  data[50];  // the format of the data is defined by the report type
 };
 #pragma pack(pop)
 

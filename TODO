@@ -17,3 +17,51 @@ Board improvements:
 - Nose too big, makes turning towards a wall VERY tight.
 - Better connectors for motors and sensor board.
 - Velcro'd battery is wobbily standing up on edge.
+
+RAM usage:
+
+  mode/explore:
+  explore:    550 bytes
+  maze:       523 bytes
+  ---------------------
+             1073 bytes
+
+  mode/remote:
+  remote:     160 bytes -> 40 bytes
+  command:      2 bytes
+  ---------------------
+              162 bytes -> 42 bytes
+
+  report:
+  report:      70 bytes -> 56 bytes
+  ---------------------
+               70 bytes -> 56 bytes
+
+  platform:
+  adc:         16 bytes
+  encoders:    10 bytes
+  motors:       4 bytes
+  rtc:          4 bytes
+  selector:     2 bytes
+  timer:        9 bytes
+  usart0_read: 70 bytes -> 30 bytes
+  usart0_write: 6 bytes
+  ---------------------
+              121 bytes -> 91 bytes
+
+  control:
+  control:      3 bytes
+  linear:      33 bytes
+  plan:        10 bytes
+  position:     8 bytes
+  rotation:     9 bytes
+  sensor_cal:  21 bytes
+  speed:       56 bytes
+  walls:        8 bytes
+  ---------------------
+              158 bytes
+
+  utils:
+  assert:      16 bytes
+  ---------------------
+               16 bytes
