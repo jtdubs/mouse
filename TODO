@@ -4,9 +4,6 @@ Firmware:
 Platform:
 - Nano every implementation
 
-Maze:
-- Smaller to represent as 256-bit bitmasks for each wall & visited status.
-
 Bazel:
 - Auto-build cross-compile toolchain.
 - Vendor all dependencies.
