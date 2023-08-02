@@ -42,6 +42,18 @@ void Send() {
   report_row = 0;
 }
 
+Cell Read(Location loc) {
+  return {
+      .wall_north = WallNorth(loc),
+      .wall_east  = WallEast(loc),
+      .wall_south = WallSouth(loc),
+      .wall_west  = WallWest(loc),
+      .visited    = Visited(loc),
+      .padding    = 0,
+      .distance   = maze_.distances[loc],
+  };
+}
+
 uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   assert(assert::Module::Maze, 0, buffer != NULL);
   assert(assert::Module::Maze, 1, len >= (sizeof(Update) * config::kMazeWidth));
@@ -72,74 +84,69 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   return report_len;
 }
 
-// TODO: Most read calls only access a single field, so faster to provide direct
-// accessors for Visited(), Distance(), WallNorth(), etc.
-Cell Read(Location loc) {
-  assert(assert::Module::Maze, 2, loc.X() < config::kMazeWidth);
-  assert(assert::Module::Maze, 3, loc.Y() < config::kMazeHeight);
-
-  uint8_t x = loc.X();
-  uint8_t y = loc.Y();
-
-  return {
-      .wall_north = (((maze_.walls_north[y] >> x) & 1) == 1),
-      .wall_east  = (((maze_.walls_east[y] >> x) & 1) == 1),
-      .wall_south = (((maze_.walls_south[y] >> x) & 1) == 1),
-      .wall_west  = (((maze_.walls_west[y] >> x) & 1) == 1),
-      .visited    = (((maze_.visited[y] >> x) & 1) == 1),
-      .padding    = 0,
-      .distance   = maze_.distances[loc],
-  };
+bool WallNorth(Location loc) {
+  return (((maze_.walls_north[loc.Y()] >> loc.X()) & 1) == 1);
 }
 
-// TODO: Can flatten this into write calls for each field individually to avoid
-// unpacking and repacking bits.
-void Write(Location loc, Cell cell) {
-  assert(assert::Module::Maze, 4, loc.X() < config::kMazeWidth);
-  assert(assert::Module::Maze, 5, loc.Y() < config::kMazeHeight);
+bool WallEast(Location loc) {
+  return (((maze_.walls_east[loc.Y()] >> loc.X()) & 1) == 1);
+}
 
-  uint8_t x = loc.X();
-  uint8_t y = loc.Y();
+bool WallSouth(Location loc) {
+  return (((maze_.walls_south[loc.Y()] >> loc.X()) & 1) == 1);
+}
 
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    if (cell.wall_north) {
-      maze_.walls_north[y] |= (1 << x);
-    } else {
-      maze_.walls_north[y] &= ~(1 << x);
-    }
+bool WallWest(Location loc) {
+  return (((maze_.walls_west[loc.Y()] >> loc.X()) & 1) == 1);
+}
 
-    if (cell.wall_east) {
-      maze_.walls_east[y] |= (1 << x);
-    } else {
-      maze_.walls_east[y] &= ~(1 << x);
-    }
+bool Visited(Location loc) {
+  return (((maze_.visited[loc.Y()] >> loc.X()) & 1) == 1);
+}
 
-    if (cell.wall_south) {
-      maze_.walls_south[y] |= (1 << x);
-    } else {
-      maze_.walls_south[y] &= ~(1 << x);
-    }
+uint8_t Distance(Location loc) {
+  return maze_.distances[loc];
+}
 
-    if (cell.wall_west) {
-      maze_.walls_west[y] |= (1 << x);
-    } else {
-      maze_.walls_west[y] &= ~(1 << x);
-    }
+void SetWallNorth(Location loc) {
+  uint8_t x             = loc.X();
+  uint8_t y             = loc.Y();
+  maze_.walls_north[y] |= (1 << x);
+}
 
-    if (cell.visited) {
-      maze_.visited[y] |= (1 << x);
-    } else {
-      maze_.visited[y] &= ~(1 << x);
-    }
+void SetWallEast(Location loc) {
+  uint8_t x            = loc.X();
+  uint8_t y            = loc.Y();
+  maze_.walls_east[y] |= (1 << x);
+}
 
-    maze_.distances[loc] = cell.distance;
+void SetWallSouth(Location loc) {
+  uint8_t x             = loc.X();
+  uint8_t y             = loc.Y();
+  maze_.walls_south[y] |= (1 << x);
+}
 
-    if (updates.Full()) {
-      Send();
-    } else {
-      updates.PushBack(loc);
-    }
+void SetWallWest(Location loc) {
+  uint8_t x            = loc.X();
+  uint8_t y            = loc.Y();
+  maze_.walls_west[y] |= (1 << x);
+}
+
+void SetVisited(Location loc) {
+  uint8_t x         = loc.X();
+  uint8_t y         = loc.Y();
+  maze_.visited[y] |= (1 << x);
+}
+
+void SetDistance(Location loc, uint8_t distance) {
+  maze_.distances[loc] = distance;
+}
+
+void Updated(Location loc) {
+  if (updates.Full()) {
+    Send();
+  } else {
+    updates.PushBack(loc);
   }
 }
-
 }  // namespace mouse::maze

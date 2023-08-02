@@ -87,11 +87,22 @@ class Location {
 // Init initializes the maze to it's default state.
 void Init();
 
-// read returns the cell at the given location.
-Cell Read(Location loc);
+// Read maze data.
+bool    WallNorth(Location loc);
+bool    WallEast(Location loc);
+bool    WallSouth(Location loc);
+bool    WallWest(Location loc);
+bool    Visited(Location loc);
+uint8_t Distance(Location loc);
 
-// update updates the cell at the given location.
-void Write(Location loc, Cell cell);
+// Write maze data.
+void SetWallNorth(Location loc);
+void SetWallEast(Location loc);
+void SetWallSouth(Location loc);
+void SetWallWest(Location loc);
+void SetVisited(Location loc);
+void SetDistance(Location loc, uint8_t distance);
+void Updated(Location loc);
 
 // report generates a report of changes to the maze.
 uint8_t GetReport(uint8_t *buffer, uint8_t len);
