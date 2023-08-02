@@ -17,15 +17,15 @@
 namespace mouse::mode::explore {
 
 namespace {
-Orientation                           orientation;  // The current orientation of the mouse.
-float                                 cell_offset;  // The offset into the current cell.
-bool                                  stopped;      // Whether or not the mouse has stopped.
-dequeue::Dequeue<maze::Location, 256> stacks;       // Front is the breadcrumb trail, Back are unvisited cells.
-dequeue::Dequeue<DequeueUpdate, 8>    updates;      // The queue of updates to send to the host.
+Orientation                                 orientation;  // The current orientation of the mouse.
+float                                       cell_offset;  // The offset into the current cell.
+bool                                        stopped;      // Whether or not the mouse has stopped.
+dequeue::Dequeue<maze::PackedLocation, 256> stacks;       // Front is the breadcrumb trail, Back are unvisited cells.
+dequeue::Dequeue<DequeueUpdate, 8>          updates;      // The queue of updates to send to the host.
 }  // namespace
 
 void Explore() {
-  stacks.RegisterCallback([](dequeue::Event event, maze::Location value) {
+  stacks.RegisterCallback([](dequeue::Event event, maze::PackedLocation value) {
     assert(assert::Module::Explore, 8, !updates.Full());
     switch (event) {
       case dequeue::Event::PushFront:
@@ -130,10 +130,10 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
 
 // adjacent determines the orientation needed to drive between two adjacent cells.
 Orientation Adjacent(maze::Location a, maze::Location b) {
-  auto ax = a.X();
-  auto ay = a.Y();
-  auto bx = b.X();
-  auto by = b.Y();
+  auto ax = a.x;
+  auto ay = a.y;
+  auto bx = b.x;
+  auto by = b.y;
 
   if (ax == bx) {
     if (ay + 1 == by) {
@@ -293,6 +293,7 @@ void Classify(maze::Location loc) {
 
   bool wall_forward, wall_left, wall_right;
   control::walls::Present(wall_left, wall_right, wall_forward);
+  maze::SetVisited(loc);
 
   switch (orientation) {
     case Orientation::North:
@@ -407,7 +408,7 @@ void Floodfill() {
   maze::SetDistance(goal, 0);
   stacks.PushBack(goal);
   while (!stacks.Empty()) {
-    auto loc = stacks.PopFront();
+    maze::Location loc = stacks.PopFront();
     if (!maze::WallNorth(loc)) {
       auto next = loc + maze::Location(0, 1);
       if (maze::Distance(next) == 0xFF) {
@@ -452,22 +453,22 @@ void Solve() {
 
     auto next = curr;
 
-    if (curr.Y() < (config::kMazeHeight - 1) && !maze::WallNorth(curr) && maze::Distance(north) < distance) {
+    if (curr.y < (config::kMazeHeight - 1) && !maze::WallNorth(curr) && maze::Distance(north) < distance) {
       next     = north;
       distance = maze::Distance(north);
     }
 
-    if (curr.X() < (config::kMazeWidth - 1) && !maze::WallEast(curr) && maze::Distance(east) < distance) {
+    if (curr.x < (config::kMazeWidth - 1) && !maze::WallEast(curr) && maze::Distance(east) < distance) {
       next     = east;
       distance = maze::Distance(east);
     }
 
-    if (curr.Y() > 0 && !maze::WallSouth(curr) && maze::Distance(south) < distance) {
+    if (curr.y > 0 && !maze::WallSouth(curr) && maze::Distance(south) < distance) {
       next     = south;
       distance = maze::Distance(south);
     }
 
-    if (curr.X() > 0 && !maze::WallWest(curr) && maze::Distance(west) < distance) {
+    if (curr.x > 0 && !maze::WallWest(curr) && maze::Distance(west) < distance) {
       next     = west;
       distance = maze::Distance(west);
     }

@@ -10,9 +10,9 @@
 namespace mouse::maze {
 
 namespace {
-Maze                          maze_;
-uint8_t                       report_row;
-dequeue::Dequeue<Location, 6> updates;
+Maze                                maze_;
+uint8_t                             report_row;
+dequeue::Dequeue<PackedLocation, 6> updates;
 }  // namespace
 
 void Init() {
@@ -85,23 +85,23 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
 }
 
 bool WallNorth(Location loc) {
-  return (((maze_.walls_north[loc.Y()] >> loc.X()) & 1) == 1);
+  return (((maze_.walls_north[loc.y] >> loc.x) & 1) == 1);
 }
 
 bool WallEast(Location loc) {
-  return (((maze_.walls_east[loc.Y()] >> loc.X()) & 1) == 1);
+  return (((maze_.walls_east[loc.y] >> loc.x) & 1) == 1);
 }
 
 bool WallSouth(Location loc) {
-  return (((maze_.walls_south[loc.Y()] >> loc.X()) & 1) == 1);
+  return (((maze_.walls_south[loc.y] >> loc.x) & 1) == 1);
 }
 
 bool WallWest(Location loc) {
-  return (((maze_.walls_west[loc.Y()] >> loc.X()) & 1) == 1);
+  return (((maze_.walls_west[loc.y] >> loc.x) & 1) == 1);
 }
 
 bool Visited(Location loc) {
-  return (((maze_.visited[loc.Y()] >> loc.X()) & 1) == 1);
+  return (((maze_.visited[loc.y] >> loc.x) & 1) == 1);
 }
 
 uint8_t Distance(Location loc) {
@@ -109,33 +109,23 @@ uint8_t Distance(Location loc) {
 }
 
 void SetWallNorth(Location loc) {
-  uint8_t x             = loc.X();
-  uint8_t y             = loc.Y();
-  maze_.walls_north[y] |= (1 << x);
+  maze_.walls_north[loc.y] |= (1 << loc.x);
 }
 
 void SetWallEast(Location loc) {
-  uint8_t x            = loc.X();
-  uint8_t y            = loc.Y();
-  maze_.walls_east[y] |= (1 << x);
+  maze_.walls_east[loc.y] |= (1 << loc.x);
 }
 
 void SetWallSouth(Location loc) {
-  uint8_t x             = loc.X();
-  uint8_t y             = loc.Y();
-  maze_.walls_south[y] |= (1 << x);
+  maze_.walls_south[loc.y] |= (1 << loc.x);
 }
 
 void SetWallWest(Location loc) {
-  uint8_t x            = loc.X();
-  uint8_t y            = loc.Y();
-  maze_.walls_west[y] |= (1 << x);
+  maze_.walls_west[loc.y] |= (1 << loc.x);
 }
 
 void SetVisited(Location loc) {
-  uint8_t x         = loc.X();
-  uint8_t y         = loc.Y();
-  maze_.visited[y] |= (1 << x);
+  maze_.visited[loc.y] |= (1 << loc.x);
 }
 
 void SetDistance(Location loc, uint8_t distance) {

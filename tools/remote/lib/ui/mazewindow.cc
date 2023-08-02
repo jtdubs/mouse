@@ -85,14 +85,14 @@ void MazeWindow::Render() {
   }
 
   for (auto next : remote_->GetNextDequeue()) {
-    auto origin = maze_origin_px + ((ImVec2(next.X(), -next.Y()) + ImVec2(0.5, -0.5)) * cell_size_px);
+    auto origin = maze_origin_px + ((ImVec2(next.x, -next.y) + ImVec2(0.5, -0.5)) * cell_size_px);
     draw_list->AddCircleFilled(origin,              //
                                cell_size_px / 4.0,  //
                                IM_COL32(90, 30, 30, 255));
   }
 
   for (auto next : remote_->GetPathDequeue()) {
-    auto origin = maze_origin_px + ((ImVec2(next.X(), -next.Y()) + ImVec2(0.5, -0.5)) * cell_size_px);
+    auto origin = maze_origin_px + ((ImVec2(next.x, -next.y) + ImVec2(0.5, -0.5)) * cell_size_px);
     draw_list->AddCircleFilled(origin,              //
                                cell_size_px / 8.0,  //
                                IM_COL32(0, 0, 0, 255));

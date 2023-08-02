@@ -258,8 +258,8 @@ void Remote::OnReport(report::Report *report) {
       for (size_t i = 0; i < n; i++) {
         maze::Location loc  = updates[i].location;
         maze::Cell     cell = updates[i].cell;
-        uint8_t        x    = loc.X();
-        uint8_t        y    = loc.Y();
+        uint8_t        x    = loc.x;
+        uint8_t        y    = loc.y;
 
         if (cell.wall_north) {
           maze_.walls_north[y] |= (1 << x);

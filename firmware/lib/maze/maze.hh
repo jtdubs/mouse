@@ -46,41 +46,43 @@ struct Maze {
 };
 
 class Location {
- private:
-  uint8_t loc_;
+ public:
+  uint8_t x;
+  uint8_t y;
 
  public:
-  Location() : loc_(0) {}
-  Location(uint8_t xy) : loc_(xy) {}
-  Location(uint8_t x, uint8_t y) : loc_((x << 4) | y) {}
-  Location(const Location &o) : loc_(o.loc_) {}
-
-  inline uint8_t X() const {
-    return loc_ >> 4;
-  }
-
-  inline uint8_t Y() const {
-    return loc_ & 0x0F;
-  }
-
   inline operator size_t() const {
-    return loc_;
+    return (x << 4) | y;
   }
 
   inline Location operator+(Location o) const {
-    return Location(loc_ + o.loc_);
+    return {static_cast<uint8_t>(x + o.x), static_cast<uint8_t>(y + o.y)};
   }
 
   inline void operator+=(Location o) {
-    loc_ += o.loc_;
+    x += o.x;
+    y += o.y;
   }
 
   inline Location operator-(Location o) const {
-    return Location(loc_ - o.loc_);
+    return {static_cast<uint8_t>(x - o.x), static_cast<uint8_t>(y - o.y)};
+  }
+};
+
+class PackedLocation {
+ public:
+  uint8_t xy;
+
+ public:
+  PackedLocation() = default;
+  PackedLocation(const Location &loc) : xy((loc.x << 4) | loc.y) {}
+
+  inline operator size_t() const {
+    return xy;
   }
 
-  inline void operator=(Location o) {
-    loc_ = o.loc_;
+  inline operator Location() const {
+    return {static_cast<uint8_t>(xy >> 4), static_cast<uint8_t>(xy & 0x0F)};
   }
 };
 
@@ -113,15 +115,19 @@ void Send();
 // Update is a single update to the maze.
 #pragma pack(push, 1)
 struct Update {
-  Location location;
-  Cell     cell;
+  PackedLocation location;
+  Cell           cell;
 };
 #pragma pack(pop)
 
 #if not defined(__AVR__)
 [[maybe_unused]] static std::ostream &operator<<(std::ostream &o, Location location) {
-  o << "maze::Location{" << static_cast<int>(location.X()) << ", " << static_cast<int>(location.Y()) << "}";
+  o << "maze::Location{" << static_cast<int>(location.x) << ", " << static_cast<int>(location.y) << "}";
   return o;
+}
+
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &o, PackedLocation location) {
+  return o << static_cast<Location>(location);
 }
 
 [[maybe_unused]] static std::ostream &operator<<(std::ostream &o, Cell cell) {
