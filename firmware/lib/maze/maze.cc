@@ -72,6 +72,8 @@ uint8_t GetReport(uint8_t *buffer, uint8_t len) {
   return report_len;
 }
 
+// TODO: Most read calls only access a single field, so faster to provide direct
+// accessors for Visited(), Distance(), WallNorth(), etc.
 Cell Read(Location loc) {
   assert(assert::Module::Maze, 2, loc.X() < config::kMazeWidth);
   assert(assert::Module::Maze, 3, loc.Y() < config::kMazeHeight);
@@ -90,6 +92,8 @@ Cell Read(Location loc) {
   };
 }
 
+// TODO: Can flatten this into write calls for each field individually to avoid
+// unpacking and repacking bits.
 void Write(Location loc, Cell cell) {
   assert(assert::Module::Maze, 4, loc.X() < config::kMazeWidth);
   assert(assert::Module::Maze, 5, loc.Y() < config::kMazeHeight);
