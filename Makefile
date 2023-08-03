@@ -3,8 +3,8 @@
 REMOTE_SOURCES=$(shell find ./tools/remote -name "*.go")
 
 all: remote
-	bazel build //firmware/... --platforms=//bazel/platforms:arduino_nano_every -c opt
-	bazel build //firmware/... --platforms=//bazel/platforms:arduino_nano_every -c dbg
+	bazel build //firmware/... --platforms=//bazel/platforms:arduino_nano -c opt
+	bazel build //firmware/... --platforms=//bazel/platforms:arduino_nano -c dbg
 	bazel build //tools/sim -c opt
 	bazel build //tools/remote -c dbg
 
