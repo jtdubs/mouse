@@ -5,7 +5,6 @@
 #include <util/delay.h>
 
 #include "firmware/platform/platform.hh"
-#include "sim.h"
 
 namespace mouse::assert {
 

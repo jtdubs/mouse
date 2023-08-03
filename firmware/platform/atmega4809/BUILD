@@ -8,5 +8,6 @@ avr_library(
     deps = [
         "//firmware/lib/utils",
         "//firmware/platform",
+        "@simavr//:headers",
     ],
 )

@@ -2,7 +2,6 @@
 #include <util/atomic.h>
 
 #include "firmware/lib/utils/assert.hh"
-#include "firmware/lib/utils/sim.h"
 #include "firmware/platform/platform.hh"
 #include "plan_impl.hh"
 
@@ -45,7 +44,6 @@ void SubmitAndWait(Plan plan) {
 // SetState sets the current plan state.
 void SetState(State state) {
   plan_.state = state;
-  sim_watch_plan(static_cast<uint8_t>(state));
 }
 
 // current gets the current plan.
