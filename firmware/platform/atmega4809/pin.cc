@@ -2,40 +2,21 @@
 
 namespace mouse::platform::pin {
 
-// TODO(justindubs): 4809 impl
-const Pin kRightDir    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)};
-const Pin kLeftPWM     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(1)};
-const Pin kRightPWM    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(2)};
-const Pin kLEDLeft     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(3)};
-const Pin kIRLEDs      = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(4)};
-const Pin kLEDOnboard  = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(5)};
-const Pin kProbeTick   = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(3)};
-const Pin kProbePlan   = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(4)};
-const Pin kProbeUnused = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(5)};
-const Pin kLEDRight    = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(6)};
-const Pin kLeftDir     = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(7)};
-
 // Init initializes all pins.
 void Init() {
-  // Set all output pins to output mode.
-  // TODO(justindubs): 4809 impl
-  DDRB = (kRightDir.mask)      //
-       | (kLeftPWM.mask)       //
-       | (kRightPWM.mask)      //
-       | (kLEDLeft.mask)       //
-       | (kIRLEDs.mask)        //
-       | (kLEDOnboard.mask);   //
-  DDRC = (kProbeTick.mask)     //
-       | (kProbePlan.mask)     //
-       | (kProbeUnused.mask);  //
-  DDRD = (kLEDRight.mask)      //
-       | (kLeftDir.mask);      //
+  PORTA_DIRSET = 0b00001110;
+  PORTB_DIRSET = 0b00000011;
+  PORTC_DIRSET = 0b00000000;
+  PORTD_DIRSET = 0b00000001;
+  PORTE_DIRSET = 0b00001111;
+  PORTF_DIRSET = 0b00010000;
 
-  // Everything starts out low.
-  // TODO(justindubs): 4809 impl
-  PORTB = 0;
-  PORTC = 0;
-  PORTD = 0;
+  PORTA_OUTCLR = 0b00001110;
+  PORTB_OUTCLR = 0b00000011;
+  PORTC_OUTCLR = 0b00000000;
+  PORTD_OUTCLR = 0b00000001;
+  PORTE_OUTCLR = 0b00001111;
+  PORTF_OUTCLR = 0b00010000;
 }
 
 }  // namespace mouse::platform::pin

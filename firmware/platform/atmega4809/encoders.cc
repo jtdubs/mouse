@@ -57,7 +57,7 @@ ISR(PORTA_PORT_vect, ISR_BLOCK) {
     static uint8_t left_last_b = 0;
 
     // Read the encoder pins (b and clk) and calculate a.
-    uint8_t d   = PIND;
+    uint8_t d   = PORTA_IN;
     uint8_t b   = (d >> 4) & 1;
     uint8_t clk = ((d >> 2) & 1);
     uint8_t a   = clk ^ b;
@@ -75,7 +75,7 @@ ISR(PORTA_PORT_vect, ISR_BLOCK) {
     static uint8_t right_last_b = 0;
 
     // Read the encoder pins (b and clk) and calculate a.
-    uint8_t d   = PIND;
+    uint8_t d   = PORTA_IN;
     uint8_t b   = (d >> 5) & 1;
     uint8_t clk = ((d >> 3) & 1);
     uint8_t a   = clk ^ b;

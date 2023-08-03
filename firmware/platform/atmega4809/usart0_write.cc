@@ -38,47 +38,9 @@ void Write(uint8_t *buffer, uint8_t length) {
   }
 
   // Initiate the write by enabling the Data Register Empty Interrupt.
-  // TODO(justindubs): 4809 impl
-  UCSR0B |= 1 << UDRIE0;
+  // TODO
 }
 
 uint8_t byte;
-
-// The USART0 Data Register Empty Interrupt.
-// TODO(justindubs): 4809 impl
-ISR(USART_UDRE_vect, ISR_BLOCK) {
-  switch (write_state_) {
-    case WriteState::Start:
-      // Write the start byte and transition to the next state.
-      UDR0         = kStartByte;
-      write_state_ = WriteState::Length;
-      break;
-    case WriteState::Length:
-      // Write the length byte and transition to the next state.
-      UDR0         = write_length_;
-      write_state_ = WriteState::Data;
-      break;
-    case WriteState::Data:
-      // Write the next byte, update the checksum, and transition after all bytes are written.
-      byte             = write_buffer_[write_index_++];
-      UDR0             = byte;
-      write_checksum_ += byte;
-      if (write_index_ == write_length_) {
-        write_state_ = WriteState::Checksum;
-      }
-      break;
-    case WriteState::Checksum:
-      // Write the checksum, disable the interrupt (nothing left to send), and transition to the next state.
-      UDR0          = -write_checksum_;
-      write_state_  = WriteState::Idle;
-      UCSR0B       &= ~_BV(UDRIE0);
-      break;
-    case WriteState::Idle:
-      // Should never happens, as the CHECKSUM state disables the interrupt.
-      // But if it does, just turn off the interrupt again...
-      UCSR0B &= ~_BV(UDRIE0);
-      break;
-  }
-}
 
 }  // namespace mouse::platform::usart0

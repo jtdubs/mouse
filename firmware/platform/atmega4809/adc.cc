@@ -15,7 +15,9 @@ uint16_t values_[8];
 }  // namespace
 
 // Init initializes the ADC.
-void Init() {
+void                   Init() {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"
   ADC0_CTRLA = ADC_RESSEL_10BIT_gc;  // 10 bit readings
   ADC0_CTRLB = 0;                    // no accumulation
   ADC0_CTRLC = ADC_SAMPCAP_bm        // reduced sampling cap
@@ -29,6 +31,7 @@ void Init() {
   ADC0_MUXPOS    = kFirstChannel;    // Select first channel
   ADC0_INTCTRL   = ADC_RESRDY_bm;    // Enable result ready interrupt
   ADC0_CTRLA    |= ADC_ENABLE_bm;    // Enable ADC
+#pragma GCC diagnostic pop
 }
 
 // sample samples the ADC channels.
@@ -63,7 +66,7 @@ ISR(ADC0_RESRDY_vect, ISR_BLOCK) {
   ADC0_MUXPOS = kNextChannel[index];
 
   // Start the next conversion, unless we are at the end of the sampling round.
-  if (next != kFirstChannel) {
+  if (kNextChannel[index] != kFirstChannel) {
     ADC0_COMMAND = ADC_STCONV_bm;  // Start conversion
   }
 }
