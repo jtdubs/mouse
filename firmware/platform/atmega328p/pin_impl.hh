@@ -1,25 +1,26 @@
 #pragma once
 
+#include <avr/io.h>
+
 namespace mouse::platform::pin {
 
 // Pin represents an output pin on the atmega328p.
 struct Pin {
   volatile uint8_t* port;
-  volatile uint8_t* ddr;
   uint8_t           mask;
 };
 
-const Pin kRightDir    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)};
-const Pin kLeftPWM     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(1)};
-const Pin kRightPWM    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(2)};
-const Pin kLEDLeft     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(3)};
-const Pin kIRLEDs      = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(4)};
-const Pin kLEDOnboard  = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(5)};
-const Pin kProbeTick   = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(3)};
-const Pin kProbePlan   = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(4)};
-const Pin kProbeUnused = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(5)};
-const Pin kLEDRight    = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(6)};
-const Pin kLeftDir     = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(7)};
+const Pin kRightDir    = {.port = &PORTB, .mask = _BV(0)};  // D8
+const Pin kLeftPWM     = {.port = &PORTB, .mask = _BV(1)};  // D9
+const Pin kRightPWM    = {.port = &PORTB, .mask = _BV(2)};  // D10
+const Pin kLEDLeft     = {.port = &PORTB, .mask = _BV(3)};  // D11
+const Pin kIRLEDs      = {.port = &PORTB, .mask = _BV(4)};  // D12
+const Pin kLEDOnboard  = {.port = &PORTB, .mask = _BV(5)};  // D13
+const Pin kProbeTick   = {.port = &PORTC, .mask = _BV(3)};  // A3
+const Pin kProbePlan   = {.port = &PORTC, .mask = _BV(4)};  // A4
+const Pin kProbeUnused = {.port = &PORTC, .mask = _BV(5)};  // A5
+const Pin kLEDRight    = {.port = &PORTD, .mask = _BV(6)};  // D6
+const Pin kLeftDir     = {.port = &PORTD, .mask = _BV(7)};  // D7
 
 void Init();
 
