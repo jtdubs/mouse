@@ -9,8 +9,6 @@
 
 #include <stdint.h>
 
-#include "pin.hh"
-
 namespace mouse::platform::motor {
 
 // set sets the power levels of the motors.

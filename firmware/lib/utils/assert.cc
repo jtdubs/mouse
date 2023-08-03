@@ -20,10 +20,10 @@ void Failed(Module m, uint8_t n) {
 
   // disable all peripherals
   platform::motor::Set(0, 0);
-  platform::pin::Clear(platform::pin::kLEDLeft);
-  platform::pin::Clear(platform::pin::kLEDRight);
-  platform::pin::Clear(platform::pin::kLEDOnboard);
-  platform::pin::Clear(platform::pin::kIRLEDs);
+  platform::led::Clear(platform::led::LED::Left);
+  platform::led::Clear(platform::led::LED::Right);
+  platform::led::Clear(platform::led::LED::Onboard);
+  platform::led::Clear(platform::led::LED::IR);
 
   for (;;) {
     // blink out each bit in the error code
@@ -31,9 +31,9 @@ void Failed(Module m, uint8_t n) {
       bool bit = (error_code >> (15 - bit_index)) & 1;
 
       // on for 20ms, off for 230ms (determined by visual inspection)
-      platform::pin::Set(bit ? platform::pin::kLEDLeft : platform::pin::kLEDRight);
+      platform::led::Set(bit ? platform::led::LED::Left : platform::led::LED::Right);
       _delay_ms(20);
-      platform::pin::Clear(bit ? platform::pin::kLEDLeft : platform::pin::kLEDRight);
+      platform::led::Clear(bit ? platform::led::LED::Left : platform::led::LED::Right);
       _delay_ms(230);
 
       if ((bit_index & 3) == 3) {

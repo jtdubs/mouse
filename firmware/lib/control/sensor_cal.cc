@@ -40,13 +40,13 @@ void Start() {
     sum_forward_  = 0;
     sample_count_ = 0;
   }
-  leds_prev_state_ = platform::pin::IsSet(platform::pin::kIRLEDs);
-  platform::pin::Set(platform::pin::kIRLEDs);
+  leds_prev_state_ = platform::led::IsSet(platform::led::LED::IR);
+  platform::led::Set(platform::led::LED::IR);
 }
 
 bool Tick() {
   if (sample_count_ == kSampleLimit) {
-    platform::pin::Set(platform::pin::kIRLEDs, leds_prev_state_);
+    platform::led::Set(platform::led::LED::IR, leds_prev_state_);
 
     // The left and right thresholds are averaged to compensate for the mouse not being positioned
     // perfectly in the center of the corridor during calibration.

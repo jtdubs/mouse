@@ -20,13 +20,13 @@ void Init() {
   power_twi_disable();
 
   // Initialize all the platform modules.
-  platform::pin::Init();
-  platform::usart0::Init();
-  platform::adc::Init();
-  platform::encoders::Init();
-  platform::motor::Init();
-  platform::timer::Init();
-  platform::rtc::Init();
+  pin::Init();
+  usart0::Init();
+  adc::Init();
+  encoders::Init();
+  motor::Init();
+  timer::Init();
+  rtc::Init();
 }
 
 uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
@@ -34,17 +34,17 @@ uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   assert(assert::Module::Platform, 1, len >= sizeof(Report));
 
   uint16_t left, right, forward;
-  platform::adc::ReadSensors(left, right, forward);
+  adc::ReadSensors(left, right, forward);
 
   Report *report = (Report *)buffer;
-  platform::encoders::Read(report->encoders.left, report->encoders.right);
+  encoders::Read(report->encoders.left, report->encoders.right);
 
-  platform::motor::Read(report->motors.left, report->motors.right);
+  motor::Read(report->motors.left, report->motors.right);
 
-  report->leds.left       = platform::pin::IsSet(platform::pin::kLEDLeft);
-  report->leds.right      = platform::pin::IsSet(platform::pin::kLEDRight);
-  report->leds.onboard    = platform::pin::IsSet(platform::pin::kLEDOnboard);
-  report->leds.ir         = platform::pin::IsSet(platform::pin::kIRLEDs);
+  report->leds.left       = pin::IsSet(led::LED::Left);
+  report->leds.right      = pin::IsSet(led::LED::Right);
+  report->leds.onboard    = pin::IsSet(led::LED::Onboard);
+  report->leds.ir         = pin::IsSet(led::LED::IR);
   report->sensors.left    = left;
   report->sensors.right   = right;
   report->sensors.forward = forward;

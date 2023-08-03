@@ -50,7 +50,7 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK) {
 }
 
 ISR(TIMER0_COMPB_vect, ISR_BLOCK) {
-  platform::adc::Sample();
+  adc::Sample();
 }
 
 }  // namespace mouse::platform::timer

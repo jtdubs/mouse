@@ -15,10 +15,10 @@
 namespace mouse::control {
 
 void Init() {
-  control::plan::Init();
-  control::speed::Init();
+  plan::Init();
+  speed::Init();
   position::Init();
-  control::linear::Init();
+  linear::Init();
   rotational::Init();
   sensor_cal::Init();
   walls::Init();
@@ -26,95 +26,95 @@ void Init() {
 }
 
 void Tick() {
-  platform::pin::Set(platform::pin::kProbeTick);
-  control::speed::Update();
+  platform::probe::Set(platform::probe::Probe::Tick);
+  speed::Update();
   position::Update();
   platform::encoders::Update();
   walls::Update();
 
-  auto plan = control::plan::Current();
+  auto plan = plan::Current();
 
   switch (plan.type) {
-    case control::plan::Type::Idle:
-      if (plan.state == control::plan::State::Scheduled) {
-        control::plan::SetState(control::plan::State::Underway);
+    case plan::Type::Idle:
+      if (plan.state == plan::State::Scheduled) {
+        plan::SetState(plan::State::Underway);
         platform::motor::Set(0, 0);
-        platform::pin::Clear(platform::pin::kLEDLeft);
-        platform::pin::Clear(platform::pin::kLEDRight);
-        platform::pin::Clear(platform::pin::kLEDOnboard);
-        platform::pin::Clear(platform::pin::kIRLEDs);
-        control::plan::SetState(control::plan::State::Implemented);
+        platform::led::Clear(platform::led::LED::Left);
+        platform::led::Clear(platform::led::LED::Right);
+        platform::led::Clear(platform::led::LED::Onboard);
+        platform::led::Clear(platform::led::LED::IR);
+        plan::SetState(plan::State::Implemented);
       }
       break;
-    case control::plan::Type::LEDs:
-      if (plan.state == control::plan::State::Scheduled) {
-        control::plan::SetState(control::plan::State::Underway);
-        platform::pin::Set(platform::pin::kLEDLeft, plan.data.leds.left);
-        platform::pin::Set(platform::pin::kLEDRight, plan.data.leds.right);
-        platform::pin::Set(platform::pin::kLEDOnboard, plan.data.leds.onboard);
-        control::plan::SetState(control::plan::State::Implemented);
+    case plan::Type::LEDs:
+      if (plan.state == plan::State::Scheduled) {
+        plan::SetState(plan::State::Underway);
+        platform::led::Set(platform::led::LED::Left, plan.data.leds.left);
+        platform::led::Set(platform::led::LED::Right, plan.data.leds.right);
+        platform::led::Set(platform::led::LED::Onboard, plan.data.leds.onboard);
+        plan::SetState(plan::State::Implemented);
       }
       break;
-    case control::plan::Type::IR:
-      if (plan.state == control::plan::State::Scheduled) {
-        control::plan::SetState(control::plan::State::Underway);
-        platform::pin::Set(platform::pin::kIRLEDs, plan.data.ir.on);
-        control::plan::SetState(control::plan::State::Implemented);
+    case plan::Type::IR:
+      if (plan.state == plan::State::Scheduled) {
+        plan::SetState(plan::State::Underway);
+        platform::led::Set(platform::led::LED::IR, plan.data.ir.on);
+        plan::SetState(plan::State::Implemented);
       }
       break;
-    case control::plan::Type::FixedPower:
-      if (plan.state == control::plan::State::Scheduled) {
-        control::plan::SetState(control::plan::State::Underway);
+    case plan::Type::FixedPower:
+      if (plan.state == plan::State::Scheduled) {
+        plan::SetState(plan::State::Underway);
         platform::motor::Set(plan.data.power.left, plan.data.power.right);
-        control::plan::SetState(control::plan::State::Implemented);
+        plan::SetState(plan::State::Implemented);
       }
       break;
-    case control::plan::Type::FixedSpeed:
-      if (plan.state == control::plan::State::Scheduled) {
-        control::plan::SetState(control::plan::State::Underway);
-        control::speed::Set(plan.data.speed.left, plan.data.speed.right);
-        control::plan::SetState(control::plan::State::Implemented);
+    case plan::Type::FixedSpeed:
+      if (plan.state == plan::State::Scheduled) {
+        plan::SetState(plan::State::Underway);
+        speed::Set(plan.data.speed.left, plan.data.speed.right);
+        plan::SetState(plan::State::Implemented);
       }
       break;
-    case control::plan::Type::LinearMotion:
+    case plan::Type::LinearMotion:
       switch (plan.state) {
-        case control::plan::State::Scheduled:
-          control::linear::Start(plan.data.linear.position, plan.data.linear.stop);
-          control::plan::SetState(control::plan::State::Underway);
+        case plan::State::Scheduled:
+          linear::Start(plan.data.linear.position, plan.data.linear.stop);
+          plan::SetState(plan::State::Underway);
           [[fallthrough]];
-        case control::plan::State::Underway:
-          if (control::linear::Tick()) {
-            control::plan::SetState(control::plan::State::Implemented);
+        case plan::State::Underway:
+          if (linear::Tick()) {
+            plan::SetState(plan::State::Implemented);
           }
           break;
         default:
           break;
       }
       break;
-    case control::plan::Type::RotationalMotion:
+    case plan::Type::RotationalMotion:
       switch (plan.state) {
-        case control::plan::State::Scheduled:
+        case plan::State::Scheduled:
           rotational::Start(plan.data.rotational.d_theta);
-          control::plan::SetState(control::plan::State::Underway);
+          plan::SetState(plan::State::Underway);
           [[fallthrough]];
-        case control::plan::State::Underway:
+        case plan::State::Underway:
           if (rotational::Tick()) {
-            control::plan::SetState(control::plan::State::Implemented);
+            plan::SetState(plan::State::Implemented);
           }
           break;
         default:
           break;
       }
       break;
-    case control::plan::Type::SensorCal:
+    case plan::Type::SensorCal:
       switch (plan.state) {
-        case control::plan::State::Scheduled:
+        case plan::State::Scheduled:
           sensor_cal::Start();
-          control::plan::SetState(control::plan::State::Underway);
+          plan::SetState(plan::State::Underway);
           break;
-        case control::plan::State::Underway:
+        case plan::State::Underway:
           if (sensor_cal::Tick()) {
-            control::plan::SetState(control::plan::State::Implemented);
+            plan::SetState(plan::State::Implemented);
           }
           break;
         default:
@@ -127,19 +127,19 @@ void Tick() {
       break;
   }
 
-  control::speed::Tick();
-  platform::pin::Clear(platform::pin::kProbeTick);
+  speed::Tick();
+  platform::probe::Clear(platform::probe::Probe::Tick);
 }
 
 uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
   assert(assert::Module::Control, 1, buffer != NULL);
   assert(assert::Module::Control, 2, len >= sizeof(Report));
 
-  static auto    previous_plan_state = control::plan::State::Scheduled;
-  static auto    previous_plan_type  = control::plan::Type::Idle;
+  static auto    previous_plan_state = plan::State::Scheduled;
+  static auto    previous_plan_type  = plan::Type::Idle;
   static uint8_t counter             = 0;
 
-  auto plan = control::plan::Current();
+  auto plan = plan::Current();
 
   // count how many ticks since the last plan change.
   if (plan.state == previous_plan_state && plan.type == previous_plan_type) {
@@ -157,21 +157,21 @@ uint8_t GetReport(uint8_t *buffer, [[maybe_unused]] uint8_t len) {
 
   auto *report = (Report *)buffer;
 
-  report->plan = control::plan::Current();
-  control::speed::Read(report->speed.measured_left, report->speed.measured_right);
-  control::speed::ReadSetpoints(report->speed.setpoint_left, report->speed.setpoint_right);
+  report->plan = plan::Current();
+  speed::Read(report->speed.measured_left, report->speed.measured_right);
+  speed::ReadSetpoints(report->speed.setpoint_left, report->speed.setpoint_right);
   position::Read(report->position.distance, report->position.theta);
   switch (report->plan.type) {
-    case control::plan::Type::SensorCal:
+    case plan::Type::SensorCal:
       sensor_cal::Read(report->plan_data.sensor_cal.left,   //
                        report->plan_data.sensor_cal.right,  //
                        report->plan_data.sensor_cal.forward);
       break;
-    case control::plan::Type::RotationalMotion:
+    case plan::Type::RotationalMotion:
       rotational::Read(report->plan_data.rotation);
       break;
-    case control::plan::Type::LinearMotion:
-      control::linear::Read(report->plan_data.linear);
+    case plan::Type::LinearMotion:
+      linear::Read(report->plan_data.linear);
       break;
     default:
       break;

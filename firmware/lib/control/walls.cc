@@ -2,6 +2,7 @@
 #include <util/atomic.h>
 
 #include "firmware/lib/utils/assert.hh"
+#include "firmware/platform/led.hh"
 #include "firmware/platform/platform.hh"
 #include "sensor_cal_impl.hh"
 #include "walls_impl.hh"
@@ -40,9 +41,9 @@ void Update() {
   }
 
   if (control_leds_) {
-    platform::pin::Set(platform::pin::kLEDLeft, s.left_present);
-    platform::pin::Set(platform::pin::kLEDRight, s.right_present);
-    platform::pin::Set(platform::pin::kLEDOnboard, s.forward_present);
+    platform::led::Set(platform::led::LED::Left, s.left_present);
+    platform::led::Set(platform::led::LED::Right, s.right_present);
+    platform::led::Set(platform::led::LED::Onboard, s.forward_present);
   }
 }
 

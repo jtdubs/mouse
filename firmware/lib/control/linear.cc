@@ -55,7 +55,7 @@ void Start(float position /* mm */, bool stop) {
   s.target_position = position;                           // mm
   s.target_speed    = stop ? 0.0 : config::kSpeedCruise;  // mm/s
   s.wall_error      = 0;
-  s.leds_prev_state = platform::pin::IsSet(platform::pin::kIRLEDs);
+  s.leds_prev_state = platform::led::IsSet(platform::led::LED::IR);
 
 #if defined(ALLOW_ANGLE_PID_TUNING)
   start_theta_ = position_theta;  // radians
@@ -66,17 +66,17 @@ void Start(float position /* mm */, bool stop) {
     state_ = s;
   }
 
-  platform::pin::Set(platform::pin::kIRLEDs);
+  platform::led::Set(platform::led::LED::IR);
 }
 
 bool Tick() {
   auto forward = platform::adc::Read(platform::adc::Channel::SensorForward);
 
   float speed_measured_left, speed_measured_right;
-  control::speed::Read(speed_measured_left, speed_measured_right);
+  speed::Read(speed_measured_left, speed_measured_right);
 
   float speed_setpoint_left, speed_setpoint_right;
-  control::speed::ReadSetpoints(speed_setpoint_left, speed_setpoint_right);
+  speed::ReadSetpoints(speed_setpoint_left, speed_setpoint_right);
 
   float position_distance, position_theta;
   position::Read(position_distance, position_theta);
@@ -88,16 +88,16 @@ bool Tick() {
 
   // Emergency stop if too close to a wall.
   if (forward >= config::kSensorEmergencyStop) {
-    platform::pin::Set(platform::pin::kIRLEDs, s.leds_prev_state);
-    control::speed::Set(0, 0);
+    platform::led::Set(platform::led::LED::IR, s.leds_prev_state);
+    speed::Set(0, 0);
     return true;
   }
 
   // If we are there, then we are done.
   if (position_distance >= s.target_position) {
     float rpm = config::SpeedToRPM(s.target_speed);
-    platform::pin::Set(platform::pin::kIRLEDs, s.leds_prev_state);
-    control::speed::Set(rpm, rpm);
+    platform::led::Set(platform::led::LED::IR, s.leds_prev_state);
+    speed::Set(rpm, rpm);
     if (s.target_speed == 0.0f) {
       // We are done when the measured speed < 0.1mm/s
       return (config::RPMToSpeed(speed_measured_left) < 0.1) &&  //
@@ -165,7 +165,7 @@ bool Tick() {
   left_speed  = config::ClampRPM(config::SpeedToRPM(left_speed));
   right_speed = config::ClampRPM(config::SpeedToRPM(right_speed));
 
-  control::speed::Set(left_speed, right_speed);
+  speed::Set(left_speed, right_speed);
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     state_ = s;

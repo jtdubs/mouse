@@ -12,8 +12,9 @@
 
 #include "adc.hh"
 #include "encoders.hh"
+#include "led.hh"
 #include "motor.hh"
-#include "pin.hh"
+#include "probe.hh"
 #include "rtc.hh"
 #include "selector.hh"
 #include "timer.hh"

@@ -4,18 +4,6 @@
 
 namespace mouse::platform::pin {
 
-const Pin kRightDir    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(0)};
-const Pin kLeftPWM     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(1)};
-const Pin kRightPWM    = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(2)};
-const Pin kLEDLeft     = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(3)};
-const Pin kIRLEDs      = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(4)};
-const Pin kLEDOnboard  = {.port = &PORTB, .ddr = &DDRB, .mask = _BV(5)};
-const Pin kProbeTick   = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(3)};
-const Pin kProbePlan   = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(4)};
-const Pin kProbeUnused = {.port = &PORTC, .ddr = &DDRC, .mask = _BV(5)};
-const Pin kLEDRight    = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(6)};
-const Pin kLeftDir     = {.port = &PORTD, .ddr = &DDRD, .mask = _BV(7)};
-
 // Init initializes all pins.
 void Init() {
   // Set all output pins to output mode.

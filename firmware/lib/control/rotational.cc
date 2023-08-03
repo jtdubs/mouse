@@ -32,10 +32,10 @@ void Start(float dtheta /* radians */) {
 
 bool Tick() {
   float speed_measured_left, speed_measured_right;
-  control::speed::Read(speed_measured_left, speed_measured_right);
+  speed::Read(speed_measured_left, speed_measured_right);
 
   float speed_setpoint_left, speed_setpoint_right;
-  control::speed::ReadSetpoints(speed_setpoint_left, speed_setpoint_right);
+  speed::ReadSetpoints(speed_setpoint_left, speed_setpoint_right);
 
   float position_distance, position_theta;
   position::Read(position_distance, position_theta);
@@ -51,7 +51,7 @@ bool Tick() {
   // If we are in the right range...
   if (fabsf(dtheta) <= (config::kCountTheta * 12.0)) {
     // Stop the motors.
-    control::speed::Set(0, 0);
+    speed::Set(0, 0);
     // We are done when the measured speed < 0.1mm/s
     return (fabsf(config::RPMToSpeed(speed_measured_left)) < 0.1) &&  //
            (fabsf(config::RPMToSpeed(speed_measured_right)) < 0.1);
@@ -90,9 +90,9 @@ bool Tick() {
   right_speed = config::ClampRPM(config::SpeedToRPM(right_speed));
 
   if (s.direction) {
-    control::speed::Set(-left_speed, right_speed);
+    speed::Set(-left_speed, right_speed);
   } else {
-    control::speed::Set(left_speed, -right_speed);
+    speed::Set(left_speed, -right_speed);
   }
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
